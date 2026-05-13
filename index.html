@@ -1486,12 +1486,11 @@
 
 <script>
 // ==================== CONFIGURATION ====================
-const sb_URL = 'https://ouhxgdhzgugfxajoannd.sb.co';
-const sb_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im91aHhnZGh6Z3VnZnhham9hbm5kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2MDU3NDEsImV4cCI6MjA5NDE4MTc0MX0.zYpFWFbX21e-9lf0_--iqeA4ZA7SqHZZWy8Nw8nNgPM';
+const SUPABASE_URL = 'https://ouhxgdhzgugfxajoannd.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im91aHhnZGh6Z3VnZnhham9hbm5kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2MDU3NDEsImV4cCI6MjA5NDE4MTc0MX0.zYpFWFbX21e-9lf0_--iqeA4ZA7SqHZZWy8Nw8nNgPM';
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
 // ==================== USER ID (STANDALONE) ====================
-// Generate a persistent anonymous user ID (UUID v4) stored in localStorage.
-// No Telegram dependency. Every browser/user gets a unique ID that survives refreshes.
 function getOrCreateUserId() {
     let userId = localStorage.getItem('profitvault_user_id');
     if (!userId) {
@@ -1508,16 +1507,14 @@ function getOrCreateUserId() {
 
 let USER_ID = getOrCreateUserId();
 
-// Optional: if the URL contains ?user_id=..., we can still use it (for manual share/debug)
+// Optional: ?user_id= in URL
 const urlParams = new URLSearchParams(window.location.search);
 const urlUserId = urlParams.get('user_id');
 if (urlUserId) {
     USER_ID = urlUserId;
-    // Also store it for consistency
     localStorage.setItem('profitvault_user_id', urlUserId);
 }
 
-// Display the user ID in the contact tab (will be filled later)
 document.getElementById('contactUserId').textContent = USER_ID;
 
 let selectedPaymentMethod = "telebirr";
@@ -1590,228 +1587,225 @@ document.addEventListener('touchend', () => {
         pullEl.style.display = 'none';
     }, 500);
 });
+
 // ==================== SOUND EFFECTS ====================
-    function playSound(soundName) {
-        if (!soundEnabled) return;
-        try {
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            const oscillator = audioContext.createOscillator();
-            const gainNode = audioContext.createGain();
-            
-            oscillator.connect(gainNode);
-            gainNode.connect(audioContext.destination);
-            
-            switch(soundName) {
-                case 'click':
-                    oscillator.frequency.value = 800;
-                    gainNode.gain.value = 0.3;
-                    oscillator.type = 'sine';
-                    oscillator.start();
-                    oscillator.stop(audioContext.currentTime + 0.1);
-                    break;
-                case 'coin':
+function playSound(soundName) {
+    if (!soundEnabled) return;
+    try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        switch(soundName) {
+            case 'click':
+                oscillator.frequency.value = 800;
+                gainNode.gain.value = 0.3;
+                oscillator.type = 'sine';
+                oscillator.start();
+                oscillator.stop(audioContext.currentTime + 0.1);
+                break;
+            case 'coin':
+                oscillator.frequency.value = 1200;
+                gainNode.gain.value = 0.2;
+                oscillator.type = 'sine';
+                oscillator.start();
+                oscillator.stop(audioContext.currentTime + 0.2);
+                break;
+            case 'win':
+                oscillator.frequency.value = 1500;
+                gainNode.gain.value = 0.4;
+                oscillator.type = 'sine';
+                oscillator.start();
+                setTimeout(() => {
+                    oscillator.frequency.value = 1000;
+                }, 100);
+                oscillator.stop(audioContext.currentTime + 0.3);
+                break;
+            case 'lose':
+                oscillator.frequency.value = 300;
+                gainNode.gain.value = 0.3;
+                oscillator.type = 'sawtooth';
+                oscillator.start();
+                oscillator.stop(audioContext.currentTime + 0.3);
+                break;
+            case 'success':
+                oscillator.frequency.value = 1000;
+                gainNode.gain.value = 0.3;
+                oscillator.type = 'sine';
+                oscillator.start();
+                setTimeout(() => {
                     oscillator.frequency.value = 1200;
-                    gainNode.gain.value = 0.2;
-                    oscillator.type = 'sine';
-                    oscillator.start();
-                    oscillator.stop(audioContext.currentTime + 0.2);
-                    break;
-                case 'win':
-                    oscillator.frequency.value = 1500;
-                    gainNode.gain.value = 0.4;
-                    oscillator.type = 'sine';
-                    oscillator.start();
-                    setTimeout(() => {
-                        oscillator.frequency.value = 1000;
-                    }, 100);
-                    oscillator.stop(audioContext.currentTime + 0.3);
-                    break;
-                case 'lose':
-                    oscillator.frequency.value = 300;
-                    gainNode.gain.value = 0.3;
-                    oscillator.type = 'sawtooth';
-                    oscillator.start();
-                    oscillator.stop(audioContext.currentTime + 0.3);
-                    break;
-                case 'success':
-                    oscillator.frequency.value = 1000;
-                    gainNode.gain.value = 0.3;
-                    oscillator.type = 'sine';
-                    oscillator.start();
-                    setTimeout(() => {
-                        oscillator.frequency.value = 1200;
-                    }, 100);
-                    oscillator.stop(audioContext.currentTime + 0.2);
-                    break;
-                case 'error':
-                    oscillator.frequency.value = 400;
-                    gainNode.gain.value = 0.3;
-                    oscillator.type = 'square';
-                    oscillator.start();
-                    oscillator.stop(audioContext.currentTime + 0.2);
-                    break;
-                case 'deposit':
-                case 'withdraw':
-                case 'ticket':
-                    oscillator.frequency.value = 1000;
-                    gainNode.gain.value = 0.3;
-                    oscillator.type = 'sine';
-                    oscillator.start();
-                    setTimeout(() => {
-                        oscillator.frequency.value = 1200;
-                    }, 100);
-                    oscillator.stop(audioContext.currentTime + 0.2);
-                    break;
-                default:
-                    break;
-            }
-            
-            setTimeout(() => audioContext.close(), 500);
-        } catch(e) {
-            console.log('Web Audio error:', e);
+                }, 100);
+                oscillator.stop(audioContext.currentTime + 0.2);
+                break;
+            case 'error':
+                oscillator.frequency.value = 400;
+                gainNode.gain.value = 0.3;
+                oscillator.type = 'square';
+                oscillator.start();
+                oscillator.stop(audioContext.currentTime + 0.2);
+                break;
+            case 'deposit':
+            case 'withdraw':
+            case 'ticket':
+                oscillator.frequency.value = 1000;
+                gainNode.gain.value = 0.3;
+                oscillator.type = 'sine';
+                oscillator.start();
+                setTimeout(() => {
+                    oscillator.frequency.value = 1200;
+                }, 100);
+                oscillator.stop(audioContext.currentTime + 0.2);
+                break;
+            default:
+                break;
         }
-    }
-
-    function toggleSound() {
-        soundEnabled = !soundEnabled;
-        localStorage.setItem('soundEnabled', soundEnabled);
-        const toggle = document.getElementById('soundToggle');
-        if (soundEnabled) {
-            toggle.classList.add('active');
-            playSound('click');
-        } else {
-            toggle.classList.remove('active');
-        }
-    }
-
-    // ==================== FLYING COIN ANIMATION ====================
-    function flyCoinToBalance(startX, startY, amount, isGain = true) {
-        const coin = document.createElement('div');
-        coin.className = 'flying-coin';
-        coin.innerHTML = isGain ? `🪙 +${amount.toLocaleString()}` : `🪙 -${amount.toLocaleString()}`;
-        coin.style.left = startX + 'px';
-        coin.style.top = startY + 'px';
-        coin.style.fontSize = '28px';
-        coin.style.fontWeight = 'bold';
-        document.body.appendChild(coin);
         
-        const target = document.getElementById('coinsCard');
-        const targetRect = target.getBoundingClientRect();
-        const targetX = targetRect.left + targetRect.width / 2;
-        const targetY = targetRect.top + targetRect.height / 2;
-        
-        const deltaX = targetX - startX;
-        const deltaY = targetY - startY;
-        
-        setTimeout(() => {
-            coin.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(0.3)`;
-            coin.style.opacity = '0.5';
-        }, 10);
-        
-        playSound('coin');
-        
-        setTimeout(() => coin.remove(), 700);
+        setTimeout(() => audioContext.close(), 500);
+    } catch(e) {
+        console.log('Web Audio error:', e);
     }
+}
 
-    // ==================== UTILITY FUNCTIONS ====================
-    function showToast(message, type = 'success') {
-        const toast = document.getElementById('toast');
-        toast.textContent = message;
-        toast.className = `toast ${type === 'error' ? 'error' : (type === 'info' ? 'info' : '')}`;
-        toast.classList.add('show');
-        if (type === 'success') playSound('success');
-        else if (type === 'error') playSound('error');
-        setTimeout(() => {
-            toast.classList.remove('show');
-        }, 3000);
+function toggleSound() {
+    soundEnabled = !soundEnabled;
+    localStorage.setItem('soundEnabled', soundEnabled);
+    const toggle = document.getElementById('soundToggle');
+    if (soundEnabled) {
+        toggle.classList.add('active');
+        playSound('click');
+    } else {
+        toggle.classList.remove('active');
     }
+}
 
-    function showModal(modalId) {
-        const modal = document.getElementById(modalId);
-        if (modal) {
-            modal.classList.add('active');
-            playSound('click');
-        }
-    }
+// ==================== FLYING COIN ANIMATION ====================
+function flyCoinToBalance(startX, startY, amount, isGain = true) {
+    const coin = document.createElement('div');
+    coin.className = 'flying-coin';
+    coin.innerHTML = isGain ? `🪙 +${amount.toLocaleString()}` : `🪙 -${amount.toLocaleString()}`;
+    coin.style.left = startX + 'px';
+    coin.style.top = startY + 'px';
+    coin.style.fontSize = '28px';
+    coin.style.fontWeight = 'bold';
+    document.body.appendChild(coin);
+    
+    const target = document.getElementById('coinsCard');
+    const targetRect = target.getBoundingClientRect();
+    const targetX = targetRect.left + targetRect.width / 2;
+    const targetY = targetRect.top + targetRect.height / 2;
+    
+    const deltaX = targetX - startX;
+    const deltaY = targetY - startY;
+    
+    setTimeout(() => {
+        coin.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(0.3)`;
+        coin.style.opacity = '0.5';
+    }, 10);
+    
+    playSound('coin');
+    
+    setTimeout(() => coin.remove(), 700);
+}
 
-    function closeModal(modalId) {
-        const modal = document.getElementById(modalId);
-        if (modal) {
-            modal.classList.remove('active');
-        }
-    }
+// ==================== UTILITY FUNCTIONS ====================
+function showToast(message, type = 'success') {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.className = `toast ${type === 'error' ? 'error' : (type === 'info' ? 'info' : '')}`;
+    toast.classList.add('show');
+    if (type === 'success') playSound('success');
+    else if (type === 'error') playSound('error');
+    setTimeout(() => {
+        toast.classList.remove('show');
+    }, 3000);
+}
 
-    function selectPaymentMethod(method) {
-        selectedPaymentMethod = method;
-        const telebirrInfo = document.getElementById('telebirrInfo');
-        const awashInfo = document.getElementById('awashInfo');
-        const paymentMethods = document.querySelectorAll('.payment-method');
-        
-        paymentMethods.forEach(el => el.classList.remove('selected'));
-        
-        if (method === 'telebirr') {
-            telebirrInfo.style.display = 'block';
-            awashInfo.style.display = 'none';
-            document.querySelector('[data-payment="telebirr"]').classList.add('selected');
-        } else {
-            telebirrInfo.style.display = 'none';
-            awashInfo.style.display = 'block';
-            document.querySelector('[data-payment="awash"]').classList.add('selected');
-        }
-    }
-
-    function createCoinBubble(x, y, amount) {
-        const bubble = document.createElement('div');
-        bubble.className = 'coin-bubble';
-        bubble.innerHTML = `🪙 +${amount}`;
-        bubble.style.left = x + 'px';
-        bubble.style.top = y + 'px';
-        bubble.style.position = 'fixed';
-        bubble.style.fontSize = '24px';
-        bubble.style.fontWeight = 'bold';
-        bubble.style.color = '#fbbf24';
-        bubble.style.textShadow = '0 0 5px #000';
-        document.body.appendChild(bubble);
-        playSound('coin');
-        
-        setTimeout(() => {
-            bubble.remove();
-        }, 800);
-    }
-
-    // Contact Admin Functions
-    function contactAdmin(method) {
-        if (method === 'telegram') {
-            window.open('https://t.me/drtesfayekebede', '_blank');
-        } else if (method === 'phone') {
-            window.location.href = 'tel:+251935983470';
-        }
+function showModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.classList.add('active');
         playSound('click');
     }
+}
 
-    function copyUserId() {
-        const userId = document.getElementById('contactUserId').innerText;
-        navigator.clipboard.writeText(userId).then(() => {
-            showToast('✅ User ID copied!', 'success');
-            playSound('click');
-        }).catch(() => {
-            showToast('Failed to copy', 'error');
-        });
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.classList.remove('active');
     }
+}
+
+function selectPaymentMethod(method) {
+    selectedPaymentMethod = method;
+    const telebirrInfo = document.getElementById('telebirrInfo');
+    const awashInfo = document.getElementById('awashInfo');
+    const paymentMethods = document.querySelectorAll('.payment-method');
+    
+    paymentMethods.forEach(el => el.classList.remove('selected'));
+    
+    if (method === 'telebirr') {
+        telebirrInfo.style.display = 'block';
+        awashInfo.style.display = 'none';
+        document.querySelector('[data-payment="telebirr"]').classList.add('selected');
+    } else {
+        telebirrInfo.style.display = 'none';
+        awashInfo.style.display = 'block';
+        document.querySelector('[data-payment="awash"]').classList.add('selected');
+    }
+}
+
+function createCoinBubble(x, y, amount) {
+    const bubble = document.createElement('div');
+    bubble.className = 'coin-bubble';
+    bubble.innerHTML = `🪙 +${amount}`;
+    bubble.style.left = x + 'px';
+    bubble.style.top = y + 'px';
+    bubble.style.position = 'fixed';
+    bubble.style.fontSize = '24px';
+    bubble.style.fontWeight = 'bold';
+    bubble.style.color = '#fbbf24';
+    bubble.style.textShadow = '0 0 5px #000';
+    document.body.appendChild(bubble);
+    playSound('coin');
+    
+    setTimeout(() => {
+        bubble.remove();
+    }, 800);
+}
+
+function contactAdmin(method) {
+    if (method === 'telegram') {
+        window.open('https://t.me/drtesfayekebede', '_blank');
+    } else if (method === 'phone') {
+        window.location.href = 'tel:+251935983470';
+    }
+    playSound('click');
+}
+
+function copyUserId() {
+    const userId = document.getElementById('contactUserId').innerText;
+    navigator.clipboard.writeText(userId).then(() => {
+        showToast('✅ User ID copied!', 'success');
+        playSound('click');
+    }).catch(() => {
+        showToast('Failed to copy', 'error');
+    });
+}
+
 // ==================== MAIN LOAD FUNCTION ====================
-    async function load() {
+async function load() {
     try {
-        // USER_ID is always set from localStorage (UUID), no Telegram needed
-        // Get user data from sb
         let { data: user, error: userError } = await sb
             .from('users')
             .select('*')
             .eq('user_id', USER_ID)
             .single();
         
-        // If no user found, automatically create one (standalone web app signup)
         if (userError && (userError.code === 'PGRST116' || userError.message.includes('contains 0 rows'))) {
-            // No user exists yet – insert a new row with defaults
             const { data: newUser, error: insertError } = await sb
                 .from('users')
                 .insert({
@@ -1844,19 +1838,16 @@ document.addEventListener('touchend', () => {
             return;
         }
         
-        // Update balances
         document.getElementById('balance').innerText = (user.balance || 0).toLocaleString();
         document.getElementById('bonus').innerText = (user.bonus_balance || 0).toLocaleString();
         document.getElementById('coins').innerText = (user.coin_balance || 0).toLocaleString();
         
-        // Get lottery tickets count
         const { count: lotteryCount } = await sb
             .from('lottery_tickets')
             .select('*', { count: 'exact', head: true })
             .eq('user_id', USER_ID)
             .eq('status', 'active');
         
-        // Quad-Lock calculation
         const depositRequired = 1500;
         const gamesRequired = 10;
         const ticketsRequired = 3;
@@ -1916,7 +1907,6 @@ document.addEventListener('touchend', () => {
             </div>
         `;
         
-        // Exchange Info
         const today = new Date().toISOString().substring(0, 10);
         const { data: exchangedToday } = await sb
             .from('daily_exchange')
@@ -1944,7 +1934,6 @@ document.addEventListener('touchend', () => {
             <div class="quad-item ${remainingExchange > 0 ? 'unlocked' : 'locked'}"><div>Remaining: ${remainingExchange.toLocaleString()} coins</div></div>
         `;
         
-        // Profile Info
         document.getElementById('profileInfo').innerHTML = `
             <div class="profile-item"><span>👤 Username</span><span>@${user.username || 'Unknown'}</span></div>
             <div class="profile-item"><span>🆔 User ID</span><span><code>${user.user_id}</code></span></div>
@@ -1956,7 +1945,6 @@ document.addEventListener('touchend', () => {
             <div class="profile-item"><span>🎟️ Lottery Tickets</span><span>${lotteryCount || 0}</span></div>
         `;
         
-        // Get market and assets
         const { data: market } = await sb
             .from('market')
             .select('*')
@@ -1971,12 +1959,10 @@ document.addEventListener('touchend', () => {
         if (market) {
             updateMarket(market, assets || []);
         }
-        
         if (assets) {
             updateInvestments(assets);
         }
         
-        // Get lottery pools
         const lotteryPools = [];
         for (const poolId of [1, 2, 3]) {
             const { count: sold } = await sb
@@ -2003,38 +1989,30 @@ document.addEventListener('touchend', () => {
                 is_full: (sold || 0) >= 15
             });
         }
-        
         updateLotteryPools(lotteryPools);
         
-        // Get my tickets
         const { data: myTickets } = await sb
             .from('lottery_tickets')
             .select('*')
             .eq('user_id', USER_ID)
             .eq('status', 'active');
-        
         updateMyTickets(myTickets || []);
         
-        // Get recent draws
         const { data: recentDraws } = await sb
             .from('lottery_draws')
             .select('*')
             .order('draw_time', { ascending: false })
             .limit(5);
-        
         updateRecentDraws(recentDraws || []);
         
-        // Get consultations
         const { data: consultations } = await sb
             .from('health_consultations')
             .select('*')
             .eq('user_id', USER_ID)
             .order('created_at', { ascending: false })
             .limit(5);
-        
         updateConsultations(consultations || []);
         
-        // Get transactions
         const { data: transactions } = await sb
             .from('transactions')
             .select('*')
@@ -2058,7 +2036,6 @@ document.addEventListener('touchend', () => {
             updateSplitTransactions({ deposit_withdraw: depositWithdraw, other: other });
         }
         
-        // Get leaderboard
         const { data: leaderboard } = await sb
             .from('users')
             .select('user_id, username, total_deposited')
@@ -2086,134 +2063,135 @@ document.addEventListener('touchend', () => {
     }
 }
 
-    // ==================== SPLIT TRANSACTIONS WITH STATUS ====================
-    function updateSplitTransactions(transactions) {
-        const depositWithdraw = transactions.deposit_withdraw || [];
-        const other = transactions.other || [];
-        
-        const depositWithdrawDiv = document.getElementById('depositWithdrawTransactions');
-        if (depositWithdraw.length === 0) {
-            depositWithdrawDiv.innerHTML = '<div class="loading">No deposit/withdrawal transactions</div>';
-        } else {
-            depositWithdrawDiv.innerHTML = depositWithdraw.map(t => {
-                const isPending = t.status === 'Pending' || t.status === 'pending';
-                const isApproved = t.status === 'Completed' || t.status === 'approved' || t.status === 'Approved';
-                const isDenied = t.status === 'denied' || t.status === 'Denied';
-                
-                let statusClass = '';
-                let statusText = '';
-                
-                if (isPending) { 
-                    statusClass = 'transaction-pending'; 
-                    statusText = '⏳ Pending'; 
-                } else if (isApproved) { 
-                    statusClass = 'transaction-approved'; 
-                    statusText = '✅ Approved'; 
-                } else if (isDenied) { 
-                    statusClass = 'transaction-denied'; 
-                    statusText = '❌ Denied'; 
-                } else {
-                    statusText = t.status || 'Unknown';
-                }
-                
-                const isDeposit = t.transaction_type.includes('Deposit') || t.transaction_type.includes('ተቀማጭ');
-                const isWithdrawal = t.transaction_type.includes('Withdrawal') || t.transaction_type.includes('መውጫ');
-                const actionIcon = isDeposit ? '📥' : (isWithdrawal ? '📤' : '💰');
-                
-                return `
-                    <div class="transaction-item ${statusClass}">
-                        <div style="display: flex; justify-content: space-between;">
-                            <span>${actionIcon} ${t.transaction_type}</span>
-                            <span style="color: ${t.amount > 0 ? '#10b981' : '#ef4444'}; font-weight: bold;">${Math.abs(t.amount).toLocaleString()} ETB</span>
-                        </div>
-                        <div style="font-size: 10px; opacity: 0.6;">${t.timestamp}</div>
-                        <div style="font-size: 11px; margin-top: 4px;"><strong>${statusText}</strong></div>
+// ==================== SPLIT TRANSACTIONS WITH STATUS ====================
+function updateSplitTransactions(transactions) {
+    const depositWithdraw = transactions.deposit_withdraw || [];
+    const other = transactions.other || [];
+    
+    const depositWithdrawDiv = document.getElementById('depositWithdrawTransactions');
+    if (depositWithdraw.length === 0) {
+        depositWithdrawDiv.innerHTML = '<div class="loading">No deposit/withdrawal transactions</div>';
+    } else {
+        depositWithdrawDiv.innerHTML = depositWithdraw.map(t => {
+            const isPending = t.status === 'Pending' || t.status === 'pending';
+            const isApproved = t.status === 'Completed' || t.status === 'approved' || t.status === 'Approved';
+            const isDenied = t.status === 'denied' || t.status === 'Denied';
+            
+            let statusClass = '';
+            let statusText = '';
+            
+            if (isPending) { 
+                statusClass = 'transaction-pending'; 
+                statusText = '⏳ Pending'; 
+            } else if (isApproved) { 
+                statusClass = 'transaction-approved'; 
+                statusText = '✅ Approved'; 
+            } else if (isDenied) { 
+                statusClass = 'transaction-denied'; 
+                statusText = '❌ Denied'; 
+            } else {
+                statusText = t.status || 'Unknown';
+            }
+            
+            const isDeposit = t.transaction_type.includes('Deposit') || t.transaction_type.includes('ተቀማጭ');
+            const isWithdrawal = t.transaction_type.includes('Withdrawal') || t.transaction_type.includes('መውጫ');
+            const actionIcon = isDeposit ? '📥' : (isWithdrawal ? '📤' : '💰');
+            
+            return `
+                <div class="transaction-item ${statusClass}">
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>${actionIcon} ${t.transaction_type}</span>
+                        <span style="color: ${t.amount > 0 ? '#10b981' : '#ef4444'}; font-weight: bold;">${Math.abs(t.amount).toLocaleString()} ETB</span>
                     </div>
-                `;
-            }).join('');
-        }
-        
-        const otherDiv = document.getElementById('otherTransactions');
-        if (other.length === 0) {
-            otherDiv.innerHTML = '<div class="loading">No other transactions</div>';
-        } else {
-            otherDiv.innerHTML = other.map(t => {
-                const icon = t.amount > 0 ? '➕' : (t.amount < 0 ? '➖' : '📝');
-                const color = t.amount > 0 ? '#10b981' : (t.amount < 0 ? '#ef4444' : '#fbbf24');
-                return `
-                    <div class="transaction-item">
-                        <div style="display: flex; justify-content: space-between;">
-                            <span>${icon} ${t.transaction_type}</span>
-                            <span style="color: ${color}; font-weight: bold;">${Math.abs(t.amount).toLocaleString()} ${t.amount >= 0 ? '🪙' : '💰'}</span>
-                        </div>
-                        <div style="font-size: 10px; opacity: 0.6;">${t.timestamp}</div>
-                        <div style="font-size: 10px;">${t.status}</div>
-                    </div>
-                `;
-            }).join('');
-        }
+                    <div style="font-size: 10px; opacity: 0.6;">${t.timestamp}</div>
+                    <div style="font-size: 11px; margin-top: 4px;"><strong>${statusText}</strong></div>
+                </div>
+            `;
+        }).join('');
     }
+    
+    const otherDiv = document.getElementById('otherTransactions');
+    if (other.length === 0) {
+        otherDiv.innerHTML = '<div class="loading">No other transactions</div>';
+    } else {
+        otherDiv.innerHTML = other.map(t => {
+            const icon = t.amount > 0 ? '➕' : (t.amount < 0 ? '➖' : '📝');
+            const color = t.amount > 0 ? '#10b981' : (t.amount < 0 ? '#ef4444' : '#fbbf24');
+            return `
+                <div class="transaction-item">
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>${icon} ${t.transaction_type}</span>
+                        <span style="color: ${color}; font-weight: bold;">${Math.abs(t.amount).toLocaleString()} ${t.amount >= 0 ? '🪙' : '💰'}</span>
+                    </div>
+                    <div style="font-size: 10px; opacity: 0.6;">${t.timestamp}</div>
+                    <div style="font-size: 10px;">${t.status}</div>
+                </div>
+            `;
+        }).join('');
+    }
+}
+
 // ==================== MARKET FUNCTIONS ====================
-    function updateMarket(market, assets) {
-        const ownedSlots = assets ? assets.map(a => a.slot_id) : [];
-        const marketGrid = document.getElementById('marketGrid');
-        
-        if (!market || market.length === 0) {
-            marketGrid.innerHTML = '<div class="loading">No market items found</div>';
-            return;
-        }
-        
-        marketGrid.innerHTML = market.map(item => {
-            const isOwned = ownedSlots.includes(item.slot_id);
-            const immediateAllowed = item.immediate_purchase_allowed;
-            const adjustmentOpen = item.adjustment_window_open;
-            
-            return `
-                <div class="market-item ${isOwned ? 'owned' : ''}" data-slot="${item.slot_id}" onclick="${!isOwned ? `buyAssetWithFly(${item.slot_id}, event)` : ''}">
-                    ${immediateAllowed ? '<div class="market-badge">⚡ Immediate</div>' : ''}
-                    ${adjustmentOpen ? '<div class="market-badge" style="background:#fbbf24; color:#1a1a2e;">📈 Adjust</div>' : ''}
-                    <div class="market-emoji">${item.emoji}</div>
-                    <div class="market-name">${item.asset_name}</div>
-                    <div class="market-price">${item.cost.toLocaleString()} 🪙</div>
-                    ${isOwned ? '<div style="font-size: 10px; margin-top: 5px;">✅ Owned</div>' : ''}
-                </div>
-            `;
-        }).join('');
+function updateMarket(market, assets) {
+    const ownedSlots = assets ? assets.map(a => a.slot_id) : [];
+    const marketGrid = document.getElementById('marketGrid');
+    
+    if (!market || market.length === 0) {
+        marketGrid.innerHTML = '<div class="loading">No market items found</div>';
+        return;
     }
     
-    function updateInvestments(assets) {
-        const investmentsDiv = document.getElementById('investments');
-        if (!assets || assets.length === 0) {
-            investmentsDiv.innerHTML = '<div class="loading">No active investments</div>';
-            return;
-        }
+    marketGrid.innerHTML = market.map(item => {
+        const isOwned = ownedSlots.includes(item.slot_id);
+        const immediateAllowed = item.immediate_purchase_allowed;
+        const adjustmentOpen = item.adjustment_window_open;
         
-        investmentsDiv.innerHTML = assets.map(asset => {
-            const purchaseTime = new Date(asset.purchase_time);
-            const maturity = new Date(purchaseTime.getTime() + 24 * 60 * 60 * 1000);
-            const now = new Date();
-            const isReady = now >= maturity;
-            const payout = Math.round(asset.purchase_price * asset.roi_at_purchase);
-            const hoursLeft = Math.ceil((maturity - now) / (1000 * 60 * 60));
-            
-            return `
-                <div class="investment-item" data-asset-id="${asset.id}" data-payout="${payout}">
-                    <div>
-                        <span style="font-size: 20px;">${asset.emoji}</span>
-                        <strong>${asset.asset_name}</strong>
-                        <div style="font-size: 11px; opacity: 0.7;">Invested: ${asset.purchase_price.toLocaleString()} 🪙</div>
-                        <div style="font-size: 11px; opacity: 0.7;">Payout: ${payout.toLocaleString()} 🪙</div>
-                    </div>
-                    ${isReady ? 
-                        `<button class="sell-btn" onclick="sellAssetWithFly(${asset.id}, ${payout}, event)">💵 Sell for ${payout.toLocaleString()} 🪙</button>` : 
-                        `<span class="badge">⏳ ${hoursLeft}h left</span>`
-                    }
-                </div>
-            `;
-        }).join('');
+        return `
+            <div class="market-item ${isOwned ? 'owned' : ''}" data-slot="${item.slot_id}" onclick="${!isOwned ? `buyAssetWithFly(${item.slot_id}, event)` : ''}">
+                ${immediateAllowed ? '<div class="market-badge">⚡ Immediate</div>' : ''}
+                ${adjustmentOpen ? '<div class="market-badge" style="background:#fbbf24; color:#1a1a2e;">📈 Adjust</div>' : ''}
+                <div class="market-emoji">${item.emoji}</div>
+                <div class="market-name">${item.asset_name}</div>
+                <div class="market-price">${item.cost.toLocaleString()} 🪙</div>
+                ${isOwned ? '<div style="font-size: 10px; margin-top: 5px;">✅ Owned</div>' : ''}
+            </div>
+        `;
+    }).join('');
+}
+
+function updateInvestments(assets) {
+    const investmentsDiv = document.getElementById('investments');
+    if (!assets || assets.length === 0) {
+        investmentsDiv.innerHTML = '<div class="loading">No active investments</div>';
+        return;
     }
     
-    async function buyAssetWithFly(slotId, event) {
+    investmentsDiv.innerHTML = assets.map(asset => {
+        const purchaseTime = new Date(asset.purchase_time);
+        const maturity = new Date(purchaseTime.getTime() + 24 * 60 * 60 * 1000);
+        const now = new Date();
+        const isReady = now >= maturity;
+        const payout = Math.round(asset.purchase_price * asset.roi_at_purchase);
+        const hoursLeft = Math.ceil((maturity - now) / (1000 * 60 * 60));
+        
+        return `
+            <div class="investment-item" data-asset-id="${asset.id}" data-payout="${payout}">
+                <div>
+                    <span style="font-size: 20px;">${asset.emoji}</span>
+                    <strong>${asset.asset_name}</strong>
+                    <div style="font-size: 11px; opacity: 0.7;">Invested: ${asset.purchase_price.toLocaleString()} 🪙</div>
+                    <div style="font-size: 11px; opacity: 0.7;">Payout: ${payout.toLocaleString()} 🪙</div>
+                </div>
+                ${isReady ? 
+                    `<button class="sell-btn" onclick="sellAssetWithFly(${asset.id}, ${payout}, event)">💵 Sell for ${payout.toLocaleString()} 🪙</button>` : 
+                    `<span class="badge">⏳ ${hoursLeft}h left</span>`
+                }
+            </div>
+        `;
+    }).join('');
+}
+
+async function buyAssetWithFly(slotId, event) {
     try {
         const button = event.currentTarget;
         const rect = button.getBoundingClientRect();
@@ -2240,46 +2218,36 @@ document.addEventListener('touchend', () => {
         const newCoins = (user.coin_balance || 0) - asset.cost;
         const now = new Date().toISOString().replace('T', ' ').substring(0, 19);
         
-        await sb
-            .from('users')
-            .update({ coin_balance: newCoins })
-            .eq('user_id', USER_ID);
+        await sb.from('users').update({ coin_balance: newCoins }).eq('user_id', USER_ID);
+        await sb.from('user_assets').insert({
+            user_id: USER_ID,
+            slot_id: slotId,
+            emoji: asset.emoji,
+            asset_name: asset.asset_name,
+            purchase_price: asset.cost,
+            roi_at_purchase: 1.25,
+            purchase_time: now,
+            sold: false
+        });
+        await sb.from('transactions').insert({
+            user_id: USER_ID,
+            transaction_type: `🛒 Market (${asset.asset_name})`,
+            amount: asset.cost,
+            status: 'Completed',
+            timestamp: now
+        });
         
-        await sb
-            .from('user_assets')
-            .insert({
-                user_id: USER_ID,
-                slot_id: slotId,
-                emoji: asset.emoji,
-                asset_name: asset.asset_name,
-                purchase_price: asset.cost,
-                roi_at_purchase: 1.25,
-                purchase_time: now,
-                sold: false
-            });
-        
-        await sb
-            .from('transactions')
-            .insert({
-                user_id: USER_ID,
-                transaction_type: `🛒 Market (${asset.asset_name})`,
-                amount: asset.cost,
-                status: 'Completed',
-                timestamp: now
-            });
-        
-        flyCoinToBalance(startX, startY, asset.cost, false); // Fixed: show deduction amount
+        flyCoinToBalance(startX, startY, asset.cost, false);
         showToast(`✅ Invested in ${asset.asset_name}!`, 'success');
         playSound('deposit');
         load();
-        
     } catch (error) {
         console.error('Buy error:', error);
         showToast('Network error: ' + error.message, 'error');
     }
 }
-    
-    async function sellAssetWithFly(assetId, payout, event) {
+
+async function sellAssetWithFly(assetId, payout, event) {
     if (!confirm(`Sell this asset for ${payout.toLocaleString()} coins?`)) return;
     
     try {
@@ -2296,48 +2264,38 @@ document.addEventListener('touchend', () => {
         
         const newCoins = (user.coin_balance || 0) + payout;
         
-        await sb
-            .from('users')
-            .update({ coin_balance: newCoins })
-            .eq('user_id', USER_ID);
+        await sb.from('users').update({ coin_balance: newCoins }).eq('user_id', USER_ID);
+        await sb.from('user_assets').update({ sold: true }).eq('id', assetId);
+        await sb.from('transactions').insert({
+            user_id: USER_ID,
+            transaction_type: '💵 Sold Asset',
+            amount: payout,
+            status: 'Completed',
+            timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19)
+        });
         
-        await sb
-            .from('user_assets')
-            .update({ sold: true })
-            .eq('id', assetId);
-        
-        await sb
-            .from('transactions')
-            .insert({
-                user_id: USER_ID,
-                transaction_type: '💵 Sold Asset',
-                amount: payout,
-                status: 'Completed',
-                timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19)
-            });
-        
-        flyCoinToBalance(startX, startY, payout, true); // Fixed: show payout gained
+        flyCoinToBalance(startX, startY, payout, true);
         showToast(`✅ Sold for ${payout} coins!`, 'success');
         playSound('coin');
         load();
-        
     } catch (error) {
         console.error('Sell error:', error);
         showToast('Network error: ' + error.message, 'error');
     }
 }
-    // ==================== NEON CYBER 3D GAME FUNCTIONS ====================
-    function createGameGrid() {
-        const grid = document.getElementById('gameGrid');
-        let html = '';
-        for (let i = 0; i < 16; i++) {
-            html += `<div class="game-card" data-pos="${i}" onclick="playGame(${i}, event)">🎁</div>`;
-        }
-        grid.innerHTML = html;
-        gameGridActive = true;
+
+// ==================== NEON CYBER 3D GAME FUNCTIONS ====================
+function createGameGrid() {
+    const grid = document.getElementById('gameGrid');
+    let html = '';
+    for (let i = 0; i < 16; i++) {
+        html += `<div class="game-card" data-pos="${i}" onclick="playGame(${i}, event)">🎁</div>`;
     }
-    
-    async function playGame(position, event) {
+    grid.innerHTML = html;
+    gameGridActive = true;
+}
+
+async function playGame(position, event) {
     if (!gameGridActive) return;
     gameGridActive = false;
     
@@ -2358,23 +2316,18 @@ document.addEventListener('touchend', () => {
         const winnings = shuffled[position] || 0;
         const newBalance = (user.coin_balance || 0) - 50 + winnings;
         
-        await sb
-            .from('users')
-            .update({ 
-                coin_balance: newBalance,
-                win_chance_plays: (user.win_chance_plays || 0) + 1
-            })
-            .eq('user_id', USER_ID);
+        await sb.from('users').update({ 
+            coin_balance: newBalance,
+            win_chance_plays: (user.win_chance_plays || 0) + 1
+        }).eq('user_id', USER_ID);
         
-        await sb
-            .from('transactions')
-            .insert({
-                user_id: USER_ID,
-                transaction_type: '🎁 Win Chance Game',
-                amount: winnings,
-                status: 'Completed',
-                timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19)
-            });
+        await sb.from('transactions').insert({
+            user_id: USER_ID,
+            transaction_type: '🎁 Win Chance Game',
+            amount: winnings,
+            status: 'Completed',
+            timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19)
+        });
         
         const resultDiv = document.getElementById('gameResult');
         resultDiv.className = `game-result ${winnings > 0 ? 'win' : 'lose'}`;
@@ -2412,64 +2365,64 @@ document.addEventListener('touchend', () => {
         gameGridActive = true;
     }
 }
-    // ==================== LOTTERY FUNCTIONS ====================
-    function updateLotteryPools(pools) {
-        const lotteryDiv = document.getElementById('lotteryPools');
-        
-        if (!pools || pools.length === 0) {
-            lotteryDiv.innerHTML = '<div class="loading">No active pools</div>';
-            return;
-        }
-        
-        lotteryDiv.innerHTML = pools.map(pool => `
-            <div class="lottery-pool">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <div><strong>🎰 Pool #${pool.id}</strong></div>
-                    <div class="badge">Prize: ${pool.reward.toLocaleString()} 🪙</div>
-                </div>
-                <div>💰 Ticket: ${pool.price.toLocaleString()} 🪙</div>
-                <div class="progress-bar" style="margin: 10px 0;">
-                    <div class="progress-fill" style="width: ${(pool.sold / pool.total) * 100}%"></div>
-                </div>
-                <div>${pool.sold}/${pool.total} sold</div>
-                ${!pool.is_full ? `<button class="btn btn-sm" style="margin-top: 10px;" onclick="showLotteryNumbers(${pool.id}, ${pool.price}, ${JSON.stringify(pool.taken_numbers)})">🎫 Buy Ticket</button>` : `<div style="color: #10b981; margin-top: 10px;">✅ Pool Full - Draw Completed!</div>`}
-            </div>
-        `).join('');
+
+// ==================== LOTTERY FUNCTIONS ====================
+function updateLotteryPools(pools) {
+    const lotteryDiv = document.getElementById('lotteryPools');
+    if (!pools || pools.length === 0) {
+        lotteryDiv.innerHTML = '<div class="loading">No active pools</div>';
+        return;
     }
     
-    function showLotteryNumbers(poolId, price, takenNumbers) {
-        currentLotteryPool = poolId;
-        currentLotteryPrice = price;
-        
-        let numbersHtml = '<div class="lottery-numbers">';
-        for (let i = 1; i <= 15; i++) {
-            const isTaken = takenNumbers && takenNumbers.includes(i);
-            if (isTaken) {
-                numbersHtml += `<div class="lottery-number taken">${String(i).padStart(2, '0')}</div>`;
-            } else {
-                numbersHtml += `<div class="lottery-number" onclick="buyLotteryTicket(${poolId}, ${i})">${String(i).padStart(2, '0')}</div>`;
-            }
-        }
-        numbersHtml += '</div>';
-        
-        const modal = document.createElement('div');
-        modal.className = 'modal active';
-        modal.style.display = 'flex';
-        modal.innerHTML = `
-            <div class="modal-content">
-                <span class="close" onclick="this.parentElement.parentElement.remove()">&times;</span>
-                <h3>🎟️ Select Ticket Number</h3>
-                <p>Pool #${poolId} - Price: ${price.toLocaleString()} 🪙</p>
-                <p style="font-size: 12px;">✅ Available | ❌ Taken</p>
-                ${numbersHtml}
-                <button class="btn" onclick="this.parentElement.parentElement.remove()">Cancel</button>
+    lotteryDiv.innerHTML = pools.map(pool => `
+        <div class="lottery-pool">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div><strong>🎰 Pool #${pool.id}</strong></div>
+                <div class="badge">Prize: ${pool.reward.toLocaleString()} 🪙</div>
             </div>
-        `;
-        document.body.appendChild(modal);
-        playSound('click');
-    }
+            <div>💰 Ticket: ${pool.price.toLocaleString()} 🪙</div>
+            <div class="progress-bar" style="margin: 10px 0;">
+                <div class="progress-fill" style="width: ${(pool.sold / pool.total) * 100}%"></div>
+            </div>
+            <div>${pool.sold}/${pool.total} sold</div>
+            ${!pool.is_full ? `<button class="btn btn-sm" style="margin-top: 10px;" onclick="showLotteryNumbers(${pool.id}, ${pool.price}, ${JSON.stringify(pool.taken_numbers)})">🎫 Buy Ticket</button>` : `<div style="color: #10b981; margin-top: 10px;">✅ Pool Full - Draw Completed!</div>`}
+        </div>
+    `).join('');
+}
+
+function showLotteryNumbers(poolId, price, takenNumbers) {
+    currentLotteryPool = poolId;
+    currentLotteryPrice = price;
     
-    async function buyLotteryTicket(poolId, number) {
+    let numbersHtml = '<div class="lottery-numbers">';
+    for (let i = 1; i <= 15; i++) {
+        const isTaken = takenNumbers && takenNumbers.includes(i);
+        if (isTaken) {
+            numbersHtml += `<div class="lottery-number taken">${String(i).padStart(2, '0')}</div>`;
+        } else {
+            numbersHtml += `<div class="lottery-number" onclick="buyLotteryTicket(${poolId}, ${i})">${String(i).padStart(2, '0')}</div>`;
+        }
+    }
+    numbersHtml += '</div>';
+    
+    const modal = document.createElement('div');
+    modal.className = 'modal active';
+    modal.style.display = 'flex';
+    modal.innerHTML = `
+        <div class="modal-content">
+            <span class="close" onclick="this.parentElement.parentElement.remove()">&times;</span>
+            <h3>🎟️ Select Ticket Number</h3>
+            <p>Pool #${poolId} - Price: ${price.toLocaleString()} 🪙</p>
+            <p style="font-size: 12px;">✅ Available | ❌ Taken</p>
+            ${numbersHtml}
+            <button class="btn" onclick="this.parentElement.parentElement.remove()">Cancel</button>
+        </div>
+    `;
+    document.body.appendChild(modal);
+    playSound('click');
+}
+
+async function buyLotteryTicket(poolId, number) {
     try {
         const price = {1:50, 2:100, 3:200}[poolId];
         
@@ -2501,91 +2454,84 @@ document.addEventListener('touchend', () => {
         const now = new Date().toISOString().replace('T', ' ').substring(0, 19);
         const username = user.username || `user_${USER_ID.substring(0, 4)}`;
         
-        await sb
-            .from('users')
-            .update({ 
-                coin_balance: (user.coin_balance || 0) - price,
-                lottery_tickets: (user.lottery_tickets || 0) + 1
-            })
-            .eq('user_id', USER_ID);
+        await sb.from('users').update({ 
+            coin_balance: (user.coin_balance || 0) - price,
+            lottery_tickets: (user.lottery_tickets || 0) + 1
+        }).eq('user_id', USER_ID);
         
-        await sb
-            .from('lottery_tickets')
-            .insert({
-                pool_id: poolId,
-                ticket_number: number,
-                serial_number: serial,
-                user_id: USER_ID,
-                username: username,
-                purchase_time: now,
-                status: 'active'
-            });
+        await sb.from('lottery_tickets').insert({
+            pool_id: poolId,
+            ticket_number: number,
+            serial_number: serial,
+            user_id: USER_ID,
+            username: username,
+            purchase_time: now,
+            status: 'active'
+        });
         
-        await sb
-            .from('transactions')
-            .insert({
-                user_id: USER_ID,
-                transaction_type: `🎟️ Lottery Ticket (Pool ${poolId})`,
-                amount: price,
-                status: 'Completed',
-                timestamp: now
-            });
+        await sb.from('transactions').insert({
+            user_id: USER_ID,
+            transaction_type: `🎟️ Lottery Ticket (Pool ${poolId})`,
+            amount: price,
+            status: 'Completed',
+            timestamp: now
+        });
         
         showToast(`✅ Ticket #${number} purchased! Good luck!`, 'success');
         playSound('ticket');
         const modal = document.querySelector('.modal.active');
         if (modal) modal.remove();
         load();
-        
     } catch (error) {
         console.error('Lottery error:', error);
         showToast('Network error: ' + error.message, 'error');
     }
 }
-    
-    function updateMyTickets(tickets) {
-        const ticketsDiv = document.getElementById('myTickets');
-        if (!tickets || tickets.length === 0) {
-            ticketsDiv.innerHTML = '<div class="loading">No tickets yet</div>';
-            return;
-        }
-        
-        ticketsDiv.innerHTML = tickets.map(ticket => `
-            <div class="ticket-item">
-                <div>
-                    <span style="font-size: 20px;">🎫</span>
-                    <strong>Pool #${ticket.pool_id}</strong>
-                    <div>Number: ${String(ticket.ticket_number).padStart(2, '0')}</div>
-                </div>
-                <div>
-                    <div class="ticket-serial">🔖 ${ticket.serial_number}</div>
-                    <span class="badge">Active</span>
-                </div>
-            </div>
-        `).join('');
+
+function updateMyTickets(tickets) {
+    const ticketsDiv = document.getElementById('myTickets');
+    if (!tickets || tickets.length === 0) {
+        ticketsDiv.innerHTML = '<div class="loading">No tickets yet</div>';
+        return;
     }
     
-    function updateRecentDraws(draws) {
-        const drawsDiv = document.getElementById('recentDraws');
-        if (!draws || draws.length === 0) {
-            drawsDiv.innerHTML = '<div class="loading">No draws yet</div>';
-            return;
-        }
-        
-        drawsDiv.innerHTML = draws.map(draw => `
-            <div class="ticket-item">
-                <div>
-                    <span>🎰 Pool #${draw.pool_id}</span>
-                    <div style="font-size: 11px;">Winner Serial: <code>${draw.winner_serial}</code></div>
-                </div>
-                <div>
-                    <span class="badge">${draw.prize_amount.toLocaleString()} 🪙</span>
-                </div>
+    ticketsDiv.innerHTML = tickets.map(ticket => `
+        <div class="ticket-item">
+            <div>
+                <span style="font-size: 20px;">🎫</span>
+                <strong>Pool #${ticket.pool_id}</strong>
+                <div>Number: ${String(ticket.ticket_number).padStart(2, '0')}</div>
             </div>
-        `).join('');
+            <div>
+                <div class="ticket-serial">🔖 ${ticket.serial_number}</div>
+                <span class="badge">Active</span>
+            </div>
+        </div>
+    `).join('');
+}
+
+function updateRecentDraws(draws) {
+    const drawsDiv = document.getElementById('recentDraws');
+    if (!draws || draws.length === 0) {
+        drawsDiv.innerHTML = '<div class="loading">No draws yet</div>';
+        return;
     }
+    
+    drawsDiv.innerHTML = draws.map(draw => `
+        <div class="ticket-item">
+            <div>
+                <span>🎰 Pool #${draw.pool_id}</span>
+                <div style="font-size: 11px;">Winner Serial: <code>${draw.winner_serial}</code></div>
+            </div>
+            <div>
+                <span class="badge">${draw.prize_amount.toLocaleString()} 🪙</span>
+            </div>
+        </div>
+    `).join('');
+}
+
 // ==================== CLINIC FUNCTIONS ====================
-    async function startConsultation() {
+async function startConsultation() {
     const issue = document.getElementById('healthIssue').value;
     if (!issue.trim() || issue.length < 10) {
         showToast('Please describe your issue in detail (min 10 characters)', 'error');
@@ -2608,45 +2554,35 @@ document.addEventListener('touchend', () => {
         const now = new Date().toISOString().replace('T', ' ').substring(0, 19);
         const username = user.username || `user_${USER_ID.substring(0, 4)}`;
         
-        await sb
-            .from('users')
-            .update({ coin_balance: newCoins })
-            .eq('user_id', USER_ID);
-        
-        await sb
-            .from('health_consultations')
-            .insert({
-                user_id: USER_ID,
-                username: username,
-                issue: issue,
-                created_at: now,
-                status: 'pending',
-                coins_charged: 50
-            });
-        
-        await sb
-            .from('transactions')
-            .insert({
-                user_id: USER_ID,
-                transaction_type: '🏥 Clinic Consultation',
-                amount: 50,
-                status: 'Completed',
-                timestamp: now
-            });
+        await sb.from('users').update({ coin_balance: newCoins }).eq('user_id', USER_ID);
+        await sb.from('health_consultations').insert({
+            user_id: USER_ID,
+            username: username,
+            issue: issue,
+            created_at: now,
+            status: 'pending',
+            coins_charged: 50
+        });
+        await sb.from('transactions').insert({
+            user_id: USER_ID,
+            transaction_type: '🏥 Clinic Consultation',
+            amount: 50,
+            status: 'Completed',
+            timestamp: now
+        });
         
         showToast('✅ Consultation request sent! Doctor will respond within 24 hours.', 'success');
         playSound('success');
         document.getElementById('healthIssue').value = '';
         load();
-        
     } catch (error) {
         console.error('Clinic error:', error);
         showToast('Network error: ' + error.message, 'error');
     }
 }
-    
-    // ==================== LEADERBOARD ====================
-    async function loadLeaderboard() {
+
+// ==================== LEADERBOARD ====================
+async function loadLeaderboard() {
     try {
         const { data: leaderboard } = await sb
             .from('users')
@@ -2674,9 +2610,10 @@ document.addEventListener('touchend', () => {
     } catch (error) {
         console.error('Leaderboard error:', error);
     }
-} 
-    // ==================== FINANCIAL FUNCTIONS ====================
-    async function buyCoins() {
+}
+
+// ==================== FINANCIAL FUNCTIONS ====================
+async function buyCoins() {
     const amount = parseInt(document.getElementById('buyCoinsAmount').value);
     if (!amount || amount < 50) {
         showToast('Minimum amount is 50 ETB', 'error');
@@ -2700,34 +2637,27 @@ document.addEventListener('touchend', () => {
         const newBalance = (user.balance || 0) - amount;
         const newCoins = (user.coin_balance || 0) + amount;
         
-        await sb
-            .from('users')
-            .update({ balance: newBalance, coin_balance: newCoins })
-            .eq('user_id', USER_ID);
-        
-        await sb
-            .from('transactions')
-            .insert({
-                user_id: USER_ID,
-                transaction_type: '💱 Buy Coins',
-                amount: amount,
-                status: 'Completed',
-                timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19)
-            });
+        await sb.from('users').update({ balance: newBalance, coin_balance: newCoins }).eq('user_id', USER_ID);
+        await sb.from('transactions').insert({
+            user_id: USER_ID,
+            transaction_type: '💱 Buy Coins',
+            amount: amount,
+            status: 'Completed',
+            timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19)
+        });
         
         showToast(`✅ Successfully bought ${amount} coins!`, 'success');
         playSound('coin');
         closeModal('buyCoinsModal');
         document.getElementById('buyCoinsAmount').value = '';
         load();
-        
     } catch (error) {
         console.error('Buy coins error:', error);
         showToast('Error buying coins', 'error');
     }
 }
-    
-    async function exchangeCoins() {
+
+async function exchangeCoins() {
     try {
         const { data: user, error: userError } = await sb
             .from('users')
@@ -2761,37 +2691,27 @@ document.addEventListener('touchend', () => {
         const newCoins = (user.coin_balance || 0) - exchangeAmount;
         const newBonus = (user.bonus_balance || 0) + exchangeAmount;
         
-        await sb
-            .from('users')
-            .update({ coin_balance: newCoins, bonus_balance: newBonus })
-            .eq('user_id', USER_ID);
-        
-        await sb
-            .from('daily_exchange')
-            .insert({ user_id: USER_ID, exchange_date: today, amount_exchanged: exchangeAmount });
-        
-        await sb
-            .from('transactions')
-            .insert({
-                user_id: USER_ID,
-                transaction_type: '🔄 Exchange to Bonus',
-                amount: exchangeAmount,
-                status: 'Completed',
-                timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19)
-            });
+        await sb.from('users').update({ coin_balance: newCoins, bonus_balance: newBonus }).eq('user_id', USER_ID);
+        await sb.from('daily_exchange').insert({ user_id: USER_ID, exchange_date: today, amount_exchanged: exchangeAmount });
+        await sb.from('transactions').insert({
+            user_id: USER_ID,
+            transaction_type: '🔄 Exchange to Bonus',
+            amount: exchangeAmount,
+            status: 'Completed',
+            timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19)
+        });
         
         showToast(`✅ Exchanged ${exchangeAmount} coins to bonus!`, 'success');
         playSound('coin');
         closeModal('exchangeModal');
         load();
-        
     } catch (error) {
         console.error('Exchange error:', error);
         showToast('Error exchanging coins', 'error');
     }
 }
-    
-    async function submitDeposit() {
+
+async function submitDeposit() {
     const amount = parseInt(document.getElementById('depositAmount').value);
     const accountHolder = document.getElementById('accountHolder').value;
     const transactionId = document.getElementById('transactionId').value;
@@ -2801,12 +2721,10 @@ document.addEventListener('touchend', () => {
         showToast('Minimum deposit is 1500 ETB', 'error');
         return;
     }
-    
     if (!accountHolder) {
         showToast('Account Holder Name is required', 'error');
         return;
     }
-    
     if (!transactionId) {
         showToast('Transaction ID is required', 'error');
         return;
@@ -2816,18 +2734,16 @@ document.addEventListener('touchend', () => {
         const now = new Date().toISOString().replace('T', ' ').substring(0, 19);
         const bankName = selectedPaymentMethod === 'telebirr' ? 'Telebirr' : 'Awash Bank';
         
-        await sb
-            .from('pending_deposits')
-            .insert({
-                user_id: USER_ID,
-                amount: amount,
-                bank_name: bankName,
-                account_holder: accountHolder,
-                transaction_id: transactionId,
-                note: note,
-                request_time: now,
-                status: 'pending'
-            });
+        await sb.from('pending_deposits').insert({
+            user_id: USER_ID,
+            amount: amount,
+            bank_name: bankName,
+            account_holder: accountHolder,
+            transaction_id: transactionId,
+            note: note,
+            request_time: now,
+            status: 'pending'
+        });
         
         showToast(`✅ Deposit request submitted! Amount: ${amount} ETB. Admin will verify.`, 'success');
         playSound('deposit');
@@ -2836,14 +2752,13 @@ document.addEventListener('touchend', () => {
         document.getElementById('accountHolder').value = '';
         document.getElementById('transactionId').value = '';
         document.getElementById('depositNote').value = '';
-        
     } catch (error) {
         console.error('Deposit error:', error);
         showToast('Error submitting deposit', 'error');
     }
 }
-    
-    async function submitWithdraw() {
+
+async function submitWithdraw() {
     const amount = parseInt(document.getElementById('withdrawAmount').value);
     const accountHolder = document.getElementById('withdrawAccountHolder').value;
     const bankAccount = document.getElementById('withdrawBankAccount').value;
@@ -2853,12 +2768,10 @@ document.addEventListener('touchend', () => {
         showToast('Minimum withdrawal is 100 ETB', 'error');
         return;
     }
-    
     if (!accountHolder) {
         showToast('Account Holder Name is required', 'error');
         return;
     }
-    
     if (!bankAccount) {
         showToast('Bank Account Number is required', 'error');
         return;
@@ -2889,12 +2802,10 @@ document.addEventListener('touchend', () => {
             showToast('Complete Quad-Lock first (4/4 requirements)', 'error');
             return;
         }
-        
         if (!canWithdrawToday) {
             showToast('Daily withdrawal limit reached! Try tomorrow', 'error');
             return;
         }
-        
         if ((user.bonus_balance || 0) < amount) {
             showToast(`Insufficient bonus. You have ${user.bonus_balance} ETB`, 'error');
             return;
@@ -2904,35 +2815,28 @@ document.addEventListener('touchend', () => {
         const net = amount - tax;
         const now = new Date().toISOString().replace('T', ' ').substring(0, 19);
         
-        await sb
-            .from('users')
-            .update({ 
-                bonus_balance: (user.bonus_balance || 0) - amount,
-                last_withdraw_date: today
-            })
-            .eq('user_id', USER_ID);
+        await sb.from('users').update({ 
+            bonus_balance: (user.bonus_balance || 0) - amount,
+            last_withdraw_date: today
+        }).eq('user_id', USER_ID);
         
-        await sb
-            .from('pending_withdrawals')
-            .insert({
-                user_id: USER_ID,
-                amount: amount,
-                tax_amount: tax,
-                net_amount: net,
-                payment_info: `Bank: ${bankName}, Account: ${bankAccount}, Holder: ${accountHolder}`,
-                request_time: now,
-                status: 'pending'
-            });
+        await sb.from('pending_withdrawals').insert({
+            user_id: USER_ID,
+            amount: amount,
+            tax_amount: tax,
+            net_amount: net,
+            payment_info: `Bank: ${bankName}, Account: ${bankAccount}, Holder: ${accountHolder}`,
+            request_time: now,
+            status: 'pending'
+        });
         
-        await sb
-            .from('transactions')
-            .insert({
-                user_id: USER_ID,
-                transaction_type: '📤 Withdrawal Request',
-                amount: -amount,
-                status: 'Pending',
-                timestamp: now
-            });
+        await sb.from('transactions').insert({
+            user_id: USER_ID,
+            transaction_type: '📤 Withdrawal Request',
+            amount: -amount,
+            status: 'Pending',
+            timestamp: now
+        });
         
         showToast(`✅ Withdrawal request submitted! You'll receive: ${net} ETB`, 'success');
         playSound('withdraw');
@@ -2941,116 +2845,106 @@ document.addEventListener('touchend', () => {
         document.getElementById('withdrawAccountHolder').value = '';
         document.getElementById('withdrawBankAccount').value = '';
         load();
-        
     } catch (error) {
         console.error('Withdrawal error:', error);
         showToast('Error submitting withdrawal', 'error');
     }
 }
+
 // ==================== REFERRAL ====================
-    function copyReferral() {
-        // Standalone referral link: uses the current web app's domain with the user's ID as a parameter
-        const link = window.location.origin + window.location.pathname + '?ref=' + USER_ID;
-        navigator.clipboard.writeText(link).then(() => {
-            showToast('Referral link copied! Share with friends!', 'success');
-            playSound('click');
-        }).catch(() => {
-            showToast('Failed to copy link', 'error');
-        });
-    }
-    
-    // ==================== TAB SWITCHING ====================
-    document.querySelectorAll('.tab').forEach(tab => {
-        tab.addEventListener('click', () => {
-            const tabId = tab.getAttribute('data-tab');
-            const content = document.getElementById(tabId);
-            
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            tab.classList.add('active');
-            
-            content.classList.add('active');
-            
-            if (tabId === 'games') {
-                createGameGrid();
-            } else if (tabId === 'market') {
-                load();
-            } else if (tabId === 'lottery') {
-                load();
-            } else if (tabId === 'profile') {
-                loadLeaderboard();
-            } else if (tabId === 'contact') {
-                // Contact tab - no additional loading needed
-            }
-        });
+function copyReferral() {
+    const link = window.location.origin + window.location.pathname + '?ref=' + USER_ID;
+    navigator.clipboard.writeText(link).then(() => {
+        showToast('Referral link copied! Share with friends!', 'success');
+        playSound('click');
+    }).catch(() => {
+        showToast('Failed to copy link', 'error');
     });
-    
-    // ==================== SUB-TAB SWITCHING ====================
-    document.querySelectorAll('.sub-tab').forEach(tab => {
-        tab.addEventListener('click', () => {
-            document.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.sub-tab-content').forEach(c => c.style.display = 'none');
-            tab.classList.add('active');
-            const subtabId = tab.getAttribute('data-subtab');
-            if (subtabId === 'deposit_withdraw') {
-                document.getElementById('depositWithdrawTransactions').style.display = 'block';
-            } else {
-                document.getElementById('otherTransactions').style.display = 'block';
-            }
-        });
-    });
-    
-    // Initialize sound toggle
-    const soundToggle = document.getElementById('soundToggle');
-    if (soundToggle) {
-        if (soundEnabled) {
-            soundToggle.classList.add('active');
-        } else {
-            soundToggle.classList.remove('active');
-        }
-    }
-    
-    // ==================== (REMOVED: Telegram WebApp initialization) ====================
-    // No longer needed: window.TelegramWebApp.expand(), etc.
-    
-    // ==================== INITIALIZE ====================
-    createGameGrid();
-    load();
-    setInterval(load, 30000);
-    
-    // ========== FIX: Add missing functions ==========
-    
-    // Update consultations display (was missing)
-    function updateConsultations(consultations) {
-        const consultationsDiv = document.getElementById('consultations');
-        if (!consultationsDiv) return;
-        if (!consultations || consultations.length === 0) {
-            consultationsDiv.innerHTML = '<div class="loading">No consultations yet</div>';
-            return;
-        }
+}
+
+// ==================== TAB SWITCHING ====================
+document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+        const tabId = tab.getAttribute('data-tab');
+        const content = document.getElementById(tabId);
         
-        consultationsDiv.innerHTML = consultations.map(c => `
-            <div class="consultation-item">
-                <div><strong>📅 ${c.created_at?.substring(0, 10) || 'Unknown'}</strong></div>
-                <div>Status: <span class="badge">${c.status || 'pending'}</span></div>
-                <div style="font-size: 12px; margin-top: 5px;">Issue: ${c.issue?.substring(0, 100) || 'No issue'}</div>
-                ${c.admin_response ? `<div style="margin-top: 5px; color: #10b981;">✅ Response: ${c.admin_response.substring(0, 100)}</div>` : ''}
-            </div>
-        `).join('');
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        tab.classList.add('active');
+        content.classList.add('active');
+        
+        if (tabId === 'games') {
+            createGameGrid();
+        } else if (tabId === 'market') {
+            load();
+        } else if (tabId === 'lottery') {
+            load();
+        } else if (tabId === 'profile') {
+            loadLeaderboard();
+        }
+    });
+});
+
+// ==================== SUB-TAB SWITCHING ====================
+document.querySelectorAll('.sub-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+        document.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.sub-tab-content').forEach(c => c.style.display = 'none');
+        tab.classList.add('active');
+        const subtabId = tab.getAttribute('data-subtab');
+        if (subtabId === 'deposit_withdraw') {
+            document.getElementById('depositWithdrawTransactions').style.display = 'block';
+        } else {
+            document.getElementById('otherTransactions').style.display = 'block';
+        }
+    });
+});
+
+// Initialize sound toggle
+const soundToggle = document.getElementById('soundToggle');
+if (soundToggle) {
+    if (soundEnabled) {
+        soundToggle.classList.add('active');
+    } else {
+        soundToggle.classList.remove('active');
+    }
+}
+
+// ==================== INITIALIZE ====================
+createGameGrid();
+load();
+setInterval(load, 30000);
+
+// Update consultations display
+function updateConsultations(consultations) {
+    const consultationsDiv = document.getElementById('consultations');
+    if (!consultationsDiv) return;
+    if (!consultations || consultations.length === 0) {
+        consultationsDiv.innerHTML = '<div class="loading">No consultations yet</div>';
+        return;
     }
     
-    // Toggle sound function (redundant but included for completeness)
-    function toggleSound() {
-        soundEnabled = !soundEnabled;
-        localStorage.setItem('soundEnabled', soundEnabled);
-        const toggle = document.getElementById('soundToggle');
-        if (soundEnabled) {
-            toggle.classList.add('active');
-            playSound('click');
-        } else {
-            toggle.classList.remove('active');
-        }
+    consultationsDiv.innerHTML = consultations.map(c => `
+        <div class="consultation-item">
+            <div><strong>📅 ${c.created_at?.substring(0, 10) || 'Unknown'}</strong></div>
+            <div>Status: <span class="badge">${c.status || 'pending'}</span></div>
+            <div style="font-size: 12px; margin-top: 5px;">Issue: ${c.issue?.substring(0, 100) || 'No issue'}</div>
+            ${c.admin_response ? `<div style="margin-top: 5px; color: #10b981;">✅ Response: ${c.admin_response.substring(0, 100)}</div>` : ''}
+        </div>
+    `).join('');
+}
+
+function toggleSound() {
+    soundEnabled = !soundEnabled;
+    localStorage.setItem('soundEnabled', soundEnabled);
+    const toggle = document.getElementById('soundToggle');
+    if (soundEnabled) {
+        toggle.classList.add('active');
+        playSound('click');
+    } else {
+        toggle.classList.remove('active');
     }
+}
 </script>
 </body>
 </html>
