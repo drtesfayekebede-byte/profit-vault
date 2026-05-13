@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Profit Vault - ፕሮፊት ቮልት | Complete Investment Platform</title>
-    <script src="https://unpkg.com/@sb/sb-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * {
             margin: 0;
@@ -1488,8 +1488,7 @@
 // ==================== CONFIGURATION ====================
 const sb_URL = 'https://ouhxgdhzgugfxajoannd.sb.co';
 const sb_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im91aHhnZGh6Z3VnZnhham9hbm5kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2MDU3NDEsImV4cCI6MjA5NDE4MTc0MX0.zYpFWFbX21e-9lf0_--iqeA4ZA7SqHZZWy8Nw8nNgPM';
-const sb = window.sb.createClient(sb_URL, sb_KEY);
-
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 // ==================== USER ID (STANDALONE) ====================
 // Generate a persistent anonymous user ID (UUID v4) stored in localStorage.
 // No Telegram dependency. Every browser/user gets a unique ID that survives refreshes.
