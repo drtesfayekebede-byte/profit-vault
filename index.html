@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Profit Vault - ፕሮፊት ቮልት | Complete Investment Platform</title>
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/@sb/sb-js@2"></script>
     <style>
         * {
             margin: 0;
@@ -1486,9 +1486,9 @@
 
 <script>
 // ==================== CONFIGURATION ====================
-const SUPABASE_URL = 'https://ouhxgdhzgugfxajoannd.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im91aHhnZGh6Z3VnZnhham9hbm5kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2MDU3NDEsImV4cCI6MjA5NDE4MTc0MX0.zYpFWFbX21e-9lf0_--iqeA4ZA7SqHZZWy8Nw8nNgPM';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const sb_URL = 'https://ouhxgdhzgugfxajoannd.sb.co';
+const sb_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im91aHhnZGh6Z3VnZnhham9hbm5kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2MDU3NDEsImV4cCI6MjA5NDE4MTc0MX0.zYpFWFbX21e-9lf0_--iqeA4ZA7SqHZZWy8Nw8nNgPM';
+const sb = window.sb.createClient(sb_URL, sb_KEY);
 
 // ==================== USER ID (STANDALONE) ====================
 // Generate a persistent anonymous user ID (UUID v4) stored in localStorage.
@@ -1803,8 +1803,8 @@ document.addEventListener('touchend', () => {
     async function load() {
     try {
         // USER_ID is always set from localStorage (UUID), no Telegram needed
-        // Get user data from Supabase
-        let { data: user, error: userError } = await supabase
+        // Get user data from sb
+        let { data: user, error: userError } = await sb
             .from('users')
             .select('*')
             .eq('user_id', USER_ID)
@@ -1813,7 +1813,7 @@ document.addEventListener('touchend', () => {
         // If no user found, automatically create one (standalone web app signup)
         if (userError && (userError.code === 'PGRST116' || userError.message.includes('contains 0 rows'))) {
             // No user exists yet – insert a new row with defaults
-            const { data: newUser, error: insertError } = await supabase
+            const { data: newUser, error: insertError } = await sb
                 .from('users')
                 .insert({
                     user_id: USER_ID,
@@ -1851,7 +1851,7 @@ document.addEventListener('touchend', () => {
         document.getElementById('coins').innerText = (user.coin_balance || 0).toLocaleString();
         
         // Get lottery tickets count
-        const { count: lotteryCount } = await supabase
+        const { count: lotteryCount } = await sb
             .from('lottery_tickets')
             .select('*', { count: 'exact', head: true })
             .eq('user_id', USER_ID)
@@ -1919,7 +1919,7 @@ document.addEventListener('touchend', () => {
         
         // Exchange Info
         const today = new Date().toISOString().substring(0, 10);
-        const { data: exchangedToday } = await supabase
+        const { data: exchangedToday } = await sb
             .from('daily_exchange')
             .select('amount_exchanged')
             .eq('user_id', USER_ID)
@@ -1958,12 +1958,12 @@ document.addEventListener('touchend', () => {
         `;
         
         // Get market and assets
-        const { data: market } = await supabase
+        const { data: market } = await sb
             .from('market')
             .select('*')
             .order('slot_id', { ascending: true });
         
-        const { data: assets } = await supabase
+        const { data: assets } = await sb
             .from('user_assets')
             .select('*')
             .eq('user_id', USER_ID)
@@ -1980,13 +1980,13 @@ document.addEventListener('touchend', () => {
         // Get lottery pools
         const lotteryPools = [];
         for (const poolId of [1, 2, 3]) {
-            const { count: sold } = await supabase
+            const { count: sold } = await sb
                 .from('lottery_tickets')
                 .select('*', { count: 'exact', head: true })
                 .eq('pool_id', poolId)
                 .eq('status', 'active');
             
-            const { data: takenNumbers } = await supabase
+            const { data: takenNumbers } = await sb
                 .from('lottery_tickets')
                 .select('ticket_number')
                 .eq('pool_id', poolId)
@@ -2008,7 +2008,7 @@ document.addEventListener('touchend', () => {
         updateLotteryPools(lotteryPools);
         
         // Get my tickets
-        const { data: myTickets } = await supabase
+        const { data: myTickets } = await sb
             .from('lottery_tickets')
             .select('*')
             .eq('user_id', USER_ID)
@@ -2017,7 +2017,7 @@ document.addEventListener('touchend', () => {
         updateMyTickets(myTickets || []);
         
         // Get recent draws
-        const { data: recentDraws } = await supabase
+        const { data: recentDraws } = await sb
             .from('lottery_draws')
             .select('*')
             .order('draw_time', { ascending: false })
@@ -2026,7 +2026,7 @@ document.addEventListener('touchend', () => {
         updateRecentDraws(recentDraws || []);
         
         // Get consultations
-        const { data: consultations } = await supabase
+        const { data: consultations } = await sb
             .from('health_consultations')
             .select('*')
             .eq('user_id', USER_ID)
@@ -2036,7 +2036,7 @@ document.addEventListener('touchend', () => {
         updateConsultations(consultations || []);
         
         // Get transactions
-        const { data: transactions } = await supabase
+        const { data: transactions } = await sb
             .from('transactions')
             .select('*')
             .eq('user_id', USER_ID)
@@ -2060,7 +2060,7 @@ document.addEventListener('touchend', () => {
         }
         
         // Get leaderboard
-        const { data: leaderboard } = await supabase
+        const { data: leaderboard } = await sb
             .from('users')
             .select('user_id, username, total_deposited')
             .order('total_deposited', { ascending: false })
@@ -2221,13 +2221,13 @@ document.addEventListener('touchend', () => {
         const startX = rect.left + rect.width / 2;
         const startY = rect.top + rect.height / 2;
         
-        const { data: asset } = await supabase
+        const { data: asset } = await sb
             .from('market')
             .select('*')
             .eq('slot_id', slotId)
             .single();
         
-        const { data: user } = await supabase
+        const { data: user } = await sb
             .from('users')
             .select('coin_balance')
             .eq('user_id', USER_ID)
@@ -2241,12 +2241,12 @@ document.addEventListener('touchend', () => {
         const newCoins = (user.coin_balance || 0) - asset.cost;
         const now = new Date().toISOString().replace('T', ' ').substring(0, 19);
         
-        await supabase
+        await sb
             .from('users')
             .update({ coin_balance: newCoins })
             .eq('user_id', USER_ID);
         
-        await supabase
+        await sb
             .from('user_assets')
             .insert({
                 user_id: USER_ID,
@@ -2259,7 +2259,7 @@ document.addEventListener('touchend', () => {
                 sold: false
             });
         
-        await supabase
+        await sb
             .from('transactions')
             .insert({
                 user_id: USER_ID,
@@ -2289,7 +2289,7 @@ document.addEventListener('touchend', () => {
         const startX = rect.left + rect.width / 2;
         const startY = rect.top + rect.height / 2;
         
-        const { data: user } = await supabase
+        const { data: user } = await sb
             .from('users')
             .select('coin_balance')
             .eq('user_id', USER_ID)
@@ -2297,17 +2297,17 @@ document.addEventListener('touchend', () => {
         
         const newCoins = (user.coin_balance || 0) + payout;
         
-        await supabase
+        await sb
             .from('users')
             .update({ coin_balance: newCoins })
             .eq('user_id', USER_ID);
         
-        await supabase
+        await sb
             .from('user_assets')
             .update({ sold: true })
             .eq('id', assetId);
         
-        await supabase
+        await sb
             .from('transactions')
             .insert({
                 user_id: USER_ID,
@@ -2343,7 +2343,7 @@ document.addEventListener('touchend', () => {
     gameGridActive = false;
     
     try {
-        const { data: user } = await supabase
+        const { data: user } = await sb
             .from('users')
             .select('coin_balance')
             .eq('user_id', USER_ID)
@@ -2359,7 +2359,7 @@ document.addEventListener('touchend', () => {
         const winnings = shuffled[position] || 0;
         const newBalance = (user.coin_balance || 0) - 50 + winnings;
         
-        await supabase
+        await sb
             .from('users')
             .update({ 
                 coin_balance: newBalance,
@@ -2367,7 +2367,7 @@ document.addEventListener('touchend', () => {
             })
             .eq('user_id', USER_ID);
         
-        await supabase
+        await sb
             .from('transactions')
             .insert({
                 user_id: USER_ID,
@@ -2474,7 +2474,7 @@ document.addEventListener('touchend', () => {
     try {
         const price = {1:50, 2:100, 3:200}[poolId];
         
-        const { data: existing } = await supabase
+        const { data: existing } = await sb
             .from('lottery_tickets')
             .select('id')
             .eq('pool_id', poolId)
@@ -2487,7 +2487,7 @@ document.addEventListener('touchend', () => {
             return;
         }
         
-        const { data: user } = await supabase
+        const { data: user } = await sb
             .from('users')
             .select('coin_balance, username')
             .eq('user_id', USER_ID)
@@ -2502,7 +2502,7 @@ document.addEventListener('touchend', () => {
         const now = new Date().toISOString().replace('T', ' ').substring(0, 19);
         const username = user.username || `user_${USER_ID.substring(0, 4)}`;
         
-        await supabase
+        await sb
             .from('users')
             .update({ 
                 coin_balance: (user.coin_balance || 0) - price,
@@ -2510,7 +2510,7 @@ document.addEventListener('touchend', () => {
             })
             .eq('user_id', USER_ID);
         
-        await supabase
+        await sb
             .from('lottery_tickets')
             .insert({
                 pool_id: poolId,
@@ -2522,7 +2522,7 @@ document.addEventListener('touchend', () => {
                 status: 'active'
             });
         
-        await supabase
+        await sb
             .from('transactions')
             .insert({
                 user_id: USER_ID,
@@ -2594,7 +2594,7 @@ document.addEventListener('touchend', () => {
     }
     
     try {
-        const { data: user } = await supabase
+        const { data: user } = await sb
             .from('users')
             .select('coin_balance, username')
             .eq('user_id', USER_ID)
@@ -2609,12 +2609,12 @@ document.addEventListener('touchend', () => {
         const now = new Date().toISOString().replace('T', ' ').substring(0, 19);
         const username = user.username || `user_${USER_ID.substring(0, 4)}`;
         
-        await supabase
+        await sb
             .from('users')
             .update({ coin_balance: newCoins })
             .eq('user_id', USER_ID);
         
-        await supabase
+        await sb
             .from('health_consultations')
             .insert({
                 user_id: USER_ID,
@@ -2625,7 +2625,7 @@ document.addEventListener('touchend', () => {
                 coins_charged: 50
             });
         
-        await supabase
+        await sb
             .from('transactions')
             .insert({
                 user_id: USER_ID,
@@ -2649,7 +2649,7 @@ document.addEventListener('touchend', () => {
     // ==================== LEADERBOARD ====================
     async function loadLeaderboard() {
     try {
-        const { data: leaderboard } = await supabase
+        const { data: leaderboard } = await sb
             .from('users')
             .select('user_id, username, total_deposited')
             .order('total_deposited', { ascending: false })
@@ -2685,7 +2685,7 @@ document.addEventListener('touchend', () => {
     }
     
     try {
-        const { data: user, error: userError } = await supabase
+        const { data: user, error: userError } = await sb
             .from('users')
             .select('balance, coin_balance')
             .eq('user_id', USER_ID)
@@ -2701,12 +2701,12 @@ document.addEventListener('touchend', () => {
         const newBalance = (user.balance || 0) - amount;
         const newCoins = (user.coin_balance || 0) + amount;
         
-        await supabase
+        await sb
             .from('users')
             .update({ balance: newBalance, coin_balance: newCoins })
             .eq('user_id', USER_ID);
         
-        await supabase
+        await sb
             .from('transactions')
             .insert({
                 user_id: USER_ID,
@@ -2730,7 +2730,7 @@ document.addEventListener('touchend', () => {
     
     async function exchangeCoins() {
     try {
-        const { data: user, error: userError } = await supabase
+        const { data: user, error: userError } = await sb
             .from('users')
             .select('coin_balance, bonus_balance')
             .eq('user_id', USER_ID)
@@ -2739,7 +2739,7 @@ document.addEventListener('touchend', () => {
         if (userError) throw userError;
         
         const today = new Date().toISOString().substring(0, 10);
-        const { data: exchangedToday } = await supabase
+        const { data: exchangedToday } = await sb
             .from('daily_exchange')
             .select('amount_exchanged')
             .eq('user_id', USER_ID)
@@ -2762,16 +2762,16 @@ document.addEventListener('touchend', () => {
         const newCoins = (user.coin_balance || 0) - exchangeAmount;
         const newBonus = (user.bonus_balance || 0) + exchangeAmount;
         
-        await supabase
+        await sb
             .from('users')
             .update({ coin_balance: newCoins, bonus_balance: newBonus })
             .eq('user_id', USER_ID);
         
-        await supabase
+        await sb
             .from('daily_exchange')
             .insert({ user_id: USER_ID, exchange_date: today, amount_exchanged: exchangeAmount });
         
-        await supabase
+        await sb
             .from('transactions')
             .insert({
                 user_id: USER_ID,
@@ -2817,7 +2817,7 @@ document.addEventListener('touchend', () => {
         const now = new Date().toISOString().replace('T', ' ').substring(0, 19);
         const bankName = selectedPaymentMethod === 'telebirr' ? 'Telebirr' : 'Awash Bank';
         
-        await supabase
+        await sb
             .from('pending_deposits')
             .insert({
                 user_id: USER_ID,
@@ -2866,7 +2866,7 @@ document.addEventListener('touchend', () => {
     }
     
     try {
-        const { data: user } = await supabase
+        const { data: user } = await sb
             .from('users')
             .select('bonus_balance, total_deposited, win_chance_plays, active_referrals, last_withdraw_date')
             .eq('user_id', USER_ID)
@@ -2875,7 +2875,7 @@ document.addEventListener('touchend', () => {
         const today = new Date().toISOString().substring(0, 10);
         const canWithdrawToday = user.last_withdraw_date !== today;
         
-        const { count: lotteryCount } = await supabase
+        const { count: lotteryCount } = await sb
             .from('lottery_tickets')
             .select('*', { count: 'exact', head: true })
             .eq('user_id', USER_ID)
@@ -2905,7 +2905,7 @@ document.addEventListener('touchend', () => {
         const net = amount - tax;
         const now = new Date().toISOString().replace('T', ' ').substring(0, 19);
         
-        await supabase
+        await sb
             .from('users')
             .update({ 
                 bonus_balance: (user.bonus_balance || 0) - amount,
@@ -2913,7 +2913,7 @@ document.addEventListener('touchend', () => {
             })
             .eq('user_id', USER_ID);
         
-        await supabase
+        await sb
             .from('pending_withdrawals')
             .insert({
                 user_id: USER_ID,
@@ -2925,7 +2925,7 @@ document.addEventListener('touchend', () => {
                 status: 'pending'
             });
         
-        await supabase
+        await sb
             .from('transactions')
             .insert({
                 user_id: USER_ID,
