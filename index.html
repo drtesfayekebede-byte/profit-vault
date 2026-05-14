@@ -1,0 +1,2936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Profit Vault - ፕሮፊት ቮልት | Complete Investment Platform</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* ==================== CRYPTO/FINANCE DARK THEME ==================== */
+        @keyframes float {
+            0% { transform: translateY(0px) scale(1); opacity: 1; }
+            50% { transform: translateY(-40px) scale(1.2); opacity: 0.8; }
+            100% { transform: translateY(-80px) scale(1.5); opacity: 0; }
+        }
+
+        @keyframes flyCoin {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.9; }
+            100% { transform: translate(var(--tx), var(--ty)) scale(0.3); opacity: 0; }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        @keyframes shine {
+            0% { background-position: -100% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        /* ==================== NEON CYBER 3D GAME BOXES ==================== */
+        @keyframes neonGlow {
+            0% { box-shadow: 0 0 5px rgba(0, 255, 255, 0.5), inset 0 0 5px rgba(0, 255, 255, 0.3); }
+            50% { box-shadow: 0 0 20px rgba(0, 255, 255, 0.8), inset 0 0 10px rgba(0, 255, 255, 0.5); }
+            100% { box-shadow: 0 0 5px rgba(0, 255, 255, 0.5), inset 0 0 5px rgba(0, 255, 255, 0.3); }
+        }
+
+        @keyframes flipIn {
+            0% { transform: rotateY(0deg); }
+            100% { transform: rotateY(180deg); }
+        }
+
+        @keyframes winnerGlow {
+            0% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(251, 191, 36, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0); }
+        }
+
+        /* Dark Velvet Background */
+        body {
+            font-family: 'Segoe UI', 'Tahoma', 'Geneva', 'Verdana', sans-serif;
+            background: linear-gradient(145deg, #1a0a1a 0%, #0d0d1a 50%, #0a0a0f 100%);
+            min-height: 100vh;
+            padding: 16px;
+            padding-bottom: 100px;
+            color: #e2e8f0;
+            position: relative;
+        }
+
+        /* Velvet texture overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 30%, rgba(255,215,0,0.05), transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            background: linear-gradient(135deg, #FFD700, #FFA500, #FF6347);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 1px;
+        }
+
+        .header p {
+            font-size: 11px;
+            opacity: 0.7;
+            margin-top: 5px;
+        }
+
+/* ==================== GEMSTONE COLLECTION BALANCE CARDS ==================== */
+        .balance-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .balance-card {
+            border-radius: 24px;
+            padding: 18px 10px;
+            text-align: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+        }
+
+        .balance-card:active {
+            transform: scale(0.96);
+        }
+
+        /* ===== RUBY GEMSTONE (Balance Card - Left) ===== */
+        .balance-card.primary {
+            background: linear-gradient(135deg, #8b0000 0%, #dc143c 35%, #ff6b6b 70%, #8b0000 100%);
+            background-size: 200% 200%;
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            animation: rubyShine 4s ease infinite;
+        }
+
+        .balance-card.primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(255,255,255,0.1) 20px, rgba(255,255,255,0.1) 40px);
+            pointer-events: none;
+            border-radius: 24px;
+        }
+
+        .balance-card.primary::after {
+            content: '💎';
+            position: absolute;
+            top: 5px;
+            right: 8px;
+            font-size: 18px;
+            opacity: 0.6;
+            animation: sparkleGem 2s ease-in-out infinite;
+        }
+
+        @keyframes rubyShine {
+            0%, 100% { background-position: 0% 0%; }
+            50% { background-position: 100% 100%; }
+        }
+
+        /* ===== EMERALD GEMSTONE (Bonus Card - Middle) ===== */
+        .balance-card.bonus {
+            background: linear-gradient(135deg, #004d00 0%, #008000 35%, #00d68f 70%, #004d00 100%);
+            background-size: 200% 200%;
+            border: 1px solid rgba(0, 214, 143, 0.3);
+            animation: emeraldShine 4s ease infinite 0.5s;
+        }
+
+        .balance-card.bonus::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(-45deg, transparent, transparent 20px, rgba(255,255,255,0.1) 20px, rgba(255,255,255,0.1) 40px);
+            pointer-events: none;
+            border-radius: 24px;
+        }
+
+        .balance-card.bonus::after {
+            content: '✨';
+            position: absolute;
+            top: 5px;
+            right: 8px;
+            font-size: 18px;
+            opacity: 0.6;
+            animation: sparkleGem 2s ease-in-out infinite 0.5s;
+        }
+
+        @keyframes emeraldShine {
+            0%, 100% { background-position: 0% 0%; }
+            50% { background-position: 100% 100%; }
+        }
+
+        /* ===== GOLDEN TOPAZ (Coins Card - Right) ===== */
+        .balance-card.coins {
+            background: linear-gradient(135deg, #b8860b 0%, #daa520 35%, #ffd700 70%, #b8860b 100%);
+            background-size: 200% 200%;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            animation: topazShine 4s ease infinite 1s;
+        }
+
+        .balance-card.coins::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(90deg, transparent, transparent 20px, rgba(255,255,255,0.15) 20px, rgba(255,255,255,0.15) 40px);
+            pointer-events: none;
+            border-radius: 24px;
+        }
+
+        .balance-card.coins::after {
+            content: '⭐';
+            position: absolute;
+            top: 5px;
+            right: 8px;
+            font-size: 18px;
+            opacity: 0.6;
+            animation: sparkleGem 2s ease-in-out infinite 1s;
+        }
+
+        @keyframes topazShine {
+            0%, 100% { background-position: 0% 0%; }
+            50% { background-position: 100% 100%; }
+        }
+
+        @keyframes sparkleGem {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.3); }
+        }
+
+        /* ===== BOLD TEXT STYLES ===== */
+        .balance-emoji {
+            font-size: 34px;
+            margin-bottom: 8px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+            position: relative;
+            z-index: 2;
+        }
+
+        .balance-value {
+            font-size: 28px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            word-break: break-word;
+            background: linear-gradient(135deg, #FFD700, #FFF8DC, #FFD700);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 2;
+        }
+
+        .balance-label {
+            font-size: 10px;
+            font-weight: 800;
+            opacity: 0.95;
+            margin-top: 5px;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.95);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+            position: relative;
+            z-index: 2;
+            font-style: italic;
+            letter-spacing: 0.5px;
+        }
+
+        /* Shine effect on card press */
+        .balance-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+            transition: left 0.5s;
+            pointer-events: none;
+        }
+
+        .balance-card:active::after {
+            left: 100%;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .tab {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            padding: 10px 18px;
+            border-radius: 30px;
+            color: white;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #fbbf24, #d97706);
+            color: #1a1a2e;
+            box-shadow: 0 4px 15px rgba(251, 191, 36, 0.3);
+            border-color: transparent;
+        }
+
+        /* Cards */
+        .card {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 18px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(56, 189, 248, 0.1);
+            transition: all 0.3s;
+            animation: fadeIn 0.3s ease-out;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card h3 {
+            margin-bottom: 15px;
+            font-size: 17px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-left: 4px solid #fbbf24;
+            padding-left: 12px;
+            color: #fbbf24;
+        }
+
+        /* Buttons */
+        .btn {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            border: none;
+            padding: 14px 20px;
+            border-radius: 30px;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 10px;
+            transition: all 0.2s;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #fbbf24, #d97706);
+            color: #1a1a2e;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, #06b6d4, #0891b2);
+        }
+
+        .btn-sm {
+            padding: 10px 16px;
+            font-size: 12px;
+            width: auto;
+            display: inline-block;
+            margin: 3px;
+        }
+
+        /* Contact Tab Styles */
+        .contact-methods {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .contact-method {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            border-radius: 20px;
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid rgba(251, 191, 36, 0.3);
+        }
+
+        .contact-method:active {
+            transform: scale(0.98);
+        }
+
+        .contact-icon {
+            font-size: 40px;
+            margin-bottom: 8px;
+        }
+
+        .contact-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #fbbf24;
+            margin-bottom: 5px;
+        }
+
+        .contact-detail {
+            font-size: 14px;
+            opacity: 0.8;
+            font-family: monospace;
+        }
+
+        .user-id-section {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        /* Flying Coin Animation */
+        .flying-coin {
+            position: fixed;
+            font-size: 28px;
+            font-weight: bold;
+            pointer-events: none;
+            z-index: 2000;
+            transition: all 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            white-space: nowrap;
+            text-shadow: 0 0 5px #000;
+        }
+
+        /* Quad-Lock Items */
+        .quad-item {
+            background: rgba(0, 0, 0, 0.35);
+            padding: 14px;
+            border-radius: 14px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s;
+        }
+
+        .quad-item.locked {
+            border-left: 4px solid #ef4444;
+        }
+
+        .quad-item.unlocked {
+            border-left: 4px solid #10b981;
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .quad-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .quad-status {
+            font-size: 24px;
+        }
+
+        .quad-text {
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .quad-count {
+            font-size: 11px;
+            opacity: 0.7;
+            margin-top: 3px;
+        }
+
+        .quad-amount {
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .progress-container {
+            margin-top: 15px;
+        }
+
+        .progress-bar {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            height: 12px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #10b981, #06b6d4);
+            height: 100%;
+            border-radius: 20px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .progress-text {
+            text-align: center;
+            margin-top: 8px;
+            font-size: 11px;
+            opacity: 0.8;
+        }
+
+        /* ==================== NEON CYBER 3D GAME BOX STYLES ==================== */
+        .game-section {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 24px;
+            padding: 16px;
+            margin: 16px 0;
+        }
+
+        .game-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .game-header h4 {
+            font-size: 18px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #00ffff, #8b5cf6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+        }
+
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            perspective: 1000px;
+        }
+
+        .game-card {
+            aspect-ratio: 1 / 1;
+            background: linear-gradient(145deg, #1e293b, #0f172a);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.1);
+            font-size: 36px;
+            font-weight: bold;
+            position: relative;
+            overflow: hidden;
+            transform-style: preserve-3d;
+        }
+
+        /* 3D Flip Effect */
+        .game-card.flipped {
+            animation: flipIn 0.6s ease forwards;
+        }
+
+        /* Shine effect */
+        .game-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: rotate(45deg);
+            transition: all 0.5s;
+        }
+
+        .game-card:hover::before {
+            left: 100%;
+        }
+
+        /* Press effect */
+        .game-card:active {
+            transform: scale(0.94);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Revealed card - different colors based on prize */
+        .game-card.revealed {
+            animation: neonGlow 0.5s ease;
+        }
+
+        .game-card.revealed[data-prize="100"],
+        .game-card.revealed[data-prize="75"] {
+            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            border-color: #ffd700;
+        }
+        .game-card.revealed[data-prize="50"] {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            border-color: #3b82f6;
+        }
+        .game-card.revealed[data-prize="25"],
+        .game-card.revealed[data-prize="10"] {
+            background: linear-gradient(135deg, #10b981, #059669);
+            border-color: #10b981;
+        }
+        .game-card.revealed[data-prize="0"] {
+            background: linear-gradient(135deg, #6b7280, #4b5563);
+            border-color: #6b7280;
+        }
+
+        .game-card.revealed.winner {
+            animation: winnerGlow 0.8s ease-in-out infinite;
+        }
+
+        .game-cost {
+            text-align: center;
+            margin-top: 16px;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            font-size: 14px;
+            color: #94a3b8;
+        }
+
+        .game-cost span {
+            color: #fbbf24;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        /* Market Grid - Enhanced */
+        .market-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .market-item {
+            background: linear-gradient(145deg, #1e293b, #0f172a);
+            border-radius: 16px;
+            padding: 12px 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .market-item:active {
+            transform: scale(0.95);
+            border-color: #fbbf24;
+        }
+
+        .market-item::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -60%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            transition: transform 0.5s;
+        }
+
+        .market-item:active::after {
+            transform: rotate(45deg) translateX(100%);
+        }
+
+        .market-item.owned {
+            opacity: 0.6;
+            cursor: not-allowed;
+            filter: grayscale(0.3);
+        }
+
+        .market-emoji {
+            font-size: 36px;
+        }
+
+        .market-name {
+            font-size: 10px;
+            margin-top: 6px;
+            word-break: break-word;
+        }
+
+        .market-price {
+            font-size: 12px;
+            font-weight: bold;
+            color: #fbbf24;
+            margin-top: 5px;
+        }
+
+        .market-badge {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #10b981;
+            font-size: 8px;
+            padding: 2px 5px;
+            border-radius: 10px;
+        }
+
+        /* Investment List */
+        .investment-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sell-btn {
+            background: linear-gradient(135deg, #fbbf24, #d97706);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            color: #1a1a2e;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 12px;
+            transition: transform 0.2s;
+        }
+
+        .sell-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Game Result */
+        .game-result {
+            text-align: center;
+            padding: 14px;
+            border-radius: 14px;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .game-result.win {
+            background: rgba(16, 185, 129, 0.25);
+            color: #10b981;
+            border: 1px solid #10b981;
+            animation: pulse 0.5s ease-in-out;
+        }
+
+        .game-result.lose {
+            background: rgba(239, 68, 68, 0.25);
+            color: #ef4444;
+            border: 1px solid #ef4444;
+            animation: shake 0.3s ease-in-out;
+        }
+
+        /* Lottery */
+        .lottery-pool {
+            background: rgba(0, 0, 0, 0.35);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .lottery-numbers {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .lottery-number {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            border: none;
+            padding: 12px;
+            border-radius: 12px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+
+        .lottery-number:active {
+            transform: scale(0.95);
+        }
+
+        .lottery-number.taken {
+            background: #ef4444;
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Ticket Item */
+        .ticket-item {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(217, 119, 6, 0.08));
+            border: 1px solid #fbbf24;
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .ticket-serial {
+            font-family: monospace;
+            font-size: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 4px 8px;
+            border-radius: 8px;
+            letter-spacing: 1px;
+        }
+
+        /* Consultation Items */
+        .consultation-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+        }
+
+        /* Full Screen Textarea */
+        .fullscreen-textarea {
+            width: 100%;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid #fbbf24;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            font-size: 16px;
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        /* Profile Items */
+        .profile-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Transaction Items */
+        .transaction-item {
+            background: rgba(0, 0, 0, 0.25);
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 6px;
+            font-size: 12px;
+        }
+
+        .transaction-pending {
+            border-left: 3px solid #fbbf24;
+        }
+
+        .transaction-approved {
+            border-left: 3px solid #10b981;
+        }
+
+        .transaction-denied {
+            border-left: 3px solid #ef4444;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border-radius: 24px;
+            padding: 25px;
+            width: 90%;
+            max-width: 380px;
+            max-height: 85vh;
+            overflow-y: auto;
+            border: 1px solid rgba(251, 191, 36, 0.3);
+        }
+
+        .modal-content h3 {
+            margin-bottom: 18px;
+            text-align: center;
+            color: #fbbf24;
+        }
+
+        .modal-content input,
+        .modal-content select,
+        .modal-content textarea {
+            width: 100%;
+            padding: 14px;
+            margin: 8px 0;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            font-size: 14px;
+        }
+
+        .modal-content input::placeholder,
+        .modal-content textarea::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .close {
+            float: right;
+            font-size: 28px;
+            cursor: pointer;
+            color: #ef4444;
+            transition: all 0.2s;
+        }
+
+        .close:hover {
+            transform: scale(1.1);
+        }
+
+        .telebirr-info, .bank-info {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            padding: 15px;
+            border-radius: 16px;
+            margin: 10px 0;
+            text-align: center;
+            border: 1px solid rgba(251, 191, 36, 0.3);
+        }
+
+        .bank-info {
+            border-color: rgba(56, 189, 248, 0.3);
+        }
+
+        /* Payment Methods */
+        .payment-methods {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .payment-method {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .payment-method.selected {
+            background: linear-gradient(135deg, #fbbf24, #d97706);
+            color: #1a1a2e;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #10b981;
+            color: #1a1a2e;
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-weight: bold;
+            display: none;
+            z-index: 1001;
+            font-size: 13px;
+            white-space: nowrap;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .toast.show {
+            display: block;
+        }
+
+        .toast.error {
+            background: #ef4444;
+            color: white;
+        }
+
+        .toast.info {
+            background: #06b6d4;
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 30px;
+            opacity: 0.7;
+        }
+
+        /* Skeleton Loading */
+        .skeleton {
+            background: linear-gradient(90deg, rgba(255,255,255,0.1) 25%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.1) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 8px;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #fbbf24;
+            border-radius: 10px;
+        }
+
+        /* Row layout */
+        .row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .row .btn {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        /* Badge */
+        .badge {
+            background: #fbbf24;
+            color: #1a1a2e;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .pending-badge {
+            background: #fbbf24;
+            color: #1a1a2e;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        /* Sub Tabs */
+        .sub-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            padding-bottom: 8px;
+        }
+
+        .sub-tab {
+            background: transparent;
+            border: none;
+            padding: 8px 16px;
+            color: white;
+            cursor: pointer;
+            border-radius: 20px;
+            transition: all 0.2s;
+        }
+
+        .sub-tab.active {
+            background: #fbbf24;
+            color: #1a1a2e;
+        }
+
+        /* Sound Toggle */
+        .sound-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 24px;
+            background: #4b5563;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .toggle-switch.active {
+            background: #10b981;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 3px;
+            transition: 0.3s;
+        }
+
+        .toggle-switch.active::after {
+            left: 27px;
+        }
+
+        /* Offline Indicator */
+        .offline-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #ef4444;
+            color: white;
+            text-align: center;
+            padding: 5px;
+            font-size: 12px;
+            z-index: 1002;
+            transform: translateY(-100%);
+            transition: transform 0.3s;
+        }
+
+        .offline-indicator.show {
+            transform: translateY(0);
+        }
+
+        /* Pull to Refresh */
+        .pull-to-refresh {
+            text-align: center;
+            padding: 10px;
+            color: #fbbf24;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+
+        /* Network Status */
+        .network-status {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #10b981;
+            z-index: 1000;
+        }
+
+        .network-status.offline {
+            background: #ef4444;
+        }
+</style>
+</head>
+<body>
+
+<!-- Offline Indicator -->
+<div id="offlineIndicator" class="offline-indicator">📡 No Internet Connection - Using Cached Data</div>
+
+<!-- Network Status Dot -->
+<div id="networkStatus" class="network-status"></div>
+
+<div class="header">
+    <h1>🏦 ፕሮፊት ቮልት</h1>
+    <p>Profit Vault - Complete Investment Platform</p>
+</div>
+
+<!-- Balance Cards - Gemstone Collection -->
+<div class="balance-container">
+    <div class="balance-card primary" id="balanceCard" onclick="showModal('depositModal')">
+        <div class="balance-emoji">💰</div>
+        <div class="balance-value" id="balance">0</div>
+        <div class="balance-label">Balance (ቀሪ ሂሳብ)</div>
+    </div>
+    <div class="balance-card bonus" id="bonusCard" onclick="showModal('exchangeModal')">
+        <div class="balance-emoji">🎁</div>
+        <div class="balance-value" id="bonus">0</div>
+        <div class="balance-label">Bonus (ቦነስ)</div>
+    </div>
+    <div class="balance-card coins" id="coinsCard" onclick="showModal('buyCoinsModal')">
+        <div class="balance-emoji">🪙</div>
+        <div class="balance-value" id="coins">0</div>
+        <div class="balance-label">Coins (ሳንቲም)</div>
+    </div>
+</div>
+
+<!-- Pull to Refresh Indicator -->
+<div id="pullToRefresh" class="pull-to-refresh" style="display: none;">↓ Pull down to refresh</div>
+
+<!-- Tabs - 7 Tabs including Contact -->
+<div class="tabs">
+    <button class="tab active" data-tab="dashboard">📊 Dashboard</button>
+    <button class="tab" data-tab="market">🛒 Market</button>
+    <button class="tab" data-tab="games">🎮 Games</button>
+    <button class="tab" data-tab="lottery">🎟️ Lottery</button>
+    <button class="tab" data-tab="clinic">🏥 Clinic</button>
+    <button class="tab" data-tab="profile">👤 Profile</button>
+    <button class="tab" data-tab="contact">📞 Contact</button>
+</div>
+
+<!-- Dashboard Tab -->
+<div id="dashboard" class="tab-content active">
+    <div class="card">
+        <h3>⚡ Quick Actions (ፈጣን እርምጃዎች)</h3>
+        <button class="btn btn-success" onclick="showModal('depositModal')">💰 Deposit (ተቀማጭ)</button>
+        <div class="row">
+            <button class="btn" onclick="showModal('buyCoinsModal')">💱 Buy Coins</button>
+            <button class="btn btn-warning" onclick="showModal('exchangeModal')">🔄 Exchange to Bonus</button>
+        </div>
+        <button class="btn btn-danger" onclick="showModal('withdrawModal')">📤 Withdraw Bonus</button>
+    </div>
+
+    <div class="card">
+        <h3>🔒 QUAD-LOCK PROGRESS</h3>
+        <div id="quadlock"><div class="loading">Loading...</div></div>
+    </div>
+
+    <div class="card">
+        <h3>📈 Exchange Info</h3>
+        <div id="exchangeInfo"></div>
+    </div>
+</div>
+
+<!-- Market Tab -->
+<div id="market" class="tab-content">
+    <div class="card">
+        <h3>🛒 Investment Market (የኢንቨስትመንት ገበያ)</h3>
+        <div id="marketGrid" class="market-grid"><div class="loading">Loading market...</div></div>
+    </div>
+    <div class="card">
+        <h3>🎒 My Investments (የኢንቨስትመንቶቼ)</h3>
+        <div id="investments"></div>
+    </div>
+</div>
+
+<!-- Games Tab -->
+<div id="games" class="tab-content">
+    <div class="game-section">
+        <div class="game-header">
+            <h4>🎁 የማሸነፍ እድል / Win Chance Game</h4>
+        </div>
+        <div id="gameGrid" class="game-grid"></div>
+        <div class="game-cost">
+            🪙 የጨዋታ ዋጋ / Game Cost: <span>50 ሳንቲም / Coins</span>
+        </div>
+        <div id="gameResult"></div>
+    </div>
+</div>
+
+<!-- Lottery Tab -->
+<div id="lottery" class="tab-content">
+    <div class="card">
+        <h3>🎟️ Lottery Pools (የሎተሪ ገንዳዎች)</h3>
+        <div id="lotteryPools"><div class="loading">Loading lottery pools...</div></div>
+    </div>
+    <div class="card">
+        <h3>🎫 My Tickets (የእኔ ቲኬቶች)</h3>
+        <div id="myTickets"></div>
+    </div>
+    <div class="card">
+        <h3>🏆 Recent Draws (የቅርብ ጊዜ ስዕሎች)</h3>
+        <div id="recentDraws"></div>
+    </div>
+</div>
+
+<!-- Clinic Tab -->
+<div id="clinic" class="tab-content">
+    <div class="card">
+        <h3>🏥 Online Clinic (50 ሳንቲም)</h3>
+        <textarea id="healthIssue" class="fullscreen-textarea" rows="6" placeholder="Describe your health issue in detail... (የጤና ችግርዎን በዝርዝር ይግለጹ)"></textarea>
+        <button class="btn btn-info" onclick="startConsultation()">Start Consultation</button>
+    </div>
+    <div class="card">
+        <h3>📋 My Consultations (የእኔ ማማከሮች)</h3>
+        <div id="consultations"></div>
+    </div>
+</div>
+
+<!-- Profile Tab -->
+<div id="profile" class="tab-content">
+    <div class="card">
+        <h3>👤 Profile (መገለጫ)</h3>
+        <div id="profileInfo"></div>
+        <button class="btn" onclick="copyReferral()">📤 Copy Referral Link</button>
+        
+        <!-- Sound Toggle -->
+        <div class="sound-toggle">
+            <span>🔊 Sound Effects</span>
+            <div id="soundToggle" class="toggle-switch active" onclick="toggleSound()"></div>
+        </div>
+    </div>
+    
+    <!-- Split Transaction History -->
+    <div class="card">
+        <h3>📜 Transaction History (የግብይት ታሪክ)</h3>
+        <div class="sub-tabs">
+            <button class="sub-tab active" data-subtab="deposit_withdraw">💰 Deposits & Withdrawals</button>
+            <button class="sub-tab" data-subtab="other">🎮 Games & Market</button>
+        </div>
+        <div id="depositWithdrawTransactions" class="sub-tab-content active"></div>
+        <div id="otherTransactions" class="sub-tab-content" style="display:none;"></div>
+    </div>
+    
+    <div class="card">
+        <h3>🏆 Leaderboard</h3>
+        <div id="leaderboard"></div>
+    </div>
+</div>
+
+<!-- Contact Tab (7th Tab) -->
+<div id="contact" class="tab-content">
+    <div class="card">
+        <h3>📞 Contact Admin</h3>
+        <p style="margin-bottom: 15px; font-size: 14px; opacity: 0.8;">For support, questions, or issues:</p>
+        
+        <div class="contact-methods">
+            <div class="contact-method" onclick="contactAdmin('telegram')">
+                <div class="contact-icon">📱</div>
+                <div class="contact-name">Telegram</div>
+                <div class="contact-detail">@drtesfayekebede</div>
+                <button class="btn btn-sm" style="margin-top: 10px;">Message</button>
+            </div>
+            
+            <div class="contact-method" onclick="contactAdmin('phone')">
+                <div class="contact-icon">📞</div>
+                <div class="contact-name">Phone</div>
+                <div class="contact-detail">+251 935 983 470</div>
+                <button class="btn btn-sm" style="margin-top: 10px;">Call Now</button>
+            </div>
+        </div>
+        
+        <div class="user-id-section">
+            <p>🆔 Your User ID: <strong id="contactUserId">Loading...</strong></p>
+            <button class="btn btn-sm" onclick="copyUserId()">📋 Copy User ID</button>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== MODALS ==================== -->
+
+<!-- DEPOSIT MODAL -->
+<div id="depositModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('depositModal')">&times;</span>
+        <h3>💰 Deposit Money</h3>
+        
+        <div class="payment-methods">
+            <div class="payment-method selected" data-payment="telebirr" onclick="selectPaymentMethod('telebirr')">
+                📱 Telebirr
+            </div>
+            <div class="payment-method" data-payment="awash" onclick="selectPaymentMethod('awash')">
+                🏦 Awash Bank
+            </div>
+        </div>
+        
+        <div id="telebirrInfo" class="telebirr-info">
+            📱 Send to Telebirr:<br>
+            <strong>0935983470</strong><br>
+            Name: <strong>Tesfaye K</strong>
+        </div>
+        
+        <div id="awashInfo" class="bank-info" style="display: none;">
+            🏦 Send to Awash Bank:<br>
+            <strong>013201372354300</strong><br>
+            Name: <strong>Tesfaye K</strong>
+        </div>
+        
+        <input type="number" id="depositAmount" placeholder="Amount (Min 1500 ETB)">
+        <input type="text" id="accountHolder" placeholder="Account Holder Name (Required)">
+        <input type="text" id="transactionId" placeholder="Transaction ID (Required)">
+        <textarea id="depositNote" rows="2" placeholder="Additional note (optional)"></textarea>
+        <button class="btn btn-success" onclick="submitDeposit()">Submit Deposit Request</button>
+        <p style="font-size: 11px; margin-top: 12px; text-align: center; opacity: 0.7;">Admin will verify and approve your deposit.</p>
+    </div>
+</div>
+
+<!-- BUY COINS MODAL -->
+<div id="buyCoinsModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('buyCoinsModal')">&times;</span>
+        <h3>💱 Buy Coins (ሳንቲም ግዙ)</h3>
+        <p>Rate: 1 ETB = 1 Coin</p>
+        <input type="number" id="buyCoinsAmount" placeholder="Amount (Min 50 ETB)">
+        <button class="btn" onclick="buyCoins()">Buy Coins</button>
+    </div>
+</div>
+
+<!-- EXCHANGE COINS TO BONUS MODAL -->
+<div id="exchangeModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('exchangeModal')">&times;</span>
+        <h3>🔄 Exchange Coins to Bonus</h3>
+        <p>📊 Daily limit: <strong>3%</strong> of your coins</p>
+        <p>💱 Rate: <strong>1 Coin = 1 Bonus</strong></p>
+        <p>✨ Bonus can be withdrawn after Quad-Lock complete</p>
+        <div id="exchangeInfoModal"></div>
+        <button class="btn btn-warning" onclick="exchangeCoins()">Exchange Now</button>
+    </div>
+</div>
+
+<!-- WITHDRAWAL MODAL -->
+<div id="withdrawModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('withdrawModal')">&times;</span>
+        <h3>📤 Withdraw Bonus</h3>
+        <p>⚠️ Tax: <strong>10%</strong> of withdrawal amount</p>
+        <p>🔒 Requires Quad-Lock: 4/4 complete</p>
+        <input type="number" id="withdrawAmount" placeholder="Amount to withdraw (Min 100 ETB)">
+        <input type="text" id="withdrawAccountHolder" placeholder="Account Holder Name (Required)">
+        <input type="text" id="withdrawBankAccount" placeholder="Bank Account Number (Required)">
+        <select id="withdrawBankName">
+            <option value="Telebirr">📱 Telebirr</option>
+            <option value="Awash Bank">🏦 Awash Bank</option>
+            <option value="CBE">🏦 Commercial Bank of Ethiopia</option>
+            <option value="Dashen Bank">🏦 Dashen Bank</option>
+            <option value="Other">🏦 Other Bank</option>
+        </select>
+        <button class="btn btn-danger" onclick="submitWithdraw()">Request Withdrawal</button>
+    </div>
+</div>
+
+<!-- Toast Notification -->
+<div id="toast" class="toast"></div>
+
+<script>
+// ==================== CONFIGURATION ====================
+const SUPABASE_URL = 'https://ouhxgdhzgugfxajoannd.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im91aHhnZGh6Z3VnZnhham9hbm5kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2MDU3NDEsImV4cCI6MjA5NDE4MTc0MX0.zYpFWFbX21e-9lf0_--iqeA4ZA7SqHZZWy8Nw8nNgPM';
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// ==================== AUTH ====================
+let USER_ID = null;
+
+async function checkSession() {
+    const { data: { session } } = await sb.auth.getSession();
+    if (session?.user) {
+        USER_ID = session.user.id;
+        localStorage.setItem('profitvault_user_id', USER_ID);
+        const { data: userData } = await sb.from('users').select('is_admin').eq('user_id', USER_ID).single();
+        IS_ADMIN = userData?.is_admin === true;
+        document.getElementById('contactUserId').textContent = USER_ID;
+        load();
+        if (IS_ADMIN) showAdminTab();
+    } else {
+        showAuthModal();
+    }
+}
+
+function showAuthModal() {
+    const modal = document.createElement('div');
+    modal.id = 'authModal';
+    modal.className = 'modal active';
+    modal.style.display = 'flex';
+    modal.innerHTML = `
+        <div class="modal-content" style="max-width: 350px;">
+            <h3>🔐 Sign In / Register</h3>
+            <div id="authMode" style="display: flex; gap: 10px; margin-bottom: 15px;">
+                <button class="btn btn-sm" style="flex:1" onclick="setAuthMode('login')">Login</button>
+                <button class="btn btn-sm" style="flex:1" onclick="setAuthMode('register')">Register</button>
+            </div>
+            <div id="authForm"></div>
+            <p style="font-size: 12px; margin-top: 12px;">Use email or phone number. Phone needs SMS provider enabled.</p>
+        </div>
+    `;
+    document.body.appendChild(modal);
+    setAuthMode('login');
+}
+
+function setAuthMode(mode) {
+    const container = document.getElementById('authForm');
+    if (!container) return;
+    const isLogin = mode === 'login';
+    container.innerHTML = `
+        <input type="text" id="authIdentifier" placeholder="Email or Phone number (e.g., +1234567890)">
+        ${!isLogin ? '<input type="text" id="authUsername" placeholder="Choose a username (optional)">' : ''}
+        <input type="password" id="authPassword" placeholder="Password (min 6 characters)">
+        <button class="btn btn-success" onclick="${isLogin ? 'login()' : 'register()'}">${isLogin ? 'Sign In' : 'Create Account'}</button>
+        <button class="btn" onclick="closeAuthModal()">Cancel</button>
+    `;
+}
+
+async function login() {
+    const identifier = document.getElementById('authIdentifier').value.trim();
+    const password = document.getElementById('authPassword').value;
+    if (!identifier || !password) { showToast('Please fill all fields', 'error'); return; }
+    const isEmail = identifier.includes('@');
+    let response;
+    if (isEmail) response = await sb.auth.signInWithPassword({ email: identifier, password });
+    else response = await sb.auth.signInWithPassword({ phone: identifier, password });
+    if (response.error) { showToast(response.error.message, 'error'); return; }
+    const authUser = response.data.user;
+    USER_ID = authUser.id;
+    localStorage.setItem('profitvault_user_id', USER_ID);
+    await syncUserWithApp(authUser, identifier);
+    closeAuthModal();
+    load();
+    showToast('Welcome back!', 'success');
+}
+
+async function register() {
+    const identifier = document.getElementById('authIdentifier').value.trim();
+    const password = document.getElementById('authPassword').value;
+    const username = document.getElementById('authUsername')?.value.trim() || 'User';
+    if (!identifier || !password) { showToast('Email/phone and password required', 'error'); return; }
+    if (password.length < 6) { showToast('Password must be at least 6 characters', 'error'); return; }
+    const isEmail = identifier.includes('@');
+    let response;
+    if (isEmail) response = await sb.auth.signUp({ email: identifier, password });
+    else response = await sb.auth.signUp({ phone: identifier, password });
+    if (response.error) { showToast(response.error.message, 'error'); return; }
+    const authUser = response.data.user;
+    USER_ID = authUser.id;
+    localStorage.setItem('profitvault_user_id', USER_ID);
+    await sb.from('users').insert({
+        user_id: USER_ID, username: username, balance: 0, bonus_balance: 0, coin_balance: 0,
+        total_deposited: 0, total_withdrawn: 0, win_chance_plays: 0, active_referrals: 0,
+        joined_date: new Date().toISOString().split('T')[0]
+    });
+    closeAuthModal();
+    load();
+    showToast('Account created! You are now logged in.', 'success');
+}
+
+async function syncUserWithApp(authUser, identifier) {
+    const { data: existing } = await sb.from('users').select('*').eq('user_id', authUser.id).single();
+    if (!existing) {
+        await sb.from('users').insert({
+            user_id: authUser.id, username: identifier.split('@')[0] || identifier.slice(0, 8),
+            balance: 0, bonus_balance: 0, coin_balance: 0, total_deposited: 0, total_withdrawn: 0,
+            win_chance_plays: 0, active_referrals: 0, joined_date: new Date().toISOString().split('T')[0]
+        });
+    }
+}
+
+function closeAuthModal() {
+    const modal = document.getElementById('authModal');
+    if (modal) modal.remove();
+}
+let selectedPaymentMethod = "telebirr";
+let IS_ADMIN = false;
+
+// Double-click prevention flags
+let isProcessing = {
+    deposit: false,
+    withdraw: false,
+    buyCoins: false,
+    exchangeCoins: false,
+    winChance: false,
+    sellAsset: false
+};
+let currentLotteryPool = null;
+let currentLotteryPrice = null;
+let gameGridActive = true;
+let soundEnabled = localStorage.getItem('soundEnabled') !== 'false';
+let isOnline = navigator.onLine;
+let refreshThreshold = 100;
+let touchStartY = 0;
+let isRefreshing = false;
+
+// ==================== NETWORK STATUS ====================
+function updateNetworkStatus() {
+    isOnline = navigator.onLine;
+    const statusDot = document.getElementById('networkStatus');
+    const offlineIndicator = document.getElementById('offlineIndicator');
+    
+    if (isOnline) {
+        statusDot.classList.remove('offline');
+        offlineIndicator.classList.remove('show');
+    } else {
+        statusDot.classList.add('offline');
+        offlineIndicator.classList.add('show');
+        showToast('No internet connection. Some features may not work.', 'error');
+    }
+}
+
+window.addEventListener('online', () => {
+    updateNetworkStatus();
+    showToast('Back online! Refreshing data...', 'success');
+    setTimeout(() => load(), 500);
+});
+
+window.addEventListener('offline', updateNetworkStatus);
+updateNetworkStatus();
+
+// ==================== PULL TO REFRESH ====================
+document.addEventListener('touchstart', (e) => {
+    if (window.scrollY === 0) {
+        touchStartY = e.touches[0].clientY;
+    }
+});
+
+document.addEventListener('touchmove', (e) => {
+    if (window.scrollY === 0 && touchStartY) {
+        const pullDistance = e.touches[0].clientY - touchStartY;
+        if (pullDistance > refreshThreshold && !isRefreshing) {
+            isRefreshing = true;
+            const pullEl = document.getElementById('pullToRefresh');
+            pullEl.style.display = 'block';
+            pullEl.innerHTML = '⟳ Refreshing...';
+            load().finally(() => {
+                isRefreshing = false;
+                pullEl.style.display = 'none';
+                pullEl.innerHTML = '↓ Pull down to refresh';
+            });
+        } else if (pullDistance > 30) {
+            const pullEl = document.getElementById('pullToRefresh');
+            pullEl.style.display = 'block';
+            pullEl.innerHTML = '↓ Release to refresh';
+        }
+    }
+});
+
+document.addEventListener('touchend', () => {
+    touchStartY = 0;
+    setTimeout(() => {
+        const pullEl = document.getElementById('pullToRefresh');
+        pullEl.style.display = 'none';
+    }, 500);
+});
+
+// ==================== SOUND EFFECTS ====================
+function playSound(soundName) {
+    if (!soundEnabled) return;
+    try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        switch(soundName) {
+            case 'click':
+                oscillator.frequency.value = 800;
+                gainNode.gain.value = 0.3;
+                oscillator.type = 'sine';
+                oscillator.start();
+                oscillator.stop(audioContext.currentTime + 0.1);
+                break;
+            case 'coin':
+                oscillator.frequency.value = 1200;
+                gainNode.gain.value = 0.2;
+                oscillator.type = 'sine';
+                oscillator.start();
+                oscillator.stop(audioContext.currentTime + 0.2);
+                break;
+            case 'win':
+                oscillator.frequency.value = 1500;
+                gainNode.gain.value = 0.4;
+                oscillator.type = 'sine';
+                oscillator.start();
+                setTimeout(() => {
+                    oscillator.frequency.value = 1000;
+                }, 100);
+                oscillator.stop(audioContext.currentTime + 0.3);
+                break;
+            case 'lose':
+                oscillator.frequency.value = 300;
+                gainNode.gain.value = 0.3;
+                oscillator.type = 'sawtooth';
+                oscillator.start();
+                oscillator.stop(audioContext.currentTime + 0.3);
+                break;
+            case 'success':
+                oscillator.frequency.value = 1000;
+                gainNode.gain.value = 0.3;
+                oscillator.type = 'sine';
+                oscillator.start();
+                setTimeout(() => {
+                    oscillator.frequency.value = 1200;
+                }, 100);
+                oscillator.stop(audioContext.currentTime + 0.2);
+                break;
+            case 'error':
+                oscillator.frequency.value = 400;
+                gainNode.gain.value = 0.3;
+                oscillator.type = 'square';
+                oscillator.start();
+                oscillator.stop(audioContext.currentTime + 0.2);
+                break;
+            case 'deposit':
+            case 'withdraw':
+            case 'ticket':
+                oscillator.frequency.value = 1000;
+                gainNode.gain.value = 0.3;
+                oscillator.type = 'sine';
+                oscillator.start();
+                setTimeout(() => {
+                    oscillator.frequency.value = 1200;
+                }, 100);
+                oscillator.stop(audioContext.currentTime + 0.2);
+                break;
+            default:
+                break;
+        }
+        
+        setTimeout(() => audioContext.close(), 500);
+    } catch(e) {
+        console.log('Web Audio error:', e);
+    }
+}
+
+function toggleSound() {
+    soundEnabled = !soundEnabled;
+    localStorage.setItem('soundEnabled', soundEnabled);
+    const toggle = document.getElementById('soundToggle');
+    if (soundEnabled) {
+        toggle.classList.add('active');
+        playSound('click');
+    } else {
+        toggle.classList.remove('active');
+    }
+}
+
+// ==================== FLYING COIN ANIMATION ====================
+function flyCoinToBalance(startX, startY, amount, isGain = true) {
+    const coin = document.createElement('div');
+    coin.className = 'flying-coin';
+    coin.innerHTML = isGain ? `🪙 +${amount.toLocaleString()}` : `🪙 -${amount.toLocaleString()}`;
+    coin.style.left = startX + 'px';
+    coin.style.top = startY + 'px';
+    coin.style.fontSize = '28px';
+    coin.style.fontWeight = 'bold';
+    document.body.appendChild(coin);
+    
+    const target = document.getElementById('coinsCard');
+    const targetRect = target.getBoundingClientRect();
+    const targetX = targetRect.left + targetRect.width / 2;
+    const targetY = targetRect.top + targetRect.height / 2;
+    
+    const deltaX = targetX - startX;
+    const deltaY = targetY - startY;
+    
+    setTimeout(() => {
+        coin.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(0.3)`;
+        coin.style.opacity = '0.5';
+    }, 10);
+    
+    playSound('coin');
+    
+    setTimeout(() => coin.remove(), 700);
+}
+
+// ==================== ADMIN PANEL ====================
+function showAdminTab() {
+    let adminTabExists = document.querySelector('.tab[data-tab="admin"]');
+    if (!adminTabExists) {
+        const tabsContainer = document.querySelector('.tabs');
+        const adminBtn = document.createElement('button');
+        adminBtn.className = 'tab';
+        adminBtn.setAttribute('data-tab', 'admin');
+        adminBtn.innerHTML = '👑 Admin';
+        tabsContainer.appendChild(adminBtn);
+        const adminContent = document.createElement('div');
+        adminContent.id = 'admin';
+        adminContent.className = 'tab-content';
+        tabsContainer.insertAdjacentElement('afterend', adminContent);
+        adminBtn.addEventListener('click', () => {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            adminBtn.classList.add('active');
+            adminContent.classList.add('active');
+            loadAdminPanel();
+        });
+    }
+}
+
+async function loadAdminPanel() {
+    const adminDiv = document.getElementById('admin');
+    if (!adminDiv) return;
+    adminDiv.innerHTML = '<div class="loading">Loading admin data...</div>';
+    const { data: users } = await sb.from('users').select('balance, bonus_balance, total_withdrawn');
+    const totalSystemBalance = users?.reduce((s,u) => s + (u.balance||0) + (u.bonus_balance||0), 0) || 0;
+    const totalWithdrawn = users?.reduce((s,u) => s + (u.total_withdrawn||0), 0) || 0;
+    const totalUsers = users?.length || 0;
+    const { data: pendingDeposits } = await sb.from('pending_deposits').select('*').eq('status','pending').order('request_time',{ascending:false});
+    const { data: pendingWithdrawals } = await sb.from('pending_withdrawals').select('*').eq('status','pending').order('request_time',{ascending:false});
+    adminDiv.innerHTML = `
+        <div class="card"><h3>📊 System Stats</h3>
+        <div class="profile-item"><span>💰 Total System Balance</span><span>${totalSystemBalance.toLocaleString()} ETB</span></div>
+        <div class="profile-item"><span>📤 Total Withdrawn All Time</span><span>${totalWithdrawn.toLocaleString()} ETB</span></div>
+        <div class="profile-item"><span>👥 Total Users</span><span>${totalUsers}</span></div></div>
+        <div class="card"><h3>⏳ Pending Deposits</h3><div id="adminDepositsList">${renderPendingList(pendingDeposits,'deposit')}</div></div>
+        <div class="card"><h3>⏳ Pending Withdrawals</h3><div id="adminWithdrawalsList">${renderPendingList(pendingWithdrawals,'withdraw')}</div></div>
+    `;
+}
+
+function renderPendingList(items, type) {
+    if (!items || items.length===0) return '<div class="loading">No pending requests</div>';
+    return items.map(item => `
+        <div class="transaction-item" style="margin-bottom:12px;">
+            <div><strong>User ID:</strong> ${item.user_id}</div>
+            <div><strong>Amount:</strong> ${item.amount} ETB</div>
+            ${type==='withdraw'?`<div><strong>Net after tax:</strong> ${item.net_amount} ETB</div>`:''}
+            <div><strong>Request Time:</strong> ${item.request_time}</div>
+            <div style="margin-top:8px;">
+                <button class="btn btn-sm btn-success" onclick="handleAdminAction('${type}','approve',${item.id},${item.amount},'${item.user_id}')">✅ Approve</button>
+                <button class="btn btn-sm btn-danger" onclick="handleAdminAction('${type}','reject',${item.id},${item.amount},'${item.user_id}')">❌ Reject</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+async function handleAdminAction(type, action, id, amount, userId) {
+    if (!confirm(`${action.toUpperCase()} this ${type} request?`)) return;
+    try {
+        if (type === 'deposit') {
+            if (action === 'approve') {
+                const { data: user } = await sb.from('users').select('balance,total_deposited').eq('user_id',userId).single();
+                await sb.from('users').update({ balance: (user.balance||0)+amount, total_deposited: (user.total_deposited||0)+amount }).eq('user_id',userId);
+                await sb.from('pending_deposits').update({ status:'approved' }).eq('id',id);
+                await sb.from('transactions').insert({ user_id:userId, transaction_type:'💰 Deposit Approved', amount:amount, status:'Completed', timestamp:new Date().toISOString().replace('T',' ').substring(0,19) });
+                showToast(`Deposit of ${amount} ETB approved!`,'success');
+            } else {
+                await sb.from('pending_deposits').update({ status:'rejected' }).eq('id',id);
+                showToast('Deposit rejected','info');
+            }
+        } else if (type === 'withdraw') {
+            if (action === 'approve') {
+                await sb.from('pending_withdrawals').update({ status:'approved' }).eq('id',id);
+                const { data: user } = await sb.from('users').select('total_withdrawn').eq('user_id',userId).single();
+                await sb.from('users').update({ total_withdrawn: (user.total_withdrawn||0)+amount }).eq('user_id',userId);
+                await sb.from('transactions').insert({ user_id:userId, transaction_type:'📤 Withdrawal Approved', amount:-amount, status:'Completed', timestamp:new Date().toISOString().replace('T',' ').substring(0,19) });
+                showToast(`Withdrawal of ${amount} ETB approved!`,'success');
+            } else {
+                const { data: user } = await sb.from('users').select('bonus_balance').eq('user_id',userId).single();
+                await sb.from('users').update({ bonus_balance: (user.bonus_balance||0)+amount }).eq('user_id',userId);
+                await sb.from('pending_withdrawals').update({ status:'rejected' }).eq('id',id);
+                showToast('Withdrawal rejected, bonus refunded','info');
+            }
+        }
+        loadAdminPanel();
+        load();
+    } catch(err) { console.error(err); showToast('Action failed','error'); }
+}
+// ==================== UTILITY FUNCTIONS ====================
+function showToast(message, type = 'success') {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.className = `toast ${type === 'error' ? 'error' : (type === 'info' ? 'info' : '')}`;
+    toast.classList.add('show');
+    if (type === 'success') playSound('success');
+    else if (type === 'error') playSound('error');
+    setTimeout(() => {
+        toast.classList.remove('show');
+    }, 3000);
+}
+
+function showModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.classList.add('active');
+        playSound('click');
+    }
+}
+
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.classList.remove('active');
+    }
+}
+
+function selectPaymentMethod(method) {
+    selectedPaymentMethod = method;
+    const telebirrInfo = document.getElementById('telebirrInfo');
+    const awashInfo = document.getElementById('awashInfo');
+    const paymentMethods = document.querySelectorAll('.payment-method');
+    
+    paymentMethods.forEach(el => el.classList.remove('selected'));
+    
+    if (method === 'telebirr') {
+        telebirrInfo.style.display = 'block';
+        awashInfo.style.display = 'none';
+        document.querySelector('[data-payment="telebirr"]').classList.add('selected');
+    } else {
+        telebirrInfo.style.display = 'none';
+        awashInfo.style.display = 'block';
+        document.querySelector('[data-payment="awash"]').classList.add('selected');
+    }
+}
+
+function createCoinBubble(x, y, amount) {
+    const bubble = document.createElement('div');
+    bubble.className = 'coin-bubble';
+    bubble.innerHTML = `🪙 +${amount}`;
+    bubble.style.left = x + 'px';
+    bubble.style.top = y + 'px';
+    bubble.style.position = 'fixed';
+    bubble.style.fontSize = '24px';
+    bubble.style.fontWeight = 'bold';
+    bubble.style.color = '#fbbf24';
+    bubble.style.textShadow = '0 0 5px #000';
+    document.body.appendChild(bubble);
+    playSound('coin');
+    
+    setTimeout(() => {
+        bubble.remove();
+    }, 800);
+}
+
+function contactAdmin(method) {
+    if (method === 'telegram') {
+        window.open('https://t.me/drtesfayekebede', '_blank');
+    } else if (method === 'phone') {
+        window.location.href = 'tel:+251935983470';
+    }
+    playSound('click');
+}
+
+function copyUserId() {
+    const userId = document.getElementById('contactUserId').innerText;
+    navigator.clipboard.writeText(userId).then(() => {
+        showToast('✅ User ID copied!', 'success');
+        playSound('click');
+    }).catch(() => {
+        showToast('Failed to copy', 'error');
+    });
+}
+
+// ==================== MAIN LOAD FUNCTION ====================
+async function load() {
+    try {
+        let { data: user, error: userError } = await sb
+            .from('users')
+            .select('*')
+            .eq('user_id', USER_ID)
+            .single();
+        
+        if (userError && (userError.code === 'PGRST116' || userError.message.includes('contains 0 rows'))) {
+            const { data: newUser, error: insertError } = await sb
+                .from('users')
+                .insert({
+                    user_id: USER_ID,
+                    username: 'Anonymous',
+                    balance: 0,
+                    bonus_balance: 0,
+                    coin_balance: 0,
+                    total_deposited: 0,
+                    total_withdrawn: 0,
+                    win_chance_plays: 0,
+                    active_referrals: 0,
+                    joined_date: new Date().toISOString().split('T')[0]
+                })
+                .select()
+                .single();
+            
+            if (insertError) {
+                console.error('Insert error:', insertError);
+                document.getElementById('quadlock').innerHTML = 
+                    '<div class="loading">Unable to create account. Please try again later.</div>';
+                return;
+            }
+            user = newUser;
+            userError = null;
+        } else if (userError) {
+            console.error('User fetch error:', userError);
+            document.getElementById('quadlock').innerHTML = 
+                `<div class="loading">User not found. Please register first.</div>`;
+            return;
+        }
+        
+        document.getElementById('balance').innerText = (user.balance || 0).toLocaleString();
+        document.getElementById('bonus').innerText = (user.bonus_balance || 0).toLocaleString();
+        document.getElementById('coins').innerText = (user.coin_balance || 0).toLocaleString();
+        
+        const { count: lotteryCount } = await sb
+            .from('lottery_tickets')
+            .select('*', { count: 'exact', head: true })
+            .eq('user_id', USER_ID)
+            .eq('status', 'active');
+        
+        const depositRequired = 1500;
+        const gamesRequired = 10;
+        const ticketsRequired = 3;
+        const referralsRequired = 3;
+        
+        const depositDone = (user.total_deposited || 0) >= depositRequired;
+        const gameDone = (user.win_chance_plays || 0) >= gamesRequired;
+        const lotteryDone = (lotteryCount || 0) >= ticketsRequired;
+        const referralDone = (user.active_referrals || 0) >= referralsRequired;
+        const completedCount = [depositDone, gameDone, lotteryDone, referralDone].filter(Boolean).length;
+        const percent = (completedCount / 4) * 100;
+        
+        document.getElementById('quadlock').innerHTML = `
+            <div class="quad-item ${depositDone ? 'unlocked' : 'locked'}">
+                <div class="quad-left">
+                    <div class="quad-status">${depositDone ? '✅' : '❌'}</div>
+                    <div>
+                        <div class="quad-text">💰 Deposit ${depositRequired} ETB</div>
+                        <div class="quad-count">${(user.total_deposited || 0).toLocaleString()}/${depositRequired} ETB</div>
+                    </div>
+                </div>
+                <div class="quad-amount">${depositDone ? 'Unlocked' : 'Locked'}</div>
+            </div>
+            <div class="quad-item ${gameDone ? 'unlocked' : 'locked'}">
+                <div class="quad-left">
+                    <div class="quad-status">${gameDone ? '✅' : '❌'}</div>
+                    <div>
+                        <div class="quad-text">🎮 Play ${gamesRequired} Win Chance Games</div>
+                        <div class="quad-count">${user.win_chance_plays || 0}/${gamesRequired} Games</div>
+                    </div>
+                </div>
+                <div class="quad-amount">${gameDone ? 'Unlocked' : 'Locked'}</div>
+            </div>
+            <div class="quad-item ${lotteryDone ? 'unlocked' : 'locked'}">
+                <div class="quad-left">
+                    <div class="quad-status">${lotteryDone ? '✅' : '❌'}</div>
+                    <div>
+                        <div class="quad-text">🎟️ Buy ${ticketsRequired} Lottery Tickets</div>
+                        <div class="quad-count">${lotteryCount || 0}/${ticketsRequired} Tickets</div>
+                    </div>
+                </div>
+                <div class="quad-amount">${lotteryDone ? 'Unlocked' : 'Locked'}</div>
+            </div>
+            <div class="quad-item ${referralDone ? 'unlocked' : 'locked'}">
+                <div class="quad-left">
+                    <div class="quad-status">${referralDone ? '✅' : '❌'}</div>
+                    <div>
+                        <div class="quad-text">👥 Get ${referralsRequired} Active Referrals</div>
+                        <div class="quad-count">${user.active_referrals || 0}/${referralsRequired} Referrals</div>
+                    </div>
+                </div>
+                <div class="quad-amount">${referralDone ? 'Unlocked' : 'Locked'}</div>
+            </div>
+            <div class="progress-container">
+                <div class="progress-bar"><div class="progress-fill" style="width: ${percent}%"></div></div>
+                <div class="progress-text">${completedCount}/4 Complete - ${Math.round(percent)}% to Withdraw</div>
+            </div>
+        `;
+        
+        const today = new Date().toISOString().substring(0, 10);
+        const { data: exchangedToday } = await sb
+            .from('daily_exchange')
+            .select('amount_exchanged')
+            .eq('user_id', USER_ID)
+            .eq('exchange_date', today);
+        
+        const exchangedAmount = exchangedToday ? exchangedToday.reduce((sum, row) => sum + (row.amount_exchanged || 0), 0) : 0;
+        const maxExchange = Math.floor((user.coin_balance || 0) * 0.03);
+        const remainingExchange = Math.max(0, maxExchange - exchangedAmount);
+        
+        document.getElementById('exchangeInfo').innerHTML = `
+            <div class="quad-item unlocked">
+                <div class="quad-left"><div>📊 Daily Limit: 3% of coins</div></div>
+                <div>${maxExchange.toLocaleString()} max</div>
+            </div>
+            <div class="quad-item ${remainingExchange > 0 ? 'unlocked' : 'locked'}">
+                <div class="quad-left"><div>Today's Remaining Exchange</div></div>
+                <div>${remainingExchange.toLocaleString()} coins</div>
+            </div>
+        `;
+        
+        document.getElementById('exchangeInfoModal').innerHTML = `
+            <div class="quad-item unlocked"><div>Max exchange today: ${maxExchange.toLocaleString()} coins</div></div>
+            <div class="quad-item ${remainingExchange > 0 ? 'unlocked' : 'locked'}"><div>Remaining: ${remainingExchange.toLocaleString()} coins</div></div>
+        `;
+        
+        document.getElementById('profileInfo').innerHTML = `
+            <div class="profile-item"><span>👤 Username</span><span>@${user.username || 'Unknown'}</span></div>
+            <div class="profile-item"><span>🆔 User ID</span><span><code>${user.user_id}</code></span></div>
+            <div class="profile-item"><span>📅 Joined</span><span>${user.joined_date || 'Unknown'}</span></div>
+            <div class="profile-item"><span>💰 Total Deposited</span><span>${(user.total_deposited || 0).toLocaleString()} ETB</span></div>
+            <div class="profile-item"><span>📤 Total Withdrawn</span><span>${(user.total_withdrawn || 0).toLocaleString()} ETB</span></div>
+            <div class="profile-item"><span>👥 Active Referrals</span><span>${user.active_referrals || 0}</span></div>
+            <div class="profile-item"><span>🎮 Games Played</span><span>${user.win_chance_plays || 0}</span></div>
+            <div class="profile-item"><span>🎟️ Lottery Tickets</span><span>${lotteryCount || 0}</span></div>
+        `;
+        
+        const { data: market } = await sb
+            .from('market')
+            .select('*')
+            .order('slot_id', { ascending: true });
+        
+        const { data: assets } = await sb
+            .from('user_assets')
+            .select('*')
+            .eq('user_id', USER_ID)
+            .eq('sold', false);
+        
+        if (market) {
+            updateMarket(market, assets || []);
+        }
+        if (assets) {
+            updateInvestments(assets);
+        }
+        
+        const lotteryPools = [];
+        for (const poolId of [1, 2, 3]) {
+            const { count: sold } = await sb
+                .from('lottery_tickets')
+                .select('*', { count: 'exact', head: true })
+                .eq('pool_id', poolId)
+                .eq('status', 'active');
+            
+            const { data: takenNumbers } = await sb
+                .from('lottery_tickets')
+                .select('ticket_number')
+                .eq('pool_id', poolId)
+                .eq('status', 'active');
+            
+            const takenList = takenNumbers ? takenNumbers.map(t => t.ticket_number) : [];
+            
+            lotteryPools.push({
+                id: poolId,
+                price: {1:50, 2:100, 3:200}[poolId],
+                reward: {1:500, 2:1000, 3:2000}[poolId],
+                sold: sold || 0,
+                total: 15,
+                taken_numbers: takenList,
+                is_full: (sold || 0) >= 15
+            });
+        }
+        updateLotteryPools(lotteryPools);
+        
+        const { data: myTickets } = await sb
+            .from('lottery_tickets')
+            .select('*')
+            .eq('user_id', USER_ID)
+            .eq('status', 'active');
+        updateMyTickets(myTickets || []);
+        
+        const { data: recentDraws } = await sb
+            .from('lottery_draws')
+            .select('*')
+            .order('draw_time', { ascending: false })
+            .limit(5);
+        updateRecentDraws(recentDraws || []);
+        
+        const { data: consultations } = await sb
+            .from('health_consultations')
+            .select('*')
+            .eq('user_id', USER_ID)
+            .order('created_at', { ascending: false })
+            .limit(5);
+        updateConsultations(consultations || []);
+        
+        const { data: transactions } = await sb
+            .from('transactions')
+            .select('*')
+            .eq('user_id', USER_ID)
+            .order('timestamp', { ascending: false })
+            .limit(20);
+        
+        if (transactions) {
+            const depositWithdraw = transactions.filter(t => 
+                t.transaction_type.includes('Deposit') || 
+                t.transaction_type.includes('Withdrawal') ||
+                t.transaction_type.includes('ተቀማጭ') ||
+                t.transaction_type.includes('መውጫ')
+            );
+            const other = transactions.filter(t => 
+                !t.transaction_type.includes('Deposit') && 
+                !t.transaction_type.includes('Withdrawal') &&
+                !t.transaction_type.includes('ተቀማጭ') &&
+                !t.transaction_type.includes('መውጫ')
+            );
+            updateSplitTransactions({ deposit_withdraw: depositWithdraw, other: other });
+        }
+        
+        const { data: leaderboard } = await sb
+            .from('users')
+            .select('user_id, username, total_deposited')
+            .order('total_deposited', { ascending: false })
+            .limit(10);
+        
+        const leaderboardDiv = document.getElementById('leaderboard');
+        if (leaderboard && leaderboard.length > 0) {
+            leaderboardDiv.innerHTML = leaderboard.map((u, idx) => `
+                <div class="transaction-item">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <span style="font-weight: bold;">${idx + 1}.</span> 
+                            <span>@${u.username || u.user_id.substring(0, 8)}</span>
+                        </div>
+                        <div><strong>${(u.total_deposited || 0).toLocaleString()} ETB</strong></div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+    } catch (error) {
+        console.error('Load error:', error);
+        showToast('Error loading data: ' + error.message, 'error');
+    }
+}
+
+// ==================== SPLIT TRANSACTIONS WITH STATUS ====================
+function updateSplitTransactions(transactions) {
+    const depositWithdraw = transactions.deposit_withdraw || [];
+    const other = transactions.other || [];
+    
+    const depositWithdrawDiv = document.getElementById('depositWithdrawTransactions');
+    if (depositWithdraw.length === 0) {
+        depositWithdrawDiv.innerHTML = '<div class="loading">No deposit/withdrawal transactions</div>';
+    } else {
+        depositWithdrawDiv.innerHTML = depositWithdraw.map(t => {
+            const isPending = t.status === 'Pending' || t.status === 'pending';
+            const isApproved = t.status === 'Completed' || t.status === 'approved' || t.status === 'Approved';
+            const isDenied = t.status === 'denied' || t.status === 'Denied';
+            
+            let statusClass = '';
+            let statusText = '';
+            
+            if (isPending) { 
+                statusClass = 'transaction-pending'; 
+                statusText = '⏳ Pending'; 
+            } else if (isApproved) { 
+                statusClass = 'transaction-approved'; 
+                statusText = '✅ Approved'; 
+            } else if (isDenied) { 
+                statusClass = 'transaction-denied'; 
+                statusText = '❌ Denied'; 
+            } else {
+                statusText = t.status || 'Unknown';
+            }
+            
+            const isDeposit = t.transaction_type.includes('Deposit') || t.transaction_type.includes('ተቀማጭ');
+            const isWithdrawal = t.transaction_type.includes('Withdrawal') || t.transaction_type.includes('መውጫ');
+            const actionIcon = isDeposit ? '📥' : (isWithdrawal ? '📤' : '💰');
+            
+            return `
+                <div class="transaction-item ${statusClass}">
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>${actionIcon} ${t.transaction_type}</span>
+                        <span style="color: ${t.amount > 0 ? '#10b981' : '#ef4444'}; font-weight: bold;">${Math.abs(t.amount).toLocaleString()} ETB</span>
+                    </div>
+                    <div style="font-size: 10px; opacity: 0.6;">${t.timestamp}</div>
+                    <div style="font-size: 11px; margin-top: 4px;"><strong>${statusText}</strong></div>
+                </div>
+            `;
+        }).join('');
+    }
+    
+    const otherDiv = document.getElementById('otherTransactions');
+    if (other.length === 0) {
+        otherDiv.innerHTML = '<div class="loading">No other transactions</div>';
+    } else {
+        otherDiv.innerHTML = other.map(t => {
+            const icon = t.amount > 0 ? '➕' : (t.amount < 0 ? '➖' : '📝');
+            const color = t.amount > 0 ? '#10b981' : (t.amount < 0 ? '#ef4444' : '#fbbf24');
+            return `
+                <div class="transaction-item">
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>${icon} ${t.transaction_type}</span>
+                        <span style="color: ${color}; font-weight: bold;">${Math.abs(t.amount).toLocaleString()} ${t.amount >= 0 ? '🪙' : '💰'}</span>
+                    </div>
+                    <div style="font-size: 10px; opacity: 0.6;">${t.timestamp}</div>
+                    <div style="font-size: 10px;">${t.status}</div>
+                </div>
+            `;
+        }).join('');
+    }
+}
+
+// ==================== MARKET FUNCTIONS ====================
+function updateMarket(market, assets) {
+    const ownedSlots = assets ? assets.map(a => a.slot_id) : [];
+    const marketGrid = document.getElementById('marketGrid');
+    
+    if (!market || market.length === 0) {
+        marketGrid.innerHTML = '<div class="loading">No market items found</div>';
+        return;
+    }
+    
+    marketGrid.innerHTML = market.map(item => {
+        const isOwned = ownedSlots.includes(item.slot_id);
+        const immediateAllowed = item.immediate_purchase_allowed;
+        const adjustmentOpen = item.adjustment_window_open;
+        
+        return `
+            <div class="market-item ${isOwned ? 'owned' : ''}" data-slot="${item.slot_id}" onclick="${!isOwned ? `buyAssetWithFly(${item.slot_id}, event)` : ''}">
+                ${immediateAllowed ? '<div class="market-badge">⚡ Immediate</div>' : ''}
+                ${adjustmentOpen ? '<div class="market-badge" style="background:#fbbf24; color:#1a1a2e;">📈 Adjust</div>' : ''}
+                <div class="market-emoji">${item.emoji}</div>
+                <div class="market-name">${item.asset_name}</div>
+                <div class="market-price">${item.cost.toLocaleString()} 🪙</div>
+                ${isOwned ? '<div style="font-size: 10px; margin-top: 5px;">✅ Owned</div>' : ''}
+            </div>
+        `;
+    }).join('');
+}
+
+function updateInvestments(assets) {
+    const investmentsDiv = document.getElementById('investments');
+    if (!assets || assets.length === 0) {
+        investmentsDiv.innerHTML = '<div class="loading">No active investments</div>';
+        return;
+    }
+    
+    investmentsDiv.innerHTML = assets.map(asset => {
+        const purchaseTime = new Date(asset.purchase_time);
+        const maturity = new Date(purchaseTime.getTime() + 24 * 60 * 60 * 1000);
+        const now = new Date();
+        const isReady = now >= maturity;
+        const payout = Math.round(asset.purchase_price * asset.roi_at_purchase);
+        const hoursLeft = Math.ceil((maturity - now) / (1000 * 60 * 60));
+        
+        return `
+            <div class="investment-item" data-asset-id="${asset.id}" data-payout="${payout}">
+                <div>
+                    <span style="font-size: 20px;">${asset.emoji}</span>
+                    <strong>${asset.asset_name}</strong>
+                    <div style="font-size: 11px; opacity: 0.7;">Invested: ${asset.purchase_price.toLocaleString()} 🪙</div>
+                    <div style="font-size: 11px; opacity: 0.7;">Payout: ${payout.toLocaleString()} 🪙</div>
+                </div>
+                ${isReady ? 
+                    `<button class="sell-btn" onclick="sellAssetWithFly(${asset.id}, ${payout}, event)">💵 Sell for ${payout.toLocaleString()} 🪙</button>` : 
+                    `<span class="badge">⏳ ${hoursLeft}h left</span>`
+                }
+            </div>
+        `;
+    }).join('');
+}
+
+async function buyAssetWithFly(slotId, event) {
+    try {
+        const button = event.currentTarget;
+        const rect = button.getBoundingClientRect();
+        const startX = rect.left + rect.width / 2;
+        const startY = rect.top + rect.height / 2;
+        
+        const { data: asset } = await sb
+            .from('market')
+            .select('*')
+            .eq('slot_id', slotId)
+            .single();
+        
+        const { data: user } = await sb
+            .from('users')
+            .select('coin_balance')
+            .eq('user_id', USER_ID)
+            .single();
+        
+        if ((user.coin_balance || 0) < asset.cost) {
+            showToast(`Need ${asset.cost} coins`, 'error');
+            return;
+        }
+        
+        const newCoins = (user.coin_balance || 0) - asset.cost;
+        const now = new Date().toISOString().replace('T', ' ').substring(0, 19);
+        
+        await sb.from('users').update({ coin_balance: newCoins }).eq('user_id', USER_ID);
+        await sb.from('user_assets').insert({
+            user_id: USER_ID,
+            slot_id: slotId,
+            emoji: asset.emoji,
+            asset_name: asset.asset_name,
+            purchase_price: asset.cost,
+            roi_at_purchase: 1.25,
+            purchase_time: now,
+            sold: false
+        });
+        await sb.from('transactions').insert({
+            user_id: USER_ID,
+            transaction_type: `🛒 Market (${asset.asset_name})`,
+            amount: asset.cost,
+            status: 'Completed',
+            timestamp: now
+        });
+        
+        flyCoinToBalance(startX, startY, asset.cost, false);
+        showToast(`✅ Invested in ${asset.asset_name}!`, 'success');
+        playSound('deposit');
+        load();
+    } catch (error) {
+        console.error('Buy error:', error);
+        showToast('Network error: ' + error.message, 'error');
+    }
+}
+
+async function sellAssetWithFly(assetId, payout, event) {
+    if (isProcessing.sellAsset) return;
+    if (!confirm(`Sell this asset for ${payout.toLocaleString()} coins?`)) return;
+    isProcessing.sellAsset = true;
+    try {
+        const button = event.currentTarget;
+        const rect = button.getBoundingClientRect();
+        const startX = rect.left + rect.width / 2;
+        const startY = rect.top + rect.height / 2;
+        const { data: user } = await sb.from('users').select('coin_balance').eq('user_id', USER_ID).single();
+        const newCoins = (user.coin_balance || 0) + payout;
+        await sb.from('users').update({ coin_balance: newCoins }).eq('user_id', USER_ID);
+        await sb.from('user_assets').update({ sold: true }).eq('id', assetId);
+        await sb.from('transactions').insert({ user_id: USER_ID, transaction_type: '💵 Sold Asset', amount: payout, status: 'Completed', timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19) });
+        flyCoinToBalance(startX, startY, payout, true);
+        showToast(`Sold for ${payout} coins!`, 'success');
+        playSound('coin');
+        load();
+    } catch (err) { showToast('Error', 'error'); }
+    finally { isProcessing.sellAsset = false; }
+}
+
+// ==================== NEON CYBER 3D GAME FUNCTIONS ====================
+function createGameGrid() {
+    const grid = document.getElementById('gameGrid');
+    let html = '';
+    for (let i = 0; i < 16; i++) {
+        html += `<div class="game-card" data-pos="${i}" onclick="playGame(${i}, event)">🎁</div>`;
+    }
+    grid.innerHTML = html;
+    gameGridActive = true;
+}
+
+async function playGame(position, event) {
+    if (!gameGridActive || isProcessing.winChance) return;
+    isProcessing.winChance = true;
+    gameGridActive = false;
+    try {
+        const { data: user } = await sb.from('users').select('coin_balance').eq('user_id', USER_ID).single();
+        if ((user.coin_balance || 0) < 50) { showToast(`Need 50 coins`, 'error'); isProcessing.winChance = false; gameGridActive = true; return; }
+        const shuffled = [100, 75, 75, 50, 50, 50, 25, 25, 25, 25, 10, 10, 10, 10, 10, 0].sort(() => Math.random() - 0.5);
+        const winnings = shuffled[position] || 0;
+        const newBalance = (user.coin_balance || 0) - 50 + winnings;
+        await sb.from('users').update({ coin_balance: newBalance, win_chance_plays: (user.win_chance_plays || 0) + 1 }).eq('user_id', USER_ID);
+        await sb.from('transactions').insert({ user_id: USER_ID, transaction_type: '🎁 Win Chance Game', amount: winnings, status: 'Completed', timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19) });
+        const resultDiv = document.getElementById('gameResult');
+        resultDiv.className = `game-result ${winnings > 0 ? 'win' : 'lose'}`;
+        resultDiv.innerHTML = winnings > 0 ? `🎉 You won ${winnings} coins! 🎉` : `💨 Better luck next time!`;
+        if (winnings > 0) {
+            playSound('win');
+            if (event) {
+                const rect = event.target.getBoundingClientRect();
+                createCoinBubble(rect.left + rect.width / 2, rect.top, winnings);
+            }
+        } else {
+            playSound('lose');
+        }
+        showToast(winnings > 0 ? `Won ${winnings} coins!` : 'No win', winnings > 0 ? 'success' : 'error');
+        const cells = document.querySelectorAll('.game-card');
+        cells.forEach((cell, idx) => { cell.classList.add('revealed'); cell.setAttribute('data-prize', shuffled[idx]); cell.innerHTML = shuffled[idx]; cell.style.fontSize = '24px'; });
+        setTimeout(() => { createGameGrid(); gameGridActive = true; isProcessing.winChance = false; load(); }, 3000);
+    } catch (err) { console.error(err); showToast('Error', 'error'); gameGridActive = true; isProcessing.winChance = false; }
+}
+// ==================== LOTTERY FUNCTIONS ====================
+function updateLotteryPools(pools) {
+    const lotteryDiv = document.getElementById('lotteryPools');
+    if (!pools || pools.length === 0) {
+        lotteryDiv.innerHTML = '<div class="loading">No active pools</div>';
+        return;
+    }
+    
+    lotteryDiv.innerHTML = pools.map(pool => `
+        <div class="lottery-pool">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div><strong>🎰 Pool #${pool.id}</strong></div>
+                <div class="badge">Prize: ${pool.reward.toLocaleString()} 🪙</div>
+            </div>
+            <div>💰 Ticket: ${pool.price.toLocaleString()} 🪙</div>
+            <div class="progress-bar" style="margin: 10px 0;">
+                <div class="progress-fill" style="width: ${(pool.sold / pool.total) * 100}%"></div>
+            </div>
+            <div>${pool.sold}/${pool.total} sold</div>
+            ${!pool.is_full ? `<button class="btn btn-sm" style="margin-top: 10px;" onclick="showLotteryNumbers(${pool.id}, ${pool.price}, ${JSON.stringify(pool.taken_numbers)})">🎫 Buy Ticket</button>` : `<div style="color: #10b981; margin-top: 10px;">✅ Pool Full - Draw Completed!</div>`}
+        </div>
+    `).join('');
+}
+
+function showLotteryNumbers(poolId, price, takenNumbers) {
+    currentLotteryPool = poolId;
+    currentLotteryPrice = price;
+    
+    let numbersHtml = '<div class="lottery-numbers">';
+    for (let i = 1; i <= 15; i++) {
+        const isTaken = takenNumbers && takenNumbers.includes(i);
+        if (isTaken) {
+            numbersHtml += `<div class="lottery-number taken">${String(i).padStart(2, '0')}</div>`;
+        } else {
+            numbersHtml += `<div class="lottery-number" onclick="buyLotteryTicket(${poolId}, ${i})">${String(i).padStart(2, '0')}</div>`;
+        }
+    }
+    numbersHtml += '</div>';
+    
+    const modal = document.createElement('div');
+    modal.className = 'modal active';
+    modal.style.display = 'flex';
+    modal.innerHTML = `
+        <div class="modal-content">
+            <span class="close" onclick="this.parentElement.parentElement.remove()">&times;</span>
+            <h3>🎟️ Select Ticket Number</h3>
+            <p>Pool #${poolId} - Price: ${price.toLocaleString()} 🪙</p>
+            <p style="font-size: 12px;">✅ Available | ❌ Taken</p>
+            ${numbersHtml}
+            <button class="btn" onclick="this.parentElement.parentElement.remove()">Cancel</button>
+        </div>
+    `;
+    document.body.appendChild(modal);
+    playSound('click');
+}
+
+async function buyLotteryTicket(poolId, number) {
+    try {
+        const price = {1:50, 2:100, 3:200}[poolId];
+        
+        const { data: existing } = await sb
+            .from('lottery_tickets')
+            .select('id')
+            .eq('pool_id', poolId)
+            .eq('ticket_number', number)
+            .eq('status', 'active')
+            .single();
+        
+        if (existing) {
+            showToast('Ticket number already taken', 'error');
+            return;
+        }
+        
+        const { data: user } = await sb
+            .from('users')
+            .select('coin_balance, username')
+            .eq('user_id', USER_ID)
+            .single();
+        
+        if ((user.coin_balance || 0) < price) {
+            showToast(`Need ${price} coins`, 'error');
+            return;
+        }
+        
+        const serial = `${poolId}-${String(number).padStart(2, '0')}-${USER_ID.slice(-4)}`;
+        const now = new Date().toISOString().replace('T', ' ').substring(0, 19);
+        const username = user.username || `user_${USER_ID.substring(0, 4)}`;
+        
+        await sb.from('users').update({ 
+            coin_balance: (user.coin_balance || 0) - price,
+            lottery_tickets: (user.lottery_tickets || 0) + 1
+        }).eq('user_id', USER_ID);
+        
+        await sb.from('lottery_tickets').insert({
+            pool_id: poolId,
+            ticket_number: number,
+            serial_number: serial,
+            user_id: USER_ID,
+            username: username,
+            purchase_time: now,
+            status: 'active'
+        });
+        
+        await sb.from('transactions').insert({
+            user_id: USER_ID,
+            transaction_type: `🎟️ Lottery Ticket (Pool ${poolId})`,
+            amount: price,
+            status: 'Completed',
+            timestamp: now
+        });
+        
+        showToast(`✅ Ticket #${number} purchased! Good luck!`, 'success');
+        playSound('ticket');
+        const modal = document.querySelector('.modal.active');
+        if (modal) modal.remove();
+        load();
+    } catch (error) {
+        console.error('Lottery error:', error);
+        showToast('Network error: ' + error.message, 'error');
+    }
+}
+
+function updateMyTickets(tickets) {
+    const ticketsDiv = document.getElementById('myTickets');
+    if (!tickets || tickets.length === 0) {
+        ticketsDiv.innerHTML = '<div class="loading">No tickets yet</div>';
+        return;
+    }
+    
+    ticketsDiv.innerHTML = tickets.map(ticket => `
+        <div class="ticket-item">
+            <div>
+                <span style="font-size: 20px;">🎫</span>
+                <strong>Pool #${ticket.pool_id}</strong>
+                <div>Number: ${String(ticket.ticket_number).padStart(2, '0')}</div>
+            </div>
+            <div>
+                <div class="ticket-serial">🔖 ${ticket.serial_number}</div>
+                <span class="badge">Active</span>
+            </div>
+        </div>
+    `).join('');
+}
+
+function updateRecentDraws(draws) {
+    const drawsDiv = document.getElementById('recentDraws');
+    if (!draws || draws.length === 0) {
+        drawsDiv.innerHTML = '<div class="loading">No draws yet</div>';
+        return;
+    }
+    
+    drawsDiv.innerHTML = draws.map(draw => `
+        <div class="ticket-item">
+            <div>
+                <span>🎰 Pool #${draw.pool_id}</span>
+                <div style="font-size: 11px;">Winner Serial: <code>${draw.winner_serial}</code></div>
+            </div>
+            <div>
+                <span class="badge">${draw.prize_amount.toLocaleString()} 🪙</span>
+            </div>
+        </div>
+    `).join('');
+}
+
+// ==================== CLINIC FUNCTIONS ====================
+async function startConsultation() {
+    const issue = document.getElementById('healthIssue').value;
+    if (!issue.trim() || issue.length < 10) {
+        showToast('Please describe your issue in detail (min 10 characters)', 'error');
+        return;
+    }
+    
+    try {
+        const { data: user } = await sb
+            .from('users')
+            .select('coin_balance, username')
+            .eq('user_id', USER_ID)
+            .single();
+        
+        if ((user.coin_balance || 0) < 50) {
+            showToast(`Need 50 coins for consultation`, 'error');
+            return;
+        }
+        
+        const newCoins = (user.coin_balance || 0) - 50;
+        const now = new Date().toISOString().replace('T', ' ').substring(0, 19);
+        const username = user.username || `user_${USER_ID.substring(0, 4)}`;
+        
+        await sb.from('users').update({ coin_balance: newCoins }).eq('user_id', USER_ID);
+        await sb.from('health_consultations').insert({
+            user_id: USER_ID,
+            username: username,
+            issue: issue,
+            created_at: now,
+            status: 'pending',
+            coins_charged: 50
+        });
+        await sb.from('transactions').insert({
+            user_id: USER_ID,
+            transaction_type: '🏥 Clinic Consultation',
+            amount: 50,
+            status: 'Completed',
+            timestamp: now
+        });
+        
+        showToast('✅ Consultation request sent! Doctor will respond within 24 hours.', 'success');
+        playSound('success');
+        document.getElementById('healthIssue').value = '';
+        load();
+    } catch (error) {
+        console.error('Clinic error:', error);
+        showToast('Network error: ' + error.message, 'error');
+    }
+}
+
+// ==================== LEADERBOARD ====================
+async function loadLeaderboard() {
+    try {
+        const { data: leaderboard } = await sb
+            .from('users')
+            .select('user_id, username, total_deposited')
+            .order('total_deposited', { ascending: false })
+            .limit(10);
+        
+        const leaderboardDiv = document.getElementById('leaderboard');
+        if (!leaderboard || leaderboard.length === 0) {
+            leaderboardDiv.innerHTML = '<div class="loading">No data yet</div>';
+            return;
+        }
+        
+        leaderboardDiv.innerHTML = leaderboard.map((u, idx) => `
+            <div class="transaction-item">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <span style="font-weight: bold;">${idx + 1}.</span> 
+                        <span>@${u.username || u.user_id.substring(0, 8)}</span>
+                    </div>
+                    <div><strong>${(u.total_deposited || 0).toLocaleString()} ETB</strong></div>
+                </div>
+            </div>
+        `).join('');
+    } catch (error) {
+        console.error('Leaderboard error:', error);
+    }
+}
+
+// ==================== FINANCIAL FUNCTIONS ====================
+async function buyCoins() {
+    if (isProcessing.buyCoins) return;
+    isProcessing.buyCoins = true;
+    try {
+        const amount = parseInt(document.getElementById('buyCoinsAmount').value);
+        if (!amount || amount < 50) { showToast('Minimum 50 ETB', 'error'); return; }
+        const { data: user } = await sb.from('users').select('balance, coin_balance').eq('user_id', USER_ID).single();
+        if ((user.balance || 0) < amount) { showToast(`Insufficient balance`, 'error'); return; }
+        const newBalance = (user.balance || 0) - amount;
+        const newCoins = (user.coin_balance || 0) + amount;
+        await sb.from('users').update({ balance: newBalance, coin_balance: newCoins }).eq('user_id', USER_ID);
+        await sb.from('transactions').insert({ user_id: USER_ID, transaction_type: '💱 Buy Coins', amount: amount, status: 'Completed', timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19) });
+        showToast(`Bought ${amount} coins!`, 'success');
+        playSound('coin');
+        closeModal('buyCoinsModal');
+        document.getElementById('buyCoinsAmount').value = '';
+        load();
+    } catch (err) { showToast('Error', 'error'); }
+    finally { isProcessing.buyCoins = false; }
+}
+
+async function exchangeCoins() {
+    if (isProcessing.exchangeCoins) return;
+    isProcessing.exchangeCoins = true;
+    try {
+        const { data: user } = await sb.from('users').select('coin_balance, bonus_balance').eq('user_id', USER_ID).single();
+        const today = new Date().toISOString().substring(0, 10);
+        const { data: exchangedToday } = await sb.from('daily_exchange').select('amount_exchanged').eq('user_id', USER_ID).eq('exchange_date', today);
+        const exchangedAmount = exchangedToday ? exchangedToday.reduce((s, r) => s + (r.amount_exchanged || 0), 0) : 0;
+        const maxExchange = Math.floor((user.coin_balance || 0) * 0.03);
+        const exchangeAmount = Math.max(0, maxExchange - exchangedAmount);
+        if (exchangeAmount <= 0) { showToast('Daily limit reached', 'error'); return; }
+        if ((user.coin_balance || 0) < exchangeAmount) { showToast('Insufficient coins', 'error'); return; }
+        const newCoins = (user.coin_balance || 0) - exchangeAmount;
+        const newBonus = (user.bonus_balance || 0) + exchangeAmount;
+        await sb.from('users').update({ coin_balance: newCoins, bonus_balance: newBonus }).eq('user_id', USER_ID);
+        await sb.from('daily_exchange').insert({ user_id: USER_ID, exchange_date: today, amount_exchanged: exchangeAmount });
+        await sb.from('transactions').insert({ user_id: USER_ID, transaction_type: '🔄 Exchange to Bonus', amount: exchangeAmount, status: 'Completed', timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19) });
+        showToast(`Exchanged ${exchangeAmount} coins → bonus`, 'success');
+        playSound('coin');
+        closeModal('exchangeModal');
+        load();
+    } catch (err) { showToast('Error', 'error'); }
+    finally { isProcessing.exchangeCoins = false; }
+}
+async function submitDeposit() {
+    if (isProcessing.deposit) return;
+    isProcessing.deposit = true;
+    try {
+        const amount = parseInt(document.getElementById('depositAmount').value);
+        const accountHolder = document.getElementById('accountHolder').value;
+        const transactionId = document.getElementById('transactionId').value;
+        const note = document.getElementById('depositNote').value;
+        if (!amount || amount < 1500) { showToast('Minimum deposit is 1500 ETB', 'error'); return; }
+        if (!accountHolder || !transactionId) { showToast('Account Holder and Transaction ID required', 'error'); return; }
+        const now = new Date().toISOString().replace('T', ' ').substring(0, 19);
+        const bankName = selectedPaymentMethod === 'telebirr' ? 'Telebirr' : 'Awash Bank';
+        await sb.from('pending_deposits').insert({
+            user_id: USER_ID, amount, bank_name: bankName, account_holder: accountHolder,
+            transaction_id: transactionId, note, request_time: now, status: 'pending'
+        });
+        showToast(`Deposit request submitted!`, 'success');
+        playSound('deposit');
+        closeModal('depositModal');
+        document.getElementById('depositAmount').value = '';
+        document.getElementById('accountHolder').value = '';
+        document.getElementById('transactionId').value = '';
+        document.getElementById('depositNote').value = '';
+    } catch (err) { showToast('Error', 'error'); }
+    finally { isProcessing.deposit = false; }
+}
+async function submitWithdraw() {
+    if (isProcessing.withdraw) return;
+    isProcessing.withdraw = true;
+    try {
+        const amount = parseInt(document.getElementById('withdrawAmount').value);
+        const accountHolder = document.getElementById('withdrawAccountHolder').value;
+        const bankAccount = document.getElementById('withdrawBankAccount').value;
+        const bankName = document.getElementById('withdrawBankName').value;
+        if (!amount || amount < 100) { showToast('Minimum 100 ETB', 'error'); return; }
+        if (!accountHolder || !bankAccount) { showToast('Account details required', 'error'); return; }
+        const { data: user } = await sb.from('users').select('bonus_balance, total_deposited, win_chance_plays, active_referrals, last_withdraw_date').eq('user_id', USER_ID).single();
+        const today = new Date().toISOString().substring(0, 10);
+        const { count: lotteryCount } = await sb.from('lottery_tickets').select('*', { count: 'exact', head: true }).eq('user_id', USER_ID).eq('status', 'active');
+        const depositOk = (user.total_deposited || 0) >= 1500;
+        const gameOk = (user.win_chance_plays || 0) >= 10;
+        const lotteryOk = (lotteryCount || 0) >= 3;
+        const referralOk = (user.active_referrals || 0) >= 3;
+        if (!(depositOk && gameOk && lotteryOk && referralOk)) { showToast('Complete Quad-Lock first', 'error'); return; }
+        if (user.last_withdraw_date === today) { showToast('Daily limit reached', 'error'); return; }
+        if ((user.bonus_balance || 0) < amount) { showToast('Insufficient bonus', 'error'); return; }
+        const tax = Math.floor(amount * 0.10);
+        const net = amount - tax;
+        const now = new Date().toISOString().replace('T', ' ').substring(0, 19);
+        await sb.from('users').update({ bonus_balance: (user.bonus_balance || 0) - amount, last_withdraw_date: today }).eq('user_id', USER_ID);
+        await sb.from('pending_withdrawals').insert({ user_id: USER_ID, amount, tax_amount: tax, net_amount: net, payment_info: `Bank: ${bankName}, Account: ${bankAccount}, Holder: ${accountHolder}`, request_time: now, status: 'pending' });
+        await sb.from('transactions').insert({ user_id: USER_ID, transaction_type: '📤 Withdrawal Request', amount: -amount, status: 'Pending', timestamp: now });
+        showToast(`Withdrawal request submitted! You'll receive: ${net} ETB`, 'success');
+        playSound('withdraw');
+        closeModal('withdrawModal');
+        document.getElementById('withdrawAmount').value = '';
+        document.getElementById('withdrawAccountHolder').value = '';
+        document.getElementById('withdrawBankAccount').value = '';
+        load();
+    } catch (err) { showToast('Error', 'error'); }
+    finally { isProcessing.withdraw = false; }
+}
+
+// ==================== REFERRAL ====================
+function copyReferral() {
+    const link = window.location.origin + window.location.pathname + '?ref=' + USER_ID;
+    navigator.clipboard.writeText(link).then(() => {
+        showToast('Referral link copied! Share with friends!', 'success');
+        playSound('click');
+    }).catch(() => {
+        showToast('Failed to copy link', 'error');
+    });
+}
+
+// ==================== TAB SWITCHING ====================
+document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+        const tabId = tab.getAttribute('data-tab');
+        const content = document.getElementById(tabId);
+        
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        tab.classList.add('active');
+        content.classList.add('active');
+        
+        if (tabId === 'games') {
+            createGameGrid();
+        } else if (tabId === 'market') {
+            load();
+        } else if (tabId === 'lottery') {
+            load();
+        } else if (tabId === 'profile') {
+            loadLeaderboard();
+        }
+    });
+});
+
+// ==================== SUB-TAB SWITCHING ====================
+document.querySelectorAll('.sub-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+        document.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.sub-tab-content').forEach(c => c.style.display = 'none');
+        tab.classList.add('active');
+        const subtabId = tab.getAttribute('data-subtab');
+        if (subtabId === 'deposit_withdraw') {
+            document.getElementById('depositWithdrawTransactions').style.display = 'block';
+        } else {
+            document.getElementById('otherTransactions').style.display = 'block';
+        }
+    });
+});
+
+// Initialize sound toggle
+const soundToggle = document.getElementById('soundToggle');
+if (soundToggle) {
+    if (soundEnabled) {
+        soundToggle.classList.add('active');
+    } else {
+        soundToggle.classList.remove('active');
+    }
+}
+
+// ==================== INITIALIZE ====================
+checkSession();
+setInterval(() => { if (USER_ID) load(); }, 30000);
+createGameGrid();  // visible after login
+
+// Update consultations display
+function updateConsultations(consultations) {
+    const consultationsDiv = document.getElementById('consultations');
+    if (!consultationsDiv) return;
+    if (!consultations || consultations.length === 0) {
+        consultationsDiv.innerHTML = '<div class="loading">No consultations yet</div>';
+        return;
+    }
+    
+    consultationsDiv.innerHTML = consultations.map(c => `
+        <div class="consultation-item">
+            <div><strong>📅 ${c.created_at?.substring(0, 10) || 'Unknown'}</strong></div>
+            <div>Status: <span class="badge">${c.status || 'pending'}</span></div>
+            <div style="font-size: 12px; margin-top: 5px;">Issue: ${c.issue?.substring(0, 100) || 'No issue'}</div>
+            ${c.admin_response ? `<div style="margin-top: 5px; color: #10b981;">✅ Response: ${c.admin_response.substring(0, 100)}</div>` : ''}
+        </div>
+    `).join('');
+}
+</script>
+</body>
+</html>
