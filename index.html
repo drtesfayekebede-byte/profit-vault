@@ -2851,9 +2851,9 @@ async function submitWithdraw() {
 
 // ==================== REFERRAL ====================
 function copyReferral() {
-    const link = window.location.origin + window.location.pathname + '?ref=' + USER_ID;
+    const link = window.location.origin + window.location.pathname;
     navigator.clipboard.writeText(link).then(() => {
-        showToast('Referral link copied! Share with friends!', 'success');
+        showToast('Referral link copied! Share with friends.', 'success');
         playSound('click');
     }).catch(() => {
         showToast('Failed to copy link', 'error');
