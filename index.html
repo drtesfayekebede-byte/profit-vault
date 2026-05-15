@@ -1839,7 +1839,7 @@ async function loadAdminPanel() {
     const { data: pendingDeposits } = await sb.from('pending_deposits').select('*').eq('status','pending').order('request_time',{ascending:false});
     const { data: pendingWithdrawals } = await sb.from('pending_withdrawals').select('*').eq('status','pending').order('request_time',{ascending:false});
     
-    // NEW: Fetch consultations HTML (await the function)
+    // Fetch consultations HTML
     const consultationsHtml = await renderConsultationsList();
     
     adminDiv.innerHTML = `
@@ -1849,6 +1849,14 @@ async function loadAdminPanel() {
         <div class="profile-item"><span>👥 Total Users</span><span>${totalUsers}</span></div></div>
         <div class="card"><h3>⏳ Pending Deposits</h3><div id="adminDepositsList">${renderPendingList(pendingDeposits,'deposit')}</div></div>
         <div class="card"><h3>🏥 Pending Consultations</h3><div id="adminConsultationsList">${consultationsHtml}</div></div>
+        <div class="card">
+            <h3>🎰 Lottery Pool Draws</h3>
+            <div id="lotteryDrawsAdmin">
+                <button class="btn btn-sm btn-info" onclick="drawLotteryWinner(1)">🎲 Draw Pool 1 Winner</button>
+                <button class="btn btn-sm btn-info" onclick="drawLotteryWinner(2)">🎲 Draw Pool 2 Winner</button>
+                <button class="btn btn-sm btn-info" onclick="drawLotteryWinner(3)">🎲 Draw Pool 3 Winner</button>
+            </div>
+        </div>
         <div class="card"><h3>⏳ Pending Withdrawals</h3><div id="adminWithdrawalsList">${renderPendingList(pendingWithdrawals,'withdraw')}</div></div>
     `;
 }
@@ -1859,7 +1867,16 @@ function renderPendingList(items, type) {
         <div class="transaction-item" style="margin-bottom:12px;">
             <div><strong>User ID:</strong> ${item.user_id}</div>
             <div><strong>Amount:</strong> ${item.amount} ETB</div>
-            ${type==='withdraw'?`<div><strong>Net after tax:</strong> ${item.net_amount} ETB</div>`:''}
+            ${type === 'deposit' ? `
+                <div><strong>Bank:</strong> ${item.bank_name || 'N/A'}</div>
+                <div><strong>Account Holder:</strong> ${item.account_holder || 'N/A'}</div>
+                <div><strong>Transaction ID:</strong> ${item.transaction_id || 'N/A'}</div>
+                <div><strong>Note:</strong> ${item.note || 'N/A'}</div>
+            ` : `
+                <div><strong>Payment Info:</strong> ${item.payment_info || 'N/A'}</div>
+                <div><strong>Tax:</strong> ${item.tax_amount || 0} ETB</div>
+                <div><strong>Net Amount:</strong> ${item.net_amount || item.amount} ETB</div>
+            `}
             <div><strong>Request Time:</strong> ${item.request_time}</div>
             <div style="margin-top:8px;">
                 <button class="btn btn-sm btn-success" onclick="handleAdminAction('${type}','approve',${item.id},${item.amount},'${item.user_id}')">✅ Approve</button>
@@ -1912,7 +1929,37 @@ async function respondToConsultation(consultationId) {
         showToast('Failed to send response', 'error');
     }
 }
-
+async function drawLotteryWinner(poolId) {
+    if (!confirm(`Draw winner for Pool ${poolId}? This will select a random active ticket and award the prize.`)) return;
+    try {
+        const { data: tickets, error } = await sb
+            .from('lottery_tickets')
+            .select('*')
+            .eq('pool_id', poolId)
+            .eq('status', 'active');
+        if (error || !tickets || tickets.length === 0) {
+            showToast(`No active tickets in Pool ${poolId}`, 'error');
+            return;
+        }
+        const winner = tickets[Math.floor(Math.random() * tickets.length)];
+        const prizeAmount = {1:500, 2:1000, 3:2000}[poolId];
+        const { data: user } = await sb.from('users').select('coin_balance').eq('user_id', winner.user_id).single();
+        const newCoins = (user.coin_balance || 0) + prizeAmount;
+        await sb.from('users').update({ coin_balance: newCoins }).eq('user_id', winner.user_id);
+        await sb.from('lottery_tickets').update({ status: 'used' }).eq('pool_id', poolId).eq('status', 'active');
+        await sb.from('lottery_draws').insert({
+            pool_id: poolId,
+            draw_time: new Date().toISOString().replace('T', ' ').substring(0,19),
+            winner_id: winner.user_id,
+            winner_serial: winner.serial_number,
+            prize_amount: prizeAmount,
+            total_tickets: tickets.length,
+            round_number: 1
+        });
+        showToast(`Pool ${poolId} winner: ${winner.username || winner.user_id} won ${prizeAmount} coins!`, 'success');
+        load();
+    } catch(err) { console.error(err); showToast('Draw failed', 'error'); }
+}
 async function handleAdminAction(type, action, id, amount, userId) {
     if (!confirm(`${action.toUpperCase()} this ${type} request?`)) return;
     try {
