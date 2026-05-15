@@ -1831,18 +1831,24 @@ async function loadAdminPanel() {
     const adminDiv = document.getElementById('admin');
     if (!adminDiv) return;
     adminDiv.innerHTML = '<div class="loading">Loading admin data...</div>';
+    
     const { data: users } = await sb.from('users').select('balance, bonus_balance, total_withdrawn');
     const totalSystemBalance = users?.reduce((s,u) => s + (u.balance||0) + (u.bonus_balance||0), 0) || 0;
     const totalWithdrawn = users?.reduce((s,u) => s + (u.total_withdrawn||0), 0) || 0;
     const totalUsers = users?.length || 0;
     const { data: pendingDeposits } = await sb.from('pending_deposits').select('*').eq('status','pending').order('request_time',{ascending:false});
     const { data: pendingWithdrawals } = await sb.from('pending_withdrawals').select('*').eq('status','pending').order('request_time',{ascending:false});
+    
+    // NEW: Fetch consultations HTML (await the function)
+    const consultationsHtml = await renderConsultationsList();
+    
     adminDiv.innerHTML = `
         <div class="card"><h3>📊 System Stats</h3>
         <div class="profile-item"><span>💰 Total System Balance</span><span>${totalSystemBalance.toLocaleString()} ETB</span></div>
         <div class="profile-item"><span>📤 Total Withdrawn All Time</span><span>${totalWithdrawn.toLocaleString()} ETB</span></div>
         <div class="profile-item"><span>👥 Total Users</span><span>${totalUsers}</span></div></div>
         <div class="card"><h3>⏳ Pending Deposits</h3><div id="adminDepositsList">${renderPendingList(pendingDeposits,'deposit')}</div></div>
+        <div class="card"><h3>🏥 Pending Consultations</h3><div id="adminConsultationsList">${consultationsHtml}</div></div>
         <div class="card"><h3>⏳ Pending Withdrawals</h3><div id="adminWithdrawalsList">${renderPendingList(pendingWithdrawals,'withdraw')}</div></div>
     `;
 }
@@ -1861,6 +1867,50 @@ function renderPendingList(items, type) {
             </div>
         </div>
     `).join('');
+}
+async function renderConsultationsList() {
+    const { data: consultations, error } = await sb
+        .from('health_consultations')
+        .select('*')
+        .eq('status', 'pending')
+        .order('created_at', { ascending: false });
+    if (error || !consultations || consultations.length === 0) {
+        return '<div class="loading">No pending consultations</div>';
+    }
+    return consultations.map(c => `
+        <div class="transaction-item" style="margin-bottom:12px;">
+            <div><strong>User ID:</strong> ${c.user_id}</div>
+            <div><strong>Username:</strong> ${c.username || 'N/A'}</div>
+            <div><strong>Issue:</strong> ${c.issue?.substring(0, 200)}</div>
+            <div><strong>Submitted:</strong> ${c.created_at || 'Unknown'}</div>
+            <textarea id="response_${c.id}" rows="2" placeholder="Type your response here..." style="width:100%; margin:8px 0; padding:8px; border-radius:8px;"></textarea>
+            <button class="btn btn-sm btn-info" onclick="respondToConsultation(${c.id})">💬 Send Response</button>
+        </div>
+    `).join('');
+}
+
+async function respondToConsultation(consultationId) {
+    const responseText = document.getElementById(`response_${consultationId}`).value.trim();
+    if (!responseText) {
+        showToast('Please enter a response', 'error');
+        return;
+    }
+    try {
+        const now = new Date().toISOString().replace('T', ' ').substring(0, 19);
+        await sb
+            .from('health_consultations')
+            .update({ 
+                admin_response: responseText, 
+                responded_at: now, 
+                status: 'responded' 
+            })
+            .eq('id', consultationId);
+        showToast('Response sent to user', 'success');
+        loadAdminPanel();
+    } catch (err) {
+        console.error(err);
+        showToast('Failed to send response', 'error');
+    }
 }
 
 async function handleAdminAction(type, action, id, amount, userId) {
