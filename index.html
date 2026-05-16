@@ -1503,7 +1503,6 @@ async function checkSession() {
         localStorage.setItem('profitvault_user_id', USER_ID);
         const { data: userData } = await sb.from('users').select('is_admin').eq('user_id', USER_ID).single();
         IS_ADMIN = userData?.is_admin === true;
-        document.getElementById('contactUserId').textContent = USER_ID;
         load();
         if (IS_ADMIN) showAdminTab();
     } else {
