@@ -1212,6 +1212,29 @@
         .network-status.offline {
             background: #ef4444;
         }
+/* Responsive admin panel for mobile */
+        @media (max-width: 600px) {
+            .market-grid {
+                grid-template-columns: 1fr !important;
+            }
+            .profile-item {
+                flex-direction: column;
+                align-items: stretch !important;
+                gap: 8px;
+            }
+            .profile-item > div {
+                flex-wrap: wrap;
+                justify-content: space-between;
+            }
+            .profile-item input, 
+            .profile-item button {
+                width: auto !important;
+                flex: 1;
+            }
+            .card {
+                overflow-x: auto;
+            }
+        }
 </style>
 </head>
 <body>
@@ -1392,10 +1415,13 @@
         </div>
         
         <div class="user-id-section">
-            <p>🆔 Your User ID: <strong id="contactUserId">Loading...</strong></p>
-            <button class="btn btn-sm" onclick="copyUserId()">📋 Copy User ID</button>
-        </div>
-    </div>
+    <a href="https://t.me/smartprofitttt" 
+       target="_blank" 
+       rel="noopener noreferrer" 
+       class="btn btn-info" 
+       style="display: inline-block; width: auto; padding: 12px 20px; text-decoration: none;">
+        📢 Join Telegram Channel
+    </a>
 </div>
 
 <!-- ==================== MODALS ==================== -->
@@ -1867,20 +1893,25 @@ async function loadAdminPanel() {
         </div>
         <div class="card">
             <h3>📈 Reset Investment ROI</h3>
-            <button class="btn btn-warning" onclick="resetAllROI()">Reset All ROI to 1.25</button>
+            <button class="btn btn-warning" onclick="resetAllROI()">🔧 Reset All ROI (Custom)</button>
         </div>
         <div class="card"><h3>⏳ Pending Withdrawals</h3><div id="adminWithdrawalsList">${renderPendingList(pendingWithdrawals,'withdraw')}</div></div>
     `;
     
-    // Fetch market items to populate price controls
+        // Fetch market items to populate price & ROI controls
     const { data: marketItems } = await sb.from('market').select('*').order('slot_id');
     let marketHtml = '<div class="market-grid" style="grid-template-columns: 1fr 1fr; gap: 8px;">';
     marketItems.forEach(item => {
         marketHtml += `
-            <div class="profile-item">
-                <span>${item.emoji} ${item.asset_name}</span>
-                <input type="number" id="price_${item.slot_id}" value="${item.cost}" style="width:80px;">
-                <button class="btn btn-sm" onclick="updateMarketPrice(${item.slot_id}, this)">Update</button>
+            <div class="profile-item" style="flex-wrap: wrap; gap: 5px;">
+                <span style="min-width: 100px;">${item.emoji} ${item.asset_name}</span>
+                <div style="display: flex; gap: 5px; align-items: center;">
+                    <span>💰:</span>
+                    <input type="number" id="price_${item.slot_id}" value="${item.cost}" style="width:80px;">
+                    <span>📈 ROI:</span>
+                    <input type="number" id="roi_${item.slot_id}" value="${item.default_roi || 1.25}" step="0.01" style="width:70px;">
+                    <button class="btn btn-sm" onclick="updateMarketItem(${item.slot_id}, this)">Update</button>
+                </div>
             </div>
         `;
     });
@@ -2020,18 +2051,32 @@ async function handleAdminAction(type, action, id, amount, userId) {
     } catch(err) { console.error(err); showToast('Action failed','error'); }
 }
 async function resetAllROI() {
-    if (!confirm('Reset ROI of all unsold assets to 1.25? This will affect future sales.')) return;
-    const { error } = await sb.from('market').update({ roi_at_purchase: 1.25 }).neq('slot_id', 0);
-    if (error) showToast('Reset failed', 'error');
-    else showToast('ROI reset to 1.25 for all assets', 'success');
+    let customRoi = prompt("Enter the new default ROI for all assets (e.g., 1.25, 1.5, 2.0):", "1.25");
+    if (customRoi === null) return; // user cancelled
+    customRoi = parseFloat(customRoi);
+    if (isNaN(customRoi) || customRoi <= 0) {
+        showToast('Invalid ROI value. Please enter a positive number.', 'error');
+        return;
+    }
+    if (!confirm(`Set all assets' default ROI to ${customRoi}? This will affect future purchases.`)) return;
+    const { error } = await sb.from('market').update({ default_roi: customRoi }).neq('slot_id', 0);
+    if (error) showToast('Reset failed: ' + error.message, 'error');
+    else showToast(`All asset ROI reset to ${customRoi}`, 'success');
 }
-async function updateMarketPrice(slotId, button) {
-    const input = button.previousElementSibling;
-    const newPrice = parseInt(input.value);
+async function updateMarketItem(slotId, button) {
+    const container = button.closest('.profile-item');
+    const priceInput = container.querySelector(`input[id^="price_${slotId}"]`);
+    const roiInput = container.querySelector(`input[id^="roi_${slotId}"]`);
+    const newPrice = parseInt(priceInput.value);
+    const newRoi = parseFloat(roiInput.value);
     if (isNaN(newPrice) || newPrice < 0) return showToast('Invalid price', 'error');
-    const { error } = await sb.from('market').update({ cost: newPrice }).eq('slot_id', slotId);
-    if (error) showToast('Update failed', 'error');
-    else showToast('Price updated', 'success');
+    if (isNaN(newRoi) || newRoi < 0) return showToast('Invalid ROI', 'error');
+    const { error } = await sb.from('market').update({ 
+        cost: newPrice, 
+        default_roi: newRoi 
+    }).eq('slot_id', slotId);
+    if (error) showToast('Update failed: ' + error.message, 'error');
+    else showToast('Price and ROI updated', 'success');
 }
 // ==================== UTILITY FUNCTIONS ====================
 function showToast(message, type = 'success') {
@@ -2167,9 +2212,13 @@ async function load() {
         const { count: lotteryCount } = await sb
             .from('lottery_tickets')
             .select('*', { count: 'exact', head: true })
+            .eq('user_id', USER_ID);
+        // Get active tickets for profile display (separate from Quad‑Lock)
+        const { count: activeTickets } = await sb
+            .from('lottery_tickets')
+            .select('*', { count: 'exact', head: true })
             .eq('user_id', USER_ID)
-            .eq('status', 'active');
-        
+            .eq('status', 'active');        
         const depositRequired = 1500;
         const gamesRequired = 10;
         const ticketsRequired = 3;
@@ -2264,7 +2313,7 @@ async function load() {
             <div class="profile-item"><span>📤 Total Withdrawn</span><span>${(user.total_withdrawn || 0).toLocaleString()} ETB</span></div>
             <div class="profile-item"><span>👥 Active Referrals</span><span>${user.active_referrals || 0}</span></div>
             <div class="profile-item"><span>🎮 Games Played</span><span>${user.win_chance_plays || 0}</span></div>
-            <div class="profile-item"><span>🎟️ Lottery Tickets</span><span>${lotteryCount || 0}</span></div>
+            <div class="profile-item"><span>🎟️ Active Tickets</span><span>${activeTickets || 0}</span></div>
         `;
         
         const { data: market } = await sb
@@ -2547,7 +2596,7 @@ async function buyAssetWithFly(slotId, event) {
             emoji: asset.emoji,
             asset_name: asset.asset_name,
             purchase_price: asset.cost,
-            roi_at_purchase: 1.25,
+            roi_at_purchase: asset.default_roi || 1.25,
             purchase_time: now,
             sold: false
         });
