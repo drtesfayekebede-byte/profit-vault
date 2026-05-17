@@ -2597,6 +2597,8 @@ function updateMarket(market, assets) {
         const isOwned = ownedSlots.includes(item.slot_id);
         const immediateAllowed = item.immediate_purchase_allowed;
         const adjustmentOpen = item.adjustment_window_open;
+        const roi = item.default_roi || 1.25;
+        const roiPercent = ((roi - 1) * 100).toFixed(0);
         
         return `
             <div class="market-item ${isOwned ? 'owned' : ''}" data-slot="${item.slot_id}" onclick="${!isOwned ? `buyAssetWithFly(${item.slot_id}, event)` : ''}">
@@ -2605,6 +2607,7 @@ function updateMarket(market, assets) {
                 <div class="market-emoji">${item.emoji}</div>
                 <div class="market-name">${item.asset_name}</div>
                 <div class="market-price">${item.cost.toLocaleString()} 🪙</div>
+                <div class="market-roi" style="font-size: 11px; color: #fbbf24; margin-top: 4px;">📈 ROI: ${roi}x (${roiPercent}%)</div>
                 ${isOwned ? '<div style="font-size: 10px; margin-top: 5px;">✅ Owned</div>' : ''}
             </div>
         `;
