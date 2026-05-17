@@ -672,7 +672,43 @@
             grid-template-columns: repeat(4, 1fr);
             gap: 12px;
         }
-
+.admin-market-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+.market-control-item {
+    flex-wrap: wrap;
+    gap: 5px;
+}
+.market-controls {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.market-price-input, .market-roi-input {
+    width: 80px;
+}
+.market-update-btn {
+    width: auto;
+}
+@media (max-width: 600px) {
+    .admin-market-grid {
+        grid-template-columns: 1fr !important;
+    }
+    .market-price-input, .market-roi-input {
+        width: 100% !important;
+        flex: 1;
+    }
+    .market-update-btn {
+        width: 100% !important;
+        margin-top: 5px;
+    }
+    .market-controls {
+        width: 100%;
+    }
+}
         .market-item {
             background: linear-gradient(145deg, #1e293b, #0f172a);
             border-radius: 16px;
@@ -1344,7 +1380,9 @@
         <h3>👤 Profile (መገለጫ)</h3>
         <div id="profileInfo"></div>
         <button class="btn" onclick="copyReferral()">📤 Copy Referral Link</button>
-        
+
+<button class="btn btn-danger" onclick="logout()" style="margin-top: 10px;">🚪 Logout</button> 
+       
         <!-- Sound Toggle -->
         <div class="sound-toggle">
             <span>🔊 Sound Effects</span>
@@ -1603,6 +1641,18 @@ function closeAuthModal() {
     setTimeout(() => {
         if (!USER_ID) showAuthModal();
     }, 500);
+}
+// ========== ADD LOGOUT FUNCTION HERE ==========
+async function logout() {
+    const { error } = await sb.auth.signOut();
+    if (error) {
+        showToast('Logout failed: ' + error.message, 'error');
+    } else {
+        localStorage.removeItem('profitvault_user_id');
+        USER_ID = null;
+        IS_ADMIN = false;
+        window.location.reload();
+    }
 }
 let selectedPaymentMethod = "telebirr";
 let IS_ADMIN = false;
@@ -1871,25 +1921,35 @@ async function loadAdminPanel() {
             <h3>📈 Reset Investment ROI</h3>
             <button class="btn btn-warning" onclick="resetAllROI()">🔧 Reset All ROI (Custom)</button>
         </div>
+        <div class="card">
+            <h3>👥 User Management</h3>
+            <input type="text" id="adminSearchUser" placeholder="User ID or username">
+            <button class="btn btn-sm" onclick="searchUser()">Search</button>
+            <div id="userManageResult"></div>
+        </div>
         <div class="card"><h3>⏳ Pending Withdrawals</h3><div id="adminWithdrawalsList">${renderPendingList(pendingWithdrawals,'withdraw')}</div></div>
     `;
     
         // Fetch market items to populate price & ROI controls
     const { data: marketItems } = await sb.from('market').select('*').order('slot_id');
-    let marketHtml = '<div class="market-grid" style="grid-template-columns: 1fr 1fr; gap: 8px;">';
+    let marketHtml = '<div class="admin-market-grid" style="grid-template-columns: 1fr 1fr; gap: 8px;">';
     marketItems.forEach(item => {
         marketHtml += `
-            <div class="profile-item" style="flex-wrap: wrap; gap: 5px;">
-                <span style="min-width: 100px;">${item.emoji} ${item.asset_name}</span>
-                <div style="display: flex; gap: 5px; align-items: center;">
-                    <span>💰:</span>
-                    <input type="number" id="price_${item.slot_id}" value="${item.cost}" style="width:80px;">
-                    <span>📈 ROI:</span>
-                    <input type="number" id="roi_${item.slot_id}" value="${item.default_roi || 1.25}" step="0.01" style="width:70px;">
-                    <button class="btn btn-sm" onclick="updateMarketItem(${item.slot_id}, this)">Update</button>
-                </div>
-            </div>
-        `;
+    <div class="profile-item market-control-item">
+        <span class="market-item-name">${item.emoji} ${item.asset_name}</span>
+        <div class="market-controls">
+            <span>💰:</span>
+            <input type="number" id="price_${item.slot_id}" value="${item.cost}" class="market-price-input">
+            <span>📈 ROI:</span>
+            <input type="number" id="roi_${item.slot_id}" value="${item.default_roi || 1.25}" step="0.01" class="market-roi-input">
+            <span>🏷️:</span>
+<input type="text" id="name_${item.slot_id}" value="${item.asset_name}" style="width:100px;">
+<span>😀:</span>
+<input type="text" id="emoji_${item.slot_id}" value="${item.emoji}" style="width:60px;">
+<button class="btn btn-sm market-update-btn" onclick="updateMarketItem(${item.slot_id}, this)">Update</button>
+        </div>
+    </div>
+`;
     });
     marketHtml += '</div>';
     adminDiv.innerHTML = adminDiv.innerHTML.replace('<div id="marketPriceControls"></div>', marketHtml);
@@ -2043,16 +2103,71 @@ async function updateMarketItem(slotId, button) {
     const container = button.closest('.profile-item');
     const priceInput = container.querySelector(`input[id^="price_${slotId}"]`);
     const roiInput = container.querySelector(`input[id^="roi_${slotId}"]`);
+    const nameInput = container.querySelector(`input[id^="name_${slotId}"]`);
+    const emojiInput = container.querySelector(`input[id^="emoji_${slotId}"]`);
     const newPrice = parseInt(priceInput.value);
     const newRoi = parseFloat(roiInput.value);
+    const newName = nameInput ? nameInput.value : null;
+    const newEmoji = emojiInput ? emojiInput.value : null;
     if (isNaN(newPrice) || newPrice < 0) return showToast('Invalid price', 'error');
     if (isNaN(newRoi) || newRoi < 0) return showToast('Invalid ROI', 'error');
-    const { error } = await sb.from('market').update({ 
-        cost: newPrice, 
-        default_roi: newRoi 
-    }).eq('slot_id', slotId);
+    const updateData = { cost: newPrice, default_roi: newRoi };
+    if (newName) updateData.asset_name = newName;
+    if (newEmoji) updateData.emoji = newEmoji;
+    const { error } = await sb.from('market').update(updateData).eq('slot_id', slotId);
     if (error) showToast('Update failed: ' + error.message, 'error');
-    else showToast('Price and ROI updated', 'success');
+    else showToast('Price, ROI, name, emoji updated', 'success');
+}
+async function searchUser() {
+    const query = document.getElementById('adminSearchUser').value.trim();
+    if (!query) { showToast('Enter User ID or username', 'error'); return; }
+    const { data, error } = await sb.from('users')
+        .select('user_id, username, balance, bonus_balance, coin_balance, is_admin')
+        .or(`user_id.eq.${query},username.ilike.%${query}%`);
+    if (error) { showToast('Search failed', 'error'); return; }
+    if (!data || data.length === 0) { showToast('User not found', 'error'); return; }
+    let html = '<div class="profile-item">Found:</div>';
+    data.forEach(u => {
+        html += `
+            <div class="profile-item" style="flex-direction:column; align-items:stretch;">
+                <div><strong>ID:</strong> ${u.user_id}</div>
+                <div><strong>Username:</strong> ${u.username}</div>
+                <div><strong>Balance:</strong> ${u.balance} ETB</div>
+                <div><strong>Bonus:</strong> ${u.bonus_balance} ETB</div>
+                <div><strong>Coins:</strong> ${u.coin_balance}</div>
+                <div><strong>Admin:</strong> ${u.is_admin ? 'Yes' : 'No'}</div>
+                <div style="display:flex; gap:5px; margin-top:5px;">
+                    <input type="number" id="adjust_${u.user_id}" placeholder="Amount" style="width:100px;">
+                    <select id="adjust_type_${u.user_id}">
+                        <option value="balance">Balance</option>
+                        <option value="bonus">Bonus</option>
+                        <option value="coins">Coins</option>
+                    </select>
+                    <button class="btn btn-sm" onclick="adjustUserBalance('${u.user_id}')">Adjust</button>
+                    <button class="btn btn-sm btn-danger" onclick="banUser('${u.user_id}')">Ban</button>
+                </div>
+            </div>
+        `;
+    });
+    document.getElementById('userManageResult').innerHTML = html;
+}
+
+async function adjustUserBalance(userId) {
+    const amount = parseInt(document.getElementById(`adjust_${userId}`).value);
+    if (isNaN(amount)) { showToast('Enter a number', 'error'); return; }
+    const type = document.getElementById(`adjust_type_${userId}`).value;
+    const { data: user } = await sb.from('users').select(type).eq('user_id', userId).single();
+    const newValue = (user[type] || 0) + amount;
+    const { error } = await sb.from('users').update({ [type]: newValue }).eq('user_id', userId);
+    if (error) showToast('Adjust failed', 'error');
+    else showToast(`${type} updated by ${amount}`, 'success');
+}
+
+async function banUser(userId) {
+    if (!confirm(`Ban user ${userId}?`)) return;
+    const { error } = await sb.from('banned_users').insert({ user_id: userId, banned_at: new Date().toISOString(), banned_by: USER_ID });
+    if (error) showToast('Ban failed', 'error');
+    else showToast('User banned', 'success');
 }
 // ==================== UTILITY FUNCTIONS ====================
 function showToast(message, type = 'success') {
@@ -2127,16 +2242,6 @@ function contactAdmin(method) {
         window.location.href = 'tel:+251935983470';
     }
     playSound('click');
-}
-
-function copyUserId() {
-    const userId = document.getElementById('contactUserId').innerText;
-    navigator.clipboard.writeText(userId).then(() => {
-        showToast('✅ User ID copied!', 'success');
-        playSound('click');
-    }).catch(() => {
-        showToast('Failed to copy', 'error');
-    });
 }
 
 // ==================== MAIN LOAD FUNCTION ====================
@@ -2596,10 +2701,16 @@ async function buyAssetWithFly(slotId, event) {
 
 async function sellAssetWithFly(assetId, payout, event) {
     if (isProcessing.sellAsset) return;
-    if (!confirm(`Sell this asset for ${payout.toLocaleString()} coins?`)) return;
+    const button = event.currentTarget;
+    button.disabled = true;
+    button.style.opacity = '0.6';
+    if (!confirm(`Sell this asset for ${payout.toLocaleString()} coins?`)) {
+        button.disabled = false;
+        button.style.opacity = '1';
+        return;
+    }
     isProcessing.sellAsset = true;
     try {
-        const button = event.currentTarget;
         const rect = button.getBoundingClientRect();
         const startX = rect.left + rect.width / 2;
         const startY = rect.top + rect.height / 2;
@@ -2607,13 +2718,24 @@ async function sellAssetWithFly(assetId, payout, event) {
         const newCoins = (user.coin_balance || 0) + payout;
         await sb.from('users').update({ coin_balance: newCoins }).eq('user_id', USER_ID);
         await sb.from('user_assets').update({ sold: true }).eq('id', assetId);
-        await sb.from('transactions').insert({ user_id: USER_ID, transaction_type: '💵 Sold Asset', amount: payout, status: 'Completed', timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19) });
+        await sb.from('transactions').insert({
+            user_id: USER_ID,
+            transaction_type: '💵 Sold Asset',
+            amount: payout,
+            status: 'Completed',
+            timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19)
+        });
         flyCoinToBalance(startX, startY, payout, true);
         showToast(`Sold for ${payout} coins!`, 'success');
         playSound('coin');
         load();
-    } catch (err) { showToast('Error', 'error'); }
-    finally { isProcessing.sellAsset = false; }
+    } catch (err) {
+        showToast('Error', 'error');
+    } finally {
+        isProcessing.sellAsset = false;
+        button.disabled = false;
+        button.style.opacity = '1';
+    }
 }
 
 // ==================== NEON CYBER 3D GAME FUNCTIONS ====================
