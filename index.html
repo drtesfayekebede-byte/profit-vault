@@ -1944,7 +1944,22 @@ async function loadAdminPanel() {
         </div>
         <div class="card"><h3>⏳ Pending Withdrawals</h3><div id="adminWithdrawalsList">${renderPendingList(pendingWithdrawals,'withdraw')}</div></div>
     `;
-    
+     // Populate admin cards list
+    const { data: adminCards } = await sb.from('global_cards').select('*').order('position');
+    if (adminCards) {
+        let cardsHtml = '';
+        for (const card of adminCards) {
+            cardsHtml += `
+                <div class="profile-item" style="margin-bottom: 8px;">
+                    <div><strong>${card.card_cost} ETB</strong> (${card.hidden_numbers.length} numbers left)</div>
+                    <div>
+                        <button class="btn btn-sm" onclick="editCardDialog(${card.id}, ${card.card_cost}, ${JSON.stringify(card.hidden_numbers)})">✏️ Edit</button>
+                    </div>
+                </div>
+            `;
+        }
+        adminDiv.innerHTML = adminDiv.innerHTML.replace('<div id="adminCardsList"></div>', `<div>${cardsHtml}</div>`);
+    }   
         // Fetch market items to populate price & ROI controls
     const { data: marketItems } = await sb.from('market').select('*').order('slot_id');
     let marketHtml = '<div class="admin-market-grid" style="grid-template-columns: 1fr 1fr; gap: 8px;">';
@@ -1969,22 +1984,7 @@ async function loadAdminPanel() {
     marketHtml += '</div>';
     adminDiv.innerHTML = adminDiv.innerHTML.replace('<div id="marketPriceControls"></div>', marketHtml);
 }
-    // Populate admin cards list
-    const { data: adminCards } = await sb.from('global_cards').select('*').order('position');
-    if (adminCards) {
-        let cardsHtml = '';
-        for (const card of adminCards) {
-            cardsHtml += `
-                <div class="profile-item" style="margin-bottom: 8px;">
-                    <div><strong>${card.card_cost} ETB</strong> (${card.hidden_numbers.length} numbers left)</div>
-                    <div>
-                        <button class="btn btn-sm" onclick="editCardDialog(${card.id}, ${card.card_cost}, ${JSON.stringify(card.hidden_numbers)})">✏️ Edit</button>
-                    </div>
-                </div>
-            `;
-        }
-        adminDiv.innerHTML = adminDiv.innerHTML.replace('<div id="adminCardsList"></div>', `<div>${cardsHtml}</div>`);
-    }
+    
 function renderPendingList(items, type) {
     if (!items || items.length===0) return '<div class="loading">No pending requests</div>';
     return items.map(item => `
