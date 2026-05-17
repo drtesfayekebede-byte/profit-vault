@@ -1290,6 +1290,7 @@
     <button class="tab active" data-tab="dashboard">📊 Dashboard</button>
     <button class="tab" data-tab="market">🛒 Market</button>
     <button class="tab" data-tab="games">🎮 Games</button>
+<button class="tab" data-tab="cards">🃏 Airtime Cards</button>
     <button class="tab" data-tab="lottery">🎟️ Lottery</button>
     <button class="tab" data-tab="clinic">🏥 Clinic</button>
     <button class="tab" data-tab="profile">👤 Profile</button>
@@ -1344,7 +1345,14 @@
         <div id="gameResult"></div>
     </div>
 </div>
-
+<!-- Airtime Cards Tab -->
+<div id="cards" class="tab-content">
+    <div class="card">
+        <h3>🃏 Airtime Cards</h3>
+        <p>Click a card to buy airtime. The hidden number will be revealed once and stored in your transaction history.</p>
+        <div id="cardsGrid" style="display: flex; flex-direction: column; gap: 12px;"></div>
+    </div>
+</div>
 <!-- Lottery Tab -->
 <div id="lottery" class="tab-content">
     <div class="card">
@@ -1927,6 +1935,13 @@ async function loadAdminPanel() {
             <button class="btn btn-sm" onclick="searchUser()">Search</button>
             <div id="userManageResult"></div>
         </div>
+        <div class="card">
+            <h3>🃏 Airtime Cards Admin</h3>
+            <div id="adminCardsList"></div>
+            <button class="btn btn-sm btn-info" onclick="adminShuffleCardsOrder()">🎲 Shuffle Display Order</button>
+            <button class="btn btn-sm" onclick="loadAdminPanel()">⟳ Refresh</button>
+            <p style="font-size: 12px; margin-top: 8px;">Click "Edit" to change cost and hidden numbers list.</p>
+        </div>
         <div class="card"><h3>⏳ Pending Withdrawals</h3><div id="adminWithdrawalsList">${renderPendingList(pendingWithdrawals,'withdraw')}</div></div>
     `;
     
@@ -1954,7 +1969,22 @@ async function loadAdminPanel() {
     marketHtml += '</div>';
     adminDiv.innerHTML = adminDiv.innerHTML.replace('<div id="marketPriceControls"></div>', marketHtml);
 }
-
+    // Populate admin cards list
+    const { data: adminCards } = await sb.from('global_cards').select('*').order('position');
+    if (adminCards) {
+        let cardsHtml = '';
+        for (const card of adminCards) {
+            cardsHtml += `
+                <div class="profile-item" style="margin-bottom: 8px;">
+                    <div><strong>${card.card_cost} ETB</strong> (${card.hidden_numbers.length} numbers left)</div>
+                    <div>
+                        <button class="btn btn-sm" onclick="editCardDialog(${card.id}, ${card.card_cost}, ${JSON.stringify(card.hidden_numbers)})">✏️ Edit</button>
+                    </div>
+                </div>
+            `;
+        }
+        adminDiv.innerHTML = adminDiv.innerHTML.replace('<div id="adminCardsList"></div>', `<div>${cardsHtml}</div>`);
+    }
 function renderPendingList(items, type) {
     if (!items || items.length===0) return '<div class="loading">No pending requests</div>';
     return items.map(item => `
@@ -2168,6 +2198,116 @@ async function banUser(userId) {
     const { error } = await sb.from('banned_users').insert({ user_id: userId, banned_at: new Date().toISOString(), banned_by: USER_ID });
     if (error) showToast('Ban failed', 'error');
     else showToast('User banned', 'success');
+}
+async function loadCards() {
+    const { data: cards, error } = await sb
+        .from('global_cards')
+        .select('*')
+        .order('position', { ascending: true });
+    if (error) return;
+    const grid = document.getElementById('cardsGrid');
+    if (!grid) return;
+    let html = '';
+    for (const card of cards) {
+        const hasNumbers = card.hidden_numbers && card.hidden_numbers.length > 0;
+        const display = hasNumbers ? '????' : 'Sold Out';
+        const disabled = !hasNumbers;
+        html += `
+            <div class="market-item ${disabled ? 'owned' : ''}" data-card-id="${card.id}" onclick="${!disabled ? `buyGlobalCard(${card.id}, ${card.card_cost})` : ''}">
+                <div class="market-emoji">🎫</div>
+                <div class="market-name">Airtime - ${card.card_cost} ETB</div>
+                <div class="market-price">Cost: ${card.card_cost} ETB</div>
+                <div class="market-number" style="font-size: 12px;">🔢 ${display}</div>
+                ${disabled ? '<div style="margin-top:5px;">❌ Sold Out</div>' : '<div style="margin-top:5px;">✅ Available</div>'}
+            </div>
+        `;
+    }
+    grid.innerHTML = html;
+}
+async function buyGlobalCard(cardId, cost) {
+    const { data: card, error } = await sb
+        .from('global_cards')
+        .select('hidden_numbers')
+        .eq('id', cardId)
+        .single();
+    if (error || !card.hidden_numbers || card.hidden_numbers.length === 0) {
+        showToast('This card is sold out!', 'error');
+        loadCards();
+        return;
+    }
+    const { data: user } = await sb.from('users').select('balance').eq('user_id', USER_ID).single();
+    if ((user.balance || 0) < cost) {
+        showToast(`Insufficient balance. Need ${cost} ETB`, 'error');
+        return;
+    }
+    const revealedNumber = card.hidden_numbers[0];
+    const newList = card.hidden_numbers.slice(1);
+    const newBalance = (user.balance || 0) - cost;
+    const { error: updateError } = await sb
+        .from('users')
+        .update({ balance: newBalance })
+        .eq('user_id', USER_ID);
+    if (updateError) { showToast('Purchase failed', 'error'); return; }
+    const { error: cardError } = await sb
+        .from('global_cards')
+        .update({ hidden_numbers: newList })
+        .eq('id', cardId);
+    if (cardError) { showToast('Failed to update card', 'error'); return; }
+    await sb.from('transactions').insert({
+        user_id: USER_ID,
+        transaction_type: `🃏 Airtime Card (${cost} ETB) - Number: ${revealedNumber}`,
+        amount: -cost,
+        status: 'Completed',
+        timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19)
+    });
+    showToast(`You revealed: ${revealedNumber} – see it under your transaction history.`, 'success');
+    playSound('coin');
+    load();        // refresh balance & transactions
+    loadCards();   // refresh card grid
+}
+async function adminFetchCards() {
+    const { data } = await sb.from('global_cards').select('*').order('position');
+    return data || [];
+}
+
+async function adminUpdateCard(cardId, newCost, newNumbersArray) {
+    const { error } = await sb
+        .from('global_cards')
+        .update({ card_cost: newCost, hidden_numbers: newNumbersArray })
+        .eq('id', cardId);
+    if (error) showToast('Update failed', 'error');
+    else showToast('Card updated', 'success');
+}
+
+async function adminShuffleCardsOrder() {
+    if (!confirm('Shuffle the display order of all cards?')) return;
+    const { data: cards } = await sb.from('global_cards').select('id');
+    if (!cards || cards.length === 0) return;
+    const shuffledIds = [...cards];
+    for (let i = shuffledIds.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffledIds[i], shuffledIds[j]] = [shuffledIds[j], shuffledIds[i]];
+    }
+    for (let i = 0; i < shuffledIds.length; i++) {
+        await sb.from('global_cards').update({ position: i }).eq('id', shuffledIds[i].id);
+    }
+    showToast('Card order shuffled', 'success');
+}
+
+function editCardDialog(cardId, currentCost, currentNumbers) {
+    const newCost = prompt('Enter new cost (ETB):', currentCost);
+    if (newCost === null) return;
+    const costNum = parseInt(newCost);
+    if (isNaN(costNum) || costNum <= 0) { showToast('Invalid cost', 'error'); return; }
+    const listText = currentNumbers.join('\n');
+    const newListText = prompt('Enter hidden numbers (one per line, max 15, 10-20 digits each):', listText);
+    if (newListText === null) return;
+    const newList = newListText.split('\n')
+        .map(s => s.trim())
+        .filter(s => s.length >= 10 && s.length <= 20 && /^\d+$/.test(s));
+    if (newList.length === 0) { showToast('At least one valid hidden number required', 'error'); return; }
+    if (newList.length > 15) { showToast('Maximum 15 numbers allowed', 'error'); return; }
+    adminUpdateCard(cardId, costNum, newList);
 }
 // ==================== UTILITY FUNCTIONS ====================
 function showToast(message, type = 'success') {
@@ -3167,6 +3307,8 @@ document.querySelectorAll('.tab').forEach(tab => {
             load();
         } else if (tabId === 'profile') {
             loadLeaderboard();
+        } else if (tabId === 'cards') {
+            loadCards();
         }
     });
 });
