@@ -3201,6 +3201,18 @@ checkSession();
 setInterval(() => { if (USER_ID) load(); }, 30000);
 createGameGrid();  // visible after login
 
+// Fix modal positioning (ensure modals are direct children of body)
+function fixModalPosition() {
+    const modals = ['depositModal', 'buyCoinsModal', 'exchangeModal', 'withdrawModal'];
+    modals.forEach(id => {
+        const modal = document.getElementById(id);
+        if (modal && modal.parentElement !== document.body) {
+            document.body.appendChild(modal);
+        }
+    });
+}
+setTimeout(fixModalPosition, 100);
+
 // Update consultations display
 function updateConsultations(consultations) {
     const consultationsDiv = document.getElementById('consultations');
