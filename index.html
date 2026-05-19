@@ -1538,15 +1538,7 @@
 const SUPABASE_URL = 'https://ouhxgdhzgugfxajoannd.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im91aHhnZGh6Z3VnZnhham9hbm5kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2MDU3NDEsImV4cCI6MjA5NDE4MTc0MX0.zYpFWFbX21e-9lf0_--iqeA4ZA7SqHZZWy8Nw8nNgPM';
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-function escapeHtml(str) {
-  if (!str) return '';
-  return str.replace(/[&<>]/g, function(m) {
-    if (m === '&') return '&amp;';
-    if (m === '<') return '&lt;';
-    if (m === '>') return '&gt;';
-    return m;
-  });
-}
+
 // ==================== AUTH ====================
 let USER_ID = null;
 
@@ -1577,7 +1569,7 @@ function showAuthModal() {
                 <button class="btn btn-sm" style="flex:1" onclick="setAuthMode('register')">Register</button>
             </div>
             <div id="authForm"></div>
-            <p style="font-size: 12px; margin-top: 12px;">Use your email address to sign in or register.</p>
+            <p style="font-size: 12px; margin-top: 12px;">Use email or phone number. Phone needs SMS provider enabled.</p>
         </div>
     `;
     document.body.appendChild(modal);
@@ -1589,7 +1581,7 @@ function setAuthMode(mode) {
     if (!container) return;
     const isLogin = mode === 'login';
     container.innerHTML = `
-        <input type="email" id="authIdentifier" placeholder="Email address" required>
+        <input type="text" id="authIdentifier" placeholder="Email or Phone number (e.g., +1234567890)">
         ${!isLogin ? '<input type="text" id="authUsername" placeholder="Choose a username (optional)">' : ''}
         <input type="password" id="authPassword" placeholder="Password (min 6 characters)">
         <button class="btn btn-success" onclick="${isLogin ? 'login()' : 'register()'}">${isLogin ? 'Sign In' : 'Create Account'}</button>
@@ -1603,7 +1595,8 @@ async function login() {
     if (!identifier || !password) { showToast('Please fill all fields', 'error'); return; }
     const isEmail = identifier.includes('@');
     let response;
-    response = await sb.auth.signInWithPassword({ email: identifier, password });
+    if (isEmail) response = await sb.auth.signInWithPassword({ email: identifier, password });
+    else response = await sb.auth.signInWithPassword({ phone: identifier, password });
     if (response.error) { showToast(response.error.message, 'error'); return; }
     const authUser = response.data.user;
     USER_ID = authUser.id;
@@ -1618,23 +1611,21 @@ async function register() {
     const identifier = document.getElementById('authIdentifier').value.trim();
     const password = document.getElementById('authPassword').value;
     const username = document.getElementById('authUsername')?.value.trim() || 'User';
-    // Get referral code from URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const referrerId = urlParams.get('ref');
     if (!identifier || !password) { showToast('Email/phone and password required', 'error'); return; }
     if (password.length < 6) { showToast('Password must be at least 6 characters', 'error'); return; }
     const isEmail = identifier.includes('@');
-    let response = await sb.auth.signUp({ email: identifier, password });
+    let response;
+    if (isEmail) response = await sb.auth.signUp({ email: identifier, password });
+    else response = await sb.auth.signUp({ phone: identifier, password });
     if (response.error) { showToast(response.error.message, 'error'); return; }
     const authUser = response.data.user;
     USER_ID = authUser.id;
     localStorage.setItem('profitvault_user_id', USER_ID);
     await sb.from('users').insert({
-    user_id: USER_ID, username: username, referred_by: referrerId || null,
-    balance: 0, bonus_balance: 0, coin_balance: 0,
-    total_deposited: 0, total_withdrawn: 0, win_chance_plays: 0, active_referrals: 0,
-    joined_date: new Date().toISOString().split('T')[0]
-});
+        user_id: USER_ID, username: username, balance: 0, bonus_balance: 0, coin_balance: 0,
+        total_deposited: 0, total_withdrawn: 0, win_chance_plays: 0, active_referrals: 0,
+        joined_date: new Date().toISOString().split('T')[0]
+    });
     closeAuthModal();
     load();
     showToast('Account created! You are now logged in.', 'success');
@@ -1687,12 +1678,6 @@ let currentLotteryPool = null;
 let currentLotteryPrice = null;
 let gameGridActive = true;
 let soundEnabled = localStorage.getItem('soundEnabled') !== 'false';
-const actionCooldown = {};
-function rateLimit(action, seconds = 2) {
-  if (actionCooldown[action] && Date.now() < actionCooldown[action]) return false;
-  actionCooldown[action] = Date.now() + seconds * 1000;
-  return true;
-}
 let isOnline = navigator.onLine;
 let refreshThreshold = 100;
 let touchStartY = 0;
@@ -2025,23 +2010,26 @@ function renderPendingList(items, type) {
     `).join('');
 }
 async function renderConsultationsList() {
-  const { data: consultations, error } = await sb
-    .from('health_consultations')
-    .select('*')
-    .eq('status', 'pending')
-    .order('created_at', { ascending: false });
-  if (error || !consultations || consultations.length === 0) {
-    return '<div class="loading">No pending consultations</div>';
-  }
-  return consultations.map(c => `
-    <div class="transaction-item">
-      <div><strong>User ID:</strong> ${escapeHtml(c.user_id)}</div>
-      <div><strong>Issue:</strong> ${escapeHtml(c.issue?.substring(0, 200))}</div>
-      <textarea id="response_${c.id}" rows="2" placeholder="Response"></textarea>
-      <button class="btn btn-sm" onclick="respondToConsultation('${c.id}')">Send</button>
-    </div>
-  `).join('');
+    const { data: consultations, error } = await sb
+        .from('health_consultations')
+        .select('*')
+        .eq('status', 'pending')
+        .order('created_at', { ascending: false });
+    if (error || !consultations || consultations.length === 0) {
+        return '<div class="loading">No pending consultations</div>';
+    }
+    return consultations.map(c => `
+        <div class="transaction-item" style="margin-bottom:12px;">
+            <div><strong>User ID:</strong> ${c.user_id}</div>
+            <div><strong>Username:</strong> ${c.username || 'N/A'}</div>
+            <div><strong>Issue:</strong> ${c.issue?.substring(0, 200)}</div>
+            <div><strong>Submitted:</strong> ${c.created_at || 'Unknown'}</div>
+            <textarea id="response_${c.id}" rows="2" placeholder="Type your response here..." style="width:100%; margin:8px 0; padding:8px; border-radius:8px;"></textarea>
+            <button class="btn btn-sm btn-info" onclick="respondToConsultation(${c.id})">💬 Send Response</button>
+        </div>
+    `).join('');
 }
+
 async function respondToConsultation(consultationId) {
     const responseText = document.getElementById(`response_${consultationId}`).value.trim();
     if (!responseText) {
@@ -2083,24 +2071,6 @@ async function drawLotteryWinner(poolId) {
         const newCoins = (user.coin_balance || 0) + prizeAmount;
         await sb.from('users').update({ coin_balance: newCoins }).eq('user_id', winner.user_id);
         await sb.from('lottery_tickets').update({ status: 'used' }).eq('pool_id', poolId).eq('status', 'active');
-// Create a new round for this pool
-const { data: lastRound } = await sb
-    .from('lottery_pools')
-    .select('round_number')
-    .eq('pool_id', poolId)
-    .order('round_number', { ascending: false })
-    .limit(1);
-const newRound = (lastRound?.[0]?.round_number || 0) + 1;
-await sb.from('lottery_pools').insert({
-    pool_id: poolId,
-    round_number: newRound,
-    price: {1:50,2:100,3:200}[poolId],
-    reward: {1:500,2:1000,3:2000}[poolId],
-    total_tickets: 15,
-    sold_tickets: 0,
-    is_active: true,
-    created_at: new Date().toISOString()
-});
         await sb.from('lottery_draws').insert({
             pool_id: poolId,
             draw_time: new Date().toISOString().replace('T', ' ').substring(0,19),
@@ -2823,19 +2793,12 @@ async function buyAssetWithFly(slotId, event) {
         const startX = rect.left + rect.width / 2;
         const startY = rect.top + rect.height / 2;
         
-        const { data: asset, error: assetError } = await sb
-    .from('market')
-    .select('*')
-    .eq('slot_id', slotId)
-    .single();
-if (assetError || !asset) {
-    showToast('Asset not found', 'error');
-    return;
-}
-if (asset.current_quantity <= 0) {
-    showToast('Item out of stock', 'error');
-    return;
-}        
+        const { data: asset } = await sb
+            .from('market')
+            .select('*')
+            .eq('slot_id', slotId)
+            .single();
+        
         const { data: user } = await sb
             .from('users')
             .select('coin_balance')
@@ -2862,14 +2825,12 @@ if (asset.current_quantity <= 0) {
             sold: false
         });
         await sb.from('transactions').insert({
-    user_id: USER_ID,
-    transaction_type: `🛒 Market (${asset.asset_name})`,
-    amount: asset.cost,
-    status: 'Completed',
-    timestamp: now
-});
-// Decrement inventory
-await sb.rpc('decrement_market_quantity', { p_slot_id: slotId });
+            user_id: USER_ID,
+            transaction_type: `🛒 Market (${asset.asset_name})`,
+            amount: asset.cost,
+            status: 'Completed',
+            timestamp: now
+        });
         
         flyCoinToBalance(startX, startY, asset.cost, false);
         showToast(`✅ Invested in ${asset.asset_name}!`, 'success');
@@ -2882,47 +2843,42 @@ await sb.rpc('decrement_market_quantity', { p_slot_id: slotId });
 }
 
 async function sellAssetWithFly(assetId, payout, event) {
-  if (isProcessing.sellAsset) return;
-  if (!rateLimit('sellAsset', 2)) { showToast('Please wait', 'error'); return; }
-  const button = event.currentTarget;
-  button.disabled = true;
-  button.style.opacity = '0.6';
-  if (!confirm(`Sell this asset?`)) {
-    button.disabled = false;
-    button.style.opacity = '1';
-    return;
-  }
-  isProcessing.sellAsset = true;
-  try {
-    const rect = button.getBoundingClientRect();
-    const startX = rect.left + rect.width / 2;
-    const startY = rect.top + rect.height / 2;
-
-    const session = await sb.auth.getSession();
-    const token = session.data.session?.access_token;
-    const response = await fetch('https://ouhxgdhzgugfxajoannd.supabase.co/functions/v1/sell-asset', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ asset_id: assetId })
-    });
-    const result = await response.json();
-    if (result.error) throw new Error(result.error);
-    
-    const actualPayout = result.payout;
-    flyCoinToBalance(startX, startY, actualPayout, true);
-    showToast(`Sold for ${actualPayout} coins!`, 'success');
-    playSound('coin');
-    load();
-  } catch (err) {
-    showToast('Error: ' + err.message, 'error');
-  } finally {
-    isProcessing.sellAsset = false;
-    button.disabled = false;
-    button.style.opacity = '1';
-  }
+    if (isProcessing.sellAsset) return;
+    const button = event.currentTarget;
+    button.disabled = true;
+    button.style.opacity = '0.6';
+    if (!confirm(`Sell this asset for ${payout.toLocaleString()} coins?`)) {
+        button.disabled = false;
+        button.style.opacity = '1';
+        return;
+    }
+    isProcessing.sellAsset = true;
+    try {
+        const rect = button.getBoundingClientRect();
+        const startX = rect.left + rect.width / 2;
+        const startY = rect.top + rect.height / 2;
+        const { data: user } = await sb.from('users').select('coin_balance').eq('user_id', USER_ID).single();
+        const newCoins = (user.coin_balance || 0) + payout;
+        await sb.from('users').update({ coin_balance: newCoins }).eq('user_id', USER_ID);
+        await sb.from('user_assets').update({ sold: true }).eq('id', assetId);
+        await sb.from('transactions').insert({
+            user_id: USER_ID,
+            transaction_type: '💵 Sold Asset',
+            amount: payout,
+            status: 'Completed',
+            timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19)
+        });
+        flyCoinToBalance(startX, startY, payout, true);
+        showToast(`Sold for ${payout} coins!`, 'success');
+        playSound('coin');
+        load();
+    } catch (err) {
+        showToast('Error', 'error');
+    } finally {
+        isProcessing.sellAsset = false;
+        button.disabled = false;
+        button.style.opacity = '1';
+    }
 }
 
 // ==================== NEON CYBER 3D GAME FUNCTIONS ====================
@@ -2937,48 +2893,34 @@ function createGameGrid() {
 }
 
 async function playGame(position, event) {
-  if (!gameGridActive || isProcessing.winChance) return;
-  isProcessing.winChance = true;
-  gameGridActive = false;
-  
-  try {
-    const response = await fetch('https://ouhxgdhzgugfxajoannd.supabase.co/functions/v1/play-win-chance', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${(await sb.auth.getSession()).data.session?.access_token}`,
-        'Content-Type': 'application/json'
-      }
-    });
-    const result = await response.json();
-    if (result.error) throw new Error(result.error);
-    const winnings = result.winnings;
-
-    // Update UI and show result (same as before but trust server value)
-    const resultDiv = document.getElementById('gameResult');
-    resultDiv.className = `game-result ${winnings > 0 ? 'win' : 'lose'}`;
-    resultDiv.innerHTML = winnings > 0 ? `🎉 You won ${winnings} coins! 🎉` : `💨 Better luck next time!`;
-    if (winnings > 0) {
-      playSound('win');
-      if (event) {
-        const rect = event.target.getBoundingClientRect();
-        createCoinBubble(rect.left + rect.width / 2, rect.top, winnings);
-      }
-    } else {
-      playSound('lose');
-    }
-    showToast(winnings > 0 ? `Won ${winnings} coins!` : 'No win', winnings > 0 ? 'success' : 'error');
-    
-    // Reveal fake grid? Better to reload entire game grid without revealing prizes
-    createGameGrid(); // resets to unknown
-    gameGridActive = true;
-    isProcessing.winChance = false;
-    load(); // refresh balance
-  } catch (err) {
-    console.error(err);
-    showToast('Game error: ' + err.message, 'error');
-    gameGridActive = true;
-    isProcessing.winChance = false;
-  }
+    if (!gameGridActive || isProcessing.winChance) return;
+    isProcessing.winChance = true;
+    gameGridActive = false;
+    try {
+        const { data: user } = await sb.from('users').select('coin_balance').eq('user_id', USER_ID).single();
+        if ((user.coin_balance || 0) < 50) { showToast(`Need 50 coins`, 'error'); isProcessing.winChance = false; gameGridActive = true; return; }
+        const shuffled = [100, 75, 75, 50, 50, 50, 25, 25, 25, 25, 10, 10, 10, 10, 10, 0].sort(() => Math.random() - 0.5);
+        const winnings = shuffled[position] || 0;
+        const newBalance = (user.coin_balance || 0) - 50 + winnings;
+        await sb.from('users').update({ coin_balance: newBalance, win_chance_plays: (user.win_chance_plays || 0) + 1 }).eq('user_id', USER_ID);
+        await sb.from('transactions').insert({ user_id: USER_ID, transaction_type: '🎁 Win Chance Game', amount: winnings, status: 'Completed', timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19) });
+        const resultDiv = document.getElementById('gameResult');
+        resultDiv.className = `game-result ${winnings > 0 ? 'win' : 'lose'}`;
+        resultDiv.innerHTML = winnings > 0 ? `🎉 You won ${winnings} coins! 🎉` : `💨 Better luck next time!`;
+        if (winnings > 0) {
+            playSound('win');
+            if (event) {
+                const rect = event.target.getBoundingClientRect();
+                createCoinBubble(rect.left + rect.width / 2, rect.top, winnings);
+            }
+        } else {
+            playSound('lose');
+        }
+        showToast(winnings > 0 ? `Won ${winnings} coins!` : 'No win', winnings > 0 ? 'success' : 'error');
+        const cells = document.querySelectorAll('.game-card');
+        cells.forEach((cell, idx) => { cell.classList.add('revealed'); cell.setAttribute('data-prize', shuffled[idx]); cell.innerHTML = shuffled[idx]; cell.style.fontSize = '24px'; });
+        setTimeout(() => { createGameGrid(); gameGridActive = true; isProcessing.winChance = false; load(); }, 3000);
+    } catch (err) { console.error(err); showToast('Error', 'error'); gameGridActive = true; isProcessing.winChance = false; }
 }
 // ==================== LOTTERY FUNCTIONS ====================
 function updateLotteryPools(pools) {
@@ -3228,7 +3170,6 @@ async function loadLeaderboard() {
 
 // ==================== FINANCIAL FUNCTIONS ====================
 async function buyCoins() {
-if (!rateLimit('buyCoins', 2)) { showToast('Please wait', 'error'); return; }
     if (isProcessing.buyCoins) return;
     isProcessing.buyCoins = true;
     try {
@@ -3250,44 +3191,28 @@ if (!rateLimit('buyCoins', 2)) { showToast('Please wait', 'error'); return; }
 }
 
 async function exchangeCoins() {
-  if (isProcessing.exchangeCoins) return;
-  if (!rateLimit('exchangeCoins', 3)) { showToast('Please wait', 'error'); return; }
-  isProcessing.exchangeCoins = true;
-  try {
-    const today = new Date().toISOString().slice(0,10);
-    // Ensure snapshot exists for today
-    const { data: userSnapshot, error: snapFetch } = await sb
-      .from('users')
-      .select('coin_balance_snapshot, snapshot_date, coin_balance')
-      .eq('user_id', USER_ID)
-      .single();
-    if (!userSnapshot.snapshot_date || userSnapshot.snapshot_date !== today) {
-      await sb.from('users').update({
-        coin_balance_snapshot: userSnapshot.coin_balance,
-        snapshot_date: today
-      }).eq('user_id', USER_ID);
-      // refetch
-      var { data: user } = await sb.from('users').select('coin_balance_snapshot, bonus_balance').eq('user_id', USER_ID).single();
-    } else {
-      var user = userSnapshot;
-    }
-    const maxExchange = Math.floor(user.coin_balance_snapshot * 0.03);
-    if (maxExchange <= 0) { showToast('No coins available for exchange', 'error'); return; }
-    // Call a secure RPC (you must create this function)
-    const { data, error } = await sb.rpc('exchange_coins', {
-      p_user_id: USER_ID,
-      p_max_exchange: maxExchange
-    });
-    if (error) throw error;
-    showToast(`Exchanged ${data.amount} coins → bonus`, 'success');
-    playSound('coin');
-    closeModal('exchangeModal');
-    load();
-  } catch (err) {
-    showToast('Exchange error: ' + err.message, 'error');
-  } finally {
-    isProcessing.exchangeCoins = false;
-  }
+    if (isProcessing.exchangeCoins) return;
+    isProcessing.exchangeCoins = true;
+    try {
+        const { data: user } = await sb.from('users').select('coin_balance, bonus_balance').eq('user_id', USER_ID).single();
+        const today = new Date().toISOString().substring(0, 10);
+        const { data: exchangedToday } = await sb.from('daily_exchange').select('amount_exchanged').eq('user_id', USER_ID).eq('exchange_date', today);
+        const exchangedAmount = exchangedToday ? exchangedToday.reduce((s, r) => s + (r.amount_exchanged || 0), 0) : 0;
+        const maxExchange = Math.floor((user.coin_balance || 0) * 0.03);
+        const exchangeAmount = Math.max(0, maxExchange - exchangedAmount);
+        if (exchangeAmount <= 0) { showToast('Daily limit reached', 'error'); return; }
+        if ((user.coin_balance || 0) < exchangeAmount) { showToast('Insufficient coins', 'error'); return; }
+        const newCoins = (user.coin_balance || 0) - exchangeAmount;
+        const newBonus = (user.bonus_balance || 0) + exchangeAmount;
+        await sb.from('users').update({ coin_balance: newCoins, bonus_balance: newBonus }).eq('user_id', USER_ID);
+        await sb.from('daily_exchange').insert({ user_id: USER_ID, exchange_date: today, amount_exchanged: exchangeAmount });
+        await sb.from('transactions').insert({ user_id: USER_ID, transaction_type: '🔄 Exchange to Bonus', amount: exchangeAmount, status: 'Completed', timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19) });
+        showToast(`Exchanged ${exchangeAmount} coins → bonus`, 'success');
+        playSound('coin');
+        closeModal('exchangeModal');
+        load();
+    } catch (err) { showToast('Error', 'error'); }
+    finally { isProcessing.exchangeCoins = false; }
 }
 async function submitDeposit() {
     if (isProcessing.deposit) return;
@@ -3440,13 +3365,13 @@ function updateConsultations(consultations) {
     }
     
     consultationsDiv.innerHTML = consultations.map(c => `
-    <div class="consultation-item">
-        <div><strong>📅 ${escapeHtml(c.created_at?.substring(0, 10) || 'Unknown')}</strong></div>
-        <div>Status: <span class="badge">${escapeHtml(c.status || 'pending')}</span></div>
-        <div style="font-size: 12px; margin-top: 5px;">Issue: ${escapeHtml(c.issue?.substring(0, 100) || 'No issue')}</div>
-        ${c.admin_response ? `<div style="margin-top: 5px; color: #10b981;">✅ Response: ${escapeHtml(c.admin_response.substring(0, 100))}</div>` : ''}
-    </div>
-`).join('');
+        <div class="consultation-item">
+            <div><strong>📅 ${c.created_at?.substring(0, 10) || 'Unknown'}</strong></div>
+            <div>Status: <span class="badge">${c.status || 'pending'}</span></div>
+            <div style="font-size: 12px; margin-top: 5px;">Issue: ${c.issue?.substring(0, 100) || 'No issue'}</div>
+            ${c.admin_response ? `<div style="margin-top: 5px; color: #10b981;">✅ Response: ${c.admin_response.substring(0, 100)}</div>` : ''}
+        </div>
+    `).join('');
 }
 </script>
 </body>
