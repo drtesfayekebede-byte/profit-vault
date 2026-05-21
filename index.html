@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Profit Vault - Complete Investment Platform | Fixed & Secure</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Profit Vault - Complete Investment Platform | Premium</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * {
@@ -12,16 +12,11 @@
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
         }
-        /* CRYPTO/FINANCE DARK THEME (same as original but kept) */
+
+        /* ===== ANIMATIONS ===== */
         @keyframes float {
             0% { transform: translateY(0px) scale(1); opacity: 1; }
-            50% { transform: translateY(-40px) scale(1.2); opacity: 0.8; }
             100% { transform: translateY(-80px) scale(1.5); opacity: 0; }
-        }
-        @keyframes flyCoin {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.3); opacity: 0.9; }
-            100% { transform: translate(var(--tx), var(--ty)) scale(0.3); opacity: 0; }
         }
         @keyframes pulse {
             0% { transform: scale(1); }
@@ -29,13 +24,9 @@
             100% { transform: scale(1); }
         }
         @keyframes shake {
-            0%, 100% { transform: translateX(0); }
+            0%,100% { transform: translateX(0); }
             25% { transform: translateX(-5px); }
             75% { transform: translateX(5px); }
-        }
-        @keyframes shine {
-            0% { background-position: -100% 0; }
-            100% { background-position: 200% 0; }
         }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
@@ -46,22 +37,24 @@
             100% { background-position: 200% 0; }
         }
         @keyframes neonGlow {
-            0% { box-shadow: 0 0 5px rgba(0, 255, 255, 0.5), inset 0 0 5px rgba(0, 255, 255, 0.3); }
-            50% { box-shadow: 0 0 20px rgba(0, 255, 255, 0.8), inset 0 0 10px rgba(0, 255, 255, 0.5); }
-            100% { box-shadow: 0 0 5px rgba(0, 255, 255, 0.5), inset 0 0 5px rgba(0, 255, 255, 0.3); }
-        }
-        @keyframes flipIn {
-            0% { transform: rotateY(0deg); }
-            100% { transform: rotateY(180deg); }
+            0% { box-shadow: 0 0 5px rgba(0, 255, 255, 0.3); }
+            50% { box-shadow: 0 0 20px rgba(0, 255, 255, 0.8); }
+            100% { box-shadow: 0 0 5px rgba(0, 255, 255, 0.3); }
         }
         @keyframes winnerGlow {
             0% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.7); }
             70% { box-shadow: 0 0 0 15px rgba(251, 191, 36, 0); }
             100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0); }
         }
+        @keyframes borderPulse {
+            0%,100% { border-color: rgba(251, 191, 36, 0.3); }
+            50% { border-color: rgba(251, 191, 36, 0.8); }
+        }
+
+        /* ===== BASE ===== */
         body {
-            font-family: 'Segoe UI', 'Tahoma', 'Geneva', 'Verdana', sans-serif;
-            background: linear-gradient(145deg, #1a0a1a 0%, #0d0d1a 50%, #0a0a0f 100%);
+            font-family: 'Segoe UI', 'Tahoma', Geneva, Verdana, sans-serif;
+            background: radial-gradient(circle at 10% 20%, #0a0f1e, #03050b);
             min-height: 100vh;
             padding: 16px;
             padding-bottom: 100px;
@@ -73,12 +66,14 @@
             position: fixed;
             top: 0;
             left: 0;
-            right: 0;
-            bottom: 0;
-            background: radial-gradient(circle at 50% 30%, rgba(255,215,0,0.05), transparent 70%);
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 30%, rgba(255,215,0,0.08), transparent 70%);
             pointer-events: none;
             z-index: 0;
         }
+
+        /* ===== CARDS & CONTAINERS ===== */
         .header {
             text-align: center;
             margin-bottom: 20px;
@@ -89,14 +84,9 @@
             font-size: 28px;
             background: linear-gradient(135deg, #FFD700, #FFA500, #FF6347);
             -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
             background-clip: text;
-            letter-spacing: 1px;
-        }
-        .header p {
-            font-size: 11px;
-            opacity: 0.7;
-            margin-top: 5px;
+            color: transparent;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.3);
         }
         .balance-container {
             display: grid;
@@ -110,158 +100,59 @@
             border-radius: 24px;
             padding: 18px 10px;
             text-align: center;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.3s;
             position: relative;
             overflow: hidden;
-            box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+            box-shadow: 0 20px 35px -10px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.1);
         }
-        .balance-card:active {
-            transform: scale(0.96);
-        }
+        .balance-card:active { transform: scale(0.96); }
         .balance-card.primary {
-            background: linear-gradient(135deg, #8b0000 0%, #dc143c 35%, #ff6b6b 70%, #8b0000 100%);
+            background: linear-gradient(135deg, #8b0000, #dc143c, #ff6b6b);
             background-size: 200% 200%;
-            border: 1px solid rgba(255, 107, 107, 0.3);
-            animation: rubyShine 4s ease infinite;
-        }
-        .balance-card.primary::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(255,255,255,0.1) 20px, rgba(255,255,255,0.1) 40px);
-            pointer-events: none;
-            border-radius: 24px;
-        }
-        .balance-card.primary::after {
-            content: '💎';
-            position: absolute;
-            top: 5px;
-            right: 8px;
-            font-size: 18px;
-            opacity: 0.6;
-            animation: sparkleGem 2s ease-in-out infinite;
+            animation: rubyShine 4s infinite;
         }
         .balance-card.bonus {
-            background: linear-gradient(135deg, #004d00 0%, #008000 35%, #00d68f 70%, #004d00 100%);
+            background: linear-gradient(135deg, #004d00, #008000, #00d68f);
             background-size: 200% 200%;
-            border: 1px solid rgba(0, 214, 143, 0.3);
-            animation: emeraldShine 4s ease infinite 0.5s;
-        }
-        .balance-card.bonus::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: repeating-linear-gradient(-45deg, transparent, transparent 20px, rgba(255,255,255,0.1) 20px, rgba(255,255,255,0.1) 40px);
-            pointer-events: none;
-            border-radius: 24px;
-        }
-        .balance-card.bonus::after {
-            content: '✨';
-            position: absolute;
-            top: 5px;
-            right: 8px;
-            font-size: 18px;
-            opacity: 0.6;
-            animation: sparkleGem 2s ease-in-out infinite 0.5s;
+            animation: emeraldShine 4s infinite 0.5s;
         }
         .balance-card.coins {
-            background: linear-gradient(135deg, #b8860b 0%, #daa520 35%, #ffd700 70%, #b8860b 100%);
+            background: linear-gradient(135deg, #b8860b, #daa520, #ffd700);
             background-size: 200% 200%;
-            border: 1px solid rgba(255, 215, 0, 0.3);
-            animation: topazShine 4s ease infinite 1s;
+            animation: topazShine 4s infinite 1s;
         }
-        .balance-card.coins::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: repeating-linear-gradient(90deg, transparent, transparent 20px, rgba(255,255,255,0.15) 20px, rgba(255,255,255,0.15) 40px);
-            pointer-events: none;
-            border-radius: 24px;
-        }
-        .balance-card.coins::after {
-            content: '⭐';
-            position: absolute;
-            top: 5px;
-            right: 8px;
-            font-size: 18px;
-            opacity: 0.6;
-            animation: sparkleGem 2s ease-in-out infinite 1s;
-        }
-        @keyframes rubyShine {
-            0%, 100% { background-position: 0% 0%; }
-            50% { background-position: 100% 100%; }
-        }
-        @keyframes emeraldShine {
-            0%, 100% { background-position: 0% 0%; }
-            50% { background-position: 100% 100%; }
-        }
-        @keyframes topazShine {
-            0%, 100% { background-position: 0% 0%; }
-            50% { background-position: 100% 100%; }
-        }
-        @keyframes sparkleGem {
-            0%, 100% { opacity: 0.3; transform: scale(1); }
-            50% { opacity: 0.8; transform: scale(1.3); }
-        }
-        .balance-emoji {
-            font-size: 34px;
-            margin-bottom: 8px;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
-            position: relative;
-            z-index: 2;
-        }
+        @keyframes rubyShine { 0%,100%{background-position:0% 0%;} 50%{background-position:100% 100%;} }
+        @keyframes emeraldShine { 0%,100%{background-position:0% 0%;} 50%{background-position:100% 100%;} }
+        @keyframes topazShine { 0%,100%{background-position:0% 0%;} 50%{background-position:100% 100%;} }
+        .balance-emoji { font-size: 34px; margin-bottom: 8px; }
         .balance-value {
             font-size: 28px;
             font-weight: 900;
-            letter-spacing: 1px;
             background: linear-gradient(135deg, #FFD700, #FFF8DC, #FFD700);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            text-shadow: 0 1px 3px rgba(0,0,0,0.3);
-            position: relative;
-            z-index: 2;
         }
-        .balance-label {
-            font-size: 10px;
-            font-weight: 800;
-            opacity: 0.95;
-            margin-top: 5px;
-            text-transform: uppercase;
-            color: rgba(255, 255, 255, 0.95);
-            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
-            position: relative;
-            z-index: 2;
-            font-style: italic;
-            letter-spacing: 0.5px;
-        }
+        .balance-label { font-size: 10px; font-weight: 800; margin-top: 5px; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* TABS */
         .tabs {
             display: flex;
             gap: 8px;
             margin-bottom: 20px;
             overflow-x: auto;
-            padding-bottom: 8px;
             flex-wrap: wrap;
             justify-content: center;
-            position: relative;
-            z-index: 1;
+            scrollbar-width: thin;
         }
         .tab {
-            background: rgba(30, 41, 59, 0.6);
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(56, 189, 248, 0.2);
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(56, 189, 248, 0.3);
             padding: 10px 18px;
-            border-radius: 30px;
+            border-radius: 40px;
             color: white;
             font-size: 13px;
             font-weight: bold;
@@ -272,199 +163,57 @@
         .tab.active {
             background: linear-gradient(135deg, #fbbf24, #d97706);
             color: #1a1a2e;
-            box-shadow: 0 4px 15px rgba(251, 191, 36, 0.3);
+            box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4);
             border-color: transparent;
         }
+
+        /* CARDS */
         .card {
-            background: rgba(30, 41, 59, 0.6);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(12px);
+            border-radius: 28px;
             padding: 18px;
-            margin-bottom: 16px;
-            border: 1px solid rgba(56, 189, 248, 0.1);
+            margin-bottom: 18px;
+            border: 1px solid rgba(251, 191, 36, 0.2);
             transition: all 0.3s;
             animation: fadeIn 0.3s ease-out;
-            position: relative;
-            z-index: 1;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+        .card:hover {
+            border-color: rgba(251, 191, 36, 0.5);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
         }
         .card h3 {
             margin-bottom: 15px;
-            font-size: 17px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            font-size: 18px;
             border-left: 4px solid #fbbf24;
             padding-left: 12px;
             color: #fbbf24;
         }
+
+        /* BUTTONS */
         .btn {
             background: linear-gradient(135deg, #3b82f6, #8b5cf6);
             border: none;
             padding: 14px 20px;
-            border-radius: 30px;
+            border-radius: 40px;
             color: white;
             font-size: 14px;
             font-weight: bold;
             cursor: pointer;
             width: 100%;
             margin-bottom: 10px;
-            transition: all 0.2s;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
+            transition: transform 0.1s, box-shadow 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
         }
-        .btn:active {
-            transform: scale(0.98);
-        }
-        .btn-success {
-            background: linear-gradient(135deg, #10b981, #059669);
-        }
-        .btn-warning {
-            background: linear-gradient(135deg, #fbbf24, #d97706);
-            color: #1a1a2e;
-        }
-        .btn-danger {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-        }
-        .btn-info {
-            background: linear-gradient(135deg, #06b6d4, #0891b2);
-        }
-        .btn-sm {
-            padding: 10px 16px;
-            font-size: 12px;
-            width: auto;
-            display: inline-block;
-            margin: 3px;
-        }
-        .contact-methods {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin: 15px 0;
-        }
-        .contact-method {
-            background: linear-gradient(135deg, #1e293b, #0f172a);
-            border-radius: 20px;
-            padding: 16px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            border: 1px solid rgba(251, 191, 36, 0.3);
-        }
-        .contact-method:active {
-            transform: scale(0.98);
-        }
-        .contact-icon {
-            font-size: 40px;
-            margin-bottom: 8px;
-        }
-        .contact-name {
-            font-size: 18px;
-            font-weight: bold;
-            color: #fbbf24;
-            margin-bottom: 5px;
-        }
-        .contact-detail {
-            font-size: 14px;
-            opacity: 0.8;
-            font-family: monospace;
-        }
-        .user-id-section {
-            margin-top: 20px;
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 12px;
-            text-align: center;
-        }
-        .flying-coin {
-            position: fixed;
-            font-size: 28px;
-            font-weight: bold;
-            pointer-events: none;
-            z-index: 2000;
-            transition: all 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-            white-space: nowrap;
-            text-shadow: 0 0 5px #000;
-        }
-        .quad-item {
-            background: rgba(0, 0, 0, 0.35);
-            padding: 14px;
-            border-radius: 14px;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            transition: all 0.3s;
-        }
-        .quad-item.locked {
-            border-left: 4px solid #ef4444;
-        }
-        .quad-item.unlocked {
-            border-left: 4px solid #10b981;
-            background: rgba(16, 185, 129, 0.1);
-        }
-        .quad-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .quad-status {
-            font-size: 24px;
-        }
-        .quad-text {
-            font-weight: bold;
-            font-size: 14px;
-        }
-        .quad-count {
-            font-size: 11px;
-            opacity: 0.7;
-            margin-top: 3px;
-        }
-        .quad-amount {
-            font-size: 14px;
-            font-weight: bold;
-        }
-        .progress-container {
-            margin-top: 15px;
-        }
-        .progress-bar {
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 20px;
-            height: 12px;
-            overflow: hidden;
-        }
-        .progress-fill {
-            background: linear-gradient(90deg, #10b981, #06b6d4);
-            height: 100%;
-            border-radius: 20px;
-            transition: width 0.5s ease;
-            width: 0%;
-        }
-        .progress-text {
-            text-align: center;
-            margin-top: 8px;
-            font-size: 11px;
-            opacity: 0.8;
-        }
-        .game-section {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 24px;
-            padding: 16px;
-            margin: 16px 0;
-        }
-        .game-header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .game-header h4 {
-            font-size: 18px;
-            font-weight: bold;
-            background: linear-gradient(135deg, #00ffff, #8b5cf6);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
-        }
+        .btn:active { transform: scale(0.97); }
+        .btn-success { background: linear-gradient(135deg, #10b981, #059669); }
+        .btn-warning { background: linear-gradient(135deg, #fbbf24, #d97706); color: #1a1a2e; }
+        .btn-danger { background: linear-gradient(135deg, #ef4444, #dc2626); }
+        .btn-info { background: linear-gradient(135deg, #06b6d4, #0891b2); }
+        .btn-sm { padding: 10px 16px; font-size: 12px; width: auto; display: inline-block; margin: 3px; }
+
+        /* GAME GRID */
         .game-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -472,285 +221,49 @@
             perspective: 1000px;
         }
         .game-card {
-            aspect-ratio: 1 / 1;
+            aspect-ratio: 1;
             background: linear-gradient(145deg, #1e293b, #0f172a);
-            border-radius: 16px;
+            border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.2s ease;
             border: 1px solid rgba(0, 255, 255, 0.3);
-            box-shadow: 0 0 15px rgba(0, 255, 255, 0.1);
             font-size: 36px;
             font-weight: bold;
-            position: relative;
-            overflow: hidden;
             transform-style: preserve-3d;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
         }
-        .game-card:active {
-            transform: scale(0.94);
-        }
+        .game-card:active { transform: scale(0.94); }
         .game-card.revealed {
-            animation: neonGlow 0.5s ease;
+            transform: rotateY(180deg);
+            animation: neonGlow 0.4s;
         }
-        .game-card.revealed[data-prize="100"],
-        .game-card.revealed[data-prize="75"] {
-            background: linear-gradient(135deg, #ffd700, #ff8c00);
-            border-color: #ffd700;
-        }
-        .game-card.revealed[data-prize="50"] {
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            border-color: #3b82f6;
-        }
-        .game-card.revealed[data-prize="25"],
-        .game-card.revealed[data-prize="10"] {
-            background: linear-gradient(135deg, #10b981, #059669);
-            border-color: #10b981;
-        }
-        .game-card.revealed[data-prize="0"] {
-            background: linear-gradient(135deg, #6b7280, #4b5563);
-            border-color: #6b7280;
-        }
-        .game-card.revealed.winner {
-            animation: winnerGlow 0.8s ease-in-out infinite;
-        }
-        .game-cost {
-            text-align: center;
-            margin-top: 16px;
-            padding: 12px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 12px;
-            font-size: 14px;
-            color: #94a3b8;
-        }
-        .game-cost span {
-            color: #fbbf24;
-            font-weight: bold;
-            font-size: 18px;
-        }
+        .game-card.revealed[data-prize="100"], .game-card.revealed[data-prize="75"] { background: linear-gradient(135deg, #ffd700, #ff8c00); }
+        .game-card.revealed[data-prize="50"] { background: linear-gradient(135deg, #3b82f6, #8b5cf6); }
+        .game-card.revealed[data-prize="25"], .game-card.revealed[data-prize="10"] { background: linear-gradient(135deg, #10b981, #059669); }
+        .game-card.revealed[data-prize="0"] { background: linear-gradient(135deg, #6b7280, #4b5563); }
+
+        /* MARKET */
         .market-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
             gap: 12px;
-        }
-        .admin-market-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-        }
-        .market-control-item {
-            flex-wrap: wrap;
-            gap: 5px;
-        }
-        .market-controls {
-            display: flex;
-            gap: 5px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        .market-price-input, .market-roi-input {
-            width: 80px;
-        }
-        .market-update-btn {
-            width: auto;
-        }
-        @media (max-width: 600px) {
-            .admin-market-grid {
-                grid-template-columns: 1fr !important;
-            }
-            .market-price-input, .market-roi-input {
-                width: 100% !important;
-                flex: 1;
-            }
-            .market-update-btn {
-                width: 100% !important;
-                margin-top: 5px;
-            }
-            .market-controls {
-                width: 100%;
-            }
         }
         .market-item {
             background: linear-gradient(145deg, #1e293b, #0f172a);
-            border-radius: 16px;
+            border-radius: 20px;
             padding: 12px 8px;
             text-align: center;
             cursor: pointer;
             transition: all 0.2s;
-            border: 1px solid rgba(56, 189, 248, 0.2);
-            position: relative;
-            overflow: hidden;
+            border: 1px solid rgba(56, 189, 248, 0.3);
         }
-        .market-item:active {
-            transform: scale(0.95);
-            border-color: #fbbf24;
-        }
-        .market-item.owned {
-            opacity: 0.6;
-            cursor: not-allowed;
-            filter: grayscale(0.3);
-        }
-        .market-emoji {
-            font-size: 36px;
-        }
-        .market-name {
-            font-size: 10px;
-            margin-top: 6px;
-            word-break: break-word;
-        }
-        .market-price {
-            font-size: 12px;
-            font-weight: bold;
-            color: #fbbf24;
-            margin-top: 5px;
-        }
-        .market-badge {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background: #10b981;
-            font-size: 8px;
-            padding: 2px 5px;
-            border-radius: 10px;
-        }
-        .investment-item {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 12px;
-            border-radius: 12px;
-            margin-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .sell-btn {
-            background: linear-gradient(135deg, #fbbf24, #d97706);
-            border: none;
-            padding: 8px 16px;
-            border-radius: 20px;
-            color: #1a1a2e;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 12px;
-            transition: transform 0.2s;
-        }
-        .sell-btn:active {
-            transform: scale(0.95);
-        }
-        .game-result {
-            text-align: center;
-            padding: 14px;
-            border-radius: 14px;
-            margin-top: 10px;
-            font-weight: bold;
-        }
-        .game-result.win {
-            background: rgba(16, 185, 129, 0.25);
-            color: #10b981;
-            border: 1px solid #10b981;
-            animation: pulse 0.5s ease-in-out;
-        }
-        .game-result.lose {
-            background: rgba(239, 68, 68, 0.25);
-            color: #ef4444;
-            border: 1px solid #ef4444;
-            animation: shake 0.3s ease-in-out;
-        }
-        .lottery-pool {
-            background: rgba(0, 0, 0, 0.35);
-            border-radius: 14px;
-            padding: 16px;
-            margin-bottom: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .lottery-numbers {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 8px;
-            margin-top: 12px;
-        }
-        .lottery-number {
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            border: none;
-            padding: 12px;
-            border-radius: 12px;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            text-align: center;
-            font-size: 16px;
-            transition: all 0.2s;
-        }
-        .lottery-number:active {
-            transform: scale(0.95);
-        }
-        .lottery-number.taken {
-            background: #ef4444;
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-        .ticket-item {
-            background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(217, 119, 6, 0.08));
-            border: 1px solid #fbbf24;
-            border-radius: 12px;
-            padding: 12px;
-            margin-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 13px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-        }
-        .ticket-serial {
-            font-family: monospace;
-            font-size: 10px;
-            background: rgba(0, 0, 0, 0.5);
-            padding: 4px 8px;
-            border-radius: 8px;
-            letter-spacing: 1px;
-        }
-        .consultation-item {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 12px;
-            border-radius: 12px;
-            margin-bottom: 8px;
-        }
-        .fullscreen-textarea {
-            width: 100%;
-            padding: 15px;
-            border-radius: 12px;
-            border: 1px solid #fbbf24;
-            background: rgba(0, 0, 0, 0.5);
-            color: white;
-            font-size: 16px;
-            min-height: 150px;
-            resize: vertical;
-        }
-        .profile-item {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 12px;
-            border-radius: 12px;
-            margin-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .transaction-item {
-            background: rgba(0, 0, 0, 0.25);
-            padding: 10px;
-            border-radius: 10px;
-            margin-bottom: 6px;
-            font-size: 12px;
-        }
-        .transaction-pending {
-            border-left: 3px solid #fbbf24;
-        }
-        .transaction-approved {
-            border-left: 3px solid #10b981;
-        }
-        .transaction-denied {
-            border-left: 3px solid #ef4444;
-        }
+        .market-item:active { transform: scale(0.96); }
+        .market-item.owned { opacity: 0.6; filter: grayscale(0.3); cursor: not-allowed; }
+
+        /* MODAL */
         .modal {
             display: none;
             position: fixed;
@@ -758,77 +271,42 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.95);
+            background: rgba(0, 0, 0, 0.96);
             justify-content: center;
             align-items: center;
             z-index: 1000;
         }
-        .modal.active {
-            display: flex;
-        }
+        .modal.active { display: flex; }
         .modal-content {
             background: linear-gradient(135deg, #1a1a2e, #16213e);
-            border-radius: 24px;
+            border-radius: 32px;
             padding: 25px;
             width: 90%;
-            max-width: 380px;
+            max-width: 400px;
             max-height: 85vh;
             overflow-y: auto;
-            border: 1px solid rgba(251, 191, 36, 0.3);
+            border: 1px solid rgba(251, 191, 36, 0.4);
+            box-shadow: 0 25px 40px rgba(0,0,0,0.5);
         }
-        .modal-content h3 {
-            margin-bottom: 18px;
-            text-align: center;
-            color: #fbbf24;
-        }
-        .modal-content input,
-        .modal-content select,
-        .modal-content textarea {
+        .modal-content input, .modal-content select, .modal-content textarea {
             width: 100%;
             padding: 14px;
             margin: 8px 0;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            background: rgba(0, 0, 0, 0.5);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(0,0,0,0.6);
             color: white;
-            font-size: 14px;
         }
         .close {
             float: right;
             font-size: 28px;
             cursor: pointer;
             color: #ef4444;
-            transition: all 0.2s;
+            transition: 0.2s;
         }
-        .telebirr-info, .bank-info {
-            background: linear-gradient(135deg, #1e293b, #0f172a);
-            padding: 15px;
-            border-radius: 16px;
-            margin: 10px 0;
-            text-align: center;
-            border: 1px solid rgba(251, 191, 36, 0.3);
-        }
-        .bank-info {
-            border-color: rgba(56, 189, 248, 0.3);
-        }
-        .payment-methods {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        .payment-method {
-            flex: 1;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 12px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .payment-method.selected {
-            background: linear-gradient(135deg, #fbbf24, #d97706);
-            color: #1a1a2e;
-        }
+        .close:hover { color: #ff8888; }
+
+        /* TOAST */
         .toast {
             position: fixed;
             bottom: 20px;
@@ -837,695 +315,781 @@
             background: #10b981;
             color: #1a1a2e;
             padding: 12px 24px;
-            border-radius: 40px;
+            border-radius: 60px;
             font-weight: bold;
             display: none;
             z-index: 1001;
-            font-size: 13px;
             white-space: nowrap;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            font-size: 14px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
-        .toast.show {
-            display: block;
-        }
-        .toast.error {
-            background: #ef4444;
-            color: white;
-        }
-        .toast.info {
-            background: #06b6d4;
-            color: white;
-        }
-        .tab-content {
-            display: none;
-        }
-        .tab-content.active {
-            display: block;
-        }
-        .loading {
-            text-align: center;
-            padding: 30px;
-            opacity: 0.7;
-        }
-        .skeleton {
-            background: linear-gradient(90deg, rgba(255,255,255,0.1) 25%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.1) 75%);
-            background-size: 200% 100%;
-            animation: shimmer 1.5s infinite;
-            border-radius: 8px;
-        }
-        ::-webkit-scrollbar {
-            width: 5px;
-        }
-        ::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #fbbf24;
-            border-radius: 10px;
-        }
-        .row {
-            display: flex;
-            gap: 10px;
-        }
-        .row .btn {
-            flex: 1;
-            margin-bottom: 0;
-        }
-        .badge {
-            background: #fbbf24;
-            color: #1a1a2e;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 10px;
-            font-weight: bold;
-        }
-        .pending-badge {
-            background: #fbbf24;
-            color: #1a1a2e;
-            padding: 2px 8px;
-            border-radius: 20px;
-            font-size: 10px;
-            font-weight: bold;
-        }
-        .sub-tabs {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 15px;
-            border-bottom: 1px solid rgba(255,255,255,0.2);
-            padding-bottom: 8px;
-        }
-        .sub-tab {
-            background: transparent;
-            border: none;
-            padding: 8px 16px;
-            color: white;
-            cursor: pointer;
-            border-radius: 20px;
-            transition: all 0.2s;
-        }
-        .sub-tab.active {
-            background: #fbbf24;
-            color: #1a1a2e;
-        }
-        .sound-toggle {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-top: 15px;
-            padding-top: 10px;
-            border-top: 1px solid rgba(255,255,255,0.1);
-        }
-        .toggle-switch {
-            position: relative;
-            width: 50px;
-            height: 24px;
-            background: #4b5563;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .toggle-switch.active {
-            background: #10b981;
-        }
-        .toggle-switch::after {
-            content: '';
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            background: white;
-            border-radius: 50%;
-            top: 2px;
-            left: 3px;
-            transition: 0.3s;
-        }
-        .toggle-switch.active::after {
-            left: 27px;
-        }
-        .offline-indicator {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            background: #ef4444;
-            color: white;
-            text-align: center;
-            padding: 5px;
-            font-size: 12px;
-            z-index: 1002;
-            transform: translateY(-100%);
-            transition: transform 0.3s;
-        }
-        .offline-indicator.show {
-            transform: translateY(0);
-        }
-        .pull-to-refresh {
-            text-align: center;
-            padding: 10px;
-            color: #fbbf24;
-            font-size: 12px;
-            transition: all 0.3s;
-        }
+        .toast.show { display: block; animation: fadeIn 0.2s; }
+        .toast.error { background: #ef4444; color: white; }
+        .toast.info { background: #06b6d4; color: white; }
+
+        /* UTILITIES */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .loading { text-align: center; padding: 30px; opacity: 0.7; }
+        .row { display: flex; gap: 10px; }
+        .row .btn { flex: 1; margin-bottom: 0; }
+        .badge { background: #fbbf24; color: #1a1a2e; padding: 4px 10px; border-radius: 40px; font-size: 10px; font-weight: bold; }
+        .quad-item { background: rgba(0,0,0,0.3); border-radius: 20px; padding: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+        .quad-item.unlocked { border-left: 4px solid #10b981; }
+        .quad-item.locked { border-left: 4px solid #ef4444; }
+        .progress-bar { background: rgba(255,255,255,0.2); border-radius: 20px; height: 12px; overflow: hidden; }
+        .progress-fill { background: linear-gradient(90deg, #10b981, #06b6d4); height: 100%; transition: width 0.5s; }
         .network-status {
             position: fixed;
-            bottom: 10px;
-            right: 10px;
-            width: 10px;
-            height: 10px;
+            bottom: 12px;
+            right: 12px;
+            width: 12px;
+            height: 12px;
             border-radius: 50%;
             background: #10b981;
             z-index: 1000;
+            box-shadow: 0 0 5px #10b981;
         }
-        .network-status.offline {
-            background: #ef4444;
+        .network-status.offline { background: #ef4444; box-shadow: 0 0 5px #ef4444; }
+        @media (max-width: 600px) {
+            .market-grid { grid-template-columns: repeat(3, 1fr); }
+            .game-grid { gap: 8px; }
+            .balance-value { font-size: 22px; }
+        }
+
+        /* ===== AUTH MODAL COLORFUL STYLES ===== */
+        #authModal .modal-content {
+            background: linear-gradient(145deg, #0f172a, #1e1b4b);
+            border: 2px solid;
+            border-image: linear-gradient(45deg, #fbbf24, #ec4899, #06b6d4) 1;
+            box-shadow: 0 0 30px rgba(236,72,153,0.3);
+        }
+        #authModal h3 {
+            font-size: 28px;
+            text-align: center;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 20px;
+        }
+        .auth-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .auth-header h2 {
+            font-size: 32px;
+            background: linear-gradient(135deg, #FFD700, #FF8C00, #FF1493);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 2px;
+        }
+        .auth-header p {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+        #authForm input {
+            background: rgba(0,0,0,0.6);
+            border: 1px solid rgba(251,191,36,0.5);
+            transition: all 0.3s;
+        }
+        #authForm input:focus {
+            border-color: #ec4899;
+            box-shadow: 0 0 10px #ec4899;
+            outline: none;
+        }
+        .mode-switch {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .mode-switch button {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            padding: 8px 20px;
+            border-radius: 40px;
+            color: white;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .mode-switch button.active {
+            background: linear-gradient(135deg, #fbbf24, #d97706);
+            color: #1a1a2e;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
-<div id="offlineIndicator" class="offline-indicator">📡 No Internet Connection - Using Cached Data</div>
 <div id="networkStatus" class="network-status"></div>
 <div class="header">
     <h1>🏦 ፕሮፊት ቮልት</h1>
-    <p>Profit Vault - Complete Investment Platform | Secure Edition</p>
+    <p>Profit Vault - Complete Investment Platform | Premium</p>
 </div>
 <div class="balance-container">
-    <div class="balance-card primary" id="balanceCard" onclick="showModal('depositModal')">
+    <div class="balance-card primary" onclick="showModal('depositModal')">
         <div class="balance-emoji">💰</div>
         <div class="balance-value" id="balance">0</div>
-        <div class="balance-label">Balance (ቀሪ ሂሳብ)</div>
+        <div class="balance-label">Balance (ETB)</div>
     </div>
-    <div class="balance-card bonus" id="bonusCard" onclick="showModal('exchangeModal')">
+    <div class="balance-card bonus" onclick="showModal('exchangeModal')">
         <div class="balance-emoji">🎁</div>
         <div class="balance-value" id="bonus">0</div>
-        <div class="balance-label">Bonus (ቦነስ)</div>
+        <div class="balance-label">Bonus (ETB)</div>
     </div>
-    <div class="balance-card coins" id="coinsCard" onclick="showModal('buyCoinsModal')">
+    <div class="balance-card coins" onclick="showModal('buyCoinsModal')">
         <div class="balance-emoji">🪙</div>
         <div class="balance-value" id="coins">0</div>
-        <div class="balance-label">Coins (ሳንቲም)</div>
+        <div class="balance-label">Coins</div>
     </div>
 </div>
-<div id="pullToRefresh" class="pull-to-refresh" style="display: none;">↓ Pull down to refresh</div>
 <div class="tabs">
     <button class="tab active" data-tab="dashboard">📊 Dashboard</button>
     <button class="tab" data-tab="market">🛒 Market</button>
     <button class="tab" data-tab="games">🎮 Games</button>
-    <button class="tab" data-tab="cards">🃏 Airtime Cards</button>
+    <button class="tab" data-tab="cards">🃏 Airtime</button>
     <button class="tab" data-tab="lottery">🎟️ Lottery</button>
     <button class="tab" data-tab="clinic">🏥 Clinic</button>
     <button class="tab" data-tab="profile">👤 Profile</button>
     <button class="tab" data-tab="contact">📞 Contact</button>
 </div>
+
+<!-- DASHBOARD -->
 <div id="dashboard" class="tab-content active">
-    <div class="card">
-        <h3>⚡ Quick Actions (ፈጣን እርምጃዎች)</h3>
-        <button class="btn btn-success" onclick="showModal('depositModal')">💰 Deposit (ተቀማጭ)</button>
-        <div class="row">
-            <button class="btn" onclick="showModal('buyCoinsModal')">💱 Buy Coins</button>
-            <button class="btn btn-warning" onclick="showModal('exchangeModal')">🔄 Exchange to Bonus</button>
-        </div>
-        <button class="btn btn-danger" onclick="showModal('withdrawModal')">📤 Withdraw Bonus</button>
-    </div>
-    <div class="card">
-        <h3>🔒 QUAD-LOCK PROGRESS</h3>
-        <div id="quadlock"><div class="loading">Loading...</div></div>
-    </div>
-    <div class="card">
-        <h3>📈 Exchange Info</h3>
-        <div id="exchangeInfo"></div>
-    </div>
-</div>
-<div id="market" class="tab-content">
-    <div class="card">
-        <h3>🛒 Investment Market (የኢንቨስትመንት ገበያ)</h3>
-        <div id="marketGrid" class="market-grid"><div class="loading">Loading market...</div></div>
-    </div>
-    <div class="card">
-        <h3>🎒 My Investments (የኢንቨስትመንቶቼ)</h3>
-        <div id="investments"></div>
-    </div>
-</div>
-<div id="games" class="tab-content">
-    <div class="game-section">
-        <div class="game-header">
-            <h4>🎁 የማሸነፍ እድል / Win Chance Game</h4>
-        </div>
-        <div id="gameGrid" class="game-grid"></div>
-        <div class="game-cost">
-            🪙 የጨዋታ ዋጋ / Game Cost: <span>50 ሳንቲም / Coins</span>
-        </div>
-        <div id="gameResult"></div>
-    </div>
-</div>
-<div id="cards" class="tab-content">
-    <div class="card">
-        <h3>🃏 Airtime Cards</h3>
-        <p>Click a card to buy airtime. The hidden number will be revealed once and stored in your transaction history.</p>
-        <div id="cardsGrid" style="display: flex; flex-direction: column; gap: 12px;"></div>
-    </div>
-</div>
-<div id="lottery" class="tab-content">
-    <div class="card">
-        <h3>🎟️ Lottery Pools (የሎተሪ ገንዳዎች)</h3>
-        <div id="lotteryPools"><div class="loading">Loading lottery pools...</div></div>
-    </div>
-    <div class="card">
-        <h3>🎫 My Tickets (የእኔ ቲኬቶች)</h3>
-        <div id="myTickets"></div>
-    </div>
-    <div class="card">
-        <h3>🏆 Recent Draws (የቅርብ ጊዜ ስዕሎች)</h3>
-        <div id="recentDraws"></div>
-    </div>
-</div>
-<div id="clinic" class="tab-content">
-    <div class="card">
-        <h3>🏥 Online Clinic (50 ሳንቲም)</h3>
-        <textarea id="healthIssue" class="fullscreen-textarea" rows="6" placeholder="Describe your health issue in detail... (የጤና ችግርዎን በዝርዝር ይግለጹ)"></textarea>
-        <button class="btn btn-info" onclick="startConsultation()">Start Consultation</button>
-    </div>
-    <div class="card">
-        <h3>📋 My Consultations (የእኔ ማማከሮች)</h3>
-        <div id="consultations"></div>
-    </div>
-</div>
-<div id="profile" class="tab-content">
-    <div class="card">
-        <h3>👤 Profile (መገለጫ)</h3>
-        <div id="profileInfo"></div>
-        <button class="btn" onclick="copyReferral()">📤 Copy Referral Link</button>
-        <button class="btn btn-danger" onclick="logout()" style="margin-top: 10px;">🚪 Logout</button>
-        <div class="sound-toggle">
-            <span>🔊 Sound Effects</span>
-            <div id="soundToggle" class="toggle-switch active" onclick="toggleSound()"></div>
-        </div>
-    </div>
-    <div class="card">
-        <h3>📜 Transaction History (የግብይት ታሪክ)</h3>
-        <div class="sub-tabs">
-            <button class="sub-tab active" data-subtab="deposit_withdraw">💰 Deposits & Withdrawals</button>
-            <button class="sub-tab" data-subtab="other">🎮 Games & Market</button>
-        </div>
-        <div id="depositWithdrawTransactions" class="sub-tab-content active"></div>
-        <div id="otherTransactions" class="sub-tab-content" style="display:none;"></div>
-    </div>
-    <div class="card">
-        <h3>🏆 Leaderboard</h3>
-        <div id="leaderboard"></div>
-    </div>
-</div>
-<div id="contact" class="tab-content">
-    <div class="card">
-        <h3>📞 Contact Admin</h3>
-        <p style="margin-bottom: 15px; font-size: 14px; opacity: 0.8;">For support, questions, or issues:</p>
-        <div class="contact-methods">
-            <div class="contact-method" onclick="contactAdmin('telegram')">
-                <div class="contact-icon">📱</div>
-                <div class="contact-name">Telegram</div>
-                <div class="contact-detail">@drtesfayekebede</div>
-                <button class="btn btn-sm" style="margin-top: 10px;">Message</button>
-            </div>
-            <div class="contact-method" onclick="contactAdmin('phone')">
-                <div class="contact-icon">📞</div>
-                <div class="contact-name">Phone</div>
-                <div class="contact-detail">+251 935 983 470</div>
-                <button class="btn btn-sm" style="margin-top: 10px;">Call Now</button>
-            </div>
-        </div>
-        <div class="user-id-section">
-            <a href="https://t.me/smartprofitttt" target="_blank" rel="noopener noreferrer" class="btn btn-info" style="display: inline-block; width: auto; padding: 12px 20px; text-decoration: none;">
-                📢 Join Telegram Channel
-            </a>
-        </div>
-    </div>
+    <div class="card"><h3>⚡ Quick Actions</h3><button class="btn btn-success" onclick="showModal('depositModal')">💰 Deposit</button><div class="row"><button class="btn" onclick="showModal('buyCoinsModal')">💱 Buy Coins</button><button class="btn btn-warning" onclick="showModal('exchangeModal')">🔄 Exchange to Bonus</button></div><button class="btn btn-danger" onclick="showModal('withdrawModal')">📤 Withdraw Bonus</button></div>
+    <div class="card"><h3>🔒 QUAD-LOCK PROGRESS</h3><div id="quadlock">Loading...</div></div>
+    <div class="card"><h3>📈 Exchange Info</h3><div id="exchangeInfo"></div></div>
 </div>
 
+<!-- MARKET -->
+<div id="market" class="tab-content"><div class="card"><h3>🛒 Investment Market</h3><div id="marketGrid" class="market-grid">Loading...</div></div><div class="card"><h3>🎒 My Investments</h3><div id="investments"></div></div></div>
+
+<!-- GAMES -->
+<div id="games" class="tab-content"><div class="card"><h3>🎁 Win Chance Game (50 Coins)</h3><div id="gameGrid" class="game-grid"></div><div class="game-cost" style="margin-top:12px; text-align:center;">🪙 Cost: <strong>50 Coins</strong></div><div id="gameResult"></div></div></div>
+
+<!-- AIRTIME CARDS -->
+<div id="cards" class="tab-content"><div class="card"><h3>🃏 Airtime Cards</h3><div id="cardsGrid" style="display:flex; flex-direction:column; gap:12px;"></div></div></div>
+
+<!-- LOTTERY -->
+<div id="lottery" class="tab-content"><div class="card"><h3>🎟️ Lottery Pools</h3><div id="lotteryPools"></div></div><div class="card"><h3>🎫 My Tickets</h3><div id="myTickets"></div></div><div class="card"><h3>🏆 Recent Draws</h3><div id="recentDraws"></div></div></div>
+
+<!-- CLINIC -->
+<div id="clinic" class="tab-content"><div class="card"><h3>🏥 Online Clinic (50 Coins)</h3><textarea id="healthIssue" rows="6" placeholder="Describe your health issue..."></textarea><button class="btn btn-info" onclick="startConsultation()">Start Consultation</button></div><div class="card"><h3>📋 My Consultations</h3><div id="consultations"></div></div></div>
+
+<!-- PROFILE -->
+<div id="profile" class="tab-content"><div class="card"><h3>👤 Profile</h3><div id="profileInfo"></div><button class="btn" onclick="copyReferral()">📤 Copy Referral Link</button><button class="btn btn-danger" onclick="logout()">🚪 Logout</button><div class="sound-toggle" style="margin-top:15px; display:flex; justify-content:space-between;"><span>🔊 Sound Effects</span><div id="soundToggle" class="toggle-switch" style="width:50px; height:24px; background:#4b5563; border-radius:12px; cursor:pointer; position:relative;" onclick="toggleSound()"><div id="toggleKnob" style="width:20px; height:20px; background:white; border-radius:50%; position:absolute; top:2px; left:3px; transition:0.2s;"></div></div></div></div><div class="card"><h3>📜 Transaction History</h3><div id="transactionList"></div></div><div class="card"><h3>🏆 Leaderboard</h3><div id="leaderboard"></div></div></div>
+
+<!-- CONTACT -->
+<div id="contact" class="tab-content"><div class="card"><h3>📞 Contact Admin</h3><div class="contact-methods"><div class="contact-method" onclick="contactAdmin('telegram')"><div>📱 Telegram</div><div>@drtesfayekebede</div><button class="btn btn-sm">Message</button></div><div class="contact-method" onclick="contactAdmin('phone')"><div>📞 Phone</div><div>+251 935 983 470</div><button class="btn btn-sm">Call</button></div></div><a href="https://t.me/smartprofitttt" target="_blank" class="btn btn-info" style="text-decoration:none;">📢 Join Telegram Channel</a></div></div>
+
 <!-- MODALS -->
-<div id="depositModal" class="modal">
-    <div class="modal-content"><span class="close" onclick="closeModal('depositModal')">&times;</span><h3>💰 Deposit Money</h3>
-        <div class="payment-methods"><div class="payment-method selected" data-payment="telebirr" onclick="selectPaymentMethod('telebirr')">📱 Telebirr</div><div class="payment-method" data-payment="awash" onclick="selectPaymentMethod('awash')">🏦 Awash Bank</div></div>
-        <div id="telebirrInfo" class="telebirr-info">📱 Send to Telebirr:<br><strong>0935983470</strong><br>Name: <strong>Tesfaye K</strong></div>
-        <div id="awashInfo" class="bank-info" style="display: none;">🏦 Send to Awash Bank:<br><strong>013201372354300</strong><br>Name: <strong>Tesfaye K</strong></div>
-        <input type="number" id="depositAmount" placeholder="Amount (Min 1500 ETB)">
-        <input type="text" id="accountHolder" placeholder="Account Holder Name (Required)">
-        <input type="text" id="transactionId" placeholder="Transaction ID (Required)">
-        <textarea id="depositNote" rows="2" placeholder="Additional note (optional)"></textarea>
-        <button class="btn btn-success" onclick="submitDeposit()">Submit Deposit Request</button>
-        <p style="font-size: 11px; margin-top: 12px; text-align: center; opacity: 0.7;">Admin will verify and approve your deposit.</p>
-    </div>
-</div>
-<div id="buyCoinsModal" class="modal">
-    <div class="modal-content"><span class="close" onclick="closeModal('buyCoinsModal')">&times;</span><h3>💱 Buy Coins (ሳንቲም ግዙ)</h3>
-        <p>Rate: 1 ETB = 1 Coin</p><input type="number" id="buyCoinsAmount" placeholder="Amount (Min 50 ETB)">
-        <button class="btn" onclick="buyCoins()">Buy Coins</button>
-    </div>
-</div>
-<div id="exchangeModal" class="modal">
-    <div class="modal-content"><span class="close" onclick="closeModal('exchangeModal')">&times;</span><h3>🔄 Exchange Coins to Bonus</h3>
-        <p>📊 Daily limit: <strong>3%</strong> of your coins</p><p>💱 Rate: <strong>1 Coin = 1 Bonus</strong></p>
-        <p>✨ Bonus can be withdrawn after Quad-Lock complete</p><div id="exchangeInfoModal"></div>
-        <button class="btn btn-warning" onclick="exchangeCoins()">Exchange Now</button>
-    </div>
-</div>
-<div id="withdrawModal" class="modal">
-    <div class="modal-content"><span class="close" onclick="closeModal('withdrawModal')">&times;</span><h3>📤 Withdraw Bonus</h3>
-        <p>⚠️ Tax: <strong>10%</strong> of withdrawal amount</p><p>🔒 Requires Quad-Lock: 4/4 complete</p>
-        <input type="number" id="withdrawAmount" placeholder="Amount to withdraw (Min 100 ETB)">
-        <input type="text" id="withdrawAccountHolder" placeholder="Account Holder Name (Required)">
-        <input type="text" id="withdrawBankAccount" placeholder="Bank Account Number (Required)">
-        <select id="withdrawBankName"><option value="Telebirr">📱 Telebirr</option><option value="Awash Bank">🏦 Awash Bank</option><option value="CBE">🏦 Commercial Bank of Ethiopia</option><option value="Dashen Bank">🏦 Dashen Bank</option><option value="Other">🏦 Other Bank</option></select>
-        <button class="btn btn-danger" onclick="submitWithdraw()">Request Withdrawal</button>
-    </div>
-</div>
+<div id="depositModal" class="modal"><div class="modal-content"><span class="close" onclick="closeModal('depositModal')">&times;</span><h3>💰 Deposit Money</h3><div class="payment-methods" style="display:flex; gap:10px; margin-bottom:15px;"><div class="payment-method" data-payment="telebirr" onclick="selectPaymentMethod('telebirr')" style="flex:1; background:rgba(255,255,255,0.1); border-radius:16px; padding:10px; text-align:center; cursor:pointer;">📱 Telebirr</div><div class="payment-method" data-payment="awash" onclick="selectPaymentMethod('awash')" style="flex:1; background:rgba(255,255,255,0.1); border-radius:16px; padding:10px; text-align:center; cursor:pointer;">🏦 Awash</div></div><div id="telebirrInfo" class="telebirr-info" style="background:rgba(0,0,0,0.4); border-radius:16px; padding:12px; margin:10px 0; text-align:center;">📱 Send to Telebirr: <strong>0935983470</strong><br>Name: Tesfaye K</div><div id="awashInfo" class="bank-info" style="display:none; background:rgba(0,0,0,0.4); border-radius:16px; padding:12px; margin:10px 0; text-align:center;">🏦 Awash Bank: <strong>013201372354300</strong><br>Name: Tesfaye K</div><input type="number" id="depositAmount" placeholder="Amount (Min 1500 ETB)"><input type="text" id="accountHolder" placeholder="Account Holder Name"><input type="text" id="transactionId" placeholder="Transaction ID"><textarea id="depositNote" rows="2" placeholder="Note (optional)"></textarea><button class="btn btn-success" onclick="submitDeposit()">Submit Deposit Request</button><p style="font-size:11px; margin-top:12px;">Admin will verify and approve.</p></div></div>
+<div id="buyCoinsModal" class="modal"><div class="modal-content"><span class="close" onclick="closeModal('buyCoinsModal')">&times;</span><h3>💱 Buy Coins</h3><p>1 ETB = 1 Coin</p><input type="number" id="buyCoinsAmount" placeholder="Amount (Min 50)"><button class="btn" onclick="buyCoins()">Buy Coins</button></div></div>
+<div id="exchangeModal" class="modal"><div class="modal-content"><span class="close" onclick="closeModal('exchangeModal')">&times;</span><h3>🔄 Exchange Coins → Bonus</h3><p>📊 Daily limit: 3% of your coins</p><p>💱 1 Coin = 1 Bonus</p><div id="exchangeInfoModal"></div><button class="btn btn-warning" onclick="exchangeCoins()">Exchange Now</button></div></div>
+<div id="withdrawModal" class="modal"><div class="modal-content"><span class="close" onclick="closeModal('withdrawModal')">&times;</span><h3>📤 Withdraw Bonus</h3><p>⚠️ Tax: 10%</p><p>🔒 Requires Quad-Lock 4/4</p><input type="number" id="withdrawAmount" placeholder="Amount (Min 100)"><input type="text" id="withdrawAccountHolder" placeholder="Account Holder"><input type="text" id="withdrawBankAccount" placeholder="Bank Account Number"><select id="withdrawBankName"><option>Telebirr</option><option>Awash Bank</option><option>CBE</option><option>Dashen Bank</option></select><button class="btn btn-danger" onclick="submitWithdraw()">Request Withdrawal</button></div></div>
 <div id="toast" class="toast"></div>
 
 <script>
-// ========== CONFIGURATION ==========
+// ==================== SUPABASE CONFIG ====================
 const SUPABASE_URL = 'https://ouhxgdhzgugfxajoannd.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im91aHhnZGh6Z3VnZnhham9hbm5kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2MDU3NDEsImV4cCI6MjA5NDE4MTc0MX0.zYpFWFbX21e-9lf0_--iqeA4ZA7SqHZZWy8Nw8nNgPM';
-const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 let USER_ID = null, IS_ADMIN = false, selectedPaymentMethod = "telebirr", soundEnabled = localStorage.getItem('soundEnabled') !== 'false';
-let isProcessing = { deposit: false, withdraw: false, buyCoins: false, exchangeCoins: false, winChance: false, sellAsset: false };
-let currentLotteryPool = null, currentLotteryPrice = null, gameGridActive = true;
-let isOnline = navigator.onLine, refreshThreshold = 100, touchStartY = 0, isRefreshing = false;
+let isProcessing = {};
 
-// Helper functions
-function showToast(msg, type='success'){ const t=document.getElementById('toast'); t.textContent=msg; t.className=`toast ${type==='error'?'error':type==='info'?'info':''}`; t.classList.add('show'); if(type==='success') playSound('success'); else if(type==='error') playSound('error'); setTimeout(()=>t.classList.remove('show'),3000);}
-function showModal(id){ document.getElementById(id).classList.add('active'); playSound('click');}
-function closeModal(id){ document.getElementById(id).classList.remove('active');}
-function selectPaymentMethod(method){ selectedPaymentMethod=method; const tele=document.getElementById('telebirrInfo'), awa=document.getElementById('awashInfo'); document.querySelectorAll('.payment-method').forEach(el=>el.classList.remove('selected')); if(method==='telebirr'){ tele.style.display='block'; awa.style.display='none'; document.querySelector('[data-payment="telebirr"]').classList.add('selected'); } else { tele.style.display='none'; awa.style.display='block'; document.querySelector('[data-payment="awash"]').classList.add('selected'); }}
-function playSound(name){ if(!soundEnabled) return; try{ const ac=new (window.AudioContext||window.webkitAudioContext)(); const osc=ac.createOscillator(), gain=ac.createGain(); osc.connect(gain); gain.connect(ac.destination); switch(name){ case'click': osc.frequency.value=800; gain.gain.value=0.3; osc.type='sine'; osc.start(); osc.stop(ac.currentTime+0.1); break; case'coin': osc.frequency.value=1200; gain.gain.value=0.2; osc.type='sine'; osc.start(); osc.stop(ac.currentTime+0.2); break; case'win': osc.frequency.value=1500; gain.gain.value=0.4; osc.type='sine'; osc.start(); setTimeout(()=>osc.frequency.value=1000,100); osc.stop(ac.currentTime+0.3); break; case'lose': osc.frequency.value=300; gain.gain.value=0.3; osc.type='sawtooth'; osc.start(); osc.stop(ac.currentTime+0.3); break; case'success': osc.frequency.value=1000; gain.gain.value=0.3; osc.type='sine'; osc.start(); setTimeout(()=>osc.frequency.value=1200,100); osc.stop(ac.currentTime+0.2); break; case'error': osc.frequency.value=400; gain.gain.value=0.3; osc.type='square'; osc.start(); osc.stop(ac.currentTime+0.2); break; default: break; } setTimeout(()=>ac.close(),500); }catch(e){}}
-function toggleSound(){ soundEnabled=!soundEnabled; localStorage.setItem('soundEnabled',soundEnabled); const tog=document.getElementById('soundToggle'); if(soundEnabled) tog.classList.add('active'); else tog.classList.remove('active'); playSound('click');}
-function flyCoinToBalance(sx,sy,amt,isGain=true){ const coin=document.createElement('div'); coin.className='flying-coin'; coin.innerHTML=isGain?`🪙 +${amt.toLocaleString()}`:`🪙 -${amt.toLocaleString()}`; coin.style.left=sx+'px'; coin.style.top=sy+'px'; document.body.appendChild(coin); const targ=document.getElementById('coinsCard'), rect=targ.getBoundingClientRect(), tx=rect.left+rect.width/2, ty=rect.top+rect.height/2, dx=tx-sx, dy=ty-sy; setTimeout(()=>{ coin.style.transform=`translate(${dx}px, ${dy}px) scale(0.3)`; coin.style.opacity='0.5'; },10); playSound('coin'); setTimeout(()=>coin.remove(),700);}
-function contactAdmin(method){ if(method==='telegram') window.open('https://t.me/drtesfayekebede','_blank'); else window.location.href='tel:+251935983470'; playSound('click');}
+// ==================== UTILITIES ====================
+function showToast(msg, type='success') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = `toast ${type==='error'?'error':type==='info'?'info':''}`;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+    if(type==='success') playSound('success');
+    else if(type==='error') playSound('error');
+}
+function showModal(id) { document.getElementById(id).classList.add('active'); playSound('click'); }
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+function playSound(name) {
+    if(!soundEnabled) return;
+    try {
+        const ac = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ac.createOscillator(), gain = ac.createGain();
+        osc.connect(gain); gain.connect(ac.destination);
+        switch(name) {
+            case 'click': osc.frequency.value=800; gain.gain.value=0.3; osc.type='sine'; osc.start(); osc.stop(ac.currentTime+0.1); break;
+            case 'coin': osc.frequency.value=1200; gain.gain.value=0.2; osc.type='sine'; osc.start(); osc.stop(ac.currentTime+0.2); break;
+            case 'win': osc.frequency.value=1500; gain.gain.value=0.4; osc.type='sine'; osc.start(); setTimeout(()=>osc.frequency.value=1000,100); osc.stop(ac.currentTime+0.3); break;
+            case 'lose': osc.frequency.value=300; gain.gain.value=0.3; osc.type='sawtooth'; osc.start(); osc.stop(ac.currentTime+0.3); break;
+            case 'success': osc.frequency.value=1000; gain.gain.value=0.3; osc.type='sine'; osc.start(); setTimeout(()=>osc.frequency.value=1200,100); osc.stop(ac.currentTime+0.2); break;
+            case 'error': osc.frequency.value=400; gain.gain.value=0.3; osc.type='square'; osc.start(); osc.stop(ac.currentTime+0.2); break;
+        }
+        setTimeout(()=>ac.close(),500);
+    } catch(e) {}
+}
+function selectPaymentMethod(method) {
+    selectedPaymentMethod = method;
+    document.getElementById('telebirrInfo').style.display = method==='telebirr' ? 'block' : 'none';
+    document.getElementById('awashInfo').style.display = method==='awash' ? 'block' : 'none';
+    document.querySelectorAll('.payment-method').forEach(el=>el.style.background='rgba(255,255,255,0.1)');
+    document.querySelector(`[data-payment="${method}"]`).style.background = 'linear-gradient(135deg, #fbbf24, #d97706)';
+}
+function toggleSound() {
+    soundEnabled = !soundEnabled;
+    localStorage.setItem('soundEnabled', soundEnabled);
+    const knob = document.getElementById('toggleKnob');
+    if(soundEnabled) knob.style.left = '27px';
+    else knob.style.left = '3px';
+    playSound('click');
+}
+function contactAdmin(method) {
+    if(method==='telegram') window.open('https://t.me/drtesfayekebede','_blank');
+    else window.location.href='tel:+251935983470';
+}
+function copyReferral() {
+    navigator.clipboard.writeText(`${window.location.origin}${window.location.pathname}?ref=${USER_ID}`);
+    showToast('Referral link copied!');
+}
+function confetti() {
+    for(let i=0;i<50;i++) {
+        let conf = document.createElement('div');
+        conf.innerHTML = ['🎉','✨','⭐','💎'][Math.floor(Math.random()*4)];
+        conf.style.position = 'fixed';
+        conf.style.left = Math.random() * window.innerWidth + 'px';
+        conf.style.top = '-20px';
+        conf.style.fontSize = '20px';
+        conf.style.pointerEvents = 'none';
+        conf.style.zIndex = '9999';
+        conf.style.transition = 'all 1.5s ease-out';
+        document.body.appendChild(conf);
+        setTimeout(() => {
+            conf.style.transform = `translateY(${window.innerHeight+50}px) rotate(${Math.random()*360}deg)`;
+            conf.style.opacity = '0';
+        }, 10);
+        setTimeout(() => conf.remove(), 1600);
+    }
+}
 
-// ---------- AUTHENTICATION ----------
-async function checkSession(){
+// ==================== AUTHENTICATION (EMAIL ONLY) ====================
+async function checkSession() {
     const { data:{ session } } = await sb.auth.getSession();
-    if(session?.user){
-        USER_ID = session.user.id; localStorage.setItem('profitvault_user_id', USER_ID);
+    if(session?.user) {
+        USER_ID = session.user.id;
+        localStorage.setItem('profitvault_user_id', USER_ID);
         const { data:userData } = await sb.from('users').select('is_admin').eq('user_id', USER_ID).single();
         IS_ADMIN = userData?.is_admin === true;
-        // Seed default airtime card if none
-        const { count } = await sb.from('global_cards').select('*', { count:'exact', head:true });
-        if(count === 0){
-            await sb.from('global_cards').insert({ card_cost:100, hidden_numbers:['12345678901234567890','09876543210987654321'], position:0 });
-        }
-        load(); if(IS_ADMIN) showAdminTab();
+        await ensureUserExists(session.user);
+        loadAllData();
+        if(IS_ADMIN) showAdminTab();
     } else showAuthModal();
 }
-function showAuthModal(){
-    const modalDiv=document.createElement('div'); modalDiv.id='authModal'; modalDiv.className='modal active'; modalDiv.style.display='flex';
-    modalDiv.innerHTML=`<div class="modal-content" style="max-width:350px;"><h3>🔐 Sign In / Register</h3><div id="authMode" style="display:flex;gap:10px;margin-bottom:15px;"><button class="btn btn-sm" style="flex:1" onclick="setAuthMode('login')">Login</button><button class="btn btn-sm" style="flex:1" onclick="setAuthMode('register')">Register</button></div><div id="authForm"></div><p style="font-size:12px;margin-top:12px;">Use email or phone number.</p></div>`;
-    document.body.appendChild(modalDiv); setAuthMode('login');
-}
-function setAuthMode(mode){
-    const container=document.getElementById('authForm'); if(!container) return;
-    const isLogin=mode==='login';
-    container.innerHTML=`<input type="text" id="authIdentifier" placeholder="Email or Phone"><${!isLogin?'<input type="text" id="authUsername" placeholder="Username (optional)">':''}<input type="password" id="authPassword" placeholder="Password (min 6)"><button class="btn btn-success" onclick="${isLogin?'login()':'register()'}">${isLogin?'Sign In':'Create Account'}</button><button class="btn btn-info" onclick="closeAuthModal()">Close</button>`;
-}
-async function login(){
-    const id=document.getElementById('authIdentifier').value.trim(), pw=document.getElementById('authPassword').value;
-    if(!id||!pw){ showToast('Fill all fields','error'); return; }
-    const isEmail=id.includes('@');
-    let resp; if(isEmail) resp=await sb.auth.signInWithPassword({ email:id, password:pw }); else resp=await sb.auth.signInWithPassword({ phone:id, password:pw });
-    if(resp.error){ showToast(resp.error.message,'error'); return; }
-    USER_ID=resp.data.user.id; localStorage.setItem('profitvault_user_id', USER_ID);
-    await ensureUserExists(resp.data.user, id);
-    closeAuthModal(); load(); showToast('Welcome back!','success');
-}
-async function register(){
-    const id=document.getElementById('authIdentifier').value.trim(), pw=document.getElementById('authPassword').value, username=document.getElementById('authUsername')?.value.trim()||'User';
-    if(!id||!pw){ showToast('Email/phone and password required','error'); return; }
-    if(pw.length<6){ showToast('Password min 6 chars','error'); return; }
-    const isEmail=id.includes('@');
-    let resp; if(isEmail) resp=await sb.auth.signUp({ email:id, password:pw }); else resp=await sb.auth.signUp({ phone:id, password:pw });
-    if(resp.error){ showToast(resp.error.message,'error'); return; }
-    const user=resp.data.user; USER_ID=user.id; localStorage.setItem('profitvault_user_id', USER_ID);
-    // Referral tracking
-    const urlParams=new URLSearchParams(window.location.search);
-    const referrerId=urlParams.get('ref');
-    if(referrerId && referrerId!==USER_ID){
-        try{ await sb.rpc('increment_referral', { referrer_id:referrerId }); }catch(e){ console.warn('RPC not available, fallback to direct update'); const { data:refUser }=await sb.from('users').select('active_referrals').eq('user_id',referrerId).single(); if(refUser) await sb.from('users').update({ active_referrals:(refUser.active_referrals||0)+1 }).eq('user_id',referrerId); }
-    }
-    await ensureUserExists(user, id);
-    closeAuthModal(); load(); showToast('Account created!','success');
-}
-async function ensureUserExists(authUser, identifier){
-    const { data:existing }=await sb.from('users').select('*').eq('user_id',authUser.id).single();
-    if(!existing){
-        await sb.from('users').insert({ user_id:authUser.id, username:identifier.split('@')[0]||identifier.slice(0,8), balance:0, bonus_balance:0, coin_balance:0, total_deposited:0, total_withdrawn:0, win_chance_plays:0, active_referrals:0, joined_date:new Date().toISOString().split('T')[0] });
+async function ensureUserExists(authUser) {
+    const { data:existing } = await sb.from('users').select('user_id').eq('user_id', authUser.id).single();
+    if(!existing) {
+        await sb.from('users').insert({
+            user_id: authUser.id,
+            username: authUser.email?.split('@')[0] || 'User',
+            balance:0, bonus_balance:0, coin_balance:0, total_deposited:0, total_withdrawn:0,
+            win_chance_plays:0, active_referrals:0, joined_date:new Date().toISOString().split('T')[0]
+        });
     }
 }
-function closeAuthModal(){ const m=document.getElementById('authModal'); if(m) m.remove(); setTimeout(()=>{ if(!USER_ID) showAuthModal(); },500);}
-async function logout(){ await sb.auth.signOut(); localStorage.removeItem('profitvault_user_id'); USER_ID=null; IS_ADMIN=false; window.location.reload(); }
-function copyReferral(){ const link=`${window.location.origin}${window.location.pathname}?ref=${USER_ID}`; navigator.clipboard.writeText(link); showToast('Referral link copied!','success'); playSound('click'); }
-
-// ---------- MAIN LOAD ----------
-async function load(){
-    try{
-        let { data:user, error:userErr }=await sb.from('users').select('*').eq('user_id',USER_ID).single();
-        if(userErr && (userErr.code==='PGRST116')){
-            const { data:newUser }=await sb.from('users').insert({ user_id:USER_ID, username:'Anonymous', balance:0, bonus_balance:0, coin_balance:0, total_deposited:0, total_withdrawn:0, win_chance_plays:0, active_referrals:0, joined_date:new Date().toISOString().split('T')[0] }).select().single();
-            user=newUser;
-        } else if(userErr){ document.getElementById('quadlock').innerHTML='<div class="loading">User not found.</div>'; return; }
-        document.getElementById('balance').innerText=(user.balance||0).toLocaleString();
-        document.getElementById('bonus').innerText=(user.bonus_balance||0).toLocaleString();
-        document.getElementById('coins').innerText=(user.coin_balance||0).toLocaleString();
-
-        const { count:lotteryCount }=await sb.from('lottery_tickets').select('*',{count:'exact',head:true}).eq('user_id',USER_ID);
-        const depositRequired=1500, gamesRequired=10, ticketsRequired=3, referralsRequired=3;
-        const depositDone=(user.total_deposited||0)>=depositRequired;
-        const gameDone=(user.win_chance_plays||0)>=gamesRequired;
-        const lotteryDone=(lotteryCount||0)>=ticketsRequired;
-        const referralDone=(user.active_referrals||0)>=referralsRequired;
-        const completed=[depositDone,gameDone,lotteryDone,referralDone].filter(Boolean).length;
-        const percent=(completed/4)*100;
-        document.getElementById('quadlock').innerHTML=`
-            <div class="quad-item ${depositDone?'unlocked':'locked'}"><div class="quad-left"><div class="quad-status">${depositDone?'✅':'❌'}</div><div><div class="quad-text">💰 Deposit ${depositRequired} ETB</div><div class="quad-count">${(user.total_deposited||0).toLocaleString()}/${depositRequired} ETB</div></div></div><div class="quad-amount">${depositDone?'Unlocked':'Locked'}</div></div>
-            <div class="quad-item ${gameDone?'unlocked':'locked'}"><div class="quad-left"><div class="quad-status">${gameDone?'✅':'❌'}</div><div><div class="quad-text">🎮 Play ${gamesRequired} Games</div><div class="quad-count">${user.win_chance_plays||0}/${gamesRequired}</div></div></div><div class="quad-amount">${gameDone?'Unlocked':'Locked'}</div></div>
-            <div class="quad-item ${lotteryDone?'unlocked':'locked'}"><div class="quad-left"><div class="quad-status">${lotteryDone?'✅':'❌'}</div><div><div class="quad-text">🎟️ Buy ${ticketsRequired} Tickets</div><div class="quad-count">${lotteryCount||0}/${ticketsRequired}</div></div></div><div class="quad-amount">${lotteryDone?'Unlocked':'Locked'}</div></div>
-            <div class="quad-item ${referralDone?'unlocked':'locked'}"><div class="quad-left"><div class="quad-status">${referralDone?'✅':'❌'}</div><div><div class="quad-text">👥 Get ${referralsRequired} Active Referrals</div><div class="quad-count">${user.active_referrals||0}/${referralsRequired}</div></div></div><div class="quad-amount">${referralDone?'Unlocked':'Locked'}</div></div>
-            <div class="progress-container"><div class="progress-bar"><div class="progress-fill" style="width:${percent}%"></div></div><div class="progress-text">${completed}/4 Complete - ${Math.round(percent)}% to Withdraw</div></div>`;
-
-        const today=new Date().toISOString().substring(0,10);
-        const { data:exchangedToday }=await sb.from('daily_exchange').select('amount_exchanged').eq('user_id',USER_ID).eq('exchange_date',today);
-        const exchangedAmount=exchangedToday?exchangedToday.reduce((s,r)=>s+(r.amount_exchanged||0),0):0;
-        const maxExchange=Math.floor((user.coin_balance||0)*0.03);
-        const remainingExchange=Math.max(0,maxExchange-exchangedAmount);
-        document.getElementById('exchangeInfo').innerHTML=`<div class="quad-item unlocked"><div class="quad-left"><div>📊 Daily Limit: 3% of coins</div></div><div>${maxExchange.toLocaleString()} max</div></div><div class="quad-item ${remainingExchange>0?'unlocked':'locked'}"><div class="quad-left"><div>Today's Remaining Exchange</div></div><div>${remainingExchange.toLocaleString()} coins</div></div>`;
-        document.getElementById('exchangeInfoModal').innerHTML=`<div class="quad-item unlocked"><div>Max exchange today: ${maxExchange.toLocaleString()} coins</div></div><div class="quad-item ${remainingExchange>0?'unlocked':'locked'}"><div>Remaining: ${remainingExchange.toLocaleString()} coins</div></div>`;
-        document.getElementById('profileInfo').innerHTML=`<div class="profile-item"><span>👤 Username</span><span>@${user.username||'Unknown'}</span></div><div class="profile-item"><span>🆔 User ID</span><span><code>${user.user_id}</code></span></div><div class="profile-item"><span>📅 Joined</span><span>${user.joined_date||'Unknown'}</span></div><div class="profile-item"><span>💰 Total Deposited</span><span>${(user.total_deposited||0).toLocaleString()} ETB</span></div><div class="profile-item"><span>📤 Total Withdrawn</span><span>${(user.total_withdrawn||0).toLocaleString()} ETB</span></div><div class="profile-item"><span>👥 Active Referrals</span><span>${user.active_referrals||0}</span></div><div class="profile-item"><span>🎮 Games Played</span><span>${user.win_chance_plays||0}</span></div><div class="profile-item"><span>🎟️ Active Tickets</span><span>${lotteryCount||0}</span></div>`;
-
-        const { data:market }=await sb.from('market').select('*').order('slot_id');
-        const { data:assets }=await sb.from('user_assets').select('*').eq('user_id',USER_ID).eq('sold',false);
-        if(market) updateMarket(market, assets||[]);
-        if(assets) updateInvestments(assets);
-
-        // lottery pools
-        const pools=[];
-        for(let pid of [1,2,3]){
-            const { count:sold }=await sb.from('lottery_tickets').select('*',{count:'exact',head:true}).eq('pool_id',pid).eq('status','active');
-            const { data:taken }=await sb.from('lottery_tickets').select('ticket_number').eq('pool_id',pid).eq('status','active');
-            const takenList=taken?taken.map(t=>t.ticket_number):[];
-            pools.push({ id:pid, price:{1:50,2:100,3:200}[pid], reward:{1:500,2:1000,3:2000}[pid], sold:sold||0, total:15, taken_numbers:takenList, is_full:(sold||0)>=15 });
-        }
-        updateLotteryPools(pools);
-        const { data:myTickets }=await sb.from('lottery_tickets').select('*').eq('user_id',USER_ID).eq('status','active');
-        updateMyTickets(myTickets||[]);
-        const { data:recentDraws }=await sb.from('lottery_draws').select('*').order('draw_time',{ascending:false}).limit(5);
-        updateRecentDraws(recentDraws||[]);
-        const { data:consultations }=await sb.from('health_consultations').select('*').eq('user_id',USER_ID).order('created_at',{ascending:false}).limit(5);
-        updateConsultations(consultations||[]);
-        const { data:transactions }=await sb.from('transactions').select('*').eq('user_id',USER_ID).order('timestamp',{ascending:false}).limit(20);
-        if(transactions){
-            const depWit=transactions.filter(t=>t.transaction_type.includes('Deposit')||t.transaction_type.includes('Withdrawal')||t.transaction_type.includes('ተቀማጭ')||t.transaction_type.includes('መውጫ'));
-            const other=transactions.filter(t=>!t.transaction_type.includes('Deposit')&&!t.transaction_type.includes('Withdrawal')&&!t.transaction_type.includes('ተቀማጭ')&&!t.transaction_type.includes('መውጫ'));
-            updateSplitTransactions({ deposit_withdraw:depWit, other:other });
-        }
-        const { data:leaderboard }=await sb.from('users').select('user_id,username,total_deposited').order('total_deposited',{ascending:false}).limit(10);
-        if(leaderboard) document.getElementById('leaderboard').innerHTML=leaderboard.map((u,i)=>`<div class="transaction-item"><div style="display:flex;justify-content:space-between;"><div><span style="font-weight:bold;">${i+1}.</span> @${u.username||u.user_id.substring(0,8)}</div><div><strong>${(u.total_deposited||0).toLocaleString()} ETB</strong></div></div></div>`).join('');
-    } catch(e){ console.error(e); showToast('Load error','error'); }
+function showAuthModal() {
+    let modalDiv = document.createElement('div');
+    modalDiv.id = 'authModal';
+    modalDiv.className = 'modal active';
+    modalDiv.innerHTML = `
+        <div class="modal-content">
+            <span class="close" onclick="closeAuthModal()">&times;</span>
+            <div class="auth-header">
+                <h2>🏆 PROFIT VAULT</h2>
+                <p>Secure Investment Platform</p>
+            </div>
+            <div class="mode-switch">
+                <button id="loginModeBtn" class="active" onclick="setAuthMode('login')">Login</button>
+                <button id="registerModeBtn" onclick="setAuthMode('register')">Register</button>
+            </div>
+            <div id="authForm"></div>
+        </div>
+    `;
+    document.body.appendChild(modalDiv);
+    setAuthMode('login');
+}
+function setAuthMode(mode) {
+    const container = document.getElementById('authForm');
+    if(!container) return;
+    const isLogin = mode === 'login';
+    // Update active button style
+    const loginBtn = document.getElementById('loginModeBtn');
+    const regBtn = document.getElementById('registerModeBtn');
+    if(loginBtn && regBtn) {
+        if(isLogin) { loginBtn.classList.add('active'); regBtn.classList.remove('active'); }
+        else { regBtn.classList.add('active'); loginBtn.classList.remove('active'); }
+    }
+    container.innerHTML = `
+        <input type="email" id="authEmail" placeholder="Email address" required>
+        <input type="password" id="authPassword" placeholder="Password (min 6)" required>
+        ${!isLogin ? '<input type="text" id="authUsername" placeholder="Username (optional)">' : ''}
+        <button class="btn btn-success" onclick="${isLogin ? 'login()' : 'register()'}">${isLogin ? 'Sign In' : 'Create Account'}</button>
+    `;
+}
+async function login() {
+    const email = document.getElementById('authEmail').value.trim();
+    const password = document.getElementById('authPassword').value;
+    if(!email || !password) return showToast('Email and password required','error');
+    const { error } = await sb.auth.signInWithPassword({ email, password });
+    if(error) return showToast(error.message,'error');
+    closeAuthModal();
+    checkSession();
+}
+async function register() {
+    const email = document.getElementById('authEmail').value.trim();
+    const password = document.getElementById('authPassword').value;
+    const username = document.getElementById('authUsername')?.value.trim() || email.split('@')[0];
+    if(!email || !password) return showToast('Email and password required','error');
+    if(password.length < 6) return showToast('Password min 6 chars','error');
+    const { error, data } = await sb.auth.signUp({ email, password });
+    if(error) return showToast(error.message,'error');
+    const urlParams = new URLSearchParams(window.location.search);
+    const ref = urlParams.get('ref');
+    if(ref && ref !== data.user?.id) {
+        try { await sb.rpc('increment_referral', { referrer_id:ref }); } catch(e) { console.warn(e); }
+    }
+    closeAuthModal();
+    checkSession();
+}
+function closeAuthModal() {
+    const m = document.getElementById('authModal');
+    if(m) m.remove();
+    if(!USER_ID) setTimeout(()=>showAuthModal(),500);
+}
+async function logout() {
+    await sb.auth.signOut();
+    localStorage.removeItem('profitvault_user_id');
+    window.location.reload();
 }
 
-function updateSplitTransactions(trans){
-    const dw=trans.deposit_withdraw||[], other=trans.other||[];
-    const dwDiv=document.getElementById('depositWithdrawTransactions');
-    if(!dw.length) dwDiv.innerHTML='<div class="loading">No deposit/withdrawal transactions</div>';
-    else dwDiv.innerHTML=dw.map(t=>{ let cls='', stat=''; if(t.status==='Pending'||t.status==='pending'){ cls='transaction-pending'; stat='⏳ Pending'; } else if(t.status==='Completed'||t.status==='approved'){ cls='transaction-approved'; stat='✅ Approved'; } else if(t.status==='denied'){ cls='transaction-denied'; stat='❌ Denied'; } else stat=t.status||'Unknown'; const isDep=t.transaction_type.includes('Deposit'); return `<div class="transaction-item ${cls}"><div style="display:flex;justify-content:space-between;"><span>${isDep?'📥':'📤'} ${t.transaction_type}</span><span style="color:${t.amount>0?'#10b981':'#ef4444'};font-weight:bold;">${Math.abs(t.amount).toLocaleString()} ETB</span></div><div style="font-size:10px;">${t.timestamp}</div><div style="font-size:11px;"><strong>${stat}</strong></div></div>`; }).join('');
-    const otherDiv=document.getElementById('otherTransactions');
-    if(!other.length) otherDiv.innerHTML='<div class="loading">No other transactions</div>';
-    else otherDiv.innerHTML=other.map(t=>`<div class="transaction-item"><div style="display:flex;justify-content:space-between;"><span>${t.amount>0?'➕':'➖'} ${t.transaction_type}</span><span style="color:${t.amount>0?'#10b981':'#ef4444'};font-weight:bold;">${Math.abs(t.amount).toLocaleString()} ${t.amount>=0?'🪙':'💰'}</span></div><div style="font-size:10px;">${t.timestamp}</div><div>${t.status}</div></div>`).join('');
+// ==================== DATA LOADING (FULL FEATURES) ====================
+let currentUser = null;
+async function loadUser() {
+    const { data, error } = await sb.from('users').select('*').eq('user_id', USER_ID).single();
+    if(error && error.code === 'PGRST116') {
+        await ensureUserExists({ id: USER_ID, email: 'temp@temp.com' });
+        return loadUser();
+    }
+    currentUser = data;
+    document.getElementById('balance').innerText = (data.balance || 0).toLocaleString();
+    document.getElementById('bonus').innerText = (data.bonus_balance || 0).toLocaleString();
+    document.getElementById('coins').innerText = (data.coin_balance || 0).toLocaleString();
+    return data;
+}
+async function loadAllData() {
+    if(!USER_ID) return;
+    await loadUser();
+    // Quad-Lock
+    const { count: lotteryCount } = await sb.from('lottery_tickets').select('*', {count:'exact', head:true}).eq('user_id', USER_ID).eq('status','active');
+    const depositDone = (currentUser.total_deposited || 0) >= 1500;
+    const gameDone = (currentUser.win_chance_plays || 0) >= 10;
+    const lotteryDone = (lotteryCount || 0) >= 3;
+    const referralDone = (currentUser.active_referrals || 0) >= 3;
+    const completed = [depositDone, gameDone, lotteryDone, referralDone].filter(Boolean).length;
+    const percent = (completed/4)*100;
+    document.getElementById('quadlock').innerHTML = `
+        <div class="quad-item ${depositDone?'unlocked':'locked'}"><div>💰 Deposit 1500 ETB</div><div>${(currentUser.total_deposited||0)}/1500</div></div>
+        <div class="quad-item ${gameDone?'unlocked':'locked'}"><div>🎮 Play 10 Games</div><div>${currentUser.win_chance_plays||0}/10</div></div>
+        <div class="quad-item ${lotteryDone?'unlocked':'locked'}"><div>🎟️ Buy 3 Tickets</div><div>${lotteryCount||0}/3</div></div>
+        <div class="quad-item ${referralDone?'unlocked':'locked'}"><div>👥 3 Referrals</div><div>${currentUser.active_referrals||0}/3</div></div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${percent}%"></div></div>
+        <div class="progress-text">${completed}/4 Complete (${Math.round(percent)}%)</div>`;
+    // Exchange info
+    const today = new Date().toISOString().slice(0,10);
+    const { data: exchanged } = await sb.from('daily_exchange').select('amount_exchanged').eq('user_id', USER_ID).eq('exchange_date', today);
+    const exchangedAmt = exchanged?.reduce((s,r)=>s+(r.amount_exchanged||0),0) || 0;
+    const maxEx = Math.floor((currentUser.coin_balance||0) * 0.03);
+    const rem = Math.max(0, maxEx - exchangedAmt);
+    document.getElementById('exchangeInfo').innerHTML = `<div>📊 Daily limit: 3% (${maxEx} max)</div><div>✅ Remaining today: ${rem} coins</div>`;
+    document.getElementById('exchangeInfoModal').innerHTML = `<div>Max exchange: ${maxEx} coins</div><div>Remaining: ${rem} coins</div>`;
+    // Market & Investments
+    const { data: market } = await sb.from('market').select('*').order('slot_id');
+    const { data: assets } = await sb.from('user_assets').select('*').eq('user_id', USER_ID).eq('sold', false);
+    const ownedSlots = assets?.map(a=>a.slot_id) || [];
+    if(market) document.getElementById('marketGrid').innerHTML = market.map(item => `<div class="market-item ${ownedSlots.includes(item.slot_id)?'owned':''}" onclick="${!ownedSlots.includes(item.slot_id)?`buyAsset(${item.slot_id})`:''}"><div class="market-emoji">${item.emoji}</div><div class="market-name">${item.asset_name}</div><div class="market-price">${item.cost} 🪙</div><div class="market-roi">ROI ${((item.default_roi||1.25)-1)*100}%</div>${ownedSlots.includes(item.slot_id)?'✅ Owned':''}</div>`).join('');
+    if(assets) document.getElementById('investments').innerHTML = assets.map(asset => {
+        const purchase = new Date(asset.purchase_time);
+        const maturity = new Date(purchase.getTime() + 24*3600000);
+        const ready = new Date() >= maturity;
+        const payout = Math.round(asset.purchase_price * asset.roi_at_purchase);
+        const hoursLeft = Math.ceil((maturity - new Date())/3600000);
+        return `<div class="investment-item"><div><span style="font-size:20px;">${asset.emoji}</span> <strong>${asset.asset_name}</strong><div>Invested: ${asset.purchase_price} 🪙</div><div>Payout: ${payout} 🪙</div></div>${ready ? `<button class="sell-btn" onclick="sellAsset(${asset.id}, ${payout})">💵 Sell</button>` : `<span class="badge">⏳ ${hoursLeft}h left</span>`}</div>`;
+    }).join('');
+    // Lottery
+    const pools = [];
+    for(let pid of [1,2,3]) {
+        const { count: sold } = await sb.from('lottery_tickets').select('*',{count:'exact',head:true}).eq('pool_id',pid).eq('status','active');
+        const { data: taken } = await sb.from('lottery_tickets').select('ticket_number').eq('pool_id',pid).eq('status','active');
+        const takenList = taken?.map(t=>t.ticket_number)||[];
+        pools.push({ id:pid, price:[50,100,200][pid-1], reward:[500,1000,2000][pid-1], sold:sold||0, total:15, taken:takenList, full:(sold||0)>=15 });
+    }
+    document.getElementById('lotteryPools').innerHTML = pools.map(p => `<div class="lottery-pool"><div><strong>🎰 Pool #${p.id}</strong> <span class="badge">Prize: ${p.reward} 🪙</span></div><div>💰 Ticket: ${p.price} 🪙</div><div class="progress-bar"><div class="progress-fill" style="width:${(p.sold/p.total)*100}%"></div></div><div>${p.sold}/${p.total} sold</div>${!p.full ? `<button class="btn btn-sm" onclick="showLotteryNumbers(${p.id}, ${p.price}, ${JSON.stringify(p.taken)})">Buy Ticket</button>` : '<div>✅ Pool Full</div>'}</div>`).join('');
+    const { data: myTickets } = await sb.from('lottery_tickets').select('*').eq('user_id', USER_ID).eq('status','active');
+    document.getElementById('myTickets').innerHTML = myTickets?.length ? myTickets.map(t => `<div class="ticket-item"><div>🎫 Pool #${t.pool_id} - Number ${String(t.ticket_number).padStart(2,'0')}</div><div><code>${t.serial_number}</code> <span class="badge">Active</span></div></div>`).join('') : '<div class="loading">No tickets</div>';
+    const { data: recent } = await sb.from('lottery_draws').select('*').order('draw_time',{ascending:false}).limit(5);
+    document.getElementById('recentDraws').innerHTML = recent?.length ? recent.map(d => `<div class="ticket-item"><div>🎰 Pool #${d.pool_id}</div><div>Winner: ${d.winner_serial}</div><div class="badge">${d.prize_amount} 🪙</div></div>`).join('') : '<div class="loading">No draws</div>';
+    // Consultations
+    const { data: cons } = await sb.from('health_consultations').select('*').eq('user_id', USER_ID).order('created_at',{ascending:false}).limit(10);
+    document.getElementById('consultations').innerHTML = cons?.length ? cons.map(c => `<div class="consultation-item"><div><strong>📅 ${c.created_at?.slice(0,10)}</strong> <span class="badge">${c.status}</span></div><div>Issue: ${c.issue?.slice(0,100)}</div>${c.admin_response ? `<div style="color:#10b981;">Response: ${c.admin_response.slice(0,100)}</div>` : ''}</div>`).join('') : '<div class="loading">No consultations</div>';
+    // Transactions
+    const { data: txs } = await sb.from('transactions').select('*').eq('user_id', USER_ID).order('timestamp',{ascending:false}).limit(30);
+    document.getElementById('transactionList').innerHTML = txs?.length ? txs.map(t => `<div class="transaction-item"><div>${t.transaction_type}</div><div style="color:${t.amount>0?'#10b981':'#ef4444'}">${t.amount>0?'+':''}${Math.abs(t.amount).toLocaleString()}</div><div style="font-size:10px;">${t.timestamp}</div><div>${t.status}</div></div>`).join('') : '<div class="loading">No transactions</div>';
+    // Leaderboard
+    const { data: top } = await sb.from('users').select('username, total_deposited').order('total_deposited',{ascending:false}).limit(10);
+    document.getElementById('leaderboard').innerHTML = top?.map((u,i) => `<div class="transaction-item"><div>${i+1}. @${u.username||'User'}</div><div>${(u.total_deposited||0).toLocaleString()} ETB</div></div>`).join('') || '<div class="loading">No data</div>';
+    // Profile Info
+    document.getElementById('profileInfo').innerHTML = `<div class="profile-item">👤 ${currentUser.username||'User'}</div><div>🆔 ${USER_ID.slice(0,8)}...</div><div>📅 Joined: ${currentUser.joined_date||'N/A'}</div><div>💰 Deposited: ${(currentUser.total_deposited||0).toLocaleString()} ETB</div><div>📤 Withdrawn: ${(currentUser.total_withdrawn||0).toLocaleString()} ETB</div><div>👥 Referrals: ${currentUser.active_referrals||0}</div><div>🎮 Games: ${currentUser.win_chance_plays||0}</div>`;
+    // Airtime cards
+    const { data: cards } = await sb.from('global_cards').select('*').order('position');
+    document.getElementById('cardsGrid').innerHTML = cards?.map(card => `<div class="market-item" onclick="buyAirtimeCard(${card.id}, ${card.card_cost})"><div class="market-emoji">🎫</div><div class="market-name">Airtime - ${card.card_cost} ETB</div><div class="market-price">Cost: ${card.card_cost} ETB</div><div>${card.hidden_numbers?.length ? '✅ Available' : '❌ Sold Out'}</div></div>`).join('') || '<div class="loading">No cards</div>';
 }
 
-function updateMarket(market, assets){
-    const ownedSlots=assets.map(a=>a.slot_id);
-    document.getElementById('marketGrid').innerHTML=market.map(item=>`<div class="market-item ${ownedSlots.includes(item.slot_id)?'owned':''}" data-slot="${item.slot_id}" onclick="${!ownedSlots.includes(item.slot_id)?`buyAssetWithFly(${item.slot_id}, event)`:''}"><div class="market-emoji">${item.emoji}</div><div class="market-name">${item.asset_name}</div><div class="market-price">${item.cost.toLocaleString()} 🪙</div><div class="market-roi" style="font-size:11px;color:#fbbf24;">📈 ROI: ${(item.default_roi||1.25)}x (${(((item.default_roi||1.25)-1)*100).toFixed(0)}%)</div>${ownedSlots.includes(item.slot_id)?'<div style="font-size:10px;">✅ Owned</div>':''}</div>`).join('');
+// ==================== FINANCIAL ACTIONS ====================
+async function buyCoins() {
+    if(isProcessing.buyCoins) return;
+    isProcessing.buyCoins = true;
+    let amt = parseInt(document.getElementById('buyCoinsAmount').value);
+    if(isNaN(amt) || amt < 50) { showToast('Minimum 50 ETB','error'); isProcessing.buyCoins=false; return; }
+    if((currentUser.balance||0) < amt) { showToast('Insufficient balance','error'); isProcessing.buyCoins=false; return; }
+    await sb.rpc('buy_coins_transaction', { p_user_id: USER_ID, p_amount: amt });
+    showToast(`Bought ${amt} coins!`,'success');
+    playSound('coin');
+    closeModal('buyCoinsModal');
+    document.getElementById('buyCoinsAmount').value = '';
+    await loadAllData();
+    isProcessing.buyCoins = false;
 }
-function updateInvestments(assets){
-    const invDiv=document.getElementById('investments');
-    if(!assets.length){ invDiv.innerHTML='<div class="loading">No active investments</div>'; return; }
-    invDiv.innerHTML=assets.map(asset=>{ const purchase=new Date(asset.purchase_time), maturity=new Date(purchase.getTime()+24*3600000), now=new Date(), ready=now>=maturity, payout=Math.round(asset.purchase_price*asset.roi_at_purchase), hoursLeft=Math.ceil((maturity-now)/3600000); return `<div class="investment-item" data-asset-id="${asset.id}"><div><span style="font-size:20px;">${asset.emoji}</span> <strong>${asset.asset_name}</strong><div style="font-size:11px;">Invested: ${asset.purchase_price.toLocaleString()} 🪙</div><div style="font-size:11px;">Payout: ${payout.toLocaleString()} 🪙</div></div>${ready?`<button class="sell-btn" onclick="sellAssetWithFly(${asset.id}, ${payout}, event)">💵 Sell for ${payout.toLocaleString()} 🪙</button>`:`<span class="badge">⏳ ${hoursLeft}h left</span>`}</div>`; }).join('');
+async function exchangeCoins() {
+    if(isProcessing.exchangeCoins) return;
+    isProcessing.exchangeCoins = true;
+    const today = new Date().toISOString().slice(0,10);
+    const { data: exchanged } = await sb.from('daily_exchange').select('amount_exchanged').eq('user_id', USER_ID).eq('exchange_date', today);
+    const exchangedAmt = exchanged?.reduce((s,r)=>s+(r.amount_exchanged||0),0) || 0;
+    const maxEx = Math.floor((currentUser.coin_balance||0) * 0.03);
+    const exAmt = Math.max(0, maxEx - exchangedAmt);
+    if(exAmt <= 0) { showToast('Daily limit reached','error'); isProcessing.exchangeCoins=false; return; }
+    await sb.rpc('exchange_coins_to_bonus', { p_user_id: USER_ID, p_amount: exAmt, p_date: today });
+    showToast(`Exchanged ${exAmt} coins → bonus`,'success');
+    playSound('coin');
+    closeModal('exchangeModal');
+    await loadAllData();
+    isProcessing.exchangeCoins = false;
 }
-async function buyAssetWithFly(slotId, event){
-    const rect=event.currentTarget.getBoundingClientRect();
-    const startX=rect.left+rect.width/2, startY=rect.top+rect.height/2;
-    try{
-        const { data:asset }=await sb.from('market').select('*').eq('slot_id',slotId).single();
-        const { data:user }=await sb.from('users').select('coin_balance').eq('user_id',USER_ID).single();
-        if((user.coin_balance||0)<asset.cost){ showToast(`Need ${asset.cost} coins`,'error'); return; }
-        // Use RPC if available, else safe fallback
-        try{
-            await sb.rpc('buy_market_asset', { p_user_id:USER_ID, p_slot_id:slotId, p_cost:asset.cost, p_emoji:asset.emoji, p_name:asset.asset_name, p_roi:asset.default_roi||1.25 });
-        } catch(e){
-            // fallback atomic transaction simulation: we trust that race condition is unlikely but this is still client-side; better to create RPC.
-            const newCoins=user.coin_balance-asset.cost;
-            await sb.from('users').update({ coin_balance:newCoins }).eq('user_id',USER_ID);
-            await sb.from('user_assets').insert({ user_id:USER_ID, slot_id:slotId, emoji:asset.emoji, asset_name:asset.asset_name, purchase_price:asset.cost, roi_at_purchase:asset.default_roi||1.25, purchase_time:new Date().toISOString().replace('T',' ').substring(0,19), sold:false });
-            await sb.from('transactions').insert({ user_id:USER_ID, transaction_type:`🛒 Market (${asset.asset_name})`, amount:asset.cost, status:'Completed', timestamp:new Date().toISOString().replace('T',' ').substring(0,19) });
-        }
-        flyCoinToBalance(startX,startY,asset.cost,false);
-        showToast(`✅ Invested in ${asset.asset_name}!`,'success'); playSound('deposit'); load();
-    } catch(err){ showToast('Error: '+err.message,'error'); }
-}
-async function sellAssetWithFly(assetId, payout, event){
-    if(isProcessing.sellAsset) return; isProcessing.sellAsset=true; const rect=event.currentTarget.getBoundingClientRect(), startX=rect.left+rect.width/2, startY=rect.top+rect.height/2;
-    try{
-        await sb.rpc('sell_market_asset', { p_asset_id:assetId, p_user_id:USER_ID, p_payout:payout });
-        flyCoinToBalance(startX,startY,payout,true);
-        showToast(`Sold for ${payout} coins!`,'success'); playSound('coin'); load();
-    } catch(err){ showToast('Sell error','error'); } finally{ isProcessing.sellAsset=false; }
-}
-function createGameGrid(){ let html=''; for(let i=0;i<16;i++) html+=`<div class="game-card" data-pos="${i}" onclick="playGame(${i}, event)">🎁</div>`; document.getElementById('gameGrid').innerHTML=html; gameGridActive=true; }
-async function playGame(pos, event){
-    if(!gameGridActive||isProcessing.winChance) return; isProcessing.winChance=true; gameGridActive=false;
-    try{
-        const { data:user }=await sb.from('users').select('coin_balance,win_chance_plays').eq('user_id',USER_ID).single();
-        if((user.coin_balance||0)<50){ showToast('Need 50 coins','error'); isProcessing.winChance=false; gameGridActive=true; return; }
-        const shuffled=[100,75,75,50,50,50,25,25,25,25,10,10,10,10,10,0].sort(()=>Math.random()-0.5);
-        const winnings=shuffled[pos]||0;
-        const newCoins=user.coin_balance-50+winnings;
-        await sb.from('users').update({ coin_balance:newCoins, win_chance_plays:(user.win_chance_plays||0)+1 }).eq('user_id',USER_ID);
-        await sb.from('transactions').insert({ user_id:USER_ID, transaction_type:'🎁 Win Chance Game', amount:winnings, status:'Completed', timestamp:new Date().toISOString().replace('T',' ').substring(0,19) });
-        const resDiv=document.getElementById('gameResult'); resDiv.className=`game-result ${winnings>0?'win':'lose'}`; resDiv.innerHTML=winnings>0?`🎉 You won ${winnings} coins! 🎉`:`💨 Better luck next time!`;
-        if(winnings>0){ playSound('win'); if(event){ const rect=event.target.getBoundingClientRect(); createCoinBubble(rect.left+rect.width/2, rect.top, winnings); } } else playSound('lose');
-        showToast(winnings>0?`Won ${winnings} coins!`:'No win', winnings>0?'success':'error');
-        const cells=document.querySelectorAll('.game-card'); cells.forEach((cell,idx)=>{ cell.classList.add('revealed'); cell.setAttribute('data-prize',shuffled[idx]); cell.innerHTML=shuffled[idx]; cell.style.fontSize='24px'; });
-        setTimeout(()=>{ createGameGrid(); gameGridActive=true; isProcessing.winChance=false; load(); },3000);
-    } catch(err){ console.error(err); showToast('Game error','error'); gameGridActive=true; isProcessing.winChance=false; }
-}
-function createCoinBubble(x,y,amt){ const b=document.createElement('div'); b.innerHTML=`🪙 +${amt}`; b.style.position='fixed'; b.style.left=x+'px'; b.style.top=y+'px'; b.style.fontSize='24px'; b.style.fontWeight='bold'; b.style.color='#fbbf24'; b.style.textShadow='0 0 5px #000'; document.body.appendChild(b); playSound('coin'); setTimeout(()=>b.remove(),800); }
-
-// Lottery and Clinic functions (same as original but fixed negative validation)
-function updateLotteryPools(pools){ document.getElementById('lotteryPools').innerHTML=pools.map(p=>`<div class="lottery-pool"><div style="display:flex;justify-content:space-between;"><div><strong>🎰 Pool #${p.id}</strong></div><div class="badge">Prize: ${p.reward.toLocaleString()} 🪙</div></div><div>💰 Ticket: ${p.price.toLocaleString()} 🪙</div><div class="progress-bar" style="margin:10px 0;"><div class="progress-fill" style="width:${(p.sold/p.total)*100}%"></div></div><div>${p.sold}/${p.total} sold</div>${!p.is_full?`<button class="btn btn-sm" style="margin-top:10px;" onclick="showLotteryNumbers(${p.id}, ${p.price}, ${JSON.stringify(p.taken_numbers)})">🎫 Buy Ticket</button>`:`<div style="color:#10b981;">✅ Pool Full - Draw Completed!</div>`}</div>`).join(''); }
-function showLotteryNumbers(poolId, price, takenNumbers){
-    currentLotteryPool=poolId; currentLotteryPrice=price;
-    let nums='<div class="lottery-numbers">';
-    for(let i=1;i<=15;i++){ const taken=takenNumbers&&takenNumbers.includes(i); nums+=`<div class="lottery-number ${taken?'taken':''}" onclick="${!taken?`buyLotteryTicket(${poolId}, ${i})`:''}">${String(i).padStart(2,'0')}</div>`; }
-    nums+='</div>';
-    const modal=document.createElement('div'); modal.className='modal active'; modal.style.display='flex'; modal.innerHTML=`<div class="modal-content"><span class="close" onclick="this.parentElement.parentElement.remove()">&times;</span><h3>🎟️ Select Ticket Number</h3><p>Pool #${poolId} - Price: ${price.toLocaleString()} 🪙</p><p style="font-size:12px;">✅ Available | ❌ Taken</p>${nums}<button class="btn" onclick="this.parentElement.parentElement.remove()">Cancel</button></div>`;
-    document.body.appendChild(modal); playSound('click');
-}
-async function buyLotteryTicket(poolId, number){
-    const price={1:50,2:100,3:200}[poolId];
-    const { data:existing }=await sb.from('lottery_tickets').select('id').eq('pool_id',poolId).eq('ticket_number',number).eq('status','active').single();
-    if(existing){ showToast('Number taken','error'); return; }
-    const { data:user }=await sb.from('users').select('coin_balance,username').eq('user_id',USER_ID).single();
-    if((user.coin_balance||0)<price){ showToast(`Need ${price} coins`,'error'); return; }
-    const serial=`${poolId}-${String(number).padStart(2,'0')}-${USER_ID.slice(-4)}`;
-    const now=new Date().toISOString().replace('T',' ').substring(0,19);
-    await sb.rpc('buy_lottery_ticket', { p_user_id:USER_ID, p_pool_id:poolId, p_ticket_number:number, p_serial:serial, p_price:price, p_username:user.username||'User' }).catch(async()=>{ // fallback
-        await sb.from('users').update({ coin_balance:user.coin_balance-price }).eq('user_id',USER_ID);
-        await sb.from('lottery_tickets').insert({ pool_id:poolId, ticket_number:number, serial_number:serial, user_id:USER_ID, username:user.username||'User', purchase_time:now, status:'active' });
-        await sb.from('transactions').insert({ user_id:USER_ID, transaction_type:`🎟️ Lottery Ticket (Pool ${poolId})`, amount:price, status:'Completed', timestamp:now });
+async function submitDeposit() {
+    if(isProcessing.deposit) return;
+    isProcessing.deposit = true;
+    let amt = parseInt(document.getElementById('depositAmount').value);
+    let holder = document.getElementById('accountHolder').value.trim();
+    let txid = document.getElementById('transactionId').value.trim();
+    let note = document.getElementById('depositNote').value;
+    if(isNaN(amt) || amt < 1500) { showToast('Minimum 1500 ETB','error'); isProcessing.deposit=false; return; }
+    if(!holder || !txid) { showToast('Account Holder and Transaction ID required','error'); isProcessing.deposit=false; return; }
+    const bank = selectedPaymentMethod === 'telebirr' ? 'Telebirr' : 'Awash Bank';
+    await sb.from('pending_deposits').insert({
+        user_id: USER_ID, amount: amt, bank_name: bank, account_holder: holder,
+        transaction_id: txid, note: note, request_time: new Date().toISOString().slice(0,19).replace('T',' '),
+        status: 'pending'
     });
-    showToast(`✅ Ticket #${number} purchased!`,'success'); playSound('ticket'); const modal=document.querySelector('.modal.active'); if(modal) modal.remove(); load();
+    showToast('Deposit request submitted!','success');
+    playSound('success');
+    closeModal('depositModal');
+    document.getElementById('depositAmount').value = '';
+    document.getElementById('accountHolder').value = '';
+    document.getElementById('transactionId').value = '';
+    document.getElementById('depositNote').value = '';
+    isProcessing.deposit = false;
 }
-function updateMyTickets(tickets){ const div=document.getElementById('myTickets'); if(!tickets.length){ div.innerHTML='<div class="loading">No tickets yet</div>'; return; } div.innerHTML=tickets.map(t=>`<div class="ticket-item"><div><span style="font-size:20px;">🎫</span> <strong>Pool #${t.pool_id}</strong><div>Number: ${String(t.ticket_number).padStart(2,'0')}</div></div><div><div class="ticket-serial">🔖 ${t.serial_number}</div><span class="badge">Active</span></div></div>`).join(''); }
-function updateRecentDraws(draws){ const div=document.getElementById('recentDraws'); if(!draws.length){ div.innerHTML='<div class="loading">No draws yet</div>'; return; } div.innerHTML=draws.map(d=>`<div class="ticket-item"><div><span>🎰 Pool #${d.pool_id}</span><div style="font-size:11px;">Winner Serial: <code>${d.winner_serial}</code></div></div><div><span class="badge">${d.prize_amount.toLocaleString()} 🪙</span></div></div>`).join(''); }
-async function startConsultation(){ const issue=document.getElementById('healthIssue').value; if(!issue.trim()||issue.length<10){ showToast('Describe issue (min 10 chars)','error'); return; } const { data:user }=await sb.from('users').select('coin_balance,username').eq('user_id',USER_ID).single(); if((user.coin_balance||0)<50){ showToast('Need 50 coins','error'); return; } await sb.rpc('start_consultation', { p_user_id:USER_ID, p_username:user.username||'User', p_issue:issue }).catch(async()=>{ const newCoins=user.coin_balance-50; await sb.from('users').update({ coin_balance:newCoins }).eq('user_id',USER_ID); await sb.from('health_consultations').insert({ user_id:USER_ID, username:user.username||'User', issue:issue, created_at:new Date().toISOString().replace('T',' ').substring(0,19), status:'pending', coins_charged:50 }); await sb.from('transactions').insert({ user_id:USER_ID, transaction_type:'🏥 Clinic Consultation', amount:50, status:'Completed', timestamp:new Date().toISOString().replace('T',' ').substring(0,19) }); }); showToast('✅ Consultation request sent!','success'); playSound('success'); document.getElementById('healthIssue').value=''; load(); }
-function updateConsultations(cons){ const div=document.getElementById('consultations'); if(!cons.length){ div.innerHTML='<div class="loading">No consultations yet</div>'; return; } div.innerHTML=cons.map(c=>`<div class="consultation-item"><div><strong>📅 ${c.created_at?.substring(0,10)||'Unknown'}</strong></div><div>Status: <span class="badge">${c.status||'pending'}</span></div><div style="font-size:12px;">Issue: ${c.issue?.substring(0,100)}</div>${c.admin_response?`<div style="margin-top:5px;color:#10b981;">✅ Response: ${c.admin_response.substring(0,100)}</div>`:''}</div>`).join(''); }
+async function submitWithdraw() {
+    if(isProcessing.withdraw) return;
+    isProcessing.withdraw = true;
+    let amt = parseInt(document.getElementById('withdrawAmount').value);
+    let holder = document.getElementById('withdrawAccountHolder').value.trim();
+    let acc = document.getElementById('withdrawBankAccount').value.trim();
+    let bank = document.getElementById('withdrawBankName').value;
+    if(isNaN(amt) || amt < 100) { showToast('Minimum 100 ETB','error'); isProcessing.withdraw=false; return; }
+    if(!holder || !acc) { showToast('Account details required','error'); isProcessing.withdraw=false; return; }
+    const { count: tickets } = await sb.from('lottery_tickets').select('*',{count:'exact',head:true}).eq('user_id',USER_ID).eq('status','active');
+    const quad = (currentUser.total_deposited >= 1500) && (currentUser.win_chance_plays >= 10) && (tickets >= 3) && (currentUser.active_referrals >= 3);
+    if(!quad) { showToast('Complete Quad-Lock first','error'); isProcessing.withdraw=false; return; }
+    const today = new Date().toISOString().slice(0,10);
+    if(currentUser.last_withdraw_date === today) { showToast('Daily limit reached','error'); isProcessing.withdraw=false; return; }
+    if((currentUser.bonus_balance||0) < amt) { showToast('Insufficient bonus','error'); isProcessing.withdraw=false; return; }
+    const tax = Math.floor(amt*0.1);
+    const net = amt - tax;
+    await sb.from('users').update({ bonus_balance: currentUser.bonus_balance - amt, last_withdraw_date: today }).eq('user_id', USER_ID);
+    await sb.from('pending_withdrawals').insert({
+        user_id: USER_ID, amount: amt, tax_amount: tax, net_amount: net,
+        payment_info: `Bank: ${bank}, Account: ${acc}, Holder: ${holder}`,
+        request_time: new Date().toISOString().slice(0,19).replace('T',' '), status: 'pending'
+    });
+    showToast(`Withdrawal request submitted! Net: ${net} ETB`,'success');
+    playSound('success');
+    closeModal('withdrawModal');
+    document.getElementById('withdrawAmount').value = '';
+    document.getElementById('withdrawAccountHolder').value = '';
+    document.getElementById('withdrawBankAccount').value = '';
+    await loadAllData();
+    isProcessing.withdraw = false;
+}
+async function buyAsset(slotId) {
+    if(isProcessing.buyAsset) return;
+    isProcessing.buyAsset = true;
+    const { data: asset } = await sb.from('market').select('*').eq('slot_id', slotId).single();
+    if((currentUser.coin_balance||0) < asset.cost) { showToast(`Need ${asset.cost} coins`,'error'); isProcessing.buyAsset=false; return; }
+    await sb.rpc('buy_market_asset', { p_user_id: USER_ID, p_slot_id: slotId, p_cost: asset.cost, p_emoji: asset.emoji, p_name: asset.asset_name, p_roi: asset.default_roi||1.25 });
+    showToast(`Invested in ${asset.asset_name}!`,'success');
+    playSound('coin');
+    await loadAllData();
+    isProcessing.buyAsset = false;
+}
+async function sellAsset(assetId, payout) {
+    if(isProcessing.sellAsset) return;
+    isProcessing.sellAsset = true;
+    await sb.rpc('sell_market_asset', { p_asset_id: assetId, p_user_id: USER_ID, p_payout: payout });
+    showToast(`Sold for ${payout} coins!`,'success');
+    playSound('coin');
+    await loadAllData();
+    isProcessing.sellAsset = false;
+}
 
-// Financial actions with positive amount validation
-async function buyCoins(){ if(isProcessing.buyCoins) return; isProcessing.buyCoins=true; const amt=parseInt(document.getElementById('buyCoinsAmount').value); if(isNaN(amt)||amt<=0||amt<50){ showToast('Minimum 50 ETB and positive','error'); isProcessing.buyCoins=false; return; } try{ const { data:user }=await sb.from('users').select('balance,coin_balance').eq('user_id',USER_ID).single(); if((user.balance||0)<amt){ showToast('Insufficient balance','error'); return; } await sb.rpc('buy_coins_transaction', { p_user_id:USER_ID, p_amount:amt }).catch(async()=>{ const newBal=user.balance-amt; const newCoins=user.coin_balance+amt; await sb.from('users').update({ balance:newBal, coin_balance:newCoins }).eq('user_id',USER_ID); await sb.from('transactions').insert({ user_id:USER_ID, transaction_type:'💱 Buy Coins', amount:amt, status:'Completed', timestamp:new Date().toISOString().replace('T',' ').substring(0,19) }); }); showToast(`Bought ${amt} coins!`,'success'); playSound('coin'); closeModal('buyCoinsModal'); document.getElementById('buyCoinsAmount').value=''; load(); } catch(err){ showToast('Error','error'); } finally{ isProcessing.buyCoins=false; } }
-async function exchangeCoins(){ if(isProcessing.exchangeCoins) return; isProcessing.exchangeCoins=true; try{ const { data:user }=await sb.from('users').select('coin_balance,bonus_balance').eq('user_id',USER_ID).single(); const today=new Date().toISOString().substring(0,10); const { data:exchanged }=await sb.from('daily_exchange').select('amount_exchanged').eq('user_id',USER_ID).eq('exchange_date',today); const exchangedAmt=exchanged?exchanged.reduce((s,r)=>s+(r.amount_exchanged||0),0):0; const maxEx=Math.floor((user.coin_balance||0)*0.03); const exAmt=Math.max(0,maxEx-exchangedAmt); if(exAmt<=0){ showToast('Daily limit reached','error'); return; } if((user.coin_balance||0)<exAmt){ showToast('Insufficient coins','error'); return; } await sb.rpc('exchange_coins_to_bonus', { p_user_id:USER_ID, p_amount:exAmt, p_date:today }).catch(async()=>{ const newCoins=user.coin_balance-exAmt; const newBonus=user.bonus_balance+exAmt; await sb.from('users').update({ coin_balance:newCoins, bonus_balance:newBonus }).eq('user_id',USER_ID); await sb.from('daily_exchange').insert({ user_id:USER_ID, exchange_date:today, amount_exchanged:exAmt }); await sb.from('transactions').insert({ user_id:USER_ID, transaction_type:'🔄 Exchange to Bonus', amount:exAmt, status:'Completed', timestamp:new Date().toISOString().replace('T',' ').substring(0,19) }); }); showToast(`Exchanged ${exAmt} coins → bonus`,'success'); playSound('coin'); closeModal('exchangeModal'); load(); } catch(err){ showToast('Error','error'); } finally{ isProcessing.exchangeCoins=false; } }
-async function submitDeposit(){ if(isProcessing.deposit) return; isProcessing.deposit=true; const amt=parseInt(document.getElementById('depositAmount').value), holder=document.getElementById('accountHolder').value, txid=document.getElementById('transactionId').value, note=document.getElementById('depositNote').value; if(isNaN(amt)||amt<1500||amt<=0){ showToast('Minimum deposit 1500 ETB and positive','error'); isProcessing.deposit=false; return; } if(!holder||!txid){ showToast('Account Holder and Transaction ID required','error'); isProcessing.deposit=false; return; } const now=new Date().toISOString().replace('T',' ').substring(0,19); const bank=selectedPaymentMethod==='telebirr'?'Telebirr':'Awash Bank'; await sb.from('pending_deposits').insert({ user_id:USER_ID, amount:amt, bank_name:bank, account_holder:holder, transaction_id:txid, note, request_time:now, status:'pending' }); showToast('Deposit request submitted!','success'); playSound('deposit'); closeModal('depositModal'); document.getElementById('depositAmount').value=''; document.getElementById('accountHolder').value=''; document.getElementById('transactionId').value=''; document.getElementById('depositNote').value=''; isProcessing.deposit=false; }
-async function submitWithdraw(){ if(isProcessing.withdraw) return; isProcessing.withdraw=true; const amt=parseInt(document.getElementById('withdrawAmount').value), holder=document.getElementById('withdrawAccountHolder').value, acc=document.getElementById('withdrawBankAccount').value, bank=document.getElementById('withdrawBankName').value; if(isNaN(amt)||amt<100||amt<=0){ showToast('Minimum 100 ETB','error'); isProcessing.withdraw=false; return; } if(!holder||!acc){ showToast('Account details required','error'); isProcessing.withdraw=false; return; } const { data:user }=await sb.from('users').select('bonus_balance,total_deposited,win_chance_plays,active_referrals,last_withdraw_date').eq('user_id',USER_ID).single(); const today=new Date().toISOString().substring(0,10); const { count:activeTickets }=await sb.from('lottery_tickets').select('*',{count:'exact',head:true}).eq('user_id',USER_ID).eq('status','active'); const depOk=(user.total_deposited||0)>=1500, gameOk=(user.win_chance_plays||0)>=10, tickOk=(activeTickets||0)>=3, refOk=(user.active_referrals||0)>=3; if(!(depOk&&gameOk&&tickOk&&refOk)){ showToast('Complete Quad-Lock first','error'); isProcessing.withdraw=false; return; } if(user.last_withdraw_date===today){ showToast('Daily limit reached','error'); isProcessing.withdraw=false; return; } if((user.bonus_balance||0)<amt){ showToast('Insufficient bonus','error'); isProcessing.withdraw=false; return; } const tax=Math.floor(amt*0.10), net=amt-tax; const now=new Date().toISOString().replace('T',' ').substring(0,19); await sb.from('users').update({ bonus_balance:user.bonus_balance-amt, last_withdraw_date:today }).eq('user_id',USER_ID); await sb.from('pending_withdrawals').insert({ user_id:USER_ID, amount:amt, tax_amount:tax, net_amount:net, payment_info:`Bank: ${bank}, Account: ${acc}, Holder: ${holder}`, request_time:now, status:'pending' }); await sb.from('transactions').insert({ user_id:USER_ID, transaction_type:'📤 Withdrawal Request', amount:-amt, status:'Pending', timestamp:now }); showToast(`Withdrawal request submitted! You'll receive: ${net} ETB`,'success'); playSound('withdraw'); closeModal('withdrawModal'); document.getElementById('withdrawAmount').value=''; document.getElementById('withdrawAccountHolder').value=''; document.getElementById('withdrawBankAccount').value=''; load(); isProcessing.withdraw=false; }
+// ==================== GAME ====================
+let gameActive = true;
+function createGameGrid() {
+    let html = '';
+    for(let i=0;i<16;i++) html += `<div class="game-card" data-pos="${i}" onclick="playGame(${i})">🎁</div>`;
+    document.getElementById('gameGrid').innerHTML = html;
+    gameActive = true;
+    document.getElementById('gameResult').innerHTML = '';
+}
+async function playGame(pos) {
+    if(!gameActive || isProcessing.game) return;
+    isProcessing.game = true;
+    gameActive = false;
+    if((currentUser.coin_balance||0) < 50) { showToast('Need 50 coins','error'); gameActive=true; isProcessing.game=false; return; }
+    const prizes = [100,75,75,50,50,50,25,25,25,25,10,10,10,10,10,0];
+    const shuffled = [...prizes].sort(()=>Math.random()-0.5);
+    const win = shuffled[pos];
+    const newCoins = currentUser.coin_balance - 50 + win;
+    await sb.from('users').update({ coin_balance: newCoins, win_chance_plays: (currentUser.win_chance_plays||0)+1 }).eq('user_id', USER_ID);
+    await sb.from('transactions').insert({ user_id: USER_ID, transaction_type:'🎁 Win Chance Game', amount: win, status:'Completed', timestamp: new Date().toISOString().slice(0,19).replace('T',' ') });
+    const resultDiv = document.getElementById('gameResult');
+    resultDiv.className = `game-result ${win>0?'win':'lose'}`;
+    resultDiv.innerHTML = win>0 ? `🎉 You won ${win} coins! 🎉` : `💨 Better luck next time!`;
+    if(win>0) { playSound('win'); confetti(); } else playSound('lose');
+    showToast(win>0 ? `Won ${win} coins!` : 'No win', win>0?'success':'error');
+    const cells = document.querySelectorAll('.game-card');
+    cells.forEach((cell, idx) => {
+        cell.classList.add('revealed');
+        cell.setAttribute('data-prize', shuffled[idx]);
+        cell.innerHTML = shuffled[idx];
+    });
+    setTimeout(() => { createGameGrid(); loadAllData(); isProcessing.game = false; }, 3000);
+}
 
-// ---------- ADMIN PANEL (with fixed edit button) ----------
-function showAdminTab(){
-    let existing=document.querySelector('.tab[data-tab="admin"]');
-    if(!existing){
-        const tabsContainer=document.querySelector('.tabs');
-        const adminBtn=document.createElement('button'); adminBtn.className='tab'; adminBtn.setAttribute('data-tab','admin'); adminBtn.innerHTML='👑 Admin'; tabsContainer.appendChild(adminBtn);
-        const adminContent=document.createElement('div'); adminContent.id='admin'; adminContent.className='tab-content'; tabsContainer.insertAdjacentElement('afterend', adminContent);
-        adminBtn.addEventListener('click',()=>{ document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active')); adminBtn.classList.add('active'); adminContent.classList.add('active'); loadAdminPanel(); });
+// ==================== LOTTERY ====================
+function showLotteryNumbers(poolId, price, taken) {
+    let html = '<div class="lottery-numbers" style="display:grid; grid-template-columns:repeat(5,1fr); gap:8px;">';
+    for(let i=1;i<=15;i++) {
+        const isTaken = taken.includes(i);
+        html += `<div class="lottery-number ${isTaken ? 'taken' : ''}" onclick="${!isTaken ? `buyLotteryTicket(${poolId}, ${i})` : ''}" style="background:${isTaken?'#ef4444':'#3b82f6'}; padding:12px; border-radius:12px; text-align:center; cursor:pointer;">${String(i).padStart(2,'0')}</div>`;
     }
+    html += '</div>';
+    const modal = document.createElement('div');
+    modal.className = 'modal active';
+    modal.innerHTML = `<div class="modal-content"><span class="close" onclick="this.parentElement.parentElement.remove()">&times;</span><h3>🎟️ Select Number</h3><p>Pool #${poolId} - Price: ${price} 🪙</p>${html}<button class="btn" onclick="this.parentElement.parentElement.remove()">Cancel</button></div>`;
+    document.body.appendChild(modal);
 }
-async function loadAdminPanel(){
-    const adminDiv=document.getElementById('admin'); if(!adminDiv) return;
-    adminDiv.innerHTML='<div class="loading">Loading admin data...</div>';
-    const { data:users }=await sb.from('users').select('balance,bonus_balance,total_withdrawn');
-    const totalSys=users?.reduce((s,u)=>s+(u.balance||0)+(u.bonus_balance||0),0)||0;
-    const totalW=users?.reduce((s,u)=>s+(u.total_withdrawn||0),0)||0;
-    const totalUsers=users?.length||0;
-    const { data:pendingDeposits }=await sb.from('pending_deposits').select('*').eq('status','pending').order('request_time',{ascending:false});
-    const { data:pendingWithdrawals }=await sb.from('pending_withdrawals').select('*').eq('status','pending').order('request_time',{ascending:false});
-    const { data:consultations }=await sb.from('health_consultations').select('*').eq('status','pending').order('created_at',{ascending:false});
-    const consultHtml=!consultations||consultations.length===0?'<div class="loading">No pending consultations</div>':consultations.map(c=>`<div class="transaction-item"><div><strong>User ID:</strong> ${c.user_id}</div><div><strong>Username:</strong> ${c.username||'N/A'}</div><div><strong>Issue:</strong> ${c.issue?.substring(0,200)}</div><textarea id="resp_${c.id}" rows="2" placeholder="Response" style="width:100%;margin:8px 0;padding:8px;"></textarea><button class="btn btn-sm btn-info" onclick="respondToConsultation(${c.id})">💬 Send Response</button></div>`).join('');
-    adminDiv.innerHTML=`<div class="card"><h3>📊 System Stats</h3><div class="profile-item"><span>💰 Total System Balance</span><span>${totalSys.toLocaleString()} ETB</span></div><div class="profile-item"><span>📤 Total Withdrawn All Time</span><span>${totalW.toLocaleString()} ETB</span></div><div class="profile-item"><span>👥 Total Users</span><span>${totalUsers}</span></div></div>
-        <div class="card"><h3>⏳ Pending Deposits</h3><div id="adminDepositsList">${renderPendingList(pendingDeposits,'deposit')}</div></div>
-        <div class="card"><h3>🏥 Pending Consultations</h3><div id="adminConsultationsList">${consultHtml}</div></div>
-        <div class="card"><h3>🎰 Lottery Pool Draws</h3><div><button class="btn btn-sm btn-info" onclick="drawLotteryWinner(1)">🎲 Draw Pool 1 Winner</button><button class="btn btn-sm btn-info" onclick="drawLotteryWinner(2)">🎲 Draw Pool 2 Winner</button><button class="btn btn-sm btn-info" onclick="drawLotteryWinner(3)">🎲 Draw Pool 3 Winner</button></div></div>
-        <div class="card"><h3>💰 Edit Market Prices</h3><div id="marketPriceControls"></div></div>
-        <div class="card"><h3>📈 Reset Investment ROI</h3><button class="btn btn-warning" onclick="resetAllROI()">🔧 Reset All ROI (Custom)</button></div>
-        <div class="card"><h3>👥 User Management</h3><input type="text" id="adminSearchUser" placeholder="User ID or username"><button class="btn btn-sm" onclick="searchUser()">Search</button><div id="userManageResult"></div></div>
-        <div class="card"><h3>🃏 Airtime Cards Admin</h3><div id="adminCardsList"></div><button class="btn btn-sm btn-info" onclick="adminShuffleCardsOrder()">🎲 Shuffle Display Order</button><button class="btn btn-sm" onclick="loadAdminPanel()">⟳ Refresh</button><p style="font-size:12px;">Click "Edit" to change cost and numbers.</p></div>
-        <div class="card"><h3>⏳ Pending Withdrawals</h3><div id="adminWithdrawalsList">${renderPendingList(pendingWithdrawals,'withdraw')}</div></div>`;
-    // market price controls
-    const { data:marketItems }=await sb.from('market').select('*').order('slot_id');
-    let marketHtml='<div class="admin-market-grid">';
-    marketItems.forEach(it=>{ marketHtml+=`<div class="profile-item market-control-item"><span class="market-item-name">${it.emoji} ${it.asset_name}</span><div class="market-controls"><span>💰:</span><input type="number" id="price_${it.slot_id}" value="${it.cost}" class="market-price-input"><span>📈 ROI:</span><input type="number" id="roi_${it.slot_id}" value="${it.default_roi||1.25}" step="0.01" class="market-roi-input"><span>🏷️:</span><input type="text" id="name_${it.slot_id}" value="${it.asset_name}" style="width:100px;"><span>😀:</span><input type="text" id="emoji_${it.slot_id}" value="${it.emoji}" style="width:60px;"><button class="btn btn-sm market-update-btn" onclick="updateMarketItem(${it.slot_id}, this)">Update</button></div></div>`; });
-    marketHtml+='</div>';
-    adminDiv.innerHTML=adminDiv.innerHTML.replace('<div id="marketPriceControls"></div>', marketHtml);
-    // airtime cards list with fixed edit button
-    const { data:adminCards }=await sb.from('global_cards').select('*').order('position');
-    if(adminCards){
-        let cardsHtml='';
-        for(const card of adminCards){
-            const safeNumbers=JSON.stringify(card.hidden_numbers).replace(/'/g, "\\'");
-            cardsHtml+=`<div class="profile-item"><div><strong>${card.card_cost} ETB</strong> (${card.hidden_numbers.length} numbers left)</div><div><button class="btn btn-sm" onclick="editCardDialog(${card.id}, ${card.card_cost}, '${safeNumbers}')">✏️ Edit</button></div></div>`;
+async function buyLotteryTicket(poolId, number) {
+    const price = [50,100,200][poolId-1];
+    const { data: existing } = await sb.from('lottery_tickets').select('id').eq('pool_id',poolId).eq('ticket_number',number).eq('status','active').single();
+    if(existing) return showToast('Number taken','error');
+    if((currentUser.coin_balance||0) < price) return showToast(`Need ${price} coins`,'error');
+    const serial = `${poolId}-${String(number).padStart(2,'0')}-${USER_ID.slice(-4)}`;
+    await sb.rpc('buy_lottery_ticket', { p_user_id: USER_ID, p_pool_id: poolId, p_ticket_number: number, p_serial: serial, p_price: price, p_username: currentUser.username || 'User' });
+    showToast(`✅ Ticket #${number} purchased!`,'success');
+    playSound('coin');
+    document.querySelector('.modal.active')?.remove();
+    await loadAllData();
+}
+async function startConsultation() {
+    const issue = document.getElementById('healthIssue').value.trim();
+    if(!issue || issue.length < 10) return showToast('Describe issue (min 10 chars)','error');
+    if((currentUser.coin_balance||0) < 50) return showToast('Need 50 coins','error');
+    await sb.rpc('start_consultation', { p_user_id: USER_ID, p_username: currentUser.username || 'User', p_issue: issue });
+    showToast('Consultation request sent!','success');
+    document.getElementById('healthIssue').value = '';
+    await loadAllData();
+}
+async function buyAirtimeCard(cardId, cost) {
+    const { data: card } = await sb.from('global_cards').select('hidden_numbers').eq('id', cardId).single();
+    if(!card?.hidden_numbers?.length) return showToast('Sold out','error');
+    if((currentUser.balance||0) < cost) return showToast(`Need ${cost} ETB`,'error');
+    const revealed = card.hidden_numbers[0];
+    const newNumbers = card.hidden_numbers.slice(1);
+    await sb.rpc('buy_airtime_card', { p_card_id: cardId, p_user_id: USER_ID, p_cost: cost, p_revealed: revealed, p_new_numbers: newNumbers });
+    showToast(`Revealed: ${revealed} (see transaction history)`,'success');
+    playSound('coin');
+    await loadAllData();
+}
+
+// ==================== ADMIN PANEL ====================
+function showAdminTab() {
+    if(document.querySelector('.tab[data-tab="admin"]')) return;
+    const tabs = document.querySelector('.tabs');
+    const adminBtn = document.createElement('button');
+    adminBtn.className = 'tab';
+    adminBtn.setAttribute('data-tab','admin');
+    adminBtn.innerHTML = '👑 Admin';
+    tabs.appendChild(adminBtn);
+    const adminDiv = document.createElement('div');
+    adminDiv.id = 'admin';
+    adminDiv.className = 'tab-content';
+    tabs.insertAdjacentElement('afterend', adminDiv);
+    adminBtn.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+        adminBtn.classList.add('active');
+        adminDiv.classList.add('active');
+        loadAdminPanel();
+    });
+}
+async function loadAdminPanel() {
+    const adminDiv = document.getElementById('admin');
+    adminDiv.innerHTML = '<div class="loading">Loading admin...</div>';
+    const { data: deposits } = await sb.from('pending_deposits').select('*').eq('status','pending');
+    const { data: withdrawals } = await sb.from('pending_withdrawals').select('*').eq('status','pending');
+    const { data: cons } = await sb.from('health_consultations').select('*').eq('status','pending');
+    const { data: market } = await sb.from('market').select('*').order('slot_id');
+    const { data: cards } = await sb.from('global_cards').select('*').order('position');
+    adminDiv.innerHTML = `
+        <div class="card"><h3>💰 Pending Deposits</h3>${renderPendingList(deposits,'deposit')}</div>
+        <div class="card"><h3>📤 Pending Withdrawals</h3>${renderPendingList(withdrawals,'withdraw')}</div>
+        <div class="card"><h3>🏥 Pending Consultations</h3>${cons?.map(c=>`<div><strong>${c.username}</strong>: ${c.issue?.slice(0,100)}<br><textarea id="resp_${c.id}" rows="2" style="width:100%"></textarea><button class="btn btn-sm" onclick="respondConsultation(${c.id})">Reply</button></div>`).join('')||'<div>None</div>'}</div>
+        <div class="card"><h3>🎰 Lottery Draws</h3><button class="btn btn-sm" onclick="drawLottery(1)">Draw Pool 1</button> <button class="btn btn-sm" onclick="drawLottery(2)">Draw Pool 2</button> <button class="btn btn-sm" onclick="drawLottery(3)">Draw Pool 3</button></div>
+        <div class="card"><h3>🛠️ Edit Market</h3>${market?.map(m=>`<div><span>${m.emoji} ${m.asset_name}</span> <input type="number" id="price_${m.slot_id}" value="${m.cost}" style="width:80px"> <input type="number" id="roi_${m.slot_id}" value="${m.default_roi}" step="0.01" style="width:80px"> <button class="btn btn-sm" onclick="updateMarketItem(${m.slot_id})">Update</button></div>`).join('')}</div>
+        <div class="card"><h3>🃏 Airtime Cards</h3>${cards?.map(c=>`<div>Cost: ${c.card_cost} ETB (${c.hidden_numbers.length} left) <button class="btn btn-sm" onclick="editCard(${c.id}, ${c.card_cost}, '${JSON.stringify(c.hidden_numbers)}')">Edit</button></div>`).join('')}<button class="btn btn-sm" onclick="shuffleCards()">Shuffle Order</button></div>
+        <div class="card"><h3>👥 User Search</h3><input type="text" id="adminSearch" placeholder="User ID or email"><button class="btn btn-sm" onclick="searchUser()">Search</button><div id="userResult"></div></div>
+    `;
+}
+function renderPendingList(items, type) {
+    if(!items?.length) return '<div>None</div>';
+    return items.map(item => `<div><strong>${item.user_id}</strong> | ${item.amount} ETB<button class="btn btn-sm btn-success" onclick="handleAdminAction('${type}','approve',${item.id},${item.amount},'${item.user_id}')">Approve</button><button class="btn btn-sm btn-danger" onclick="handleAdminAction('${type}','reject',${item.id},${item.amount},'${item.user_id}')">Reject</button></div>`).join('');
+}
+async function handleAdminAction(type, action, id, amount, userId) {
+    if(!confirm(`${action.toUpperCase()} this request?`)) return;
+    if(type === 'deposit') {
+        if(action === 'approve') await sb.rpc('approve_deposit', { p_deposit_id:id, p_user_id:userId, p_amount:amount });
+        else await sb.from('pending_deposits').update({ status:'rejected' }).eq('id',id);
+    } else if(type === 'withdraw') {
+        if(action === 'approve') await sb.rpc('approve_withdrawal', { p_withdrawal_id:id, p_user_id:userId, p_amount:amount });
+        else {
+            const { data: wd } = await sb.from('pending_withdrawals').select('amount').eq('id',id).single();
+            await sb.from('users').update({ bonus_balance: sb.raw(`bonus_balance + ${wd.amount}`) }).eq('user_id',userId);
+            await sb.from('pending_withdrawals').update({ status:'rejected' }).eq('id',id);
         }
-        adminDiv.innerHTML=adminDiv.innerHTML.replace('<div id="adminCardsList"></div>', `<div>${cardsHtml}</div>`);
     }
+    showToast(`${action}d ${type} request`,'success');
+    loadAdminPanel();
+    loadAllData();
 }
-function renderPendingList(items, type){ if(!items||!items.length) return '<div class="loading">No pending requests</div>'; return items.map(item=>`<div class="transaction-item"><div><strong>User ID:</strong> ${item.user_id}</div><div><strong>Amount:</strong> ${item.amount} ETB</div>${type==='deposit'?`<div><strong>Bank:</strong> ${item.bank_name||'N/A'}</div><div><strong>Account Holder:</strong> ${item.account_holder||'N/A'}</div><div><strong>Transaction ID:</strong> ${item.transaction_id||'N/A'}</div><div><strong>Note:</strong> ${item.note||'N/A'}</div>`:`<div><strong>Payment Info:</strong> ${item.payment_info||'N/A'}</div><div><strong>Tax:</strong> ${item.tax_amount||0} ETB</div><div><strong>Net Amount:</strong> ${item.net_amount||item.amount} ETB</div>`}<div><strong>Request Time:</strong> ${item.request_time}</div><div><button class="btn btn-sm btn-success" onclick="handleAdminAction('${type}','approve',${item.id},${item.amount},'${item.user_id}')">✅ Approve</button><button class="btn btn-sm btn-danger" onclick="handleAdminAction('${type}','reject',${item.id},${item.amount},'${item.user_id}')">❌ Reject</button></div></div>`).join(''); }
-async function respondToConsultation(id){ const resp=document.getElementById(`resp_${id}`).value; if(!resp.trim()){ showToast('Response required','error'); return; } await sb.from('health_consultations').update({ admin_response:resp, responded_at:new Date().toISOString().replace('T',' ').substring(0,19), status:'responded' }).eq('id',id); showToast('Response sent','success'); loadAdminPanel(); }
-async function handleAdminAction(type,action,id,amount,userId){ if(!confirm(`${action.toUpperCase()} this ${type} request?`)) return; if(type==='deposit'){ if(action==='approve'){ await sb.rpc('approve_deposit', { p_deposit_id:id, p_user_id:userId, p_amount:amount }).catch(async()=>{ const { data:user }=await sb.from('users').select('balance,total_deposited').eq('user_id',userId).single(); await sb.from('users').update({ balance:(user.balance||0)+amount, total_deposited:(user.total_deposited||0)+amount }).eq('user_id',userId); await sb.from('pending_deposits').update({ status:'approved' }).eq('id',id); await sb.from('transactions').insert({ user_id:userId, transaction_type:'💰 Deposit Approved', amount:amount, status:'Completed', timestamp:new Date().toISOString().replace('T',' ').substring(0,19) }); }); showToast(`Deposit of ${amount} ETB approved!`,'success'); } else { await sb.from('pending_deposits').update({ status:'rejected' }).eq('id',id); showToast('Deposit rejected','info'); } } else if(type==='withdraw'){ if(action==='approve'){ await sb.rpc('approve_withdrawal', { p_withdrawal_id:id, p_user_id:userId, p_amount:amount }).catch(async()=>{ const { data:user }=await sb.from('users').select('total_withdrawn').eq('user_id',userId).single(); const { data:wd }=await sb.from('pending_withdrawals').select('net_amount').eq('id',id).single(); await sb.from('pending_withdrawals').update({ status:'approved' }).eq('id',id); await sb.from('users').update({ total_withdrawn:(user.total_withdrawn||0)+(wd?.net_amount||amount) }).eq('user_id',userId); await sb.from('transactions').insert({ user_id:userId, transaction_type:'📤 Withdrawal Approved', amount:-amount, status:'Completed', timestamp:new Date().toISOString().replace('T',' ').substring(0,19) }); }); showToast(`Withdrawal of ${amount} ETB approved!`,'success'); } else { const { data:user }=await sb.from('users').select('bonus_balance').eq('user_id',userId).single(); await sb.from('users').update({ bonus_balance:(user.bonus_balance||0)+amount }).eq('user_id',userId); await sb.from('pending_withdrawals').update({ status:'rejected' }).eq('id',id); showToast('Withdrawal rejected, bonus refunded','info'); } } loadAdminPanel(); load(); }
-async function drawLotteryWinner(poolId){ if(!confirm(`Draw winner for Pool ${poolId}?`)) return; try{ const { data:tickets }=await sb.from('lottery_tickets').select('*').eq('pool_id',poolId).eq('status','active'); if(!tickets||tickets.length===0){ showToast(`No active tickets in Pool ${poolId}`,'error'); return; } const winner=tickets[Math.floor(Math.random()*tickets.length)]; const prize={1:500,2:1000,3:2000}[poolId]; await sb.rpc('award_lottery_winner', { p_winner_id:winner.user_id, p_prize:prize, p_pool_id:poolId, p_serial:winner.serial_number, p_tickets_count:tickets.length }); showToast(`Pool ${poolId} winner: ${winner.username||winner.user_id} won ${prize} coins!`,'success'); load(); } catch(err){ showToast('Draw failed','error'); } }
-async function updateMarketItem(slotId,btn){ const container=btn.closest('.profile-item'); const priceInput=container.querySelector(`input[id^="price_${slotId}"]`); const roiInput=container.querySelector(`input[id^="roi_${slotId}"]`); const nameInput=container.querySelector(`input[id^="name_${slotId}"]`); const emojiInput=container.querySelector(`input[id^="emoji_${slotId}"]`); const newPrice=parseInt(priceInput.value); const newRoi=parseFloat(roiInput.value); const newName=nameInput?nameInput.value:null; const newEmoji=emojiInput?emojiInput.value:null; if(isNaN(newPrice)||newPrice<=0||isNaN(newRoi)||newRoi<=0){ showToast('Invalid price/ROI','error'); return; } const update={ cost:newPrice, default_roi:newRoi }; if(newName) update.asset_name=newName; if(newEmoji) update.emoji=newEmoji; const { error }=await sb.from('market').update(update).eq('slot_id',slotId); if(error) showToast('Update failed','error'); else showToast('Updated','success'); }
-async function resetAllROI(){ const val=prompt('Enter new default ROI (e.g., 1.25):','1.25'); if(!val) return; const roi=parseFloat(val); if(isNaN(roi)||roi<=0){ showToast('Invalid ROI','error'); return; } if(!confirm(`Set all assets ROI to ${roi}?`)) return; const { error }=await sb.from('market').update({ default_roi:roi }).neq('slot_id',0); if(error) showToast('Reset failed','error'); else showToast(`All ROI reset to ${roi}`,'success'); }
-async function searchUser(){ const q=document.getElementById('adminSearchUser').value.trim(); if(!q){ showToast('Enter User ID or username','error'); return; } const { data }=await sb.from('users').select('user_id,username,balance,bonus_balance,coin_balance,is_admin').or(`user_id.eq.${q},username.ilike.%${q}%`); if(!data||!data.length){ showToast('User not found','error'); return; } let html=''; data.forEach(u=>{ html+=`<div class="profile-item" style="flex-direction:column;"><div><strong>ID:</strong> ${u.user_id}</div><div><strong>Username:</strong> ${u.username}</div><div><strong>Balance:</strong> ${u.balance} ETB</div><div><strong>Bonus:</strong> ${u.bonus_balance} ETB</div><div><strong>Coins:</strong> ${u.coin_balance}</div><div><strong>Admin:</strong> ${u.is_admin?'Yes':'No'}</div><div style="display:flex;gap:5px;"><input type="number" id="adj_${u.user_id}" placeholder="Amount"><select id="adj_type_${u.user_id}"><option value="balance">Balance</option><option value="bonus">Bonus</option><option value="coins">Coins</option></select><button class="btn btn-sm" onclick="adjustUserBalance('${u.user_id}')">Adjust</button><button class="btn btn-sm btn-danger" onclick="banUser('${u.user_id}')">Ban</button></div></div>`; }); document.getElementById('userManageResult').innerHTML=html; }
-async function adjustUserBalance(userId){ const amt=parseInt(document.getElementById(`adj_${userId}`).value); if(isNaN(amt)){ showToast('Enter number','error'); return; } const type=document.getElementById(`adj_type_${userId}`).value; const { data:user }=await sb.from('users').select(type).eq('user_id',userId).single(); const newVal=(user[type]||0)+amt; if(newVal<0){ showToast('Cannot go negative','error'); return; } await sb.from('users').update({ [type]:newVal }).eq('user_id',userId); showToast(`${type} updated by ${amt}`,'success'); }
-async function banUser(userId){ if(!confirm(`Ban ${userId}?`)) return; await sb.from('banned_users').insert({ user_id:userId, banned_at:new Date().toISOString(), banned_by:USER_ID }); showToast('User banned','success'); }
-async function adminShuffleCardsOrder(){ if(!confirm('Shuffle display order?')) return; const { data:cards }=await sb.from('global_cards').select('id'); if(!cards) return; const shuffled=[...cards]; for(let i=shuffled.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [shuffled[i],shuffled[j]]=[shuffled[j],shuffled[i]]; } for(let i=0;i<shuffled.length;i++){ await sb.from('global_cards').update({ position:i }).eq('id',shuffled[i].id); } showToast('Order shuffled','success'); loadAdminPanel(); }
-function editCardDialog(cardId, currentCost, currentNumbersStr){ const currentNumbers=JSON.parse(currentNumbersStr); const newCost=prompt('New cost (ETB):', currentCost); if(newCost===null) return; const costNum=parseInt(newCost); if(isNaN(costNum)||costNum<=0){ showToast('Invalid cost','error'); return; } const listText=currentNumbers.join('\n'); const newListText=prompt('Hidden numbers (one per line, 10-20 digits each, max 15):', listText); if(newListText===null) return; const newList=newListText.split('\n').map(s=>s.trim()).filter(s=>s.length>=10&&s.length<=20&&/^\d+$/.test(s)); if(newList.length===0||newList.length>15){ showToast('Need 1-15 valid numbers','error'); return; } adminUpdateCard(cardId, costNum, newList); }
-async function adminUpdateCard(cardId, newCost, newNumbers){ const { error }=await sb.from('global_cards').update({ card_cost:newCost, hidden_numbers:newNumbers }).eq('id',cardId); if(error) showToast('Update failed','error'); else showToast('Card updated','success'); loadAdminPanel(); loadCards(); }
-// Airtime Cards User View
-async function loadCards(){ const { data:cards }=await sb.from('global_cards').select('*').order('position'); const grid=document.getElementById('cardsGrid'); if(!cards||!cards.length){ grid.innerHTML='<div class="loading">No cards available</div>'; return; } let html=''; for(const card of cards){ const has=card.hidden_numbers&&card.hidden_numbers.length>0; html+=`<div class="market-item ${!has?'owned':''}" onclick="${has?`buyGlobalCard(${card.id}, ${card.card_cost})`:''}"><div class="market-emoji">🎫</div><div class="market-name">Airtime - ${card.card_cost} ETB</div><div class="market-price">Cost: ${card.card_cost} ETB</div><div class="market-number" style="font-size:12px;">🔢 ${has?'????':'Sold Out'}</div>${!has?'<div style="margin-top:5px;">❌ Sold Out</div>':'<div style="margin-top:5px;">✅ Available</div>'}</div>`; } grid.innerHTML=html; }
-async function buyGlobalCard(cardId, cost){ const { data:card }=await sb.from('global_cards').select('hidden_numbers').eq('id',cardId).single(); if(!card||!card.hidden_numbers||!card.hidden_numbers.length){ showToast('Sold out','error'); loadCards(); return; } const { data:user }=await sb.from('users').select('balance').eq('user_id',USER_ID).single(); if((user.balance||0)<cost){ showToast(`Need ${cost} ETB`,'error'); return; } const revealed=card.hidden_numbers[0]; const newList=card.hidden_numbers.slice(1); const newBal=user.balance-cost; await sb.rpc('buy_airtime_card', { p_card_id:cardId, p_user_id:USER_ID, p_cost:cost, p_revealed:revealed, p_new_numbers:newList }).catch(async()=>{ await sb.from('users').update({ balance:newBal }).eq('user_id',USER_ID); await sb.from('global_cards').update({ hidden_numbers:newList }).eq('id',cardId); await sb.from('transactions').insert({ user_id:USER_ID, transaction_type:`🃏 Airtime Card (${cost} ETB) - Number: ${revealed}`, amount:-cost, status:'Completed', timestamp:new Date().toISOString().replace('T',' ').substring(0,19) }); }); showToast(`Revealed: ${revealed} – see transaction history.`,'success'); playSound('coin'); load(); loadCards(); }
+async function respondConsultation(id) {
+    const resp = document.getElementById(`resp_${id}`).value;
+    if(!resp) return showToast('Response required','error');
+    await sb.from('health_consultations').update({ admin_response:resp, status:'responded' }).eq('id',id);
+    showToast('Response sent','success');
+    loadAdminPanel();
+}
+async function drawLottery(poolId) {
+    if(!confirm(`Draw winner for Pool ${poolId}?`)) return;
+    const { data: tickets } = await sb.from('lottery_tickets').select('*').eq('pool_id',poolId).eq('status','active');
+    if(!tickets?.length) return showToast('No tickets','error');
+    const winner = tickets[Math.floor(Math.random()*tickets.length)];
+    const prize = [500,1000,2000][poolId-1];
+    await sb.rpc('award_lottery_winner', { p_winner_id:winner.user_id, p_prize:prize, p_pool_id:poolId, p_serial:winner.serial_number, p_tickets_count:tickets.length });
+    showToast(`Pool ${poolId} winner: ${winner.username} won ${prize} coins!`,'success');
+    loadAdminPanel();
+    loadAllData();
+}
+async function updateMarketItem(slotId) {
+    const newPrice = parseInt(document.getElementById(`price_${slotId}`).value);
+    const newRoi = parseFloat(document.getElementById(`roi_${slotId}`).value);
+    if(isNaN(newPrice) || newPrice<=0 || isNaN(newRoi) || newRoi<=0) return showToast('Invalid','error');
+    await sb.from('market').update({ cost:newPrice, default_roi:newRoi }).eq('slot_id',slotId);
+    showToast('Market updated','success');
+    loadAdminPanel();
+    loadAllData();
+}
+async function editCard(cardId, currentCost, numbersJson) {
+    const newCost = prompt('New cost (ETB):', currentCost);
+    if(!newCost) return;
+    const numbers = JSON.parse(numbersJson);
+    const newList = prompt('Hidden numbers (one per line):', numbers.join('\n'));
+    if(!newList) return;
+    const newNumbers = newList.split('\n').map(s=>s.trim()).filter(s=>s.length>=10 && s.length<=20 && /^\d+$/.test(s));
+    if(newNumbers.length===0 || newNumbers.length>15) return showToast('1-15 valid numbers','error');
+    await sb.from('global_cards').update({ card_cost:parseInt(newCost), hidden_numbers:newNumbers }).eq('id',cardId);
+    showToast('Card updated','success');
+    loadAdminPanel();
+    loadAllData();
+}
+async function shuffleCards() {
+    const { data: cards } = await sb.from('global_cards').select('id');
+    if(!cards) return;
+    const shuffled = [...cards];
+    for(let i=shuffled.length-1;i>0;i--) { const j=Math.floor(Math.random()*(i+1)); [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]; }
+    for(let i=0;i<shuffled.length;i++) await sb.from('global_cards').update({ position:i }).eq('id',shuffled[i].id);
+    showToast('Order shuffled','success');
+    loadAdminPanel();
+    loadAllData();
+}
+async function searchUser() {
+    const q = document.getElementById('adminSearch').value.trim();
+    if(!q) return;
+    const { data } = await sb.from('users').select('user_id,username,balance,bonus_balance,coin_balance').or(`user_id.eq.${q},username.ilike.%${q}%`);
+    const resultDiv = document.getElementById('userResult');
+    if(!data?.length) { resultDiv.innerHTML = '<div>User not found</div>'; return; }
+    resultDiv.innerHTML = data.map(u => `<div><strong>${u.username}</strong> (${u.user_id.slice(0,8)}): Balance ${u.balance} ETB, Bonus ${u.bonus_balance}, Coins ${u.coin_balance}<input type="number" id="adj_${u.user_id}" placeholder="Amount"><select id="adj_type_${u.user_id}"><option>balance</option><option>bonus_balance</option><option>coin_balance</option></select><button class="btn btn-sm" onclick="adjustUser('${u.user_id}')">Adjust</button></div>`).join('');
+}
+async function adjustUser(userId) {
+    const amt = parseInt(document.getElementById(`adj_${userId}`).value);
+    if(isNaN(amt)) return;
+    const type = document.getElementById(`adj_type_${userId}`).value;
+    const { data: user } = await sb.from('users').select(type).eq('user_id',userId).single();
+    const newVal = (user[type]||0) + amt;
+    if(newVal < 0) return showToast('Cannot go negative','error');
+    await sb.from('users').update({ [type]: newVal }).eq('user_id',userId);
+    showToast(`Updated ${type} by ${amt}`,'success');
+    loadAdminPanel();
+    loadAllData();
+}
 
-// ---------- UI EVENT LISTENERS ----------
-document.querySelectorAll('.tab').forEach(tab=>{ tab.addEventListener('click',()=>{ const id=tab.getAttribute('data-tab'); document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active')); tab.classList.add('active'); document.getElementById(id).classList.add('active'); if(id==='games') createGameGrid(); else if(id==='cards') loadCards(); else if(id==='market'||id==='lottery'||id==='profile') load(); }); });
-document.querySelectorAll('.sub-tab').forEach(st=>{ st.addEventListener('click',()=>{ document.querySelectorAll('.sub-tab').forEach(t=>t.classList.remove('active')); document.querySelectorAll('.sub-tab-content').forEach(c=>c.style.display='none'); st.classList.add('active'); const sub=st.getAttribute('data-subtab'); document.getElementById(sub==='deposit_withdraw'?'depositWithdrawTransactions':'otherTransactions').style.display='block'; }); });
-window.addEventListener('online',()=>{ updateNetworkStatus(); showToast('Back online!','success'); setTimeout(()=>load(),500); });
-window.addEventListener('offline',updateNetworkStatus);
-function updateNetworkStatus(){ const online=navigator.onLine; const statusDot=document.getElementById('networkStatus'); const offlineIndicator=document.getElementById('offlineIndicator'); if(online){ statusDot.classList.remove('offline'); offlineIndicator.classList.remove('show'); } else { statusDot.classList.add('offline'); offlineIndicator.classList.add('show'); showToast('No internet','error'); } }
-updateNetworkStatus();
-setInterval(()=>{ if(USER_ID) load(); },30000);
-document.getElementById('soundToggle').classList.toggle('active',soundEnabled);
-createGameGrid();
-checkSession();
+// ==================== INIT ====================
+window.addEventListener('load', () => {
+    checkSession();
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            const id = tab.getAttribute('data-tab');
+            document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+            tab.classList.add('active');
+            document.getElementById(id).classList.add('active');
+            if(id === 'games') createGameGrid();
+            else if(id !== 'admin') loadAllData();
+        });
+    });
+    window.addEventListener('online', () => { document.getElementById('networkStatus').classList.remove('offline'); showToast('Back online','success'); loadAllData(); });
+    window.addEventListener('offline', () => { document.getElementById('networkStatus').classList.add('offline'); showToast('No internet','error'); });
+    setInterval(() => { if(USER_ID) loadAllData(); }, 30000);
+    if(soundEnabled) document.getElementById('toggleKnob').style.left = '27px';
+    else document.getElementById('toggleKnob').style.left = '3px';
+});
 </script>
 </body>
 </html>
