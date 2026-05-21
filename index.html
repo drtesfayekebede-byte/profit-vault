@@ -237,9 +237,9 @@
         }
         .game-card:active { transform: scale(0.94); }
         .game-card.revealed {
-            transform: rotateY(180deg);
-            animation: neonGlow 0.4s;
-        }
+    /* Remove transform: rotateY(180deg); */
+    animation: neonGlow 0.4s;
+}
         .game-card.revealed[data-prize="100"], .game-card.revealed[data-prize="75"] { background: linear-gradient(135deg, #ffd700, #ff8c00); }
         .game-card.revealed[data-prize="50"] { background: linear-gradient(135deg, #3b82f6, #8b5cf6); }
         .game-card.revealed[data-prize="25"], .game-card.revealed[data-prize="10"] { background: linear-gradient(135deg, #10b981, #059669); }
@@ -288,15 +288,18 @@
             border: 1px solid rgba(251, 191, 36, 0.4);
             box-shadow: 0 25px 40px rgba(0,0,0,0.5);
         }
-        .modal-content input, .modal-content select, .modal-content textarea {
-            width: 100%;
-            padding: 14px;
-            margin: 8px 0;
-            border-radius: 20px;
-            border: 1px solid rgba(255,255,255,0.2);
-            background: rgba(0,0,0,0.6);
-            color: white;
-        }
+        .fullscreen-textarea {
+    width: 100%;
+    padding: 15px;
+    border-radius: 12px;
+    border: 1px solid #fbbf24;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    font-size: 16px;
+    min-height: 200px;  /* increased from 150px */
+    resize: vertical;
+    box-sizing: border-box;
+}
         .close {
             float: right;
             font-size: 28px;
@@ -973,14 +976,39 @@ async function loadAdminPanel() {
         <div class="card"><h3>📤 Pending Withdrawals</h3>${renderPendingList(withdrawals,'withdraw')}</div>
         <div class="card"><h3>🏥 Pending Consultations</h3>${cons?.map(c=>`<div><strong>${c.username}</strong>: ${c.issue?.slice(0,100)}<br><textarea id="resp_${c.id}" rows="2" style="width:100%"></textarea><button class="btn btn-sm" onclick="respondConsultation(${c.id})">Reply</button></div>`).join('')||'<div>None</div>'}</div>
         <div class="card"><h3>🎰 Lottery Draws</h3><button class="btn btn-sm" onclick="drawLottery(1)">Draw Pool 1</button> <button class="btn btn-sm" onclick="drawLottery(2)">Draw Pool 2</button> <button class="btn btn-sm" onclick="drawLottery(3)">Draw Pool 3</button></div>
-        <div class="card"><h3>🛠️ Edit Market</h3>${market?.map(m=>`<div><span>${m.emoji} ${m.asset_name}</span> <input type="number" id="price_${m.slot_id}" value="${m.cost}" style="width:80px"> <input type="number" id="roi_${m.slot_id}" value="${m.default_roi}" step="0.01" style="width:80px"> <button class="btn btn-sm" onclick="updateMarketItem(${m.slot_id})">Update</button></div>`).join('')}</div>
+        <div class="card"><h3>🛠️ Edit Market (Name, Emoji, Price, ROI)</h3>${market?.map(m => `
+    <div style="margin-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:8px;">
+        <input type="text" id="emoji_${m.slot_id}" value="${m.emoji}" style="width:60px;"> 
+        <input type="text" id="name_${m.slot_id}" value="${m.asset_name}" style="width:120px;"> 
+        <input type="number" id="price_${m.slot_id}" value="${m.cost}" style="width:80px;"> 
+        <input type="number" id="roi_${m.slot_id}" value="${m.default_roi}" step="0.01" style="width:80px;"> 
+        <button class="btn btn-sm" onclick="updateMarketItemFull(${m.slot_id})">Update</button>
+    </div>`).join('')}</div>
         <div class="card"><h3>🃏 Airtime Cards</h3>${cards?.map(c=>`<div>Cost: ${c.card_cost} ETB (${c.hidden_numbers.length} left) <button class="btn btn-sm" onclick="editCard(${c.id}, ${c.card_cost}, '${JSON.stringify(c.hidden_numbers)}')">Edit</button></div>`).join('')}<button class="btn btn-sm" onclick="shuffleCards()">Shuffle Order</button></div>
         <div class="card"><h3>👥 User Search</h3><input type="text" id="adminSearch" placeholder="User ID or email"><button class="btn btn-sm" onclick="searchUser()">Search</button><div id="userResult"></div></div>
     `;
 }
 function renderPendingList(items, type) {
-    if(!items?.length) return '<div>None</div>';
-    return items.map(item => `<div><strong>${item.user_id}</strong> | ${item.amount} ETB<button class="btn btn-sm btn-success" onclick="handleAdminAction('${type}','approve',${item.id},${item.amount},'${item.user_id}')">Approve</button><button class="btn btn-sm btn-danger" onclick="handleAdminAction('${type}','reject',${item.id},${item.amount},'${item.user_id}')">Reject</button></div>`).join('');
+    if (!items?.length) return '<div>None</div>';
+    return items.map(item => `
+        <div style="border-bottom:1px solid #333; margin-bottom:8px; padding-bottom:8px;">
+            <strong>User ID:</strong> ${item.user_id}<br>
+            <strong>Amount:</strong> ${item.amount} ETB<br>
+            ${type === 'deposit' ? `
+                <strong>Bank:</strong> ${item.bank_name || 'N/A'}<br>
+                <strong>Account Holder:</strong> ${item.account_holder || 'N/A'}<br>
+                <strong>Transaction ID:</strong> ${item.transaction_id || 'N/A'}<br>
+                <strong>Note:</strong> ${item.note || 'N/A'}<br>
+            ` : `
+                <strong>Payment Info:</strong> ${item.payment_info || 'N/A'}<br>
+                <strong>Tax:</strong> ${item.tax_amount || 0} ETB<br>
+                <strong>Net Amount:</strong> ${item.net_amount || item.amount} ETB<br>
+            `}
+            <strong>Request Time:</strong> ${item.request_time}<br>
+            <button class="btn btn-sm btn-success" onclick="handleAdminAction('${type}','approve',${item.id},${item.amount},'${item.user_id}')">Approve</button>
+            <button class="btn btn-sm btn-danger" onclick="handleAdminAction('${type}','reject',${item.id},${item.amount},'${item.user_id}')">Reject</button>
+        </div>
+    `).join('');
 }
 async function handleAdminAction(type, action, id, amount, userId) {
     if(!confirm(`${action.toUpperCase()} this request?`)) return;
@@ -1023,6 +1051,26 @@ async function updateMarketItem(slotId) {
     if(isNaN(newPrice) || newPrice<=0 || isNaN(newRoi) || newRoi<=0) return showToast('Invalid','error');
     await sb.from('market').update({ cost:newPrice, default_roi:newRoi }).eq('slot_id',slotId);
     showToast('Market updated','success');
+    loadAdminPanel();
+    loadAllData();
+}
+async function updateMarketItemFull(slotId) {
+    const newEmoji = document.getElementById(`emoji_${slotId}`).value.trim();
+    const newName = document.getElementById(`name_${slotId}`).value.trim();
+    const newPrice = parseInt(document.getElementById(`price_${slotId}`).value);
+    const newRoi = parseFloat(document.getElementById(`roi_${slotId}`).value);
+    if (!newEmoji || !newName || isNaN(newPrice) || newPrice <= 0 || isNaN(newRoi) || newRoi <= 0) {
+        showToast('Invalid values', 'error');
+        return;
+    }
+    const { error } = await sb.from('market').update({
+        emoji: newEmoji,
+        asset_name: newName,
+        cost: newPrice,
+        default_roi: newRoi
+    }).eq('slot_id', slotId);
+    if (error) showToast('Update failed', 'error');
+    else showToast('Market updated', 'success');
     loadAdminPanel();
     loadAllData();
 }
