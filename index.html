@@ -986,15 +986,29 @@ function showLotteryNumbers(poolId, price, taken) {
 }
 async function buyLotteryTicket(poolId, number) {
     const price = [50,100,200][poolId-1];
-    const { data: existing } = await sb.from('lottery_tickets').select('id').eq('pool_id',poolId).eq('ticket_number',number).eq('status','active').single();
-    if(existing) return showToast('Number taken','error');
-    if((currentUser.coin_balance||0) < price) return showToast(`Need ${price} coins`,'error');
+    if ((currentUser.coin_balance || 0) < price) {
+        showToast(`Need ${price} coins`, 'error');
+        return;
+    }
     const serial = `${poolId}-${String(number).padStart(2,'0')}-${USER_ID.slice(-4)}`;
-    await sb.rpc('buy_lottery_ticket', { p_user_id: USER_ID, p_pool_id: poolId, p_ticket_number: number, p_serial: serial, p_price: price, p_username: currentUser.username || 'User' });
-    showToast(`✅ Ticket #${number} purchased!`,'success');
-    playSound('coin');
-    document.querySelector('.modal.active')?.remove();
-    await loadAllData();
+    const { data: success, error } = await sb.rpc('buy_lottery_ticket_fast', {
+        p_user_id: USER_ID,
+        p_pool_id: poolId,
+        p_ticket_number: number,
+        p_serial: serial,
+        p_price: price,
+        p_username: currentUser.username || 'User'
+    });
+    if (error) {
+        showToast('Error: ' + error.message, 'error');
+    } else if (success === false) {
+        showToast('Ticket already taken or insufficient coins', 'error');
+    } else {
+        showToast(`✅ Ticket #${number} purchased!`, 'success');
+        playSound('coin');
+        document.querySelector('.modal.active')?.remove();
+        await loadAllData();
+    }
 }
 async function startConsultation() {
     const issue = document.getElementById('healthIssue').value.trim();
