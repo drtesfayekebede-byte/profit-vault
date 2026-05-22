@@ -479,8 +479,14 @@
 <div id="market" class="tab-content"><div class="card"><h3>🛒 Investment Market</h3><div id="marketGrid" class="market-grid">Loading...</div></div><div class="card"><h3>🎒 My Investments</h3><div id="investments"></div></div></div>
 
 <!-- GAMES -->
-<div id="games" class="tab-content"><div class="card"><h3>🎁 Win Chance Game (50 Coins)</h3><div id="gameGrid" class="game-grid"></div><div class="game-cost" style="margin-top:12px; text-align:center;">🪙 Cost: <strong>50 Coins</strong></div><div id="gameResult"></div></div></div>
-
+<div id="games" class="tab-content">
+    <div class="card">
+        <h3>🎁 Win Chance Game (50 Coins)</h3>
+        <div id="gameResult"></div>
+        <div id="gameGrid" class="game-grid"></div>
+        <div class="game-cost" style="margin-top:12px; text-align:center;">🪙 Cost: <strong>50 Coins</strong></div>
+    </div>
+</div>
 <!-- AIRTIME CARDS -->
 <div id="cards" class="tab-content"><div class="card"><h3>🃏 Airtime Cards</h3><div id="cardsGrid" style="display:flex; flex-direction:column; gap:12px;"></div></div></div>
 
@@ -497,7 +503,6 @@
     <div id="profileInfo"></div>
     <div id="referralEarnings" style="margin-top: 10px; color: #fbbf24;">💰 Referral earnings: 0 ETB</div>
     <button class="btn" onclick="copyReferral()">📤 Copy Referral Link</button>
-        <a href="https://t.me/profitvaultinvestment" target="_blank" class="btn btn-info" style="text-decoration:none; display:inline-block; margin-top:10px;">📢 Join our Channel @profitvaultinvestment</a>
         <button class="btn btn-danger" onclick="logout()">🚪 Logout</button>
         <div class="sound-toggle" style="margin-top:15px; display:flex; justify-content:space-between;">
             <span>🔊 Sound Effects</span>
@@ -517,7 +522,19 @@
 </div>
 
 <!-- CONTACT -->
-<div id="contact" class="tab-content"><div class="card"><h3>📞 Contact Admin</h3><div class="contact-methods"><div class="contact-method" onclick="contactAdmin('telegram')"><div>📱 Telegram Admin</div><div>@profitpv</div><button class="btn btn-sm">Message</button></div></div></div></div>
+<div id="contact" class="tab-content">
+    <div class="card">
+        <h3>📞 Contact Admin</h3>
+        <div class="contact-methods">
+            <div class="contact-method" onclick="contactAdmin('telegram')">
+                <div>📱 Telegram Admin</div>
+                <div>@profitvaultinvestment</div>
+                <button class="btn btn-sm">Message</button>
+            </div>
+        </div>
+        <a href="https://t.me/profitpv" target="_blank" class="btn btn-info" style="text-decoration:none; display:block; margin-top:10px;">📢 Join our Channel @profitpv</a>
+    </div>
+</div>
 
 <!-- MODALS -->
 <div id="depositModal" class="modal"><div class="modal-content"><span class="close" onclick="closeModal('depositModal')">&times;</span><h3>💰 Deposit Money</h3><div class="payment-methods" style="display:flex; gap:10px; margin-bottom:15px;"><div class="payment-method" data-payment="telebirr" onclick="selectPaymentMethod('telebirr')" style="flex:1; background:rgba(255,255,255,0.1); border-radius:16px; padding:10px; text-align:center; cursor:pointer;">📱 Telebirr</div><div class="payment-method" data-payment="awash" onclick="selectPaymentMethod('awash')" style="flex:1; background:rgba(255,255,255,0.1); border-radius:16px; padding:10px; text-align:center; cursor:pointer;">🏦 Awash</div></div><div id="telebirrInfo" class="telebirr-info" style="background:rgba(0,0,0,0.4); border-radius:16px; padding:12px; margin:10px 0; text-align:center;">📱 Send to Telebirr: <strong>0935983470</strong><br>Name: Tesfaye</div><div id="awashInfo" class="bank-info" style="display:none; background:rgba(0,0,0,0.4); border-radius:16px; padding:12px; margin:10px 0; text-align:center;">🏦 Awash Bank: <strong>013201372354300</strong><br>Name: Tesfaye</div><input type="number" id="depositAmount" placeholder="Amount (Min 1500 ETB)"><input type="text" id="accountHolder" placeholder="Account Holder Name"><input type="text" id="transactionId" placeholder="Transaction ID"><textarea id="depositNote" rows="2" placeholder="Note (optional)"></textarea><button class="btn btn-success" onclick="submitDeposit()">Submit Deposit Request</button><p style="font-size:11px; margin-top:12px;">Admin will verify and approve.</p></div></div>
@@ -578,7 +595,7 @@ function toggleSound() {
     playSound('click');
 }
 function contactAdmin(method) {
-    if(method==='telegram') window.open('https://t.me/profitpv','_blank');
+    if(method==='telegram') window.open('https://t.me/profitvaultinvestment','_blank');
 }
 function copyReferral() {
     navigator.clipboard.writeText(`${window.location.origin}${window.location.pathname}?ref=${USER_ID}`);
@@ -725,14 +742,14 @@ await loadReferralEarnings();
     const { count: lotteryCount } = await sb.from('lottery_tickets').select('*', {count:'exact', head:true}).eq('user_id', USER_ID).eq('status','active');
     const depositDone = (currentUser.total_deposited || 0) >= 1500;
     const gameDone = (currentUser.win_chance_plays || 0) >= 10;
-    const lotteryDone = (lotteryCount || 0) >= 3;
+    const lotteryDone = (lotteryCount || 0) >= 1;
     const referralDone = (currentUser.active_referrals || 0) >= 3;
     const completed = [depositDone, gameDone, lotteryDone, referralDone].filter(Boolean).length;
     const percent = (completed/4)*100;
     document.getElementById('quadlock').innerHTML = `
         <div class="quad-item ${depositDone?'unlocked':'locked'}"><div>💰 Deposit 1500 ETB</div><div>${(currentUser.total_deposited||0)}/1500</div></div>
         <div class="quad-item ${gameDone?'unlocked':'locked'}"><div>🎮 Play 10 Games</div><div>${currentUser.win_chance_plays||0}/10</div></div>
-        <div class="quad-item ${lotteryDone?'unlocked':'locked'}"><div>🎟️ Buy 3 Tickets</div><div>${lotteryCount||0}/3</div></div>
+        <div class="quad-item ${lotteryDone?'unlocked':'locked'}"><div>🎟️ Buy 1 Tickets</div><div>${lotteryCount||0}/3</div></div>
         <div class="quad-item ${referralDone?'unlocked':'locked'}"><div>👥 3 Referrals</div><div>${currentUser.active_referrals||0}/3</div></div>
         <div class="progress-bar"><div class="progress-fill" style="width:${percent}%"></div></div>
         <div class="progress-text">${completed}/4 Complete (${Math.round(percent)}%)</div>`;
@@ -771,8 +788,14 @@ await loadReferralEarnings();
     const { data: recent } = await sb.from('lottery_draws').select('*').order('draw_time',{ascending:false}).limit(5);
     document.getElementById('recentDraws').innerHTML = recent?.length ? recent.map(d => `<div class="ticket-item"><div>🎰 Pool #${d.pool_id}</div><div>Winner: ${d.winner_serial}</div><div class="badge">${d.prize_amount} 🪙</div></div>`).join('') : '<div class="loading">No draws</div>';
     // Consultations
-    const { data: cons } = await sb.from('health_consultations').select('*').eq('user_id', USER_ID).order('created_at',{ascending:false}).limit(10);
-    document.getElementById('consultations').innerHTML = cons?.length ? cons.map(c => `<div class="consultation-item"><div><strong>📅 ${c.created_at?.slice(0,10)}</strong> <span class="badge">${c.status}</span></div><div>Issue: ${c.issue?.slice(0,100)}</div>${c.admin_response ? `<div style="color:#10b981;">Response: ${c.admin_response.slice(0,100)}</div>` : ''}</div>`).join('') : '<div class="loading">No consultations</div>';
+const { data: cons } = await sb.from('health_consultations').select('*').eq('user_id', USER_ID).order('created_at',{ascending:false}).limit(10);
+document.getElementById('consultations').innerHTML = cons?.length ? cons.map(c => `
+    <div class="consultation-item">
+        <div><strong>📅 ${c.created_at?.slice(0,10)}</strong> <span class="badge">${c.status}</span></div>
+        <div>Issue: ${c.issue?.slice(0,100)}</div>
+        ${c.admin_response ? `<div style="color:#10b981; margin-top:8px;">✅ Response: ${c.admin_response.slice(0,200)}</div>` : '<div style="color:#fbbf24;">⏳ Waiting for admin response...</div>'}
+    </div>
+`).join('') : '<div class="loading">No consultations</div>';
     // Transactions
     const { data: txs } = await sb.from('transactions').select('*').eq('user_id', USER_ID).order('timestamp',{ascending:false}).limit(30);
     document.getElementById('transactionList').innerHTML = txs?.length ? txs.map(t => `<div class="transaction-item"><div>${t.transaction_type}</div><div style="color:${t.amount>0?'#10b981':'#ef4444'}">${t.amount>0?'+':''}${Math.abs(t.amount).toLocaleString()}</div><div style="font-size:10px;">${t.timestamp}</div><div>${t.status}</div></div>`).join('') : '<div class="loading">No transactions</div>';
@@ -1136,9 +1159,21 @@ async function handleAdminAction(type, action, id, amount, userId) {
 async function respondConsultation(id) {
     const resp = document.getElementById(`resp_${id}`).value;
     if(!resp) return showToast('Response required','error');
-    await sb.from('health_consultations').update({ admin_response:resp, status:'responded' }).eq('id',id);
-    showToast('Response sent','success');
-    loadAdminPanel();
+    const { error } = await sb.from('health_consultations').update({ 
+        admin_response: resp, 
+        status: 'responded',
+        updated_at: new Date().toISOString()
+    }).eq('id', id);
+    if (error) {
+        showToast('Failed to send response', 'error');
+    } else {
+        showToast('Response sent successfully', 'success');
+        loadAdminPanel();
+        // Also reload user data if user is viewing their consultations
+        if (document.getElementById('clinic').classList.contains('active')) {
+            loadAllData();
+        }
+    }
 }
 async function drawLottery(poolId) {
     if(!confirm(`Draw winner for Pool ${poolId}?`)) return;
