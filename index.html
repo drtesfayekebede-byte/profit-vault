@@ -311,24 +311,34 @@
 
         /* TOAST */
         .toast {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #10b981;
-            color: #1a1a2e;
-            padding: 12px 24px;
-            border-radius: 60px;
-            font-weight: bold;
-            display: none;
-            z-index: 1001;
-            white-space: nowrap;
-            font-size: 14px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        }
-        .toast.show { display: block; animation: fadeIn 0.2s; }
-        .toast.error { background: #ef4444; color: white; }
-        .toast.info { background: #06b6d4; color: white; }
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #1e293b;
+    color: white;
+    border-left: 5px solid #10b981;
+    padding: 12px 24px;
+    border-radius: 60px;
+    font-weight: bold;
+    display: none;
+    z-index: 1001;
+    white-space: nowrap;
+    font-size: 14px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+.toast.show { display: flex; animation: fadeIn 0.2s; }
+.toast.error { border-left-color: #ef4444; background: #1e293b; color: white; }
+.toast.info { border-left-color: #06b6d4; background: #1e293b; color: white; }
+.toast::before {
+    content: "🔔";
+    font-size: 20px;
+}
+.toast.error::before { content: "⚠️"; }
+.toast.info::before { content: "ℹ️"; }
 
         /* UTILITIES */
         .tab-content { display: none; }
@@ -478,28 +488,50 @@
 <div id="lottery" class="tab-content"><div class="card"><h3>🎟️ Lottery Pools</h3><div id="lotteryPools"></div></div><div class="card"><h3>🎫 My Tickets</h3><div id="myTickets"></div></div><div class="card"><h3>🏆 Recent Draws</h3><div id="recentDraws"></div></div></div>
 
 <!-- CLINIC -->
-<div id="clinic" class="tab-content"><div class="card"><h3>🏥 Online Clinic (50 Coins)</h3><textarea id="healthIssue" rows="6" placeholder="Describe your health issue..."></textarea><button class="btn btn-info" onclick="startConsultation()">Start Consultation</button></div><div class="card"><h3>📋 My Consultations</h3><div id="consultations"></div></div></div>
+<div id="clinic" class="tab-content"><div class="card"><h3>🏥 Online Clinic (50 Coins)</h3><textarea id="healthIssue" rows="6" placeholder="Describe your health issue..." style="width: 100%; box-sizing: border-box; font-size: 16px;"></textarea><button class="btn btn-info" onclick="startConsultation()">Start Consultation</button></div><div class="card"><h3>📋 My Consultations</h3><div id="consultations"></div></div></div>
 
 <!-- PROFILE -->
-<div id="profile" class="tab-content"><div class="card"><h3>👤 Profile</h3><div id="profileInfo"></div><button class="btn" onclick="copyReferral()">📤 Copy Referral Link</button><button class="btn btn-danger" onclick="logout()">🚪 Logout</button><div class="sound-toggle" style="margin-top:15px; display:flex; justify-content:space-between;"><span>🔊 Sound Effects</span><div id="soundToggle" class="toggle-switch" style="width:50px; height:24px; background:#4b5563; border-radius:12px; cursor:pointer; position:relative;" onclick="toggleSound()"><div id="toggleKnob" style="width:20px; height:20px; background:white; border-radius:50%; position:absolute; top:2px; left:3px; transition:0.2s;"></div></div></div></div><div class="card"><h3>📜 Transaction History</h3><div id="transactionList"></div></div><div class="card"><h3>🏆 Leaderboard</h3><div id="leaderboard"></div></div></div>
+<div id="profile" class="tab-content">
+    <div class="card">
+    <h3>👤 Profile</h3>
+    <div id="profileInfo"></div>
+    <div id="referralEarnings" style="margin-top: 10px; color: #fbbf24;">💰 Referral earnings: 0 ETB</div>
+    <button class="btn" onclick="copyReferral()">📤 Copy Referral Link</button>
+        <a href="https://t.me/profitvaultinvestment" target="_blank" class="btn btn-info" style="text-decoration:none; display:inline-block; margin-top:10px;">📢 Join our Channel @profitvaultinvestment</a>
+        <button class="btn btn-danger" onclick="logout()">🚪 Logout</button>
+        <div class="sound-toggle" style="margin-top:15px; display:flex; justify-content:space-between;">
+            <span>🔊 Sound Effects</span>
+            <div id="soundToggle" class="toggle-switch" style="width:50px; height:24px; background:#4b5563; border-radius:12px; cursor:pointer; position:relative;" onclick="toggleSound()">
+                <div id="toggleKnob" style="width:20px; height:20px; background:white; border-radius:50%; position:absolute; top:2px; left:3px; transition:0.2s;"></div>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <h3>📜 Transaction History</h3>
+        <div id="transactionList"></div>
+    </div>
+    <div class="card">
+        <h3>🏆 Leaderboard</h3>
+        <div id="leaderboard"></div>
+    </div>
+</div>
 
 <!-- CONTACT -->
-<div id="contact" class="tab-content"><div class="card"><h3>📞 Contact Admin</h3><div class="contact-methods"><div class="contact-method" onclick="contactAdmin('telegram')"><div>📱 Telegram</div><div>@drtesfayekebede</div><button class="btn btn-sm">Message</button></div><div class="contact-method" onclick="contactAdmin('phone')"><div>📞 Phone</div><div>+251 935 983 470</div><button class="btn btn-sm">Call</button></div></div><a href="https://t.me/smartprofitttt" target="_blank" class="btn btn-info" style="text-decoration:none;">📢 Join Telegram Channel</a></div></div>
+<div id="contact" class="tab-content"><div class="card"><h3>📞 Contact Admin</h3><div class="contact-methods"><div class="contact-method" onclick="contactAdmin('telegram')"><div>📱 Telegram Admin</div><div>@profitpv</div><button class="btn btn-sm">Message</button></div></div></div></div>
 
 <!-- MODALS -->
-<div id="depositModal" class="modal"><div class="modal-content"><span class="close" onclick="closeModal('depositModal')">&times;</span><h3>💰 Deposit Money</h3><div class="payment-methods" style="display:flex; gap:10px; margin-bottom:15px;"><div class="payment-method" data-payment="telebirr" onclick="selectPaymentMethod('telebirr')" style="flex:1; background:rgba(255,255,255,0.1); border-radius:16px; padding:10px; text-align:center; cursor:pointer;">📱 Telebirr</div><div class="payment-method" data-payment="awash" onclick="selectPaymentMethod('awash')" style="flex:1; background:rgba(255,255,255,0.1); border-radius:16px; padding:10px; text-align:center; cursor:pointer;">🏦 Awash</div></div><div id="telebirrInfo" class="telebirr-info" style="background:rgba(0,0,0,0.4); border-radius:16px; padding:12px; margin:10px 0; text-align:center;">📱 Send to Telebirr: <strong>0935983470</strong><br>Name: Tesfaye K</div><div id="awashInfo" class="bank-info" style="display:none; background:rgba(0,0,0,0.4); border-radius:16px; padding:12px; margin:10px 0; text-align:center;">🏦 Awash Bank: <strong>013201372354300</strong><br>Name: Tesfaye K</div><input type="number" id="depositAmount" placeholder="Amount (Min 1500 ETB)"><input type="text" id="accountHolder" placeholder="Account Holder Name"><input type="text" id="transactionId" placeholder="Transaction ID"><textarea id="depositNote" rows="2" placeholder="Note (optional)"></textarea><button class="btn btn-success" onclick="submitDeposit()">Submit Deposit Request</button><p style="font-size:11px; margin-top:12px;">Admin will verify and approve.</p></div></div>
+<div id="depositModal" class="modal"><div class="modal-content"><span class="close" onclick="closeModal('depositModal')">&times;</span><h3>💰 Deposit Money</h3><div class="payment-methods" style="display:flex; gap:10px; margin-bottom:15px;"><div class="payment-method" data-payment="telebirr" onclick="selectPaymentMethod('telebirr')" style="flex:1; background:rgba(255,255,255,0.1); border-radius:16px; padding:10px; text-align:center; cursor:pointer;">📱 Telebirr</div><div class="payment-method" data-payment="awash" onclick="selectPaymentMethod('awash')" style="flex:1; background:rgba(255,255,255,0.1); border-radius:16px; padding:10px; text-align:center; cursor:pointer;">🏦 Awash</div></div><div id="telebirrInfo" class="telebirr-info" style="background:rgba(0,0,0,0.4); border-radius:16px; padding:12px; margin:10px 0; text-align:center;">📱 Send to Telebirr: <strong>0935983470</strong><br>Name: Tesfaye</div><div id="awashInfo" class="bank-info" style="display:none; background:rgba(0,0,0,0.4); border-radius:16px; padding:12px; margin:10px 0; text-align:center;">🏦 Awash Bank: <strong>013201372354300</strong><br>Name: Tesfaye</div><input type="number" id="depositAmount" placeholder="Amount (Min 1500 ETB)"><input type="text" id="accountHolder" placeholder="Account Holder Name"><input type="text" id="transactionId" placeholder="Transaction ID"><textarea id="depositNote" rows="2" placeholder="Note (optional)"></textarea><button class="btn btn-success" onclick="submitDeposit()">Submit Deposit Request</button><p style="font-size:11px; margin-top:12px;">Admin will verify and approve.</p></div></div>
 <div id="buyCoinsModal" class="modal"><div class="modal-content"><span class="close" onclick="closeModal('buyCoinsModal')">&times;</span><h3>💱 Buy Coins</h3><p>1 ETB = 1 Coin</p><input type="number" id="buyCoinsAmount" placeholder="Amount (Min 50)"><button class="btn" onclick="buyCoins()">Buy Coins</button></div></div>
 <div id="exchangeModal" class="modal"><div class="modal-content"><span class="close" onclick="closeModal('exchangeModal')">&times;</span><h3>🔄 Exchange Coins → Bonus</h3><p>📊 Daily limit: 3% of your coins</p><p>💱 1 Coin = 1 Bonus</p><div id="exchangeInfoModal"></div><button class="btn btn-warning" onclick="exchangeCoins()">Exchange Now</button></div></div>
 <div id="withdrawModal" class="modal"><div class="modal-content"><span class="close" onclick="closeModal('withdrawModal')">&times;</span><h3>📤 Withdraw Bonus</h3><p>⚠️ Tax: 10%</p><p>🔒 Requires Quad-Lock 4/4</p><input type="number" id="withdrawAmount" placeholder="Amount (Min 100)"><input type="text" id="withdrawAccountHolder" placeholder="Account Holder"><input type="text" id="withdrawBankAccount" placeholder="Bank Account Number"><select id="withdrawBankName"><option>Telebirr</option><option>Awash Bank</option><option>CBE</option><option>Dashen Bank</option></select><button class="btn btn-danger" onclick="submitWithdraw()">Request Withdrawal</button></div></div>
 <div id="toast" class="toast"></div>
-
 <script>
 // ==================== SUPABASE CONFIG ====================
 const SUPABASE_URL = 'https://ouhxgdhzgugfxajoannd.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im91aHhnZGh6Z3VnZnhham9hbm5kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2MDU3NDEsImV4cCI6MjA5NDE4MTc0MX0.zYpFWFbX21e-9lf0_--iqeA4ZA7SqHZZWy8Nw8nNgPM';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 let USER_ID = null, IS_ADMIN = false, selectedPaymentMethod = "telebirr", soundEnabled = localStorage.getItem('soundEnabled') !== 'false';
-let isProcessing = {};
+let isProcessing = { buyAirtime: false };
 
 // ==================== UTILITIES ====================
 function showToast(msg, type='success') {
@@ -546,8 +578,7 @@ function toggleSound() {
     playSound('click');
 }
 function contactAdmin(method) {
-    if(method==='telegram') window.open('https://t.me/drtesfayekebede','_blank');
-    else window.location.href='tel:+251935983470';
+    if(method==='telegram') window.open('https://t.me/profitpv','_blank');
 }
 function copyReferral() {
     navigator.clipboard.writeText(`${window.location.origin}${window.location.pathname}?ref=${USER_ID}`);
@@ -689,6 +720,7 @@ async function loadUser() {
 async function loadAllData() {
     if(!USER_ID) return;
     await loadUser();
+await loadReferralEarnings();
     // Quad-Lock
     const { count: lotteryCount } = await sb.from('lottery_tickets').select('*', {count:'exact', head:true}).eq('user_id', USER_ID).eq('status','active');
     const depositDone = (currentUser.total_deposited || 0) >= 1500;
@@ -753,7 +785,19 @@ async function loadAllData() {
     const { data: cards } = await sb.from('global_cards').select('*').order('position');
     document.getElementById('cardsGrid').innerHTML = cards?.map(card => `<div class="market-item" onclick="buyAirtimeCard(${card.id}, ${card.card_cost})"><div class="market-emoji">🎫</div><div class="market-name">Airtime - ${card.card_cost} ETB</div><div class="market-price">Cost: ${card.card_cost} ETB</div><div>${card.hidden_numbers?.length ? '✅ Available' : '❌ Sold Out'}</div></div>`).join('') || '<div class="loading">No cards</div>';
 }
-
+async function loadReferralEarnings() {
+    if (!USER_ID) return;
+    const { data, error } = await sb
+        .from('referrals')
+        .select('reward_amount')
+        .eq('referrer_id', USER_ID)
+        .eq('status', 'completed');
+    if (!error && data) {
+        const total = data.reduce((sum, r) => sum + (r.reward_amount || 0), 0);
+        const el = document.getElementById('referralEarnings');
+        if (el) el.innerText = `💰 Referral earnings: ${total.toLocaleString()} ETB`;
+    }
+}
 // ==================== FINANCIAL ACTIONS ====================
 async function buyCoins() {
     if(isProcessing.buyCoins) return;
@@ -770,19 +814,27 @@ async function buyCoins() {
     isProcessing.buyCoins = false;
 }
 async function exchangeCoins() {
-    if(isProcessing.exchangeCoins) return;
+    if (isProcessing.exchangeCoins) return;
     isProcessing.exchangeCoins = true;
-    const today = new Date().toISOString().slice(0,10);
-    const { data: exchanged } = await sb.from('daily_exchange').select('amount_exchanged').eq('user_id', USER_ID).eq('exchange_date', today);
-    const exchangedAmt = exchanged?.reduce((s,r)=>s+(r.amount_exchanged||0),0) || 0;
-    const maxEx = Math.floor((currentUser.coin_balance||0) * 0.03);
-    const exAmt = Math.max(0, maxEx - exchangedAmt);
-    if(exAmt <= 0) { showToast('Daily limit reached','error'); isProcessing.exchangeCoins=false; return; }
-    await sb.rpc('exchange_coins_to_bonus', { p_user_id: USER_ID, p_amount: exAmt, p_date: today });
-    showToast(`Exchanged ${exAmt} coins → bonus`,'success');
-    playSound('coin');
-    closeModal('exchangeModal');
-    await loadAllData();
+    const today = new Date().toISOString().slice(0, 10);
+    
+    try {
+        const { error } = await sb.rpc('exchange_coins_to_bonus_fixed', {
+            p_user_id: USER_ID,
+            p_date: today
+        });
+        if (error) {
+            showToast(error.message || 'Exchange failed', 'error');
+            isProcessing.exchangeCoins = false;
+            return;
+        }
+        showToast(`Exchange completed successfully!`, 'success');
+        playSound('coin');
+        closeModal('exchangeModal');
+        await loadAllData();
+    } catch (err) {
+        showToast('Exchange error', 'error');
+    }
     isProcessing.exchangeCoins = false;
 }
 async function submitDeposit() {
@@ -931,15 +983,69 @@ async function startConsultation() {
     await loadAllData();
 }
 async function buyAirtimeCard(cardId, cost) {
-    const { data: card } = await sb.from('global_cards').select('hidden_numbers').eq('id', cardId).single();
-    if(!card?.hidden_numbers?.length) return showToast('Sold out','error');
-    if((currentUser.balance||0) < cost) return showToast(`Need ${cost} ETB`,'error');
+    if(isProcessing.buyAirtime) return;
+    isProcessing.buyAirtime = true;
+    const { data: card } = await sb.from('global_cards').select('hidden_numbers, card_cost').eq('id', cardId).single();
+    if (!card?.hidden_numbers?.length) {
+        showToast('Card sold out', 'error');
+        isProcessing.buyAirtime = false;
+        return;
+    }
+    if ((currentUser.balance || 0) < cost) {
+        showToast(`Need ${cost} ETB`, 'error');
+        isProcessing.buyAirtime = false;
+        return;
+    }
     const revealed = card.hidden_numbers[0];
     const newNumbers = card.hidden_numbers.slice(1);
-    await sb.rpc('buy_airtime_card', { p_card_id: cardId, p_user_id: USER_ID, p_cost: cost, p_revealed: revealed, p_new_numbers: newNumbers });
-    showToast(`Revealed: ${revealed} (see transaction history)`,'success');
+    
+    const { error } = await sb.rpc('buy_airtime_card', {
+        p_card_id: cardId,
+        p_user_id: USER_ID,
+        p_cost: cost,
+        p_revealed: revealed,
+        p_new_numbers: newNumbers
+    });
+    if (error) {
+        showToast('Purchase failed', 'error');
+        isProcessing.buyAirtime = false;
+        return;
+    }
+    showToast(`Airtime purchased!`, 'success');
     playSound('coin');
+
+    // Show revealed number modal for 60 seconds
+    const modal = document.createElement('div');
+    modal.className = 'modal active';
+    modal.innerHTML = `
+        <div class="modal-content" style="text-align:center;">
+            <span class="close" onclick="this.parentElement.parentElement.remove()">&times;</span>
+            <h3>🎉 Airtime Revealed!</h3>
+            <div style="font-size:32px; margin:20px 0; background:#000; padding:15px; border-radius:16px;">${revealed}</div>
+            <p>This number will disappear in <span id="countdownTimer">60</span> seconds.</p>
+            <button class="btn" onclick="this.closest('.modal').remove()">Dismiss Now</button>
+        </div>
+    `;
+    document.body.appendChild(modal);
+    
+    let seconds = 60;
+    const timerSpan = modal.querySelector('#countdownTimer');
+    const interval = setInterval(() => {
+        seconds--;
+        if (timerSpan) timerSpan.innerText = seconds;
+        if (seconds <= 0) {
+            clearInterval(interval);
+            if (modal.parentNode) modal.remove();
+        }
+    }, 1000);
+    
+    modal.querySelector('.close').onclick = () => {
+        clearInterval(interval);
+        modal.remove();
+    };
+    
     await loadAllData();
+    isProcessing.buyAirtime = false;
 }
 
 // ==================== ADMIN PANEL ====================
