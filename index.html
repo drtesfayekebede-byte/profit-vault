@@ -607,14 +607,14 @@ function confetti() {
         conf.innerHTML = ['🎉','✨','⭐','💎'][Math.floor(Math.random()*4)];
         conf.style.position = 'fixed';
         conf.style.left = Math.random() * window.innerWidth + 'px';
-        conf.style.top = '-20px';
+        conf.style.bottom = '-20px';   // start from bottom
         conf.style.fontSize = '20px';
         conf.style.pointerEvents = 'none';
         conf.style.zIndex = '9999';
         conf.style.transition = 'all 1.5s ease-out';
         document.body.appendChild(conf);
         setTimeout(() => {
-            conf.style.transform = `translateY(${window.innerHeight+50}px) rotate(${Math.random()*360}deg)`;
+            conf.style.transform = `translateY(-${window.innerHeight+50}px) rotate(${Math.random()*360}deg)`; // move upward
             conf.style.opacity = '0';
         }, 10);
         setTimeout(() => conf.remove(), 1600);
@@ -749,7 +749,7 @@ await loadReferralEarnings();
     document.getElementById('quadlock').innerHTML = `
         <div class="quad-item ${depositDone?'unlocked':'locked'}"><div>💰 Deposit 1500 ETB</div><div>${(currentUser.total_deposited||0)}/1500</div></div>
         <div class="quad-item ${gameDone?'unlocked':'locked'}"><div>🎮 Play 10 Games</div><div>${currentUser.win_chance_plays||0}/10</div></div>
-        <div class="quad-item ${lotteryDone?'unlocked':'locked'}"><div>🎟️ Buy 1 Tickets</div><div>${lotteryCount||0}/3</div></div>
+        <div class="quad-item ${lotteryDone?'unlocked':'locked'}"><div>🎟️ Buy 1 Ticket</div><div>${lotteryCount||0}/1</div></div>
         <div class="quad-item ${referralDone?'unlocked':'locked'}"><div>👥 3 Referrals</div><div>${currentUser.active_referrals||0}/3</div></div>
         <div class="progress-bar"><div class="progress-fill" style="width:${percent}%"></div></div>
         <div class="progress-text">${completed}/4 Complete (${Math.round(percent)}%)</div>`;
@@ -1158,21 +1158,33 @@ async function handleAdminAction(type, action, id, amount, userId) {
 }
 async function respondConsultation(id) {
     const resp = document.getElementById(`resp_${id}`).value;
-    if(!resp) return showToast('Response required','error');
-    const { error } = await sb.from('health_consultations').update({ 
-        admin_response: resp, 
-        status: 'responded',
-        updated_at: new Date().toISOString()
-    }).eq('id', id);
-    if (error) {
-        showToast('Failed to send response', 'error');
-    } else {
-        showToast('Response sent successfully', 'success');
-        loadAdminPanel();
-        // Also reload user data if user is viewing their consultations
-        if (document.getElementById('clinic').classList.contains('active')) {
-            loadAllData();
+    if (!resp || resp.trim() === '') {
+        showToast('Response cannot be empty', 'error');
+        return;
+    }
+    try {
+        const { error } = await sb
+            .from('health_consultations')
+            .update({ 
+                admin_response: resp.trim(), 
+                status: 'responded'
+            })
+            .eq('id', id);
+        if (error) {
+            console.error('Supabase error:', error);
+            showToast('Error: ' + error.message, 'error');
+        } else {
+            showToast('Response sent successfully!', 'success');
+            // Refresh admin panel
+            loadAdminPanel();
+            // If user is viewing clinic, refresh their view too
+            if (document.getElementById('clinic').classList.contains('active')) {
+                loadAllData();
+            }
         }
+    } catch (err) {
+        console.error('Unexpected error:', err);
+        showToast('An unexpected error occurred', 'error');
     }
 }
 async function drawLottery(poolId) {
