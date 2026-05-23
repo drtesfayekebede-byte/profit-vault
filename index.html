@@ -717,6 +717,10 @@ function confetti() {
 
 // ==================== AUTHENTICATION (EMAIL ONLY) ====================
 async function checkSession() {
+    // Force clear any stale session on mobile
+    if (/Mobi|Android/i.test(navigator.userAgent)) {
+        localStorage.removeItem('profitvault_user_id');
+    }
     const { data:{ session } } = await sb.auth.getSession();
     // Remove any cache‑busting parameter to keep URL clean
     if (window.location.search.includes('t=')) {
