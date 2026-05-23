@@ -481,6 +481,25 @@ body::before {
             background: #fbbf24;
             color: #1a1a2e;
         }
+.password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+.password-wrapper input {
+    flex: 1;
+    padding-right: 35px;
+}
+.password-toggle {
+    position: absolute;
+    right: 12px;
+    cursor: pointer;
+    font-size: 18px;
+    user-select: none;
+    background: none;
+    border: none;
+    color: #fbbf24;
+}
     </style>
 </head>
 <body>
@@ -662,6 +681,16 @@ function toggleSound() {
 function contactAdmin(method) {
     if(method==='telegram') window.open('https://t.me/profitvaultinvestment','_blank');
 }
+function togglePasswordVisibility(inputId, btnElement) {
+    const input = document.getElementById(inputId);
+    if (input.type === 'password') {
+        input.type = 'text';
+        btnElement.textContent = '🙈';
+    } else {
+        input.type = 'password';
+        btnElement.textContent = '👁️';
+    }
+}
 function copyReferral() {
     navigator.clipboard.writeText(`${window.location.origin}${window.location.pathname}?ref=${USER_ID}`);
     showToast('Referral link copied!');
@@ -719,21 +748,22 @@ function showAuthModal() {
     modalDiv.id = 'authModal';
     modalDiv.className = 'modal active';
     modalDiv.innerHTML = `
-        <div class="modal-content">
-            <span class="close" onclick="closeAuthModal()">&times;</span>
-            <div class="auth-header">
-                <h2>🏆 ፕሮፊት ቮልት</h2>
-                <p>Secure Investment Platform</p>
-            </div>
-            <div class="mode-switch">
-                <button id="loginModeBtn" class="active" onclick="setAuthMode('login')">Login</button>
-                <button id="registerModeBtn" onclick="setAuthMode('register')">Register</button>
-            </div>
-            <div id="authForm"></div>
+    <div class="modal-content">
+        <span class="close" onclick="closeAuthModal()">&times;</span>
+        <div class="auth-header">
+            <h2>🏆 ፕሮፊት ቮልት</h2>
+            <p>Secure Investment Platform</p>
         </div>
-    `;
-    document.body.appendChild(modalDiv);
-    setAuthMode('login');
+        <div class="mode-switch">
+            <button id="loginModeBtn" class="active" onclick="setAuthMode('login')">Login</button>
+            <button id="registerModeBtn" onclick="setAuthMode('register')">Register</button>
+        </div>
+        <div id="authForm"></div>
+        <div style="text-align:center; margin-top:12px;">
+            <a href="#" onclick="forgotPassword()" style="color:#fbbf24; font-size:12px;">Forgot Password?</a>
+        </div>
+    </div>
+`;
 }
 function setAuthMode(mode) {
     const container = document.getElementById('authForm');
@@ -748,7 +778,10 @@ function setAuthMode(mode) {
     }
     container.innerHTML = `
         <input type="email" id="authEmail" placeholder="Email address" required>
-        <input type="password" id="authPassword" placeholder="Password (min 6)" required>
+        <div class="password-wrapper">
+            <input type="password" id="authPassword" placeholder="Password (min 6)" required>
+            <button type="button" class="password-toggle" onclick="togglePasswordVisibility('authPassword', this)">👁️</button>
+        </div>
         ${!isLogin ? '<input type="text" id="authUsername" placeholder="Username (optional)">' : ''}
         <button class="btn btn-success" onclick="${isLogin ? 'login()' : 'register()'}">${isLogin ? 'Sign In' : 'Create Account'}</button>
     `;
@@ -788,6 +821,18 @@ async function logout() {
     localStorage.removeItem('profitvault_user_id');
     // Force a full reload without cache (works on all devices)
     window.location.href = window.location.pathname + '?t=' + Date.now();
+}
+async function forgotPassword() {
+    const email = prompt("Enter your registered email address to reset password:");
+    if (!email) return;
+    const { error } = await sb.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin + window.location.pathname,
+    });
+    if (error) {
+        showToast(error.message, 'error');
+    } else {
+        showToast("Password reset email sent! Check your inbox.", 'success');
+    }
 }
 // ==================== DATA LOADING (FULL FEATURES) ====================
 let currentUser = null;
@@ -1432,6 +1477,23 @@ async function adjustUser(userId) {
 // ==================== INIT ====================
 window.addEventListener('load', () => {
     checkSession();
+// Handle password reset redirect
+const hashParams = new URLSearchParams(window.location.hash.substring(1));
+if (hashParams.get('type') === 'recovery') {
+    const newPassword = prompt("Set a new password (min 6 characters):");
+    if (newPassword && newPassword.length >= 6) {
+        sb.auth.updateUser({ password: newPassword })
+            .then(({ error }) => {
+                if (error) showToast(error.message, 'error');
+                else {
+                    showToast("Password updated! Please log in again.", 'success');
+                    history.replaceState(null, '', window.location.pathname);
+                }
+            });
+    } else if (newPassword) {
+        showToast("Password must be at least 6 characters", 'error');
+    }
+}
     initHistoryTabs();
     document.querySelectorAll('.tab').forEach(tab => {
         tab.addEventListener('click', () => {
