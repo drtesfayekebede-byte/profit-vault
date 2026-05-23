@@ -53,25 +53,25 @@
 
         /* ===== BASE ===== */
         body {
-            font-family: 'Segoe UI', 'Tahoma', Geneva, Verdana, sans-serif;
-            background: radial-gradient(circle at 10% 20%, #0a0f1e, #03050b);
-            min-height: 100vh;
-            padding: 16px;
-            padding-bottom: 100px;
-            color: #e2e8f0;
-            position: relative;
-        }
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 50% 30%, rgba(255,215,0,0.08), transparent 70%);
-            pointer-events: none;
-            z-index: 0;
-        }
+    background: radial-gradient(circle at 20% 30%, #0a0f2a, #010101);
+    min-height: 100vh;
+    padding: 16px;
+    padding-bottom: 100px;
+    color: #e2e8f0;
+    position: relative;
+    overflow-x: hidden;
+}
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(45deg, rgba(255,215,0,0.03) 0px, rgba(255,215,0,0.03) 2px, transparent 2px, transparent 8px);
+    pointer-events: none;
+    z-index: 0;
+}
 
         /* ===== CARDS & CONTAINERS ===== */
         .header {
@@ -370,67 +370,108 @@
             .balance-value { font-size: 22px; }
         }
 
-        /* ===== AUTH MODAL COLORFUL STYLES ===== */
-        #authModal .modal-content {
-            background: linear-gradient(145deg, #0f172a, #1e1b4b);
-            border: 2px solid;
-            border-image: linear-gradient(45deg, #fbbf24, #ec4899, #06b6d4) 1;
-            box-shadow: 0 0 30px rgba(236,72,153,0.3);
-        }
-        #authModal h3 {
-            font-size: 28px;
-            text-align: center;
-            background: linear-gradient(135deg, #FFD700, #FFA500);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            margin-bottom: 20px;
-        }
-        .auth-header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .auth-header h2 {
-            font-size: 32px;
-            background: linear-gradient(135deg, #FFD700, #FF8C00, #FF1493);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            letter-spacing: 2px;
-        }
-        .auth-header p {
-            font-size: 12px;
-            opacity: 0.8;
-        }
-        #authForm input {
-            background: rgba(0,0,0,0.6);
-            border: 1px solid rgba(251,191,36,0.5);
-            transition: all 0.3s;
-        }
-        #authForm input:focus {
-            border-color: #ec4899;
-            box-shadow: 0 0 10px #ec4899;
-            outline: none;
-        }
-        .mode-switch {
+        /* ===== AUTH MODAL – NO BORDER, ATTRACTIVE BACKGROUND ===== */
+#authModal {
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(12px);
+}
+#authModal .modal-content {
+    background: linear-gradient(145deg, #0f172a, #0a0f1e);
+    border: none;
+    border-radius: 48px;
+    box-shadow: 0 30px 50px rgba(0,0,0,0.6);
+    padding: 30px 25px;
+    width: 90%;
+    max-width: 420px;
+}
+.auth-header h2 {
+    font-size: 38px;
+    font-weight: 900;
+    font-style: italic;
+    background: linear-gradient(135deg, #FFD700, #FFA500, #FF8C00);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 0 15px rgba(255,215,0,0.3);
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+}
+.auth-header p {
+    color: #cbd5e1;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+.mode-switch button {
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(4px);
+    border: none;
+    border-radius: 60px;
+    padding: 10px 28px;
+    font-weight: bold;
+    color: white;
+    transition: all 0.2s;
+}
+.mode-switch button.active {
+    background: linear-gradient(135deg, #fbbf24, #d97706);
+    color: #0a0f1e;
+    box-shadow: 0 4px 15px rgba(251,191,36,0.3);
+}
+#authForm input {
+    background: rgba(0,0,0,0.6);
+    border: none;
+    border-radius: 60px;
+    padding: 14px 20px;
+    color: white;
+    font-size: 15px;
+    margin-bottom: 16px;
+    transition: 0.2s;
+}
+#authForm input:focus {
+    background: rgba(0,0,0,0.8);
+    box-shadow: 0 0 0 2px #fbbf24;
+    outline: none;
+}
+#authForm .btn-success {
+    background: linear-gradient(135deg, #fbbf24, #ff8c00);
+    border: none;
+    border-radius: 60px;
+    padding: 14px;
+    font-weight: bold;
+    font-size: 16px;
+    color: #1a1a2e;
+    transition: 0.2s;
+}
+#authForm .btn-success:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 20px rgba(251,191,36,0.5);
+}
+.close {
+    color: #fbbf24;
+    opacity: 0.8;
+    transition: 0.2s;
+}
+.close:hover {
+    color: #ff8c00;
+    opacity: 1;
+}
+
+        /* Transaction history styling */
+        .transaction-item {
             display: flex;
-            gap: 15px;
-            justify-content: center;
-            margin-bottom: 20px;
+            align-items: center;
+            gap: 12px;
+            background: rgba(0,0,0,0.3);
+            padding: 8px 12px;
+            border-radius: 12px;
+            margin-bottom: 8px;
         }
-        .mode-switch button {
-            background: rgba(255,255,255,0.1);
-            border: none;
-            padding: 8px 20px;
-            border-radius: 40px;
-            color: white;
-            cursor: pointer;
-            transition: 0.2s;
+        .transaction-item input {
+            margin-right: 8px;
+            transform: scale(1.2);
         }
-        .mode-switch button.active {
-            background: linear-gradient(135deg, #fbbf24, #d97706);
+        .sub-tabs .btn-sm.active {
+            background: #fbbf24;
             color: #1a1a2e;
-            font-weight: bold;
         }
     </style>
 </head>
@@ -499,10 +540,10 @@
 <!-- PROFILE -->
 <div id="profile" class="tab-content">
     <div class="card">
-    <h3>👤 Profile</h3>
-    <div id="profileInfo"></div>
-    <div id="referralEarnings" style="margin-top: 10px; color: #fbbf24;">💰 Referral earnings: 0 ETB</div>
-    <button class="btn" onclick="copyReferral()">📤 Copy Referral Link</button>
+        <h3>👤 Profile</h3>
+        <div id="profileInfo"></div>
+        <div id="referralEarnings" style="margin-top: 10px; color: #fbbf24;">💰 Referral earnings: 0 ETB</div>
+        <button class="btn" onclick="copyReferral()">📤 Copy Referral Link</button>
         <button class="btn btn-danger" onclick="logout()">🚪 Logout</button>
         <div class="sound-toggle" style="margin-top:15px; display:flex; justify-content:space-between;">
             <span>🔊 Sound Effects</span>
@@ -513,7 +554,18 @@
     </div>
     <div class="card">
         <h3>📜 Transaction History</h3>
+        <div class="sub-tabs" style="display:flex; gap:10px; margin-bottom:12px; flex-wrap:wrap;">
+            <button class="btn-sm active" data-hist="all">All</button>
+            <button class="btn-sm" data-hist="depwith">Deposits/Withdrawals</button>
+            <button class="btn-sm" data-hist="other">Other</button>
+            <button class="btn-sm btn-danger" onclick="clearSelectedHistory()">🗑️ Clear Selected</button>
+        </div>
         <div id="transactionList"></div>
+        <div id="paginationControls" style="display:flex; justify-content:center; gap:10px; margin-top:15px;">
+            <button class="btn-sm" id="prevPageBtn" onclick="changePage(-1)">◀ Previous</button>
+            <span id="pageInfo">Page 1</span>
+            <button class="btn-sm" id="nextPageBtn" onclick="changePage(1)">Next ▶</button>
+        </div>
     </div>
     <div class="card">
         <h3>🏆 Leaderboard</h3>
@@ -549,6 +601,11 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 let USER_ID = null, IS_ADMIN = false, selectedPaymentMethod = "telebirr", soundEnabled = localStorage.getItem('soundEnabled') !== 'false';
 let isProcessing = { buyAirtime: false };
+// Transaction pagination & filtering
+let currentHistoryType = 'all';    // 'all', 'depwith', 'other'
+let currentPage = 1;
+let totalPages = 1;
+let allTransactions = [];
 
 // ==================== UTILITIES ====================
 function showToast(msg, type='success') {
@@ -624,6 +681,10 @@ function confetti() {
 // ==================== AUTHENTICATION (EMAIL ONLY) ====================
 async function checkSession() {
     const { data:{ session } } = await sb.auth.getSession();
+    // Remove any cache‑busting parameter to keep URL clean
+    if (window.location.search.includes('t=')) {
+        history.replaceState({}, document.title, window.location.pathname);
+    }
     if(session?.user) {
         USER_ID = session.user.id;
         localStorage.setItem('profitvault_user_id', USER_ID);
@@ -653,7 +714,7 @@ function showAuthModal() {
         <div class="modal-content">
             <span class="close" onclick="closeAuthModal()">&times;</span>
             <div class="auth-header">
-                <h2>🏆 PROFIT VAULT</h2>
+                <h2>🏆 ፕሮፊት ቮልት</h2>
                 <p>Secure Investment Platform</p>
             </div>
             <div class="mode-switch">
@@ -717,9 +778,9 @@ function closeAuthModal() {
 async function logout() {
     await sb.auth.signOut();
     localStorage.removeItem('profitvault_user_id');
-    window.location.reload();
+    // Force a full reload without cache (works on all devices)
+    window.location.href = window.location.pathname + '?t=' + Date.now();
 }
-
 // ==================== DATA LOADING (FULL FEATURES) ====================
 let currentUser = null;
 async function loadUser() {
@@ -796,17 +857,39 @@ document.getElementById('consultations').innerHTML = cons?.length ? cons.map(c =
         ${c.admin_response ? `<div style="color:#10b981; margin-top:8px;">✅ Response: ${c.admin_response.slice(0,200)}</div>` : '<div style="color:#fbbf24;">⏳ Waiting for admin response...</div>'}
     </div>
 `).join('') : '<div class="loading">No consultations</div>';
-    // Transactions
-    const { data: txs } = await sb.from('transactions').select('*').eq('user_id', USER_ID).order('timestamp',{ascending:false}).limit(30);
-    document.getElementById('transactionList').innerHTML = txs?.length ? txs.map(t => `<div class="transaction-item"><div>${t.transaction_type}</div><div style="color:${t.amount>0?'#10b981':'#ef4444'}">${t.amount>0?'+':''}${Math.abs(t.amount).toLocaleString()}</div><div style="font-size:10px;">${t.timestamp}</div><div>${t.status}</div></div>`).join('') : '<div class="loading">No transactions</div>';
+    // Transactions - load all, then filter/paginate
+const { data: txs } = await sb.from('transactions').select('*').eq('user_id', USER_ID).order('timestamp', {ascending: false});
+if (txs) {
+    allTransactions = txs;
+    applyTransactionFilter();
+} else {
+    document.getElementById('transactionList').innerHTML = '<div class="loading">No transactions</div>';
+}
     // Leaderboard
     const { data: top } = await sb.from('users').select('username, total_deposited').order('total_deposited',{ascending:false}).limit(10);
     document.getElementById('leaderboard').innerHTML = top?.map((u,i) => `<div class="transaction-item"><div>${i+1}. @${u.username||'User'}</div><div>${(u.total_deposited||0).toLocaleString()} ETB</div></div>`).join('') || '<div class="loading">No data</div>';
     // Profile Info
     document.getElementById('profileInfo').innerHTML = `<div class="profile-item">👤 ${currentUser.username||'User'}</div><div>🆔 ${USER_ID.slice(0,8)}...</div><div>📅 Joined: ${currentUser.joined_date||'N/A'}</div><div>💰 Deposited: ${(currentUser.total_deposited||0).toLocaleString()} ETB</div><div>📤 Withdrawn: ${(currentUser.total_withdrawn||0).toLocaleString()} ETB</div><div>👥 Referrals: ${currentUser.active_referrals||0}</div><div>🎮 Games: ${currentUser.win_chance_plays||0}</div>`;
-    // Airtime cards
-    const { data: cards } = await sb.from('global_cards').select('*').order('position');
-    document.getElementById('cardsGrid').innerHTML = cards?.map(card => `<div class="market-item" onclick="buyAirtimeCard(${card.id}, ${card.card_cost})"><div class="market-emoji">🎫</div><div class="market-name">Airtime - ${card.card_cost} ETB</div><div class="market-price">Cost: ${card.card_cost} ETB</div><div>${card.hidden_numbers?.length ? '✅ Available' : '❌ Sold Out'}</div></div>`).join('') || '<div class="loading">No cards</div>';
+    // Airtime cards – sort available first, then sold out, then by position
+const { data: cards } = await sb.from('global_cards').select('*').order('position');
+if (cards) {
+    const sortedCards = [...cards].sort((a, b) => {
+        const aAvailable = (a.hidden_numbers?.length > 0) ? 0 : 1;
+        const bAvailable = (b.hidden_numbers?.length > 0) ? 0 : 1;
+        if (aAvailable !== bAvailable) return aAvailable - bAvailable;
+        return a.position - b.position;
+    });
+    document.getElementById('cardsGrid').innerHTML = sortedCards.map(card => `
+        <div class="market-item" onclick="buyAirtimeCard(${card.id}, ${card.card_cost})">
+            <div class="market-emoji">🎫</div>
+            <div class="market-name">Airtime - ${card.card_cost} ETB</div>
+            <div class="market-price">Cost: ${card.card_cost} ETB</div>
+            <div>${card.hidden_numbers?.length ? '✅ Available' : '❌ Sold Out'}</div>
+        </div>
+    `).join('');
+} else {
+        document.getElementById('cardsGrid').innerHTML = '<div class="loading">No cards</div>';
+    }
 }
 async function loadReferralEarnings() {
     if (!USER_ID) return;
@@ -820,6 +903,66 @@ async function loadReferralEarnings() {
         const el = document.getElementById('referralEarnings');
         if (el) el.innerText = `💰 Referral earnings: ${total.toLocaleString()} ETB`;
     }
+}
+function applyTransactionFilter() {
+    let filtered = allTransactions;
+    if (currentHistoryType === 'depwith') {
+        filtered = allTransactions.filter(t => t.transaction_type.includes('Deposit') || t.transaction_type.includes('Withdrawal'));
+    } else if (currentHistoryType === 'other') {
+        filtered = allTransactions.filter(t => !t.transaction_type.includes('Deposit') && !t.transaction_type.includes('Withdrawal'));
+    }
+    totalPages = Math.ceil(filtered.length / 5);
+    if (currentPage > totalPages) currentPage = Math.max(1, totalPages);
+    const start = (currentPage - 1) * 5;
+    const pageItems = filtered.slice(start, start + 5);
+    document.getElementById('transactionList').innerHTML = pageItems.map(t => `
+        <div class="transaction-item" data-id="${t.id}">
+            <input type="checkbox" class="txn-checkbox" value="${t.id}" style="margin-right:8px;">
+            <div style="flex:2;">${t.transaction_type}</div>
+            <div style="flex:1; text-align:right; color:${t.amount>0?'#10b981':'#ef4444'}">${t.amount>0?'+':''}${Math.abs(t.amount).toLocaleString()}</div>
+            <div style="font-size:10px; flex:1; text-align:right;">${t.timestamp}</div>
+            <div style="flex:1; text-align:right;">${t.status}</div>
+        </div>
+    `).join('');
+    document.getElementById('pageInfo').innerText = `Page ${currentPage} of ${totalPages || 1}`;
+}
+
+function changePage(delta) {
+    const newPage = currentPage + delta;
+    if (newPage >= 1 && newPage <= totalPages) {
+        currentPage = newPage;
+        applyTransactionFilter();
+    }
+}
+
+async function clearSelectedHistory() {
+    const checkboxes = document.querySelectorAll('.txn-checkbox:checked');
+    if (checkboxes.length === 0) {
+        showToast('No transactions selected', 'info');
+        return;
+    }
+    if (!confirm(`Delete ${checkboxes.length} selected transaction(s)? This cannot be undone.`)) return;
+    const idsToDelete = Array.from(checkboxes).map(cb => parseInt(cb.value));
+    const { error } = await sb.from('transactions').delete().in('id', idsToDelete);
+    if (error) {
+        showToast('Error deleting: ' + error.message, 'error');
+    } else {
+        showToast(`${idsToDelete.length} transaction(s) deleted`, 'success');
+        await loadAllData();
+    }
+}
+
+// Attach sub‑tab event listeners (run after DOM ready)
+function initHistoryTabs() {
+    document.querySelectorAll('[data-hist]').forEach(btn => {
+        btn.onclick = (e) => {
+            document.querySelectorAll('[data-hist]').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentHistoryType = btn.getAttribute('data-hist');
+            currentPage = 1;
+            applyTransactionFilter();
+        };
+    });
 }
 // ==================== FINANCIAL ACTIONS ====================
 async function buyCoins() {
@@ -1288,6 +1431,7 @@ async function adjustUser(userId) {
 // ==================== INIT ====================
 window.addEventListener('load', () => {
     checkSession();
+    initHistoryTabs();
     document.querySelectorAll('.tab').forEach(tab => {
         tab.addEventListener('click', () => {
             const id = tab.getAttribute('data-tab');
