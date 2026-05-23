@@ -288,6 +288,14 @@ body::before {
             border: 1px solid rgba(251, 191, 36, 0.4);
             box-shadow: 0 25px 40px rgba(0,0,0,0.5);
         }
+.modal.active {
+    display: flex;
+    animation: fadeScale 0.3s ease-out;
+}
+@keyframes fadeScale {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
         .fullscreen-textarea {
     width: 100%;
     padding: 15px;
@@ -833,7 +841,7 @@ await loadReferralEarnings();
         const ready = new Date() >= maturity;
         const payout = Math.round(asset.purchase_price * asset.roi_at_purchase);
         const hoursLeft = Math.ceil((maturity - new Date())/3600000);
-        return `<div class="investment-item"><div><span style="font-size:20px;">${asset.emoji}</span> <strong>${asset.asset_name}</strong><div>Invested: ${asset.purchase_price} 🪙</div><div>Payout: ${payout} 🪙</div></div>${ready ? `<button class="sell-btn" onclick="sellAsset(${asset.id}, ${payout})">💵 Sell</button>` : `<span class="badge">⏳ ${hoursLeft}h left</span>`}</div>`;
+        return `<div class="investment-item"><div><span style="font-size:20px;">${asset.emoji}</span> <strong>${asset.asset_name}</strong><div>Invested: ${asset.purchase_price} 🪙</div><div>Payout: ${payout} 🪙</div></div>${ready ? `<button class="sell-btn" onclick="sellAsset(${asset.id})">💵 Sell</button>` : `<span class="badge">⏳ ${hoursLeft}h left</span>`}</div>`;
     }).join('');
     // Lottery
     const pools = [];
@@ -970,36 +978,32 @@ async function buyCoins() {
     isProcessing.buyCoins = true;
     let amt = parseInt(document.getElementById('buyCoinsAmount').value);
     if(isNaN(amt) || amt < 50) { showToast('Minimum 50 ETB','error'); isProcessing.buyCoins=false; return; }
-    if((currentUser.balance||0) < amt) { showToast('Insufficient balance','error'); isProcessing.buyCoins=false; return; }
-    await sb.rpc('buy_coins_transaction', { p_user_id: USER_ID, p_amount: amt });
-    showToast(`Bought ${amt} coins!`,'success');
-    playSound('coin');
-    closeModal('buyCoinsModal');
-    document.getElementById('buyCoinsAmount').value = '';
-    await loadAllData();
+    try {
+        const { error } = await sb.rpc('buy_coins_transaction_secure', { p_amount: amt });
+        if (error) throw error;
+        showToast(`Bought ${amt} coins!`,'success');
+        playSound('coin');
+        closeModal('buyCoinsModal');
+        document.getElementById('buyCoinsAmount').value = '';
+        await loadAllData();
+    } catch (err) {
+        showToast(err.message, 'error');
+    }
     isProcessing.buyCoins = false;
 }
 async function exchangeCoins() {
     if (isProcessing.exchangeCoins) return;
     isProcessing.exchangeCoins = true;
     const today = new Date().toISOString().slice(0, 10);
-    
     try {
-        const { error } = await sb.rpc('exchange_coins_to_bonus_fixed', {
-            p_user_id: USER_ID,
-            p_date: today
-        });
-        if (error) {
-            showToast(error.message || 'Exchange failed', 'error');
-            isProcessing.exchangeCoins = false;
-            return;
-        }
+        const { error } = await sb.rpc('exchange_coins_to_bonus_fixed_secure', { p_date: today });
+        if (error) throw error;
         showToast(`Exchange completed successfully!`, 'success');
         playSound('coin');
         closeModal('exchangeModal');
         await loadAllData();
     } catch (err) {
-        showToast('Exchange error', 'error');
+        showToast(err.message || 'Exchange failed', 'error');
     }
     isProcessing.exchangeCoins = false;
 }
@@ -1062,21 +1066,29 @@ async function submitWithdraw() {
 async function buyAsset(slotId) {
     if(isProcessing.buyAsset) return;
     isProcessing.buyAsset = true;
-    const { data: asset } = await sb.from('market').select('*').eq('slot_id', slotId).single();
-    if((currentUser.coin_balance||0) < asset.cost) { showToast(`Need ${asset.cost} coins`,'error'); isProcessing.buyAsset=false; return; }
-    await sb.rpc('buy_market_asset', { p_user_id: USER_ID, p_slot_id: slotId, p_cost: asset.cost, p_emoji: asset.emoji, p_name: asset.asset_name, p_roi: asset.default_roi||1.25 });
-    showToast(`Invested in ${asset.asset_name}!`,'success');
-    playSound('coin');
-    await loadAllData();
+    try {
+        const { error } = await sb.rpc('buy_market_asset_secure', { p_slot_id: slotId });
+        if (error) throw error;
+        showToast(`Invested!`,'success');
+        playSound('coin');
+        await loadAllData();
+    } catch (err) {
+        showToast(err.message, 'error');
+    }
     isProcessing.buyAsset = false;
 }
-async function sellAsset(assetId, payout) {
+async function sellAsset(assetId) {
     if(isProcessing.sellAsset) return;
     isProcessing.sellAsset = true;
-    await sb.rpc('sell_market_asset', { p_asset_id: assetId, p_user_id: USER_ID, p_payout: payout });
-    showToast(`Sold for ${payout} coins!`,'success');
-    playSound('coin');
-    await loadAllData();
+    try {
+        const { error } = await sb.rpc('sell_market_asset_secure', { p_asset_id: assetId });
+        if (error) throw error;
+        showToast(`Sold!`,'success');
+        playSound('coin');
+        await loadAllData();
+    } catch (err) {
+        showToast(err.message, 'error');
+    }
     isProcessing.sellAsset = false;
 }
 
@@ -1093,25 +1105,30 @@ async function playGame(pos) {
     if(!gameActive || isProcessing.game) return;
     isProcessing.game = true;
     gameActive = false;
-    if((currentUser.coin_balance||0) < 50) { showToast('Need 50 coins','error'); gameActive=true; isProcessing.game=false; return; }
-    const prizes = [100,75,75,50,50,50,25,25,25,25,10,10,10,10,10,0];
-    const shuffled = [...prizes].sort(()=>Math.random()-0.5);
-    const win = shuffled[pos];
-    const newCoins = currentUser.coin_balance - 50 + win;
-    await sb.from('users').update({ coin_balance: newCoins, win_chance_plays: (currentUser.win_chance_plays||0)+1 }).eq('user_id', USER_ID);
-    await sb.from('transactions').insert({ user_id: USER_ID, transaction_type:'🎁 Win Chance Game', amount: win, status:'Completed', timestamp: new Date().toISOString().slice(0,19).replace('T',' ') });
-    const resultDiv = document.getElementById('gameResult');
-    resultDiv.className = `game-result ${win>0?'win':'lose'}`;
-    resultDiv.innerHTML = win>0 ? `🎉 You won ${win} coins! 🎉` : `💨 Better luck next time!`;
-    if(win>0) { playSound('win'); confetti(); } else playSound('lose');
-    showToast(win>0 ? `Won ${win} coins!` : 'No win', win>0?'success':'error');
-    const cells = document.querySelectorAll('.game-card');
-    cells.forEach((cell, idx) => {
-        cell.classList.add('revealed');
-        cell.setAttribute('data-prize', shuffled[idx]);
-        cell.innerHTML = shuffled[idx];
-    });
-    setTimeout(() => { createGameGrid(); loadAllData(); isProcessing.game = false; }, 3000);
+    try {
+        const { data: win, error } = await sb.rpc('play_game_secure');
+        if (error) throw error;
+        const resultDiv = document.getElementById('gameResult');
+        resultDiv.className = `game-result ${win>0?'win':'lose'}`;
+        resultDiv.innerHTML = win>0 ? `🎉 You won ${win} coins! 🎉` : `💨 Better luck next time!`;
+        if(win>0) { playSound('win'); confetti(); } else playSound('lose');
+        showToast(win>0 ? `Won ${win} coins!` : 'No win', win>0?'success':'error');
+        const cells = document.querySelectorAll('.game-card');
+        // Fake reveal for UI (since RPC does the actual update)
+        const prizes = [100,75,75,50,50,50,25,25,25,25,10,10,10,10,10,0];
+        const shuffled = [...prizes].sort(()=>Math.random()-0.5);
+        cells.forEach((cell, idx) => {
+            cell.classList.add('revealed');
+            cell.setAttribute('data-prize', shuffled[idx]);
+            cell.innerHTML = shuffled[idx];
+        });
+        await loadAllData();
+        setTimeout(() => { createGameGrid(); isProcessing.game = false; }, 3000);
+    } catch (err) {
+        showToast(err.message || 'Game failed', 'error');
+        gameActive = true;
+        isProcessing.game = false;
+    }
 }
 
 // ==================== LOTTERY ====================
@@ -1133,12 +1150,10 @@ async function buyLotteryTicket(poolId, number) {
         showToast(`Need ${price} coins`, 'error');
         return;
     }
-    const serial = `${poolId}-${String(number).padStart(2,'0')}-${USER_ID.slice(-4)}`;
     const { data: success, error } = await sb.rpc('buy_lottery_ticket_fast', {
         p_user_id: USER_ID,
         p_pool_id: poolId,
         p_ticket_number: number,
-        p_serial: serial,
         p_price: price,
         p_username: currentUser.username || 'User'
     });
@@ -1156,78 +1171,51 @@ async function buyLotteryTicket(poolId, number) {
 async function startConsultation() {
     const issue = document.getElementById('healthIssue').value.trim();
     if(!issue || issue.length < 10) return showToast('Describe issue (min 10 chars)','error');
-    if((currentUser.coin_balance||0) < 50) return showToast('Need 50 coins','error');
-    await sb.rpc('start_consultation', { p_user_id: USER_ID, p_username: currentUser.username || 'User', p_issue: issue });
-    showToast('Consultation request sent!','success');
-    document.getElementById('healthIssue').value = '';
-    await loadAllData();
+    try {
+        const { error } = await sb.rpc('start_consultation_secure', { p_issue: issue });
+        if (error) throw error;
+        showToast('Consultation request sent!','success');
+        document.getElementById('healthIssue').value = '';
+        await loadAllData();
+    } catch (err) {
+        showToast(err.message, 'error');
+    }
 }
 async function buyAirtimeCard(cardId, cost) {
     if(isProcessing.buyAirtime) return;
     isProcessing.buyAirtime = true;
-    const { data: card } = await sb.from('global_cards').select('hidden_numbers, card_cost').eq('id', cardId).single();
-    if (!card?.hidden_numbers?.length) {
-        showToast('Card sold out', 'error');
-        isProcessing.buyAirtime = false;
-        return;
+    try {
+        const { data: revealed, error } = await sb.rpc('buy_airtime_card_secure', { p_card_id: cardId });
+        if (error) throw error;
+        showToast(`Airtime purchased!`, 'success');
+        playSound('coin');
+        // Show revealed number modal for 60 seconds
+        const modal = document.createElement('div');
+        modal.className = 'modal active';
+        modal.innerHTML = `
+            <div class="modal-content" style="text-align:center;">
+                <span class="close" onclick="this.parentElement.parentElement.remove()">&times;</span>
+                <h3>🎉 Airtime Revealed!</h3>
+                <div style="font-size:32px; margin:20px 0; background:#000; padding:15px; border-radius:16px;">${revealed}</div>
+                <p>This number will disappear in <span id="countdownTimer">60</span> seconds.</p>
+                <button class="btn" onclick="this.closest('.modal').remove()">Dismiss Now</button>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        let seconds = 60;
+        const timerSpan = modal.querySelector('#countdownTimer');
+        const interval = setInterval(() => {
+            seconds--;
+            if (timerSpan) timerSpan.innerText = seconds;
+            if (seconds <= 0) { clearInterval(interval); if (modal.parentNode) modal.remove(); }
+        }, 1000);
+        modal.querySelector('.close').onclick = () => { clearInterval(interval); modal.remove(); };
+        await loadAllData();
+    } catch (err) {
+        showToast(err.message, 'error');
     }
-    if ((currentUser.balance || 0) < cost) {
-        showToast(`Need ${cost} ETB`, 'error');
-        isProcessing.buyAirtime = false;
-        return;
-    }
-    const revealed = card.hidden_numbers[0];
-    const newNumbers = card.hidden_numbers.slice(1);
-    
-    const { error } = await sb.rpc('buy_airtime_card', {
-        p_card_id: cardId,
-        p_user_id: USER_ID,
-        p_cost: cost,
-        p_revealed: revealed,
-        p_new_numbers: newNumbers
-    });
-    if (error) {
-        showToast('Purchase failed', 'error');
-        isProcessing.buyAirtime = false;
-        return;
-    }
-    showToast(`Airtime purchased!`, 'success');
-    playSound('coin');
-
-    // Show revealed number modal for 60 seconds
-    const modal = document.createElement('div');
-    modal.className = 'modal active';
-    modal.innerHTML = `
-        <div class="modal-content" style="text-align:center;">
-            <span class="close" onclick="this.parentElement.parentElement.remove()">&times;</span>
-            <h3>🎉 Airtime Revealed!</h3>
-            <div style="font-size:32px; margin:20px 0; background:#000; padding:15px; border-radius:16px;">${revealed}</div>
-            <p>This number will disappear in <span id="countdownTimer">60</span> seconds.</p>
-            <button class="btn" onclick="this.closest('.modal').remove()">Dismiss Now</button>
-        </div>
-    `;
-    document.body.appendChild(modal);
-    
-    let seconds = 60;
-    const timerSpan = modal.querySelector('#countdownTimer');
-    const interval = setInterval(() => {
-        seconds--;
-        if (timerSpan) timerSpan.innerText = seconds;
-        if (seconds <= 0) {
-            clearInterval(interval);
-            if (modal.parentNode) modal.remove();
-        }
-    }, 1000);
-    
-    modal.querySelector('.close').onclick = () => {
-        clearInterval(interval);
-        modal.remove();
-    };
-    
-    await loadAllData();
     isProcessing.buyAirtime = false;
 }
-
 // ==================== ADMIN PANEL ====================
 function showAdminTab() {
     if(document.querySelector('.tab[data-tab="admin"]')) return;
@@ -1299,11 +1287,17 @@ function renderPendingList(items, type) {
 async function handleAdminAction(type, action, id, amount, userId) {
     if(!confirm(`${action.toUpperCase()} this request?`)) return;
     if(type === 'deposit') {
-        if(action === 'approve') await sb.rpc('approve_deposit', { p_deposit_id:id, p_user_id:userId, p_amount:amount });
-        else await sb.from('pending_deposits').update({ status:'rejected' }).eq('id',id);
+        if(action === 'approve') {
+            const { error } = await sb.rpc('approve_deposit_secure', { p_deposit_id: id, p_amount: amount });
+            if (error) return showToast(error.message, 'error');
+        } else {
+            await sb.from('pending_deposits').update({ status:'rejected' }).eq('id',id);
+        }
     } else if(type === 'withdraw') {
-        if(action === 'approve') await sb.rpc('approve_withdrawal', { p_withdrawal_id:id, p_user_id:userId, p_amount:amount });
-        else {
+        if(action === 'approve') {
+            const { error } = await sb.rpc('approve_withdrawal_secure', { p_withdrawal_id: id, p_amount: amount });
+            if (error) return showToast(error.message, 'error');
+        } else {
             const { data: wd } = await sb.from('pending_withdrawals').select('amount').eq('id',id).single();
             await sb.from('users').update({ bonus_balance: sb.raw(`bonus_balance + ${wd.amount}`) }).eq('user_id',userId);
             await sb.from('pending_withdrawals').update({ status:'rejected' }).eq('id',id);
@@ -1350,7 +1344,14 @@ async function drawLottery(poolId) {
     if(!tickets?.length) return showToast('No tickets','error');
     const winner = tickets[Math.floor(Math.random()*tickets.length)];
     const prize = [500,1000,2000][poolId-1];
-    await sb.rpc('award_lottery_winner', { p_winner_id:winner.user_id, p_prize:prize, p_pool_id:poolId, p_serial:winner.serial_number, p_tickets_count:tickets.length });
+    const { error } = await sb.rpc('award_lottery_winner_fixed', {
+        p_winner_id: winner.user_id,
+        p_prize: prize,
+        p_pool_id: poolId,
+        p_serial: winner.serial_number,
+        p_tickets_count: tickets.length
+    });
+    if (error) return showToast(error.message, 'error');
     showToast(`Pool ${poolId} winner: ${winner.username} won ${prize} coins!`,'success');
     loadAdminPanel();
     loadAllData();
