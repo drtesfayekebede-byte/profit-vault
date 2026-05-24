@@ -6,54 +6,72 @@
     <title>Profit Vault - Complete Investment Platform | Premium</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+    }
 
-        /* ===== ANIMATIONS ===== */
-        @keyframes float {
-            0% { transform: translateY(0px) scale(1); opacity: 1; }
-            100% { transform: translateY(-80px) scale(1.5); opacity: 0; }
-        }
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-        @keyframes shake {
-            0%,100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes shimmer {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
-        }
-        @keyframes neonGlow {
-            0% { box-shadow: 0 0 5px rgba(0, 255, 255, 0.3); }
-            50% { box-shadow: 0 0 20px rgba(0, 255, 255, 0.8); }
-            100% { box-shadow: 0 0 5px rgba(0, 255, 255, 0.3); }
-        }
-        @keyframes winnerGlow {
-            0% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.7); }
-            70% { box-shadow: 0 0 0 15px rgba(251, 191, 36, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0); }
-        }
-        @keyframes borderPulse {
-            0%,100% { border-color: rgba(251, 191, 36, 0.3); }
-            50% { border-color: rgba(251, 191, 36, 0.8); }
-        }
+    /* ===== ORIGINAL ANIMATIONS ===== */
+    @keyframes float {
+        0% { transform: translateY(0px) scale(1); opacity: 1; }
+        100% { transform: translateY(-80px) scale(1.5); opacity: 0; }
+    }
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+    @keyframes shake {
+        0%,100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        75% { transform: translateX(5px); }
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes shimmer {
+        0% { background-position: -200% 0; }
+        100% { background-position: 200% 0; }
+    }
+    @keyframes neonGlow {
+        0% { box-shadow: 0 0 5px rgba(0, 255, 255, 0.3); }
+        50% { box-shadow: 0 0 20px rgba(0, 255, 255, 0.8); }
+        100% { box-shadow: 0 0 5px rgba(0, 255, 255, 0.3); }
+    }
+    @keyframes winnerGlow {
+        0% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.7); }
+        70% { box-shadow: 0 0 0 15px rgba(251, 191, 36, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0); }
+    }
+    @keyframes borderPulse {
+        0%,100% { border-color: rgba(251, 191, 36, 0.3); }
+        50% { border-color: rgba(251, 191, 36, 0.8); }
+    }
 
-        /* ===== BASE ===== */
-        body {
-    background: radial-gradient(circle at 20% 30%, #0a0f2a, #010101);
+    /* ===== NEW BACKGROUND ANIMATIONS (zigzag lines & particles) ===== */
+    @keyframes slideZigzag {
+        0% { background-position: 0 0; }
+        100% { background-position: 200px 200px; }
+    }
+    @keyframes slideZigzagReverse {
+        0% { background-position: 0 0; }
+        100% { background-position: -200px 200px; }
+    }
+    @keyframes slideZigzagHorizontal {
+        0% { background-position: 0 0; }
+        100% { background-position: 300px 0; }
+    }
+    @keyframes floatParticle {
+        0% { transform: translate(0, 0) scale(1); opacity: 0.1; }
+        100% { transform: translate(100px, 100px) scale(1.5); opacity: 0.4; }
+    }
+
+    /* ===== BASE – DEEP BLACK BACKGROUND (replaces old body) ===== */
+    body {
+    background: radial-gradient(circle at 20% 30%, #0a0f1e, #010101);
     min-height: 100vh;
     padding: 16px;
     padding-bottom: 100px;
@@ -61,445 +79,518 @@
     position: relative;
     overflow-x: hidden;
 }
-body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: repeating-linear-gradient(45deg, rgba(255,215,0,0.03) 0px, rgba(255,215,0,0.03) 2px, transparent 2px, transparent 8px);
-    pointer-events: none;
-    z-index: 0;
-}
 
-        /* ===== CARDS & CONTAINERS ===== */
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
-            position: relative;
-            z-index: 1;
-        }
-        .header h1 {
-            font-size: 28px;
-            background: linear-gradient(135deg, #FFD700, #FFA500, #FF6347);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            text-shadow: 0 2px 5px rgba(0,0,0,0.3);
-        }
-        .balance-container {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin-bottom: 20px;
-            position: relative;
-            z-index: 1;
-        }
-        .balance-card {
-            border-radius: 24px;
-            padding: 18px 10px;
-            text-align: center;
-            cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.3s;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 20px 35px -10px rgba(0,0,0,0.5);
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        .balance-card:active { transform: scale(0.96); }
-        .balance-card.primary {
-            background: linear-gradient(135deg, #8b0000, #dc143c, #ff6b6b);
-            background-size: 200% 200%;
-            animation: rubyShine 4s infinite;
-        }
-        .balance-card.bonus {
-            background: linear-gradient(135deg, #004d00, #008000, #00d68f);
-            background-size: 200% 200%;
-            animation: emeraldShine 4s infinite 0.5s;
-        }
-        .balance-card.coins {
-            background: linear-gradient(135deg, #b8860b, #daa520, #ffd700);
-            background-size: 200% 200%;
-            animation: topazShine 4s infinite 1s;
-        }
-        @keyframes rubyShine { 0%,100%{background-position:0% 0%;} 50%{background-position:100% 100%;} }
-        @keyframes emeraldShine { 0%,100%{background-position:0% 0%;} 50%{background-position:100% 100%;} }
-        @keyframes topazShine { 0%,100%{background-position:0% 0%;} 50%{background-position:100% 100%;} }
-        .balance-emoji { font-size: 34px; margin-bottom: 8px; }
-        .balance-value {
-            font-size: 28px;
-            font-weight: 900;
-            background: linear-gradient(135deg, #FFD700, #FFF8DC, #FFD700);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-        .balance-label { font-size: 10px; font-weight: 800; margin-top: 5px; text-transform: uppercase; letter-spacing: 1px; }
+    /* The old body::before is REMOVED – zigzag lines replace it */
 
-        /* TABS */
-        .tabs {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 20px;
-            overflow-x: auto;
-            flex-wrap: wrap;
-            justify-content: center;
-            scrollbar-width: thin;
-        }
-        .tab {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(56, 189, 248, 0.3);
-            padding: 10px 18px;
-            border-radius: 40px;
-            color: white;
-            font-size: 13px;
-            font-weight: bold;
-            cursor: pointer;
-            white-space: nowrap;
-            transition: all 0.3s;
-        }
-        .tab.active {
-            background: linear-gradient(135deg, #fbbf24, #d97706);
-            color: #1a1a2e;
-            box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4);
-            border-color: transparent;
-        }
+    /* Animated zigzag line layers */
+    .zigzag-line {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 0;
+        background: repeating-linear-gradient(
+            45deg,
+            rgba(0, 255, 255, 0.15) 0px,
+            rgba(0, 255, 255, 0.15) 2px,
+            transparent 2px,
+            transparent 8px
+        );
+        mask-image: repeating-linear-gradient(
+            45deg,
+            transparent 0px,
+            transparent 20px,
+            black 20px,
+            black 40px
+        );
+        animation: slideZigzag 20s linear infinite;
+    }
 
-        /* CARDS */
-        .card {
-            background: rgba(15, 23, 42, 0.7);
-            backdrop-filter: blur(12px);
-            border-radius: 28px;
-            padding: 18px;
-            margin-bottom: 18px;
-            border: 1px solid rgba(251, 191, 36, 0.2);
-            transition: all 0.3s;
-            animation: fadeIn 0.3s ease-out;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-        }
-        .card:hover {
-            border-color: rgba(251, 191, 36, 0.5);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-        }
-        .card h3 {
-            margin-bottom: 15px;
-            font-size: 18px;
-            border-left: 4px solid #fbbf24;
-            padding-left: 12px;
-            color: #fbbf24;
-        }
+    .zigzag-line:nth-child(2) {
+        background: repeating-linear-gradient(
+            135deg,
+            rgba(255, 0, 255, 0.15) 0px,
+            rgba(255, 0, 255, 0.15) 2px,
+            transparent 2px,
+            transparent 12px
+        );
+        mask-image: repeating-linear-gradient(
+            135deg,
+            transparent 0px,
+            transparent 30px,
+            black 30px,
+            black 60px
+        );
+        animation: slideZigzagReverse 25s linear infinite;
+    }
 
-        /* BUTTONS */
-        .btn {
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            border: none;
-            padding: 14px 20px;
-            border-radius: 40px;
-            color: white;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-            margin-bottom: 10px;
-            transition: transform 0.1s, box-shadow 0.2s;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-        }
-        .btn:active { transform: scale(0.97); }
-        .btn-success { background: linear-gradient(135deg, #10b981, #059669); }
-        .btn-warning { background: linear-gradient(135deg, #fbbf24, #d97706); color: #1a1a2e; }
-        .btn-danger { background: linear-gradient(135deg, #ef4444, #dc2626); }
-        .btn-info { background: linear-gradient(135deg, #06b6d4, #0891b2); }
-        .btn-sm { padding: 10px 16px; font-size: 12px; width: auto; display: inline-block; margin: 3px; }
+    .zigzag-line:nth-child(3) {
+        background: repeating-linear-gradient(
+            90deg,
+            rgba(255, 255, 0, 0.1) 0px,
+            rgba(255, 255, 0, 0.1) 1px,
+            transparent 1px,
+            transparent 6px
+        );
+        mask-image: repeating-linear-gradient(
+            90deg,
+            transparent 0px,
+            transparent 15px,
+            black 15px,
+            black 30px
+        );
+        animation: slideZigzagHorizontal 18s linear infinite;
+    }
 
-        /* GAME GRID */
-        .game-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-            perspective: 1000px;
-        }
-        .game-card {
-            aspect-ratio: 1;
-            background: linear-gradient(145deg, #1e293b, #0f172a);
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            border: 1px solid rgba(0, 255, 255, 0.3);
-            font-size: 36px;
-            font-weight: bold;
-            transform-style: preserve-3d;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
-        }
-        .game-card:active { transform: scale(0.94); }
-        .game-card.revealed {
-    /* Remove transform: rotateY(180deg); */
-    animation: neonGlow 0.4s;
-}
-        .game-card.revealed[data-prize="100"], .game-card.revealed[data-prize="75"] { background: linear-gradient(135deg, #ffd700, #ff8c00); }
-        .game-card.revealed[data-prize="50"] { background: linear-gradient(135deg, #3b82f6, #8b5cf6); }
-        .game-card.revealed[data-prize="25"], .game-card.revealed[data-prize="10"] { background: linear-gradient(135deg, #10b981, #059669); }
-        .game-card.revealed[data-prize="0"] { background: linear-gradient(135deg, #6b7280, #4b5563); }
+    /* Floating color particles (dim light) */
+    .particle {
+        position: fixed;
+        border-radius: 50%;
+        filter: blur(60px);
+        opacity: 0.3;
+        animation: floatParticle 15s infinite alternate ease-in-out;
+        pointer-events: none;
+        z-index: 0;
+    }
 
-        /* MARKET */
-        .market-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            gap: 12px;
-        }
-        .market-item {
-            background: linear-gradient(145deg, #1e293b, #0f172a);
-            border-radius: 20px;
-            padding: 12px 8px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: 1px solid rgba(56, 189, 248, 0.3);
-        }
-        .market-item:active { transform: scale(0.96); }
-        .market-item.owned { opacity: 0.6; filter: grayscale(0.3); cursor: not-allowed; }
+    /* ===== ENSURE CONTENT STAYS ABOVE BACKGROUND ===== */
+    .header, .balance-container, .tabs, .card, .modal, .game-grid, .market-grid, .toast, .network-status {
+        position: relative;
+        z-index: 1;
+    }
 
-        /* MODAL */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.96);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-        .modal.active { display: flex; }
-        .modal-content {
-            background: linear-gradient(135deg, #1a1a2e, #16213e);
-            border-radius: 32px;
-            padding: 25px;
-            width: 90%;
-            max-width: 400px;
-            max-height: 85vh;
-            overflow-y: auto;
-            border: 1px solid rgba(251, 191, 36, 0.4);
-            box-shadow: 0 25px 40px rgba(0,0,0,0.5);
-        }
-.modal.active {
-    display: flex;
-    animation: fadeScale 0.3s ease-out;
-}
-@keyframes fadeScale {
-    from { opacity: 0; transform: scale(0.95); }
-    to { opacity: 1; transform: scale(1); }
-}
-        .fullscreen-textarea {
-    width: 100%;
-    padding: 15px;
-    border-radius: 12px;
-    border: 1px solid #fbbf24;
-    background: rgba(0, 0, 0, 0.5);
-    color: white;
-    font-size: 16px;
-    min-height: 200px;  /* increased from 150px */
-    resize: vertical;
-    box-sizing: border-box;
-}
-        .close {
-            float: right;
-            font-size: 28px;
-            cursor: pointer;
-            color: #ef4444;
-            transition: 0.2s;
-        }
-        .close:hover { color: #ff8888; }
+    /* ===== ALL YOUR ORIGINAL STYLES BELOW (unchanged) ===== */
+    /* CARDS & CONTAINERS */
+    .header {
+        text-align: center;
+        margin-bottom: 20px;
+        position: relative;
+        z-index: 1;
+    }
+    .header h1 {
+        font-size: 28px;
+        background: linear-gradient(135deg, #FFD700, #FFA500, #FF6347);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    }
+    .balance-container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin-bottom: 20px;
+        position: relative;
+        z-index: 1;
+    }
+    .balance-card {
+        border-radius: 24px;
+        padding: 18px 10px;
+        text-align: center;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.3s;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 20px 35px -10px rgba(0,0,0,0.5);
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+    .balance-card:active { transform: scale(0.96); }
+    .balance-card.primary {
+        background: linear-gradient(135deg, #8b0000, #dc143c, #ff6b6b);
+        background-size: 200% 200%;
+        animation: rubyShine 4s infinite;
+    }
+    .balance-card.bonus {
+        background: linear-gradient(135deg, #004d00, #008000, #00d68f);
+        background-size: 200% 200%;
+        animation: emeraldShine 4s infinite 0.5s;
+    }
+    .balance-card.coins {
+        background: linear-gradient(135deg, #b8860b, #daa520, #ffd700);
+        background-size: 200% 200%;
+        animation: topazShine 4s infinite 1s;
+    }
+    @keyframes rubyShine { 0%,100%{background-position:0% 0%;} 50%{background-position:100% 100%;} }
+    @keyframes emeraldShine { 0%,100%{background-position:0% 0%;} 50%{background-position:100% 100%;} }
+    @keyframes topazShine { 0%,100%{background-position:0% 0%;} 50%{background-position:100% 100%;} }
+    .balance-emoji { font-size: 34px; margin-bottom: 8px; }
+    .balance-value {
+        font-size: 28px;
+        font-weight: 900;
+        background: linear-gradient(135deg, #FFD700, #FFF8DC, #FFD700);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+    .balance-label { font-size: 10px; font-weight: 800; margin-top: 5px; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* TOAST */
-        .toast {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    background: #1e293b;
-    color: white;
-    border-left: 5px solid #10b981;
-    padding: 12px 24px;
-    border-radius: 60px;
-    font-weight: bold;
-    display: none;
-    z-index: 1001;
-    white-space: nowrap;
-    font-size: 14px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-}
-.toast.show { display: flex; animation: fadeIn 0.2s; }
-.toast.error { border-left-color: #ef4444; background: #1e293b; color: white; }
-.toast.info { border-left-color: #06b6d4; background: #1e293b; color: white; }
-.toast::before {
-    content: "🔔";
-    font-size: 20px;
-}
-.toast.error::before { content: "⚠️"; }
-.toast.info::before { content: "ℹ️"; }
+    /* TABS */
+    .tabs {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 20px;
+        overflow-x: auto;
+        flex-wrap: wrap;
+        justify-content: center;
+        scrollbar-width: thin;
+    }
+    .tab {
+        background: rgba(30, 41, 59, 0.7);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(56, 189, 248, 0.3);
+        padding: 10px 18px;
+        border-radius: 40px;
+        color: white;
+        font-size: 13px;
+        font-weight: bold;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: all 0.3s;
+    }
+    .tab.active {
+        background: linear-gradient(135deg, #fbbf24, #d97706);
+        color: #1a1a2e;
+        box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4);
+        border-color: transparent;
+    }
 
-        /* UTILITIES */
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        .loading { text-align: center; padding: 30px; opacity: 0.7; }
-        .row { display: flex; gap: 10px; }
-        .row .btn { flex: 1; margin-bottom: 0; }
-        .badge { background: #fbbf24; color: #1a1a2e; padding: 4px 10px; border-radius: 40px; font-size: 10px; font-weight: bold; }
-        .quad-item { background: rgba(0,0,0,0.3); border-radius: 20px; padding: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
-        .quad-item.unlocked { border-left: 4px solid #10b981; }
-        .quad-item.locked { border-left: 4px solid #ef4444; }
-        .progress-bar { background: rgba(255,255,255,0.2); border-radius: 20px; height: 12px; overflow: hidden; }
-        .progress-fill { background: linear-gradient(90deg, #10b981, #06b6d4); height: 100%; transition: width 0.5s; }
-        .network-status {
-            position: fixed;
-            bottom: 12px;
-            right: 12px;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #10b981;
-            z-index: 1000;
-            box-shadow: 0 0 5px #10b981;
-        }
-        .network-status.offline { background: #ef4444; box-shadow: 0 0 5px #ef4444; }
-        @media (max-width: 600px) {
-            .market-grid { grid-template-columns: repeat(3, 1fr); }
-            .game-grid { gap: 8px; }
-            .balance-value { font-size: 22px; }
-        }
+    /* CARDS */
+    .card {
+        background: rgba(15, 23, 42, 0.7);
+        backdrop-filter: blur(12px);
+        border-radius: 28px;
+        padding: 18px;
+        margin-bottom: 18px;
+        border: 1px solid rgba(251, 191, 36, 0.2);
+        transition: all 0.3s;
+        animation: fadeIn 0.3s ease-out;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+    .card:hover {
+        border-color: rgba(251, 191, 36, 0.5);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    }
+    .card h3 {
+        margin-bottom: 15px;
+        font-size: 18px;
+        border-left: 4px solid #fbbf24;
+        padding-left: 12px;
+        color: #fbbf24;
+    }
 
-        /* ===== AUTH MODAL – NO BORDER, ATTRACTIVE BACKGROUND ===== */
-#authModal {
-    background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(12px);
-}
-#authModal .modal-content {
-    background: linear-gradient(145deg, #0f172a, #0a0f1e);
-    border: none;
-    border-radius: 48px;
-    box-shadow: 0 30px 50px rgba(0,0,0,0.6);
-    padding: 30px 25px;
-    width: 90%;
-    max-width: 420px;
-}
-.auth-header h2 {
-    font-size: 38px;
-    font-weight: 900;
-    font-style: italic;
-    background: linear-gradient(135deg, #FFD700, #FFA500, #FF8C00);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    text-shadow: 0 0 15px rgba(255,215,0,0.3);
-    letter-spacing: 2px;
-    margin-bottom: 8px;
-}
-.auth-header p {
-    color: #cbd5e1;
-    font-size: 14px;
-    margin-bottom: 20px;
-}
-.mode-switch button {
-    background: rgba(255,255,255,0.1);
-    backdrop-filter: blur(4px);
-    border: none;
-    border-radius: 60px;
-    padding: 10px 28px;
-    font-weight: bold;
-    color: white;
-    transition: all 0.2s;
-}
-.mode-switch button.active {
-    background: linear-gradient(135deg, #fbbf24, #d97706);
-    color: #0a0f1e;
-    box-shadow: 0 4px 15px rgba(251,191,36,0.3);
-}
-#authForm input {
-    background: rgba(0,0,0,0.6);
-    border: none;
-    border-radius: 60px;
-    padding: 14px 20px;
-    color: white;
-    font-size: 15px;
-    margin-bottom: 16px;
-    transition: 0.2s;
-}
-#authForm input:focus {
-    background: rgba(0,0,0,0.8);
-    box-shadow: 0 0 0 2px #fbbf24;
-    outline: none;
-}
-#authForm .btn-success {
-    background: linear-gradient(135deg, #fbbf24, #ff8c00);
-    border: none;
-    border-radius: 60px;
-    padding: 14px;
-    font-weight: bold;
-    font-size: 16px;
-    color: #1a1a2e;
-    transition: 0.2s;
-}
-#authForm .btn-success:hover {
-    transform: scale(1.02);
-    box-shadow: 0 0 20px rgba(251,191,36,0.5);
-}
-#authModal .modal-content .close {
-    color: #fbbf24;
-    opacity: 0.8;
-    transition: 0.2s;
-}
-#authModal .modal-content .close:hover {
-    color: #ff8c00;
-    opacity: 1;
-}
-        /* Transaction history styling */
-        .transaction-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background: rgba(0,0,0,0.3);
-            padding: 8px 12px;
-            border-radius: 12px;
-            margin-bottom: 8px;
-        }
-        .transaction-item input {
-            margin-right: 8px;
-            transform: scale(1.2);
-        }
-        .sub-tabs .btn-sm.active {
-            background: #fbbf24;
-            color: #1a1a2e;
-        }
-.password-wrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
-}
-.password-wrapper input {
-    flex: 1;
-    padding-right: 35px;
-}
-.password-toggle {
-    position: absolute;
-    right: 12px;
-    cursor: pointer;
-    font-size: 18px;
-    user-select: none;
-    background: none;
-    border: none;
-    color: #fbbf24;
-}
-    </style>
+    /* BUTTONS */
+    .btn {
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+        border: none;
+        padding: 14px 20px;
+        border-radius: 40px;
+        color: white;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+        width: 100%;
+        margin-bottom: 10px;
+        transition: transform 0.1s, box-shadow 0.2s;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn-success { background: linear-gradient(135deg, #10b981, #059669); }
+    .btn-warning { background: linear-gradient(135deg, #fbbf24, #d97706); color: #1a1a2e; }
+    .btn-danger { background: linear-gradient(135deg, #ef4444, #dc2626); }
+    .btn-info { background: linear-gradient(135deg, #06b6d4, #0891b2); }
+    .btn-sm { padding: 10px 16px; font-size: 12px; width: auto; display: inline-block; margin: 3px; }
+
+    /* GAME GRID */
+    .game-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        perspective: 1000px;
+    }
+    .game-card {
+        aspect-ratio: 1;
+        background: linear-gradient(145deg, #1e293b, #0f172a);
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: 1px solid rgba(0, 255, 255, 0.3);
+        font-size: 36px;
+        font-weight: bold;
+        transform-style: preserve-3d;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+    }
+    .game-card:active { transform: scale(0.94); }
+    .game-card.revealed {
+        animation: neonGlow 0.4s;
+    }
+    .game-card.revealed[data-prize="100"], .game-card.revealed[data-prize="75"] { background: linear-gradient(135deg, #ffd700, #ff8c00); }
+    .game-card.revealed[data-prize="50"] { background: linear-gradient(135deg, #3b82f6, #8b5cf6); }
+    .game-card.revealed[data-prize="25"], .game-card.revealed[data-prize="10"] { background: linear-gradient(135deg, #10b981, #059669); }
+    .game-card.revealed[data-prize="0"] { background: linear-gradient(135deg, #6b7280, #4b5563); }
+
+    /* MARKET */
+    .market-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 12px;
+    }
+    .market-item {
+        background: linear-gradient(145deg, #1e293b, #0f172a);
+        border-radius: 20px;
+        padding: 12px 8px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+    .market-item:active { transform: scale(0.96); }
+    .market-item.owned { opacity: 0.6; filter: grayscale(0.3); cursor: not-allowed; }
+
+    /* MODAL */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.96);
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+    .modal.active { display: flex; }
+    .modal-content {
+        background: linear-gradient(135deg, #1a1a2e, #16213e);
+        border-radius: 32px;
+        padding: 25px;
+        width: 90%;
+        max-width: 400px;
+        max-height: 85vh;
+        overflow-y: auto;
+        border: 1px solid rgba(251, 191, 36, 0.4);
+        box-shadow: 0 25px 40px rgba(0,0,0,0.5);
+    }
+    .modal.active {
+        display: flex;
+        animation: fadeScale 0.3s ease-out;
+    }
+    @keyframes fadeScale {
+        from { opacity: 0; transform: scale(0.95); }
+        to { opacity: 1; transform: scale(1); }
+    }
+    .fullscreen-textarea {
+        width: 100%;
+        padding: 15px;
+        border-radius: 12px;
+        border: 1px solid #fbbf24;
+        background: rgba(0, 0, 0, 0.5);
+        color: white;
+        font-size: 16px;
+        min-height: 200px;
+        resize: vertical;
+        box-sizing: border-box;
+    }
+    .close {
+        float: right;
+        font-size: 28px;
+        cursor: pointer;
+        color: #ef4444;
+        transition: 0.2s;
+    }
+    .close:hover { color: #ff8888; }
+
+    /* TOAST */
+    .toast {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: #1e293b;
+        color: white;
+        border-left: 5px solid #10b981;
+        padding: 12px 24px;
+        border-radius: 60px;
+        font-weight: bold;
+        display: none;
+        z-index: 1001;
+        white-space: nowrap;
+        font-size: 14px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+    .toast.show { display: flex; animation: fadeIn 0.2s; }
+    .toast.error { border-left-color: #ef4444; background: #1e293b; color: white; }
+    .toast.info { border-left-color: #06b6d4; background: #1e293b; color: white; }
+    .toast::before {
+        content: "🔔";
+        font-size: 20px;
+    }
+    .toast.error::before { content: "⚠️"; }
+    .toast.info::before { content: "ℹ️"; }
+
+    /* UTILITIES */
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .loading { text-align: center; padding: 30px; opacity: 0.7; }
+    .row { display: flex; gap: 10px; }
+    .row .btn { flex: 1; margin-bottom: 0; }
+    .badge { background: #fbbf24; color: #1a1a2e; padding: 4px 10px; border-radius: 40px; font-size: 10px; font-weight: bold; }
+    .quad-item { background: rgba(0,0,0,0.3); border-radius: 20px; padding: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+    .quad-item.unlocked { border-left: 4px solid #10b981; }
+    .quad-item.locked { border-left: 4px solid #ef4444; }
+    .progress-bar { background: rgba(255,255,255,0.2); border-radius: 20px; height: 12px; overflow: hidden; }
+    .progress-fill { background: linear-gradient(90deg, #10b981, #06b6d4); height: 100%; transition: width 0.5s; }
+    .network-status {
+        position: fixed;
+        bottom: 12px;
+        right: 12px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: #10b981;
+        z-index: 1000;
+        box-shadow: 0 0 5px #10b981;
+    }
+    .network-status.offline { background: #ef4444; box-shadow: 0 0 5px #ef4444; }
+    @media (max-width: 600px) {
+        .market-grid { grid-template-columns: repeat(3, 1fr); }
+        .game-grid { gap: 8px; }
+        .balance-value { font-size: 22px; }
+    }
+
+    /* ===== AUTH MODAL ===== */
+    #authModal {
+        background: rgba(0, 0, 0, 0.85);
+        backdrop-filter: blur(12px);
+    }
+    #authModal .modal-content {
+        background: linear-gradient(145deg, #0f172a, #0a0f1e);
+        border: none;
+        border-radius: 48px;
+        box-shadow: 0 30px 50px rgba(0,0,0,0.6);
+        padding: 30px 25px;
+        width: 90%;
+        max-width: 420px;
+    }
+    .auth-header h2 {
+        font-size: 38px;
+        font-weight: 900;
+        font-style: italic;
+        background: linear-gradient(135deg, #FFD700, #FFA500, #FF8C00);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-shadow: 0 0 15px rgba(255,215,0,0.3);
+        letter-spacing: 2px;
+        margin-bottom: 8px;
+    }
+    .auth-header p {
+        color: #cbd5e1;
+        font-size: 14px;
+        margin-bottom: 20px;
+    }
+    .mode-switch button {
+        background: rgba(255,255,255,0.1);
+        backdrop-filter: blur(4px);
+        border: none;
+        border-radius: 60px;
+        padding: 10px 28px;
+        font-weight: bold;
+        color: white;
+        transition: all 0.2s;
+    }
+    .mode-switch button.active {
+        background: linear-gradient(135deg, #fbbf24, #d97706);
+        color: #0a0f1e;
+        box-shadow: 0 4px 15px rgba(251,191,36,0.3);
+    }
+    #authForm input {
+        background: rgba(0,0,0,0.6);
+        border: none;
+        border-radius: 60px;
+        padding: 14px 20px;
+        color: white;
+        font-size: 15px;
+        margin-bottom: 16px;
+        transition: 0.2s;
+    }
+    #authForm input:focus {
+        background: rgba(0,0,0,0.8);
+        box-shadow: 0 0 0 2px #fbbf24;
+        outline: none;
+    }
+    #authForm .btn-success {
+        background: linear-gradient(135deg, #fbbf24, #ff8c00);
+        border: none;
+        border-radius: 60px;
+        padding: 14px;
+        font-weight: bold;
+        font-size: 16px;
+        color: #1a1a2e;
+        transition: 0.2s;
+    }
+    #authForm .btn-success:hover {
+        transform: scale(1.02);
+        box-shadow: 0 0 20px rgba(251,191,36,0.5);
+    }
+    #authModal .modal-content .close {
+        color: #fbbf24;
+        opacity: 0.8;
+        transition: 0.2s;
+    }
+    #authModal .modal-content .close:hover {
+        color: #ff8c00;
+        opacity: 1;
+    }
+
+    /* Transaction history styling */
+    .transaction-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: rgba(0,0,0,0.3);
+        padding: 8px 12px;
+        border-radius: 12px;
+        margin-bottom: 8px;
+    }
+    .transaction-item input {
+        margin-right: 8px;
+        transform: scale(1.2);
+    }
+    .sub-tabs .btn-sm.active {
+        background: #fbbf24;
+        color: #1a1a2e;
+    }
+
+    /* Password toggle */
+    .password-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+    .password-wrapper input {
+        flex: 1;
+        padding-right: 35px;
+    }
+    .password-toggle {
+        position: absolute;
+        right: 12px;
+        cursor: pointer;
+        font-size: 18px;
+        user-select: none;
+        background: none;
+        border: none;
+        color: #fbbf24;
+    }
+</style>
 </head>
 <body>
 <div id="networkStatus" class="network-status"></div>
@@ -533,6 +624,7 @@ body::before {
     <button class="tab" data-tab="clinic">🏥 Clinic</button>
     <button class="tab" data-tab="profile">👤 Profile</button>
     <button class="tab" data-tab="contact">📞 Contact</button>
+<button class="tab" id="logoutTab" style="background: linear-gradient(135deg, #ef4444, #dc2626); border-color: #ef4444;">🚪 Logout</button>
 </div>
 
 <!-- DASHBOARD -->
@@ -570,7 +662,6 @@ body::before {
         <div id="profileInfo"></div>
         <div id="referralEarnings" style="margin-top: 10px; color: #fbbf24;">💰 Referral earnings: 0 ETB</div>
         <button class="btn" onclick="copyReferral()">📤 Copy Referral Link</button>
-        <button class="btn btn-danger" onclick="logout()">🚪 Logout</button>
         <div class="sound-toggle" style="margin-top:15px; display:flex; justify-content:space-between;">
             <span>🔊 Sound Effects</span>
             <div id="soundToggle" class="toggle-switch" style="width:50px; height:24px; background:#4b5563; border-radius:12px; cursor:pointer; position:relative;" onclick="toggleSound()">
@@ -615,13 +706,70 @@ body::before {
 </div>
 
 <!-- MODALS -->
-<div id="depositModal" class="modal"><div class="modal-content"><span class="close" onclick="closeModal('depositModal')">&times;</span><h3>💰 Deposit Money</h3><div class="payment-methods" style="display:flex; gap:10px; margin-bottom:15px;"><div class="payment-method" data-payment="telebirr" onclick="selectPaymentMethod('telebirr')" style="flex:1; background:rgba(255,255,255,0.1); border-radius:16px; padding:10px; text-align:center; cursor:pointer;">📱 Telebirr</div><div class="payment-method" data-payment="awash" onclick="selectPaymentMethod('awash')" style="flex:1; background:rgba(255,255,255,0.1); border-radius:16px; padding:10px; text-align:center; cursor:pointer;">🏦 Awash</div></div><div id="telebirrInfo" class="telebirr-info" style="background:rgba(0,0,0,0.4); border-radius:16px; padding:12px; margin:10px 0; text-align:center;">📱 Send to Telebirr: <strong>0935983470</strong><br>Name: Tesfaye</div><div id="awashInfo" class="bank-info" style="display:none; background:rgba(0,0,0,0.4); border-radius:16px; padding:12px; margin:10px 0; text-align:center;">🏦 Awash Bank: <strong>013201372354300</strong><br>Name: Tesfaye</div><input type="number" id="depositAmount" placeholder="Amount (Min 1500 ETB)"><input type="text" id="accountHolder" placeholder="Account Holder Name"><input type="text" id="transactionId" placeholder="Transaction ID"><textarea id="depositNote" rows="2" placeholder="Note (optional)"></textarea><button class="btn btn-success" onclick="submitDeposit()">Submit Deposit Request</button><p style="font-size:11px; margin-top:12px;">Admin will verify and approve.</p></div></div>
+<div id="depositModal" class="modal"><div class="modal-content"><span class="close" onclick="closeModal('depositModal')">&times;</span><h3>💰 Deposit Money</h3><div class="payment-methods" style="display:flex; gap:10px; margin-bottom:15px;"><div class="payment-method" data-payment="telebirr" onclick="selectPaymentMethod('telebirr')" style="flex:1; background:rgba(255,255,255,0.1); border-radius:16px; padding:10px; text-align:center; cursor:pointer;">📱 Telebirr</div><div class="payment-method" data-payment="awash" onclick="selectPaymentMethod('awash')" style="flex:1; background:rgba(255,255,255,0.1); border-radius:16px; padding:10px; text-align:center; cursor:pointer;">🏦 Awash</div></div><div id="telebirrInfo" class="telebirr-info" style="background:rgba(0,0,0,0.4); border-radius:16px; padding:12px; margin:10px 0; text-align:center;">📱 Send to Telebirr: <strong id="telebirrNumber">0935983470</strong><br>Name: <span id="telebirrName">Tesfaye</span></div><div id="awashInfo" class="bank-info" style="display:none; background:rgba(0,0,0,0.4); border-radius:16px; padding:12px; margin:10px 0; text-align:center;">🏦 <span id="bankName">Awash Bank</span>: <strong id="bankAccount">013201372354300</strong><br>Name: <span id="bankHolder">Tesfaye</span></div><input type="number" id="depositAmount" placeholder="Amount (Min 1500 ETB)"><input type="text" id="accountHolder" placeholder="Account Holder Name"><input type="text" id="transactionId" placeholder="Transaction ID"><textarea id="depositNote" rows="2" placeholder="Note (optional)"></textarea><button class="btn btn-success" onclick="submitDeposit()">Submit Deposit Request</button><p style="font-size:11px; margin-top:12px;">Admin will verify and approve.</p></div></div>
 <div id="buyCoinsModal" class="modal"><div class="modal-content"><span class="close" onclick="closeModal('buyCoinsModal')">&times;</span><h3>💱 Buy Coins</h3><p>1 ETB = 1 Coin</p><input type="number" id="buyCoinsAmount" placeholder="Amount (Min 50)"><button class="btn" onclick="buyCoins()">Buy Coins</button></div></div>
 <div id="exchangeModal" class="modal"><div class="modal-content"><span class="close" onclick="closeModal('exchangeModal')">&times;</span><h3>🔄 Exchange Coins → Bonus</h3><p>📊 Daily limit: 3% of your coins</p><p>💱 1 Coin = 1 Bonus</p><div id="exchangeInfoModal"></div><button class="btn btn-warning" onclick="exchangeCoins()">Exchange Now</button></div></div>
 <div id="withdrawModal" class="modal"><div class="modal-content"><span class="close" onclick="closeModal('withdrawModal')">&times;</span><h3>📤 Withdraw Bonus</h3><p>⚠️ Tax: 10%</p><p>🔒 Requires Quad-Lock 4/4</p><input type="number" id="withdrawAmount" placeholder="Amount (Min 100)"><input type="text" id="withdrawAccountHolder" placeholder="Account Holder"><input type="text" id="withdrawBankAccount" placeholder="Bank Account Number"><select id="withdrawBankName"><option>Telebirr</option><option>Awash Bank</option><option>CBE</option><option>Dashen Bank</option></select><button class="btn btn-danger" onclick="submitWithdraw()">Request Withdrawal</button></div></div>
 <div id="toast" class="toast"></div>
 <script>
 // ==================== SUPABASE CONFIG ====================
+function escapeHTML(str) {
+    if (!str) return '';
+    return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+// ==================== DEPOSIT SETTINGS ====================
+let depositSettings = { telebirr_number: '', bank_name: '', bank_account: '', account_holder: '' };
+
+async function loadDepositSettings() {
+    const { data } = await sb.from('app_settings').select('key, value');
+    if (data) {
+        data.forEach(setting => { depositSettings[setting.key] = setting.value; });
+    }
+}
+
+async function updateDepositSettings(telebirr, bankName, bankAccount, holder) {
+    const updates = [
+        sb.from('app_settings').update({ value: telebirr }).eq('key', 'telebirr_number'),
+        sb.from('app_settings').update({ value: bankName }).eq('key', 'bank_name'),
+        sb.from('app_settings').update({ value: bankAccount }).eq('key', 'bank_account'),
+        sb.from('app_settings').update({ value: holder }).eq('key', 'account_holder')
+    ];
+    await Promise.all(updates);
+    await loadDepositSettings();
+    refreshDepositModalInfo();
+    showToast('Deposit settings updated', 'success');
+}
+
+function refreshDepositModalInfo() {
+    const telebirrSpan = document.getElementById('telebirrNumber');
+    const telebirrNameSpan = document.getElementById('telebirrName');
+    const bankNameSpan = document.getElementById('bankName');
+    const bankAccountSpan = document.getElementById('bankAccount');
+    const bankHolderSpan = document.getElementById('bankHolder');
+    if (telebirrSpan) telebirrSpan.innerText = depositSettings.telebirr_number;
+    if (telebirrNameSpan) telebirrNameSpan.innerText = depositSettings.account_holder;
+    if (bankNameSpan) bankNameSpan.innerText = depositSettings.bank_name;
+    if (bankAccountSpan) bankAccountSpan.innerText = depositSettings.bank_account;
+    if (bankHolderSpan) bankHolderSpan.innerText = depositSettings.account_holder;
+}
+
+async function saveDepositSettings() {
+    const telebirr = document.getElementById('admin_telebirr').value.trim();
+    const bankName = document.getElementById('admin_bank_name').value.trim();
+    const bankAccount = document.getElementById('admin_bank_account').value.trim();
+    const holder = document.getElementById('admin_holder').value.trim();
+    if (!telebirr || !bankName || !bankAccount || !holder) {
+        showToast('All fields are required', 'error');
+        return;
+    }
+    await updateDepositSettings(telebirr, bankName, bankAccount, holder);
+    await loadAdminPanel(); // refresh admin panel to show updated values
+}
 const SUPABASE_URL = 'https://hgazgrgkfpvpmjvenqer.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhnYXpncmdrZnB2cG1qdmVucWVyIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3OTUzOTAwOCwiZXhwIjoyMDk1MTE1MDA4fQ.ucLa4M0mlGNK5StazyxRhWbCUhMnNWp5BZfUNUL-yOo';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -643,8 +791,11 @@ function showToast(msg, type='success') {
     if(type==='success') playSound('success');
     else if(type==='error') playSound('error');
 }
-function showModal(id) { document.getElementById(id).classList.add('active'); playSound('click'); }
-function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+function showModal(id) {
+    document.getElementById(id).classList.add('active');
+    if (id === 'depositModal') refreshDepositModalInfo();
+    playSound('click');
+}
 function playSound(name) {
     if(!soundEnabled) return;
     try {
@@ -752,7 +903,8 @@ async function checkSession() {
         
         // Ensure the user row is fully populated (if missing any fields)
         await ensureUserExists(session.user);
-        
+        await loadDepositSettings();
+
         // Load all data and show admin tab if needed
         await loadAllData();
         if (IS_ADMIN) showAdminTab();
@@ -846,6 +998,18 @@ function closeAuthModal() {
     if(m) m.remove();
     if(!USER_ID) setTimeout(()=>showAuthModal(),500);
 }
+async function forgotPassword() {
+    const email = prompt("Enter your registered email address to reset password:");
+    if (!email) return;
+    const { error } = await sb.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin + window.location.pathname,
+    });
+    if (error) {
+        showToast(error.message, 'error');
+    } else {
+        showToast("Password reset email sent! Check your inbox.", 'success');
+    }
+}
 async function logout() {
     // Clear all possible stored session data
     await sb.auth.signOut();
@@ -921,24 +1085,70 @@ await loadReferralEarnings();
     }).join('');
     // Lottery
     const pools = [];
-    for(let pid of [1,2,3]) {
-        const { count: sold } = await sb.from('lottery_tickets').select('*',{count:'exact',head:true}).eq('pool_id',pid).eq('status','active');
-        const { data: taken } = await sb.from('lottery_tickets').select('ticket_number').eq('pool_id',pid).eq('status','active');
-        const takenList = taken?.map(t=>t.ticket_number)||[];
-        pools.push({ id:pid, price:[50,100,200][pid-1], reward:[500,1000,2000][pid-1], sold:sold||0, total:15, taken:takenList, full:(sold||0)>=15 });
-    }
-    document.getElementById('lotteryPools').innerHTML = pools.map(p => `<div class="lottery-pool"><div><strong>🎰 Pool #${p.id}</strong> <span class="badge">Prize: ${p.reward} 🪙</span></div><div>💰 Ticket: ${p.price} 🪙</div><div class="progress-bar"><div class="progress-fill" style="width:${(p.sold/p.total)*100}%"></div></div><div>${p.sold}/${p.total} sold</div>${!p.full ? `<button class="btn btn-sm" onclick="showLotteryNumbers(${p.id}, ${p.price}, ${JSON.stringify(p.taken)})">Buy Ticket</button>` : '<div>✅ Pool Full</div>'}</div>`).join('');
+for(let pid of [1,2,3]) {
+    const { data: roundInfo } = await sb.from('lottery_pool_rounds')
+        .select('current_round, is_active')
+        .eq('pool_id', pid)
+        .single();
+    const currentRound = roundInfo?.current_round || 1;
+    const isActive = roundInfo?.is_active !== false;
+    
+    const { count: sold } = await sb.from('lottery_tickets')
+        .select('*', {count:'exact', head:true})
+        .eq('pool_id', pid)
+        .eq('round', currentRound)
+        .eq('status', 'active');
+    
+    const { data: taken } = await sb.from('lottery_tickets')
+        .select('ticket_number')
+        .eq('pool_id', pid)
+        .eq('round', currentRound)
+        .eq('status', 'active');
+    const takenList = taken?.map(t=>t.ticket_number)||[];
+    
+    const price = [50,100,200][pid-1];
+    const reward = [500,1000,2000][pid-1];
+    const full = (sold||0) >= 15;
+    
+    pools.push({
+        id: pid,
+        round: currentRound,
+        isActive: isActive,
+        price: price,
+        reward: reward,
+        sold: sold||0,
+        total: 15,
+        taken: takenList,
+        full: full
+    });
+}
+document.getElementById('lotteryPools').innerHTML = pools.map(p => `
+    <div class="lottery-pool">
+        <div><strong>🎰 Pool #${p.id} (Round ${p.round})</strong> <span class="badge">Prize: ${p.reward} 🪙</span></div>
+        <div>💰 Ticket: ${p.price} 🪙</div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${(p.sold/p.total)*100}%"></div></div>
+        <div>${p.sold}/${p.total} sold</div>
+        ${!p.full && p.isActive ? 
+            `<button class="btn btn-sm" onclick="showLotteryNumbers(${p.id}, ${p.price}, ${JSON.stringify(p.taken)}, ${p.round})">Buy Ticket</button>` : 
+            (p.isActive ? '<div>✅ Pool Full</div>' : '<div>⏳ Waiting for admin to start new round</div>')}
+    </div>
+`).join('');
     const { data: myTickets } = await sb.from('lottery_tickets').select('*').eq('user_id', USER_ID).eq('status','active');
-    document.getElementById('myTickets').innerHTML = myTickets?.length ? myTickets.map(t => `<div class="ticket-item"><div>🎫 Pool #${t.pool_id} - Number ${String(t.ticket_number).padStart(2,'0')}</div><div><code>${t.serial_number}</code> <span class="badge">Active</span></div></div>`).join('') : '<div class="loading">No tickets</div>';
+    document.getElementById('myTickets').innerHTML = myTickets?.length ? myTickets.map(t => `
+    <div class="ticket-item">
+        <div>🎫 ${escapeHTML(t.serial_number)}</div>
+        <div><span class="badge">Active</span></div>
+    </div>
+`).join('') : '<div class="loading">No tickets</div>';
     const { data: recent } = await sb.from('lottery_draws').select('*').order('draw_time',{ascending:false}).limit(5);
     document.getElementById('recentDraws').innerHTML = recent?.length ? recent.map(d => `<div class="ticket-item"><div>🎰 Pool #${d.pool_id}</div><div>Winner: ${d.winner_serial}</div><div class="badge">${d.prize_amount} 🪙</div></div>`).join('') : '<div class="loading">No draws</div>';
     // Consultations
 const { data: cons } = await sb.from('health_consultations').select('*').eq('user_id', USER_ID).order('created_at',{ascending:false}).limit(10);
 document.getElementById('consultations').innerHTML = cons?.length ? cons.map(c => `
     <div class="consultation-item">
-        <div><strong>📅 ${c.created_at?.slice(0,10)}</strong> <span class="badge">${c.status}</span></div>
-        <div>Issue: ${c.issue?.slice(0,100)}</div>
-        ${c.admin_response ? `<div style="color:#10b981; margin-top:8px;">✅ Response: ${c.admin_response.slice(0,200)}</div>` : '<div style="color:#fbbf24;">⏳ Waiting for admin response...</div>'}
+        <div><strong>📅 ${escapeHTML(c.created_at?.slice(0,10))}</strong> <span class="badge">${escapeHTML(c.status)}</span></div>
+        <div>Issue: ${escapeHTML(c.issue?.slice(0,100))}</div>
+        ${c.admin_response ? `<div style="color:#10b981; margin-top:8px;">✅ Response: ${escapeHTML(c.admin_response.slice(0,200))}</div>` : '<div style="color:#fbbf24;">⏳ Waiting for admin response...</div>'}
     </div>
 `).join('') : '<div class="loading">No consultations</div>';
     // Transactions - load all, then filter/paginate
@@ -951,9 +1161,9 @@ if (txs) {
 }
     // Leaderboard
     const { data: top } = await sb.from('users').select('username, total_deposited').order('total_deposited',{ascending:false}).limit(10);
-    document.getElementById('leaderboard').innerHTML = top?.map((u,i) => `<div class="transaction-item"><div>${i+1}. @${u.username||'User'}</div><div>${(u.total_deposited||0).toLocaleString()} ETB</div></div>`).join('') || '<div class="loading">No data</div>';
+    document.getElementById('leaderboard').innerHTML = top?.map((u,i) => `<div class="transaction-item"><div>${i+1}. @${escapeHTML(u.username) || 'User'}</div><div>${(u.total_deposited||0).toLocaleString()} ETB</div></div>`).join('') || '<div class="loading">No data</div>';
     // Profile Info
-    document.getElementById('profileInfo').innerHTML = `<div class="profile-item">👤 ${currentUser.username||'User'}</div><div>🆔 ${USER_ID.slice(0,8)}...</div><div>📅 Joined: ${currentUser.joined_date||'N/A'}</div><div>💰 Deposited: ${(currentUser.total_deposited||0).toLocaleString()} ETB</div><div>📤 Withdrawn: ${(currentUser.total_withdrawn||0).toLocaleString()} ETB</div><div>👥 Referrals: ${currentUser.active_referrals||0}</div><div>🎮 Games: ${currentUser.win_chance_plays||0}</div>`;
+    document.getElementById('profileInfo').innerHTML = `<div class="profile-item">👤 ${escapeHTML(currentUser.username) || 'User'}</div><div>🆔 ${USER_ID.slice(0,8)}...</div><div>📅 Joined: ${escapeHTML(currentUser.joined_date) || 'N/A'}</div><div>💰 Deposited: ${(currentUser.total_deposited||0).toLocaleString()} ETB</div><div>📤 Withdrawn: ${(currentUser.total_withdrawn||0).toLocaleString()} ETB</div><div>👥 Referrals: ${currentUser.active_referrals||0}</div><div>🎮 Games: ${currentUser.win_chance_plays||0}</div>`;
     // Airtime cards – sort available first, then sold out, then by position
 const { data: cards } = await sb.from('global_cards').select('*').order('position');
 if (cards) {
@@ -1199,7 +1409,7 @@ async function playGame(pos) {
             cell.innerHTML = shuffled[idx];
         });
         await loadAllData();
-        setTimeout(() => { createGameGrid(); isProcessing.game = false; }, 3000);
+        setTimeout(() => { createGameGrid(); isProcessing.game = false; }, 1500);
     } catch (err) {
         showToast(err.message || 'Game failed', 'error');
         gameActive = true;
@@ -1208,19 +1418,29 @@ async function playGame(pos) {
 }
 
 // ==================== LOTTERY ====================
-function showLotteryNumbers(poolId, price, taken) {
+function showLotteryNumbers(poolId, price, taken, round) {
     let html = '<div class="lottery-numbers" style="display:grid; grid-template-columns:repeat(5,1fr); gap:8px;">';
     for(let i=1;i<=15;i++) {
         const isTaken = taken.includes(i);
-        html += `<div class="lottery-number ${isTaken ? 'taken' : ''}" onclick="${!isTaken ? `buyLotteryTicket(${poolId}, ${i})` : ''}" style="background:${isTaken?'#ef4444':'#3b82f6'}; padding:12px; border-radius:12px; text-align:center; cursor:pointer;">${String(i).padStart(2,'0')}</div>`;
+        html += `<div class="lottery-number ${isTaken ? 'taken' : ''}" 
+            onclick="${!isTaken ? `buyLotteryTicket(${poolId}, ${i}, ${round})` : ''}" 
+            style="background:${isTaken?'#ef4444':'#3b82f6'}; padding:12px; border-radius:12px; text-align:center; cursor:pointer;">
+            ${String(i).padStart(2,'0')}
+        </div>`;
     }
     html += '</div>';
     const modal = document.createElement('div');
     modal.className = 'modal active';
-    modal.innerHTML = `<div class="modal-content"><span class="close" onclick="this.parentElement.parentElement.remove()">&times;</span><h3>🎟️ Select Number</h3><p>Pool #${poolId} - Price: ${price} 🪙</p>${html}<button class="btn" onclick="this.parentElement.parentElement.remove()">Cancel</button></div>`;
+    modal.innerHTML = `<div class="modal-content">
+        <span class="close" onclick="this.parentElement.parentElement.remove()">&times;</span>
+        <h3>🎟️ Select Number</h3>
+        <p>Pool #${poolId} (Round ${round}) - Price: ${price} 🪙</p>
+        ${html}
+        <button class="btn" onclick="this.parentElement.parentElement.remove()">Cancel</button>
+    </div>`;
     document.body.appendChild(modal);
 }
-async function buyLotteryTicket(poolId, number) {
+async function buyLotteryTicket(poolId, number, round) {
     const price = [50,100,200][poolId-1];
     if ((currentUser.coin_balance || 0) < price) {
         showToast(`Need ${price} coins`, 'error');
@@ -1236,7 +1456,7 @@ async function buyLotteryTicket(poolId, number) {
     if (error) {
         showToast('Error: ' + error.message, 'error');
     } else if (success === false) {
-        showToast('Ticket already taken or insufficient coins', 'error');
+        showToast('Ticket already taken, pool full, or insufficient coins', 'error');
     } else {
         showToast(`✅ Ticket #${number} purchased!`, 'success');
         playSound('coin');
@@ -1325,7 +1545,15 @@ async function loadAdminPanel() {
         <div class="card"><h3>💰 Pending Deposits</h3>${renderPendingList(deposits,'deposit')}</div>
         <div class="card"><h3>📤 Pending Withdrawals</h3>${renderPendingList(withdrawals,'withdraw')}</div>
         <div class="card"><h3>🏥 Pending Consultations</h3>${cons?.map(c=>`<div><strong>${c.username}</strong>: ${c.issue?.slice(0,100)}<br><textarea id="resp_${c.id}" rows="2" style="width:100%"></textarea><button class="btn btn-sm" onclick="respondConsultation(${c.id})">Reply</button></div>`).join('')||'<div>None</div>'}</div>
-        <div class="card"><h3>🎰 Lottery Draws</h3><button class="btn btn-sm" onclick="drawLottery(1)">Draw Pool 1</button> <button class="btn btn-sm" onclick="drawLottery(2)">Draw Pool 2</button> <button class="btn btn-sm" onclick="drawLottery(3)">Draw Pool 3</button></div>
+        <div class="card"><h3>🎰 Lottery Draws</h3>
+    <button class="btn btn-sm" onclick="drawLottery(1)">Draw Pool 1</button>
+    <button class="btn btn-sm" onclick="drawLottery(2)">Draw Pool 2</button>
+    <button class="btn btn-sm" onclick="drawLottery(3)">Draw Pool 3</button>
+    <hr>
+    <button class="btn btn-sm btn-success" onclick="startNewLotteryRound(1)">🔄 Start New Round Pool 1</button>
+    <button class="btn btn-sm btn-success" onclick="startNewLotteryRound(2)">🔄 Start New Round Pool 2</button>
+    <button class="btn btn-sm btn-success" onclick="startNewLotteryRound(3)">🔄 Start New Round Pool 3</button>
+</div>
         <div class="card"><h3>🛠️ Edit Market (Name, Emoji, Price, ROI)</h3>${market?.map(m => `
     <div style="margin-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:8px;">
         <input type="text" id="emoji_${m.slot_id}" value="${m.emoji}" style="width:60px;"> 
@@ -1334,8 +1562,31 @@ async function loadAdminPanel() {
         <input type="number" id="roi_${m.slot_id}" value="${m.default_roi}" step="0.01" style="width:80px;"> 
         <button class="btn btn-sm" onclick="updateMarketItemFull(${m.slot_id})">Update</button>
     </div>`).join('')}</div>
-        <div class="card"><h3>🃏 Airtime Cards</h3>${cards?.map(c=>`<div>Cost: ${c.card_cost} ETB (${c.hidden_numbers.length} left) <button class="btn btn-sm" onclick="editCard(${c.id}, ${c.card_cost}, '${JSON.stringify(c.hidden_numbers)}')">Edit</button></div>`).join('')}<button class="btn btn-sm" onclick="shuffleCards()">Shuffle Order</button></div>
+        <div class="card"><h3>🃏 Airtime Cards</h3>${cards?.map(c=>`<div>Cost: ${c.card_cost} ETB (${c.hidden_numbers.length} left) 
+    <button class="btn btn-sm" onclick="editCard(${c.id}, ${c.card_cost}, '${JSON.stringify(c.hidden_numbers)}')">Edit</button>
+    <button class="btn btn-sm btn-success" onclick="addCardNumbers(${c.id})">➕ Add Numbers</button>
+</div>`).join('')}<button class="btn btn-sm" onclick="shuffleCards()">Shuffle Order</button></div>
         <div class="card"><h3>👥 User Search</h3><input type="text" id="adminSearch" placeholder="User ID or email"><button class="btn btn-sm" onclick="searchUser()">Search</button><div id="userResult"></div></div>
+<div class="card">
+    <h3>💰 Deposit Settings (Edit Payment Info)</h3>
+    <div style="margin-bottom:10px;">
+        <label>Telebirr Number:</label>
+        <input type="text" id="admin_telebirr" value="${depositSettings.telebirr_number}" style="width:100%; padding:8px; margin-top:5px;">
+    </div>
+    <div style="margin-bottom:10px;">
+        <label>Bank Name:</label>
+        <input type="text" id="admin_bank_name" value="${depositSettings.bank_name}" style="width:100%; padding:8px; margin-top:5px;">
+    </div>
+    <div style="margin-bottom:10px;">
+        <label>Bank Account Number:</label>
+        <input type="text" id="admin_bank_account" value="${depositSettings.bank_account}" style="width:100%; padding:8px; margin-top:5px;">
+    </div>
+    <div style="margin-bottom:10px;">
+        <label>Account Holder Name:</label>
+        <input type="text" id="admin_holder" value="${depositSettings.account_holder}" style="width:100%; padding:8px; margin-top:5px;">
+    </div>
+    <button class="btn btn-sm btn-success" onclick="saveDepositSettings()">💾 Save Deposit Settings</button>
+</div>
     `;
 }
 function renderPendingList(items, type) {
@@ -1346,9 +1597,9 @@ function renderPendingList(items, type) {
             <strong>Amount:</strong> ${item.amount} ETB<br>
             ${type === 'deposit' ? `
                 <strong>Bank:</strong> ${item.bank_name || 'N/A'}<br>
-                <strong>Account Holder:</strong> ${item.account_holder || 'N/A'}<br>
+                <strong>Account Holder:</strong> ${escapeHTML(item.account_holder) || 'N/A'}<br>
                 <strong>Transaction ID:</strong> ${item.transaction_id || 'N/A'}<br>
-                <strong>Note:</strong> ${item.note || 'N/A'}<br>
+                <strong>Note:</strong> ${escapeHTML(item.note) || 'N/A'}<br>
             ` : `
                 <strong>Payment Info:</strong> ${item.payment_info || 'N/A'}<br>
                 <strong>Tax:</strong> ${item.tax_amount || 0} ETB<br>
@@ -1446,20 +1697,26 @@ async function updateMarketItemFull(slotId) {
     const newName = document.getElementById(`name_${slotId}`).value.trim();
     const newPrice = parseInt(document.getElementById(`price_${slotId}`).value);
     const newRoi = parseFloat(document.getElementById(`roi_${slotId}`).value);
+    
     if (!newEmoji || !newName || isNaN(newPrice) || newPrice <= 0 || isNaN(newRoi) || newRoi <= 0) {
         showToast('Invalid values', 'error');
         return;
     }
+    
     const { error } = await sb.from('market').update({
         emoji: newEmoji,
         asset_name: newName,
         cost: newPrice,
         default_roi: newRoi
     }).eq('slot_id', slotId);
-    if (error) showToast('Update failed', 'error');
-    else showToast('Market updated', 'success');
-    loadAdminPanel();
-    loadAllData();
+    
+    if (error) {
+        showToast('Update failed: ' + error.message, 'error');
+    } else {
+        showToast('Market updated successfully!', 'success');
+        await loadAdminPanel();  // Refresh admin panel
+        await loadAllData();     // Refresh user view
+    }
 }
 async function editCard(cardId, currentCost, numbersJson) {
     const newCost = prompt('New cost (ETB):', currentCost);
@@ -1473,6 +1730,47 @@ async function editCard(cardId, currentCost, numbersJson) {
     showToast('Card updated','success');
     loadAdminPanel();
     loadAllData();
+}
+async function addCardNumbers(cardId) {
+    const newNumbersText = prompt("Enter new hidden numbers (one per line):");
+    if (!newNumbersText) return;
+    
+    const newNumbers = newNumbersText.split('\n')
+        .map(s => s.trim())
+        .filter(s => s.length >= 10 && s.length <= 20 && /^\d+$/.test(s));
+    
+    if (newNumbers.length === 0) {
+        showToast('No valid numbers entered (10-20 digits each)', 'error');
+        return;
+    }
+    
+    // Get current card
+    const { data: card, error: fetchError } = await sb
+        .from('global_cards')
+        .select('hidden_numbers')
+        .eq('id', cardId)
+        .single();
+    
+    if (fetchError) {
+        showToast('Error fetching card', 'error');
+        return;
+    }
+    
+    const currentNumbers = card.hidden_numbers || [];
+    const updatedNumbers = [...currentNumbers, ...newNumbers];
+    
+    const { error } = await sb
+        .from('global_cards')
+        .update({ hidden_numbers: updatedNumbers })
+        .eq('id', cardId);
+    
+    if (error) {
+        showToast('Error adding numbers: ' + error.message, 'error');
+    } else {
+        showToast(`Added ${newNumbers.length} new numbers to card!`, 'success');
+        await loadAdminPanel();
+        await loadAllData();
+    }
 }
 async function shuffleCards() {
     const { data: cards } = await sb.from('global_cards').select('id');
@@ -1490,7 +1788,7 @@ async function searchUser() {
     const { data } = await sb.from('users').select('user_id,username,balance,bonus_balance,coin_balance').or(`user_id.eq.${q},username.ilike.%${q}%`);
     const resultDiv = document.getElementById('userResult');
     if(!data?.length) { resultDiv.innerHTML = '<div>User not found</div>'; return; }
-    resultDiv.innerHTML = data.map(u => `<div><strong>${u.username}</strong> (${u.user_id.slice(0,8)}): Balance ${u.balance} ETB, Bonus ${u.bonus_balance}, Coins ${u.coin_balance}<input type="number" id="adj_${u.user_id}" placeholder="Amount"><select id="adj_type_${u.user_id}"><option>balance</option><option>bonus_balance</option><option>coin_balance</option></select><button class="btn btn-sm" onclick="adjustUser('${u.user_id}')">Adjust</button></div>`).join('');
+    resultDiv.innerHTML = data.map(u => `<div><strong>${escapeHTML(u.username)}</strong> (${u.user_id.slice(0,8)}): Balance ${u.balance} ETB, Bonus ${u.bonus_balance}, Coins ${u.coin_balance}<input type="number" id="adj_${u.user_id}" placeholder="Amount"><select id="adj_type_${u.user_id}"><option>balance</option><option>bonus_balance</option><option>coin_balance</option></select><button class="btn btn-sm" onclick="adjustUser('${u.user_id}')">Adjust</button></div>`).join('');
 }
 async function adjustUser(userId) {
     const amt = parseInt(document.getElementById(`adj_${userId}`).value);
@@ -1504,7 +1802,17 @@ async function adjustUser(userId) {
     loadAdminPanel();
     loadAllData();
 }
-
+async function startNewLotteryRound(poolId) {
+    if (!confirm(`Start a new round for Pool ${poolId}? This will reset the pool and allow new ticket purchases.`)) return;
+    const { error } = await sb.rpc('start_new_lottery_round', { p_pool_id: poolId });
+    if (error) {
+        showToast('Error: ' + error.message, 'error');
+    } else {
+        showToast(`Pool ${poolId} new round started!`, 'success');
+        await loadAdminPanel();
+        await loadAllData();
+    }
+}
 // ==================== INIT ====================
 window.addEventListener('load', () => {
     checkSession();
@@ -1527,16 +1835,21 @@ if (hashParams.get('type') === 'recovery') {
 }
     initHistoryTabs();
     document.querySelectorAll('.tab').forEach(tab => {
-        tab.addEventListener('click', () => {
-            const id = tab.getAttribute('data-tab');
-            document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
-            tab.classList.add('active');
-            document.getElementById(id).classList.add('active');
-            if(id === 'games') createGameGrid();
-            else if(id !== 'admin') loadAllData();
-        });
+    tab.addEventListener('click', () => {
+        // If this is the logout tab, call logout and exit
+        if (tab.id === 'logoutTab') {
+            logout();
+            return;
+        }
+        const id = tab.getAttribute('data-tab');
+        document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(id).classList.add('active');
+        if(id === 'games') createGameGrid();
+        else if(id !== 'admin') loadAllData();
     });
+});
     window.addEventListener('online', () => { document.getElementById('networkStatus').classList.remove('offline'); showToast('Back online','success'); loadAllData(); });
     window.addEventListener('offline', () => { document.getElementById('networkStatus').classList.add('offline'); showToast('No internet','error'); });
     setInterval(() => { if(USER_ID) loadAllData(); }, 30000);
@@ -1544,5 +1857,17 @@ if (hashParams.get('type') === 'recovery') {
     else document.getElementById('toggleKnob').style.left = '3px';
 });
 </script>
+
+<!-- Animated zigzag lines (must be inside body, before closing body) -->
+<div class="zigzag-line"></div>
+<div class="zigzag-line"></div>
+<div class="zigzag-line"></div>
+
+<!-- Floating dim‑light particles -->
+<div class="particle" style="width: 300px; height: 300px; background: #00ffff; bottom: -100px; left: -100px;"></div>
+<div class="particle" style="width: 200px; height: 200px; background: #ff00ff; top: 20%; right: -50px; animation-duration: 20s;"></div>
+<div class="particle" style="width: 400px; height: 400px; background: #ffaa00; bottom: 10%; right: 30%; animation-duration: 25s;"></div>
+<div class="particle" style="width: 250px; height: 250px; background: #00ffaa; top: 60%; left: -80px; animation-duration: 18s;"></div>
+
 </body>
 </html>
