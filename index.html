@@ -84,7 +84,7 @@
 
     /* Animated zigzag line layers */
     .zigzag-line {
-        position: absolute;
+        position: fixed;
         top: 0;
         left: 0;
         width: 100%;
@@ -92,12 +92,12 @@
         pointer-events: none;
         z-index: 0;
         background: repeating-linear-gradient(
-            45deg,
-            rgba(0, 255, 255, 0.15) 0px,
-            rgba(0, 255, 255, 0.15) 2px,
-            transparent 2px,
-            transparent 8px
-        );
+    45deg,
+    rgba(0, 255, 255, 0.2) 0px,
+    rgba(0, 255, 255, 0.2) 2px,
+    transparent 2px,
+    transparent 12px
+);
         mask-image: repeating-linear-gradient(
             45deg,
             transparent 0px,
@@ -110,12 +110,12 @@
 
     .zigzag-line:nth-child(2) {
         background: repeating-linear-gradient(
-            135deg,
-            rgba(255, 0, 255, 0.15) 0px,
-            rgba(255, 0, 255, 0.15) 2px,
-            transparent 2px,
-            transparent 12px
-        );
+    135deg,
+    rgba(255, 0, 255, 0.2) 0px,
+    rgba(255, 0, 255, 0.2) 2px,
+    transparent 2px,
+    transparent 12px
+);
         mask-image: repeating-linear-gradient(
             135deg,
             transparent 0px,
@@ -128,12 +128,12 @@
 
     .zigzag-line:nth-child(3) {
         background: repeating-linear-gradient(
-            90deg,
-            rgba(255, 255, 0, 0.1) 0px,
-            rgba(255, 255, 0, 0.1) 1px,
-            transparent 1px,
-            transparent 6px
-        );
+    90deg,
+    rgba(255, 255, 0, 0.15) 0px,
+    rgba(255, 255, 0, 0.15) 2px,
+    transparent 2px,
+    transparent 12px
+);
         mask-image: repeating-linear-gradient(
             90deg,
             transparent 0px,
@@ -146,7 +146,7 @@
 
     /* Floating color particles (dim light) */
     .particle {
-    position: absolute;
+    position: fixed;
     border-radius: 50%;
     filter: blur(80px);    /* was 60px */
     opacity: 0.5;          /* was 0.3 */
@@ -1431,7 +1431,7 @@ async function playGame(pos) {
         });
         
         // Reset the game grid after a short delay (800ms for faster restart)
-        setTimeout(() => { createGameGrid(); isProcessing.game = false; }, 800);
+        setTimeout(() => { createGameGrid(); isProcessing.game = false; }, 3000);
         // Refresh data in the background (balances, etc.) – does NOT block the reset
         await loadAllData();
     } catch (err) {
@@ -1591,27 +1591,43 @@ async function loadAdminPanel() {
     <button class="btn btn-sm btn-success" onclick="addCardNumbers(${c.id})">➕ Add Numbers</button>
 </div>`).join('')}<button class="btn btn-sm" onclick="shuffleCards()">Shuffle Order</button></div>
         <div class="card"><h3>👥 User Search</h3><input type="text" id="adminSearch" placeholder="User ID or email"><button class="btn btn-sm" onclick="searchUser()">Search</button><div id="userResult"></div></div>
-<div class="card">
-    <h3>💰 Deposit Settings (Edit Payment Info)</h3>
-    <div style="margin-bottom:10px;">
-        <label>Telebirr Number:</label>
-        <input type="text" id="admin_telebirr" value="${depositSettings.telebirr_number}" style="width:100%; padding:8px; margin-top:5px;">
+    <div class="card">
+        <h3>💰 Deposit Settings (Edit Payment Info)</h3>
+        <div style="margin-bottom:10px;">
+            <label>Telebirr Number:</label>
+            <input type="text" id="admin_telebirr" value="${depositSettings.telebirr_number}" style="width:100%; padding:8px; margin-top:5px;">
+        </div>
+        <div style="margin-bottom:10px;">
+            <label>Bank Name:</label>
+            <input type="text" id="admin_bank_name" value="${depositSettings.bank_name}" style="width:100%; padding:8px; margin-top:5px;">
+        </div>
+        <div style="margin-bottom:10px;">
+            <label>Bank Account Number:</label>
+            <input type="text" id="admin_bank_account" value="${depositSettings.bank_account}" style="width:100%; padding:8px; margin-top:5px;">
+        </div>
+        <div style="margin-bottom:10px;">
+            <label>Account Holder Name:</label>
+            <input type="text" id="admin_holder" value="${depositSettings.account_holder}" style="width:100%; padding:8px; margin-top:5px;">
+        </div>
+        <button class="btn btn-sm btn-success" onclick="saveDepositSettings()">💾 Save Deposit Settings</button>
     </div>
-    <div style="margin-bottom:10px;">
-        <label>Bank Name:</label>
-        <input type="text" id="admin_bank_name" value="${depositSettings.bank_name}" style="width:100%; padding:8px; margin-top:5px;">
+
+    <div class="card">
+        <h3>🧹 Storage Cleanup (Free Up Database Space)</h3>
+        <p>Delete old data – safe, does not affect balances or active investments.</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;">
+            <button class="btn btn-sm btn-warning" onclick="cleanupUsedTickets()">🗑️ Used Tickets (>3d)</button>
+            <button class="btn btn-sm btn-warning" onclick="cleanupOldDraws()">🗑️ Draws (>3d)</button>
+            <button class="btn btn-sm btn-warning" onclick="cleanupConsultations()">🗑️ Resolved Consultations (>3d)</button>
+            <button class="btn btn-sm btn-warning" onclick="cleanupPendingRequests()">🗑️ Approved/Rejected Requests (>7d)</button>
+            <button class="btn btn-sm btn-warning" onclick="cleanupReferrals()">🗑️ Completed Referrals (>90d)</button>
+            <button class="btn btn-sm btn-warning" onclick="cleanupExchangeRecords()">🗑️ Exchange Records (>3d)</button>
+            <button class="btn btn-sm btn-danger" onclick="cleanupTransactions()">🗑️ Transactions (>15d)</button>
+            <button class="btn btn-sm btn-danger" onclick="cleanupSoldAssets()">🗑️ Sold Assets (>7d)</button>
+        </div>
+        <div id="cleanupResult" style="margin-top: 10px; color: #fbbf24;"></div>
     </div>
-    <div style="margin-bottom:10px;">
-        <label>Bank Account Number:</label>
-        <input type="text" id="admin_bank_account" value="${depositSettings.bank_account}" style="width:100%; padding:8px; margin-top:5px;">
-    </div>
-    <div style="margin-bottom:10px;">
-        <label>Account Holder Name:</label>
-        <input type="text" id="admin_holder" value="${depositSettings.account_holder}" style="width:100%; padding:8px; margin-top:5px;">
-    </div>
-    <button class="btn btn-sm btn-success" onclick="saveDepositSettings()">💾 Save Deposit Settings</button>
-</div>
-    `;
+`;
 }
 function renderPendingList(items, type) {
     if (!items?.length) return '<div>None</div>';
@@ -1837,6 +1853,73 @@ async function startNewLotteryRound(poolId) {
         await loadAllData();
     }
 }
+
+// ========== ADD ALL CLEANUP FUNCTIONS BELOW THIS LINE ==========
+
+async function cleanupUsedTickets() {
+    if (!confirm('Delete used lottery tickets older than 3 days?')) return;
+    const { data, error } = await sb.rpc('delete_old_used_tickets');
+    if (error) showToast('Error: ' + error.message, 'error');
+    else showToast(`Deleted ${data} used tickets`, 'success');
+    document.getElementById('cleanupResult').innerText = `✅ Deleted ${data} used tickets`;
+}
+
+async function cleanupOldDraws() {
+    if (!confirm('Delete lottery draws older than 3 days?')) return;
+    const { data, error } = await sb.rpc('delete_old_draws');
+    if (error) showToast('Error: ' + error.message, 'error');
+    else showToast(`Deleted ${data} old draws`, 'success');
+    document.getElementById('cleanupResult').innerText = `✅ Deleted ${data} draws`;
+}
+
+async function cleanupConsultations() {
+    if (!confirm('Delete resolved consultations older than 3 days?')) return;
+    const { data, error } = await sb.rpc('delete_old_consultations');
+    if (error) showToast('Error: ' + error.message, 'error');
+    else showToast(`Deleted ${data} consultations`, 'success');
+    document.getElementById('cleanupResult').innerText = `✅ Deleted ${data} consultations`;
+}
+
+async function cleanupPendingRequests() {
+    if (!confirm('Delete approved/rejected requests older than 7 days?')) return;
+    const { data, error } = await sb.rpc('delete_old_pending_requests');
+    if (error) showToast('Error: ' + error.message, 'error');
+    else showToast(`Deleted ${data} old requests`, 'success');
+    document.getElementById('cleanupResult').innerText = `✅ Deleted ${data} requests`;
+}
+
+async function cleanupReferrals() {
+    if (!confirm('Delete completed referrals older than 90 days?')) return;
+    const { data, error } = await sb.rpc('delete_old_referrals');
+    if (error) showToast('Error: ' + error.message, 'error');
+    else showToast(`Deleted ${data} referrals`, 'success');
+    document.getElementById('cleanupResult').innerText = `✅ Deleted ${data} referrals`;
+}
+
+async function cleanupExchangeRecords() {
+    if (!confirm('Delete daily exchange records older than 3 days?')) return;
+    const { data, error } = await sb.rpc('delete_old_exchange_records');
+    if (error) showToast('Error: ' + error.message, 'error');
+    else showToast(`Deleted ${data} exchange records`, 'success');
+    document.getElementById('cleanupResult').innerText = `✅ Deleted ${data} exchange records`;
+}
+
+async function cleanupTransactions() {
+    if (!confirm('Delete transactions older than 15 days?')) return;
+    const { data, error } = await sb.rpc('delete_old_transactions');
+    if (error) showToast('Error: ' + error.message, 'error');
+    else showToast(`Deleted ${data} transactions`, 'success');
+    document.getElementById('cleanupResult').innerText = `✅ Deleted ${data} transactions`;
+}
+
+async function cleanupSoldAssets() {
+    if (!confirm('Delete sold assets older than 7 days?')) return;
+    const { data, error } = await sb.rpc('delete_old_sold_assets');
+    if (error) showToast('Error: ' + error.message, 'error');
+    else showToast(`Deleted ${data} sold assets`, 'success');
+    document.getElementById('cleanupResult').innerText = `✅ Deleted ${data} sold assets`;
+}
+
 // ==================== INIT ====================
 window.addEventListener('load', () => {
     checkSession();
