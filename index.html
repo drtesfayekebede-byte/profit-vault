@@ -453,16 +453,15 @@ body::before {
     transform: scale(1.02);
     box-shadow: 0 0 20px rgba(251,191,36,0.5);
 }
-.close {
+#authModal .modal-content .close {
     color: #fbbf24;
     opacity: 0.8;
     transition: 0.2s;
 }
-.close:hover {
+#authModal .modal-content .close:hover {
     color: #ff8c00;
     opacity: 1;
 }
-
         /* Transaction history styling */
         .transaction-item {
             display: flex;
@@ -717,24 +716,50 @@ function confetti() {
 
 // ==================== AUTHENTICATION (EMAIL ONLY) ====================
 async function checkSession() {
-    // Force clear any stale session on mobile
-    if (/Mobi|Android/i.test(navigator.userAgent)) {
-        localStorage.removeItem('profitvault_user_id');
-    }
-    const { data:{ session } } = await sb.auth.getSession();
-    // Remove any cache‑busting parameter to keep URL clean
+    // Remove cache‑busting parameter
     if (window.location.search.includes('t=')) {
         history.replaceState({}, document.title, window.location.pathname);
     }
-    if(session?.user) {
+    
+    const { data: { session } } = await sb.auth.getSession();
+    
+    if (session?.user) {
+        // Verify the user exists in your public.users table
+        const { data: userRow } = await sb.from('users')
+            .select('user_id')
+            .eq('user_id', session.user.id)
+            .maybeSingle();
+        
+        if (!userRow) {
+            // Corrupt state – force logout and reload
+            await sb.auth.signOut();
+            localStorage.clear();
+            sessionStorage.clear();
+            window.location.reload();
+            return;
+        }
+        
+        // Valid session – set up the app
         USER_ID = session.user.id;
         localStorage.setItem('profitvault_user_id', USER_ID);
-        const { data:userData } = await sb.from('users').select('is_admin').eq('user_id', USER_ID).single();
+        
+        // Check if user is admin
+        const { data: userData } = await sb.from('users')
+            .select('is_admin')
+            .eq('user_id', USER_ID)
+            .single();
         IS_ADMIN = userData?.is_admin === true;
+        
+        // Ensure the user row is fully populated (if missing any fields)
         await ensureUserExists(session.user);
-        loadAllData();
-        if(IS_ADMIN) showAdminTab();
-    } else showAuthModal();
+        
+        // Load all data and show admin tab if needed
+        await loadAllData();
+        if (IS_ADMIN) showAdminTab();
+    } else {
+        // No session – show login modal
+        showAuthModal();
+    }
 }
 async function ensureUserExists(authUser) {
     const { data:existing } = await sb.from('users').select('user_id').eq('user_id', authUser.id).single();
@@ -767,7 +792,8 @@ function showAuthModal() {
             <a href="#" onclick="forgotPassword()" style="color:#fbbf24; font-size:12px;">Forgot Password?</a>
         </div>
     </div>
-`;
+    `;
+    document.body.appendChild(modalDiv);
 }
 function setAuthMode(mode) {
     const container = document.getElementById('authForm');
@@ -821,22 +847,23 @@ function closeAuthModal() {
     if(!USER_ID) setTimeout(()=>showAuthModal(),500);
 }
 async function logout() {
+    // Clear all possible stored session data
     await sb.auth.signOut();
-    localStorage.removeItem('profitvault_user_id');
-    // Force a full reload without cache (works on all devices)
-    window.location.href = window.location.pathname + '?t=' + Date.now();
-}
-async function forgotPassword() {
-    const email = prompt("Enter your registered email address to reset password:");
-    if (!email) return;
-    const { error } = await sb.auth.resetPasswordForEmail(email, {
-        redirectTo: window.location.origin + window.location.pathname,
-    });
-    if (error) {
-        showToast(error.message, 'error');
-    } else {
-        showToast("Password reset email sent! Check your inbox.", 'success');
+    localStorage.clear();
+    sessionStorage.clear();
+    // Safer IndexedDB clearing (works on all browsers)
+    if (window.indexedDB && window.indexedDB.databases) {
+        try {
+            const dbs = await indexedDB.databases();
+            dbs.forEach(db => indexedDB.deleteDatabase(db.name));
+        } catch(e) { console.warn("Could not clear IndexedDB", e); }
     }
+    // If .databases is not supported, at least try to delete known Supabase DB
+    if (window.indexedDB) {
+        try { indexedDB.deleteDatabase('supabase'); } catch(e) {}
+    }
+    // Force a hard reload without cache
+    window.location.replace(window.location.pathname + '?t=' + Date.now());
 }
 // ==================== DATA LOADING (FULL FEATURES) ====================
 let currentUser = null;
