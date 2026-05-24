@@ -84,7 +84,7 @@
 
     /* Animated zigzag line layers */
     .zigzag-line {
-        position: fixed;
+        position: absolute;
         top: 0;
         left: 0;
         width: 100%;
@@ -146,14 +146,14 @@
 
     /* Floating color particles (dim light) */
     .particle {
-        position: fixed;
-        border-radius: 50%;
-        filter: blur(60px);
-        opacity: 0.3;
-        animation: floatParticle 15s infinite alternate ease-in-out;
-        pointer-events: none;
-        z-index: 0;
-    }
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);    /* was 60px */
+    opacity: 0.5;          /* was 0.3 */
+    animation: floatParticle 15s infinite alternate ease-in-out;
+    pointer-events: none;
+    z-index: 0;
+}
 
     /* ===== ENSURE CONTENT STAYS ABOVE BACKGROUND ===== */
     .header, .balance-container, .tabs, .card, .modal, .game-grid, .market-grid, .toast, .network-status {
@@ -796,6 +796,10 @@ function showModal(id) {
     if (id === 'depositModal') refreshDepositModalInfo();
     playSound('click');
 }
+function closeModal(id) {
+    const modal = document.getElementById(id);
+    if (modal) modal.classList.remove('active');
+}
 function playSound(name) {
     if(!soundEnabled) return;
     try {
@@ -1388,28 +1392,48 @@ function createGameGrid() {
     document.getElementById('gameResult').innerHTML = '';
 }
 async function playGame(pos) {
-    if(!gameActive || isProcessing.game) return;
+    if (!gameActive || isProcessing.game) return;
     isProcessing.game = true;
     gameActive = false;
     try {
         const { data: win, error } = await sb.rpc('play_game_secure');
         if (error) throw error;
         const resultDiv = document.getElementById('gameResult');
-        resultDiv.className = `game-result ${win>0?'win':'lose'}`;
-        resultDiv.innerHTML = win>0 ? `🎉 You won ${win} coins! 🎉` : `💨 Better luck next time!`;
-        if(win>0) { playSound('win'); confetti(); } else playSound('lose');
-        showToast(win>0 ? `Won ${win} coins!` : 'No win', win>0?'success':'error');
+        resultDiv.className = `game-result ${win > 0 ? 'win' : 'lose'}`;
+        resultDiv.innerHTML = win > 0 ? `🎉 You won ${win} coins! 🎉` : `💨 Better luck next time!`;
+        if (win > 0) { playSound('win'); confetti(); } else playSound('lose');
+        showToast(win > 0 ? `Won ${win} coins!` : 'No win', win > 0 ? 'success' : 'error');
+        
         const cells = document.querySelectorAll('.game-card');
-        // Fake reveal for UI (since RPC does the actual update)
-        const prizes = [100,75,75,50,50,50,25,25,25,25,10,10,10,10,10,0];
-        const shuffled = [...prizes].sort(()=>Math.random()-0.5);
+        // Prize pool for visual effect
+        const prizePool = [100, 75, 75, 50, 50, 50, 25, 25, 25, 25, 10, 10, 10, 10, 10, 0];
+        // Create an array for the 16 card values: the clicked card gets the actual win, others get random values from prizePool
+        let displayValues = new Array(16);
+        // Set the clicked card to the actual win amount
+        displayValues[pos] = win;
+        // Fill the rest with random values from prizePool (excluding win if needed, but not required)
+        let otherIndices = [...Array(16).keys()].filter(i => i !== pos);
+        // Shuffle the prizePool for randomness
+        let shuffledPool = [...prizePool];
+        for (let i = shuffledPool.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffledPool[i], shuffledPool[j]] = [shuffledPool[j], shuffledPool[i]];
+        }
+        for (let i = 0; i < otherIndices.length; i++) {
+            displayValues[otherIndices[i]] = shuffledPool[i % shuffledPool.length];
+        }
+        
+        // Reveal all cards
         cells.forEach((cell, idx) => {
             cell.classList.add('revealed');
-            cell.setAttribute('data-prize', shuffled[idx]);
-            cell.innerHTML = shuffled[idx];
+            cell.setAttribute('data-prize', displayValues[idx]);
+            cell.innerHTML = displayValues[idx];
         });
+        
+        // Reset the game grid after a short delay (800ms for faster restart)
+        setTimeout(() => { createGameGrid(); isProcessing.game = false; }, 800);
+        // Refresh data in the background (balances, etc.) – does NOT block the reset
         await loadAllData();
-        setTimeout(() => { createGameGrid(); isProcessing.game = false; }, 1500);
     } catch (err) {
         showToast(err.message || 'Game failed', 'error');
         gameActive = true;
