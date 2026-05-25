@@ -1,0 +1,2 @@
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://hgazgrgkfpvpmjvenqer.supabase.co; style-src 'self' 'unsafe-inline'; connect-src 'self' https://hgazgrgkfpvpmjvenqer.supabase.co wss://hgazgrgkfpvpmjvenqer.supabase.co; img-src 'self' data:; font-src 'self'; frame-ancestors 'none';
