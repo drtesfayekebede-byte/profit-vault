@@ -71,7 +71,7 @@
 
     /* ===== BASE – DEEP BLACK BACKGROUND (replaces old body) ===== */
     body {
-    background: radial-gradient(circle at 20% 30%, #0a0f1e, #010101);
+    background: radial-gradient(circle at 20% 30%, #05050a, #000000);
     min-height: 100vh;
     padding: 16px;
     padding-bottom: 100px;
@@ -91,10 +91,10 @@
         height: 100%;
         pointer-events: none;
         z-index: 0;
-        background: repeating-linear-gradient(
+                background: repeating-linear-gradient(
     45deg,
-    rgba(0, 255, 255, 0.2) 0px,
-    rgba(0, 255, 255, 0.2) 2px,
+    rgba(0, 255, 255, 0.06) 0px,
+    rgba(0, 255, 255, 0.06) 2px,
     transparent 2px,
     transparent 12px
 );
@@ -109,10 +109,10 @@
     }
 
     .zigzag-line:nth-child(2) {
-        background: repeating-linear-gradient(
+      background: repeating-linear-gradient(
     135deg,
-    rgba(255, 0, 255, 0.2) 0px,
-    rgba(255, 0, 255, 0.2) 2px,
+    rgba(255, 0, 255, 0.06) 0px,
+    rgba(255, 0, 255, 0.06) 2px,
     transparent 2px,
     transparent 12px
 );
@@ -127,10 +127,10 @@
     }
 
     .zigzag-line:nth-child(3) {
-        background: repeating-linear-gradient(
+      background: repeating-linear-gradient(
     90deg,
-    rgba(255, 255, 0, 0.15) 0px,
-    rgba(255, 255, 0, 0.15) 2px,
+    rgba(255, 255, 0, 0.05) 0px,
+    rgba(255, 255, 0, 0.05) 2px,
     transparent 2px,
     transparent 12px
 );
@@ -1331,7 +1331,7 @@ async function submitWithdraw() {
     if(isNaN(amt) || amt < 100) { showToast('Minimum 100 ETB','error'); isProcessing.withdraw=false; return; }
     if(!holder || !acc) { showToast('Account details required','error'); isProcessing.withdraw=false; return; }
     const { count: tickets } = await sb.from('lottery_tickets').select('*',{count:'exact',head:true}).eq('user_id',USER_ID).eq('status','active');
-    const quad = (currentUser.total_deposited >= 1500) && (currentUser.win_chance_plays >= 10) && (tickets >= 3) && (currentUser.active_referrals >= 3);
+    const quad = (currentUser.total_deposited >= 1500) && (currentUser.win_chance_plays >= 10) && (tickets >= 3) && (currentUser.active_referrals >= 1);
     if(!quad) { showToast('Complete Quad-Lock first','error'); isProcessing.withdraw=false; return; }
     const today = new Date().toISOString().slice(0,10);
     if(currentUser.last_withdraw_date === today) { showToast('Daily limit reached','error'); isProcessing.withdraw=false; return; }
@@ -1431,7 +1431,7 @@ async function playGame(pos) {
         });
         
         // Reset the game grid after a short delay (800ms for faster restart)
-        setTimeout(() => { createGameGrid(); isProcessing.game = false; }, 3000);
+        setTimeout(() => { createGameGrid(); isProcessing.game = false; }, 1500);
         // Refresh data in the background (balances, etc.) – does NOT block the reset
         await loadAllData();
     } catch (err) {
@@ -1627,7 +1627,20 @@ async function loadAdminPanel() {
         </div>
         <div id="cleanupResult" style="margin-top: 10px; color: #fbbf24;"></div>
     </div>
+<div class="card">
+        <h3>📊 Platform Statistics</h3>
+        <div id="adminStats" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+            <div>👥 Total Users: <strong id="statUsers">-</strong></div>
+            <div>💰 Total Balance: <strong id="statBalance">-</strong> ETB</div>
+            <div>🎁 Total Bonus: <strong id="statBonus">-</strong> ETB</div>
+            <div>🪙 Total Coins: <strong id="statCoins">-</strong></div>
+            <div>📈 Total Deposited: <strong id="statDeposited">-</strong> ETB</div>
+            <div>📤 Total Withdrawn: <strong id="statWithdrawn">-</strong> ETB</div>
+        </div>
+        <button class="btn btn-sm btn-info" onclick="refreshAdminStats()" style="margin-top: 10px;">🔄 Refresh Stats</button>
+    </div>
 `;
+    await refreshAdminStats();
 }
 function renderPendingList(items, type) {
     if (!items?.length) return '<div>None</div>';
@@ -1919,7 +1932,28 @@ async function cleanupSoldAssets() {
     else showToast(`Deleted ${data} sold assets`, 'success');
     document.getElementById('cleanupResult').innerText = `✅ Deleted ${data} sold assets`;
 }
-
+// ========== ADMIN STATISTICS FUNCTION ==========
+async function refreshAdminStats() {
+    if (!IS_ADMIN) return;
+    try {
+        const users = await sb.rpc('get_total_users');
+        const balance = await sb.rpc('get_total_balance');
+        const bonus = await sb.rpc('get_total_bonus');
+        const coins = await sb.rpc('get_total_coins');
+        const deposited = await sb.rpc('get_total_deposited');
+        const withdrawn = await sb.rpc('get_total_withdrawn');
+        
+        document.getElementById('statUsers').innerText = users.data || 0;
+        document.getElementById('statBalance').innerText = (balance.data || 0).toLocaleString();
+        document.getElementById('statBonus').innerText = (bonus.data || 0).toLocaleString();
+        document.getElementById('statCoins').innerText = (coins.data || 0).toLocaleString();
+        document.getElementById('statDeposited').innerText = (deposited.data || 0).toLocaleString();
+        document.getElementById('statWithdrawn').innerText = (withdrawn.data || 0).toLocaleString();
+    } catch (err) {
+        console.error(err);
+        showToast('Failed to load stats', 'error');
+    }
+}
 // ==================== INIT ====================
 window.addEventListener('load', () => {
     checkSession();
