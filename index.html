@@ -466,90 +466,129 @@
         .balance-value { font-size: 22px; }
     }
 
-    /* ===== AUTH MODAL ===== */
-    #authModal {
-        background: rgba(0, 0, 0, 0.85);
-        backdrop-filter: blur(12px);
-    }
-    #authModal .modal-content {
-        background: linear-gradient(145deg, #0f172a, #0a0f1e);
-        border: none;
-        border-radius: 48px;
-        box-shadow: 0 30px 50px rgba(0,0,0,0.6);
-        padding: 30px 25px;
-        width: 90%;
-        max-width: 420px;
-    }
-    .auth-header h2 {
-        font-size: 38px;
-        font-weight: 900;
-        font-style: italic;
-        background: linear-gradient(135deg, #FFD700, #FFA500, #FF8C00);
-        -webkit-background-clip: text;
-        background-clip: text;
-        color: transparent;
-        text-shadow: 0 0 15px rgba(255,215,0,0.3);
-        letter-spacing: 2px;
-        margin-bottom: 8px;
-    }
-    .auth-header p {
-        color: #cbd5e1;
-        font-size: 14px;
-        margin-bottom: 20px;
-    }
-    .mode-switch button {
-        background: rgba(255,255,255,0.1);
-        backdrop-filter: blur(4px);
-        border: none;
-        border-radius: 60px;
-        padding: 10px 28px;
-        font-weight: bold;
-        color: white;
-        transition: all 0.2s;
-    }
-    .mode-switch button.active {
-        background: linear-gradient(135deg, #fbbf24, #d97706);
-        color: #0a0f1e;
-        box-shadow: 0 4px 15px rgba(251,191,36,0.3);
-    }
-    #authForm input {
-        background: rgba(0,0,0,0.6);
-        border: none;
-        border-radius: 60px;
-        padding: 14px 20px;
-        color: white;
-        font-size: 15px;
-        margin-bottom: 16px;
-        transition: 0.2s;
-    }
-    #authForm input:focus {
-        background: rgba(0,0,0,0.8);
-        box-shadow: 0 0 0 2px #fbbf24;
-        outline: none;
-    }
-    #authForm .btn-success {
-        background: linear-gradient(135deg, #fbbf24, #ff8c00);
-        border: none;
-        border-radius: 60px;
-        padding: 14px;
-        font-weight: bold;
-        font-size: 16px;
-        color: #1a1a2e;
-        transition: 0.2s;
-    }
-    #authForm .btn-success:hover {
-        transform: scale(1.02);
-        box-shadow: 0 0 20px rgba(251,191,36,0.5);
-    }
-    #authModal .modal-content .close {
-        color: #fbbf24;
-        opacity: 0.8;
-        transition: 0.2s;
-    }
-    #authModal .modal-content .close:hover {
-        color: #ff8c00;
-        opacity: 1;
-    }
+    /* ===== AUTH MODAL – BRIGHT & COLORFUL ===== */
+#authModal {
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(8px);
+}
+#authModal .modal-content {
+    background: linear-gradient(135deg, #f9f3c1, #fce4b2, #ffd6a5, #ffb7b2, #b5ead7, #c7e9fb);
+    background-size: 300% 300%;
+    animation: gradientShift 6s ease infinite;
+    border: none;
+    border-radius: 48px;
+    box-shadow: 0 25px 45px rgba(0, 0, 0, 0.2), 0 0 0 2px rgba(255, 215, 0, 0.5);
+    padding: 30px 25px;
+    width: 90%;
+    max-width: 420px;
+    animation: fadeScale 0.3s ease-out;
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.auth-header h2 {
+    font-size: 38px;
+    font-weight: 900;
+    font-style: italic;
+    background: linear-gradient(135deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: none;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+}
+.auth-header p {
+    color: #2d3436;
+    font-size: 14px;
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+.mode-switch {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-bottom: 25px;
+}
+.mode-switch button {
+    background: rgba(255, 255, 255, 0.8);
+    border: none;
+    border-radius: 60px;
+    padding: 10px 28px;
+    font-weight: bold;
+    color: #2d3436;
+    transition: all 0.2s;
+    cursor: pointer;
+    font-size: 14px;
+}
+.mode-switch button.active {
+    background: linear-gradient(135deg, #ff9f43, #ff6b6b);
+    color: white;
+    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+}
+#authForm input {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid #ddd;
+    border-radius: 60px;
+    padding: 14px 20px;
+    color: #2d3436;
+    font-size: 15px;
+    margin-bottom: 16px;
+    transition: 0.2s;
+    width: 100%;
+    box-sizing: border-box;
+}
+#authForm input:focus {
+    background: white;
+    border-color: #ff9f43;
+    box-shadow: 0 0 0 2px rgba(255, 159, 67, 0.4);
+    outline: none;
+}
+#authForm .btn-success {
+    background: linear-gradient(135deg, #ff9f43, #ff6b6b);
+    border: none;
+    border-radius: 60px;
+    padding: 14px;
+    font-weight: bold;
+    font-size: 16px;
+    color: white;
+    transition: 0.2s;
+    cursor: pointer;
+    width: 100%;
+}
+#authForm .btn-success:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 20px rgba(255, 107, 107, 0.6);
+}
+#authModal .modal-content .close {
+    color: #ff6b6b;
+    opacity: 0.9;
+    transition: 0.2s;
+}
+#authModal .modal-content .close:hover {
+    color: #d63031;
+    opacity: 1;
+}
+/* Password toggle inside auth modal – adjust for bright background */
+#authForm .password-wrapper {
+    position: relative;
+    width: 100%;
+}
+#authForm .password-toggle {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #ff9f43;
+    font-size: 18px;
+    cursor: pointer;
+}
 
     /* Transaction history styling */
     .transaction-item {
@@ -625,7 +664,6 @@
     <button class="tab" data-tab="profile">👤 Profile</button>
     <button class="tab" data-tab="contact">📞 Contact</button>
     <button class="tab" id="logoutTab" style="background: linear-gradient(135deg, #ef4444, #dc2626); border-color: #ef4444;">🚪 Logout</button>
-    <button class="tab" id="manualLoginBtn" onclick="showAuthModal()" style="background: linear-gradient(135deg, #fbbf24, #d97706); color: #1a1a2e;">🔐 Login</button>
     <button class="tab" onclick="location.reload();" style="background: #3b82f6;">🔄 Refresh</button>
 </div>
 
