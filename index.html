@@ -466,47 +466,52 @@
         .balance-value { font-size: 22px; }
     }
 
-    /* ===== AUTH MODAL – BRIGHT & COLORFUL ===== */
+    /* ===== AUTH MODAL – NEON NOIR (NO BORDER) ===== */
 #authModal {
-    background: rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(8px);
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
 }
 #authModal .modal-content {
-    background: linear-gradient(135deg, #f9f3c1, #fce4b2, #ffd6a5, #ffb7b2, #b5ead7, #c7e9fb);
-    background-size: 300% 300%;
-    animation: gradientShift 6s ease infinite;
-    border: none;
+    background: #1a1a1f;  /* dark gray-black panel */
+    border: none;  /* no border */
     border-radius: 48px;
-    box-shadow: 0 25px 45px rgba(0, 0, 0, 0.2), 0 0 0 2px rgba(255, 215, 0, 0.5);
+    box-shadow: 0 25px 40px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.05);
     padding: 30px 25px;
     width: 90%;
     max-width: 420px;
-    animation: fadeScale 0.3s ease-out;
+    animation: slideUpFlicker 0.4s ease-out;
 }
 
-@keyframes gradientShift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+@keyframes slideUpFlicker {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+        filter: brightness(0.8);
+    }
+    80% {
+        opacity: 0.9;
+        transform: translateY(-5px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+        filter: brightness(1);
+    }
 }
 
 .auth-header h2 {
     font-size: 38px;
     font-weight: 900;
     font-style: italic;
-    background: linear-gradient(135deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    text-shadow: none;
+    color: #00aaff;  /* electric blue */
+    text-shadow: 0 0 8px #00aaff, 0 0 2px #00aaff;
     letter-spacing: 2px;
     margin-bottom: 8px;
 }
 .auth-header p {
-    color: #2d3436;
+    color: #ccc;
     font-size: 14px;
     margin-bottom: 20px;
-    font-weight: 500;
 }
 .mode-switch {
     display: flex;
@@ -515,27 +520,27 @@
     margin-bottom: 25px;
 }
 .mode-switch button {
-    background: rgba(255, 255, 255, 0.8);
-    border: none;
+    background: transparent;
+    border: 1px solid #ff66cc;  /* neon pink outline */
     border-radius: 60px;
     padding: 10px 28px;
     font-weight: bold;
-    color: #2d3436;
+    color: #ff66cc;
     transition: all 0.2s;
     cursor: pointer;
     font-size: 14px;
 }
 .mode-switch button.active {
-    background: linear-gradient(135deg, #ff9f43, #ff6b6b);
-    color: white;
-    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+    background: #ff66cc;  /* solid neon pink fill */
+    color: #0a0a0f;
+    box-shadow: 0 0 10px #ff66cc, 0 0 5px #ff66cc;
 }
 #authForm input {
-    background: rgba(255, 255, 255, 0.9);
-    border: 1px solid #ddd;
+    background: #0a0a0f;
+    border: 1px solid #2a2a35;
     border-radius: 60px;
     padding: 14px 20px;
-    color: #2d3436;
+    color: #fff;
     font-size: 15px;
     margin-bottom: 16px;
     transition: 0.2s;
@@ -543,37 +548,37 @@
     box-sizing: border-box;
 }
 #authForm input:focus {
-    background: white;
-    border-color: #ff9f43;
-    box-shadow: 0 0 0 2px rgba(255, 159, 67, 0.4);
+    border-color: #00ff88;  /* neon green */
+    box-shadow: 0 0 8px #00ff88, 0 0 2px #00ff88;
     outline: none;
 }
 #authForm .btn-success {
-    background: linear-gradient(135deg, #ff9f43, #ff6b6b);
+    background: linear-gradient(135deg, #ffcc00, #ffaa00);  /* neon yellow gradient */
     border: none;
     border-radius: 60px;
     padding: 14px;
     font-weight: bold;
     font-size: 16px;
-    color: white;
+    color: #0a0a0f;
     transition: 0.2s;
     cursor: pointer;
     width: 100%;
+    text-shadow: 0 1px 1px rgba(0,0,0,0.2);
 }
 #authForm .btn-success:hover {
     transform: scale(1.02);
-    box-shadow: 0 0 20px rgba(255, 107, 107, 0.6);
+    box-shadow: 0 0 15px #ffcc00;
 }
 #authModal .modal-content .close {
-    color: #ff6b6b;
+    color: #ff66cc;
     opacity: 0.9;
     transition: 0.2s;
 }
 #authModal .modal-content .close:hover {
-    color: #d63031;
+    color: #ff3399;
     opacity: 1;
 }
-/* Password toggle inside auth modal – adjust for bright background */
+/* Password toggle inside auth modal – adjust for dark background */
 #authForm .password-wrapper {
     position: relative;
     width: 100%;
@@ -585,7 +590,7 @@
     transform: translateY(-50%);
     background: none;
     border: none;
-    color: #ff9f43;
+    color: #ff66cc;
     font-size: 18px;
     cursor: pointer;
 }
