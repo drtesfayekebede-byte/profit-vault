@@ -624,7 +624,9 @@
     <button class="tab" data-tab="clinic">🏥 Clinic</button>
     <button class="tab" data-tab="profile">👤 Profile</button>
     <button class="tab" data-tab="contact">📞 Contact</button>
-<button class="tab" id="logoutTab" style="background: linear-gradient(135deg, #ef4444, #dc2626); border-color: #ef4444;">🚪 Logout</button>
+    <button class="tab" id="logoutTab" style="background: linear-gradient(135deg, #ef4444, #dc2626); border-color: #ef4444;">🚪 Logout</button>
+    <button class="tab" id="manualLoginBtn" onclick="showAuthModal()" style="background: linear-gradient(135deg, #fbbf24, #d97706); color: #1a1a2e;">🔐 Login</button>
+    <button class="tab" onclick="location.reload();" style="background: #3b82f6;">🔄 Refresh</button>
 </div>
 
 <!-- DASHBOARD -->
@@ -929,6 +931,9 @@ async function ensureUserExists(authUser) {
     }
 }
 function showAuthModal() {
+    // Prevent duplicate modals
+    if (document.getElementById('authModal')) return;
+    
     let modalDiv = document.createElement('div');
     modalDiv.id = 'authModal';
     modalDiv.className = 'modal active';
@@ -950,6 +955,7 @@ function showAuthModal() {
     </div>
     `;
     document.body.appendChild(modalDiv);
+    setAuthMode('login'); // immediately show login form
 }
 function setAuthMode(mode) {
     const container = document.getElementById('authForm');
@@ -1000,7 +1006,7 @@ async function register() {
 function closeAuthModal() {
     const m = document.getElementById('authModal');
     if(m) m.remove();
-    if(!USER_ID) setTimeout(()=>showAuthModal(),500);
+    // No automatic reopen – user can click the Login button if needed
 }
 async function forgotPassword() {
     const email = prompt("Enter your registered email address to reset password:");
@@ -1371,7 +1377,7 @@ async function submitWithdraw() {
     if(isNaN(amt) || amt < 100) { showToast('Minimum 100 ETB','error'); isProcessing.withdraw=false; return; }
     if(!holder || !acc) { showToast('Account details required','error'); isProcessing.withdraw=false; return; }
     const { count: tickets } = await sb.from('lottery_tickets').select('*',{count:'exact',head:true}).eq('user_id',USER_ID).eq('status','active');
-    const quad = (currentUser.total_deposited >= 1500) && (currentUser.win_chance_plays >= 10) && (tickets >= 3) && (currentUser.active_referrals >= 1);
+    const quad = (currentUser.total_deposited >= 1500) && (currentUser.win_chance_plays >= 10) && (tickets >= 1) && (currentUser.active_referrals >= 1);
     if(!quad) { showToast('Complete Quad-Lock first','error'); isProcessing.withdraw=false; return; }
     const today = new Date().toISOString().slice(0,10);
     if(currentUser.last_withdraw_date === today) { showToast('Daily limit reached','error'); isProcessing.withdraw=false; return; }
