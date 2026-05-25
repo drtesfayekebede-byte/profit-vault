@@ -1502,14 +1502,21 @@ async function startConsultation() {
     }
 }
 async function buyAirtimeCard(cardId, cost) {
-    if(isProcessing.buyAirtime) return;
+    if (isProcessing.buyAirtime) return;
     isProcessing.buyAirtime = true;
+    
+    // Show loading toast immediately
+    showToast('Processing purchase...', 'info');
+    
     try {
         const { data: revealed, error } = await sb.rpc('buy_airtime_card_secure', { p_card_id: cardId });
         if (error) throw error;
+        
+        // Hide loading toast (by showing a success toast)
         showToast(`Airtime purchased!`, 'success');
         playSound('coin');
-        // Show revealed number modal for 60 seconds
+        
+        // Create modal with revealed number (already fast)
         const modal = document.createElement('div');
         modal.className = 'modal active';
         modal.innerHTML = `
@@ -1517,12 +1524,14 @@ async function buyAirtimeCard(cardId, cost) {
                 <span class="close" onclick="this.parentElement.parentElement.remove()">&times;</span>
                 <h3>🎉 Airtime Revealed!</h3>
                 <div style="font-size:32px; margin:20px 0; background:#000; padding:15px; border-radius:16px;">${revealed}</div>
-                <p>This number will disappear in <span id="countdownTimer">60</span> seconds.</p>
+                <p>This number will disappear in <span id="countdownTimer">20</span> seconds.</p>
                 <button class="btn" onclick="this.closest('.modal').remove()">Dismiss Now</button>
             </div>
         `;
         document.body.appendChild(modal);
-        let seconds = 60;
+        
+        // Auto-close after 20 seconds
+        let seconds = 20;
         const timerSpan = modal.querySelector('#countdownTimer');
         const interval = setInterval(() => {
             seconds--;
@@ -1530,6 +1539,7 @@ async function buyAirtimeCard(cardId, cost) {
             if (seconds <= 0) { clearInterval(interval); if (modal.parentNode) modal.remove(); }
         }, 1000);
         modal.querySelector('.close').onclick = () => { clearInterval(interval); modal.remove(); };
+        
         await loadAllData();
     } catch (err) {
         showToast(err.message, 'error');
