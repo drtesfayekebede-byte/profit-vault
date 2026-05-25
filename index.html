@@ -1015,23 +1015,63 @@ async function forgotPassword() {
     }
 }
 async function logout() {
-    // Clear all possible stored session data
+    // Show feedback
+    showToast('Logging out...', 'info');
+    
+    // 1. Sign out from Supabase (invalidates session on server)
     await sb.auth.signOut();
+    
+    // 2. Wipe all browser storage
     localStorage.clear();
     sessionStorage.clear();
-    // Safer IndexedDB clearing (works on all browsers)
+    
+    // 3. Delete all IndexedDB databases (including Supabase's)
     if (window.indexedDB && window.indexedDB.databases) {
         try {
             const dbs = await indexedDB.databases();
-            dbs.forEach(db => indexedDB.deleteDatabase(db.name));
-        } catch(e) { console.warn("Could not clear IndexedDB", e); }
+            dbs.forEach(db => {
+                if (db.name) indexedDB.deleteDatabase(db.name);
+            });
+        } catch(e) { console.warn("IndexedDB clear error", e); }
     }
-    // If .databases is not supported, at least try to delete known Supabase DB
-    if (window.indexedDB) {
-        try { indexedDB.deleteDatabase('supabase'); } catch(e) {}
-    }
-    // Force a hard reload without cache
-    window.location.replace(window.location.pathname + '?t=' + Date.now());
+    // Fallback: delete known Supabase DBs
+    ['supabase', 'supabase-auth', '_supabase', 'supabase-auth-token'].forEach(dbName => {
+        try { indexedDB.deleteDatabase(dbName); } catch(e) {}
+    });
+    
+    // 4. Clear all global variables
+    USER_ID = null;
+    IS_ADMIN = false;
+    currentUser = null;
+    allTransactions = [];
+    
+    // 5. Reset UI to initial state (clear all dynamic content)
+    document.getElementById('balance').innerText = '0';
+    document.getElementById('bonus').innerText = '0';
+    document.getElementById('coins').innerText = '0';
+    document.getElementById('quadlock').innerHTML = 'Loading...';
+    document.getElementById('marketGrid').innerHTML = 'Loading...';
+    document.getElementById('investments').innerHTML = '';
+    document.getElementById('lotteryPools').innerHTML = 'Loading...';
+    document.getElementById('myTickets').innerHTML = 'Loading...';
+    document.getElementById('recentDraws').innerHTML = 'Loading...';
+    document.getElementById('consultations').innerHTML = 'Loading...';
+    document.getElementById('transactionList').innerHTML = '';
+    document.getElementById('leaderboard').innerHTML = 'Loading...';
+    document.getElementById('profileInfo').innerHTML = '';
+    document.getElementById('cardsGrid').innerHTML = 'Loading...';
+    
+    // 6. Remove admin tab if it exists
+    const adminTab = document.querySelector('.tab[data-tab="admin"]');
+    if (adminTab) adminTab.remove();
+    const adminDiv = document.getElementById('admin');
+    if (adminDiv) adminDiv.remove();
+    
+    // 7. Immediately show the login modal
+    showAuthModal();
+    
+    // 8. Clear the loading toast
+    showToast('Logged out', 'success');
 }
 // ==================== DATA LOADING (FULL FEATURES) ====================
 let currentUser = null;
