@@ -1044,17 +1044,21 @@ async function register() {
     if(password.length < 6) return showToast('Password min 6 chars','error');
     const { error, data } = await sb.auth.signUp({ email, password });
     if(error) return showToast(error.message,'error');
+    
+    // ✅ IMPORTANT: Create the user row in public.users BEFORE inserting referral
+    await ensureUserExists(data.user);
+    
     const urlParams = new URLSearchParams(window.location.search);
     const ref = urlParams.get('ref');
     if(ref && ref !== data.user?.id) {
         try { 
-    await sb.rpc('increment_referral', { 
-        referrer_id: ref, 
-        referred_user_id: data.user.id 
-    }); 
-} catch(e) { 
-    console.warn(e); 
-}
+            await sb.rpc('increment_referral', { 
+                referrer_id: ref, 
+                referred_user_id: data.user.id 
+            }); 
+        } catch(e) { 
+            console.warn(e); 
+        }
     }
     closeAuthModal();
     checkSession();
