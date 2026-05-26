@@ -924,14 +924,17 @@ async function checkSession() {
     const { data: { session } } = await sb.auth.getSession();
     
     if (session?.user) {
-        // Verify the user exists in your public.users table
+        // Ensure the user row exists BEFORE checking it
+        await ensureUserExists(session.user);
+        
+        // Now fetch the user row (it should exist)
         const { data: userRow } = await sb.from('users')
             .select('user_id')
             .eq('user_id', session.user.id)
             .maybeSingle();
         
         if (!userRow) {
-            // Corrupt state – force logout and reload
+            // This should not happen after ensureUserExists, but handle it
             await sb.auth.signOut();
             localStorage.clear();
             sessionStorage.clear();
@@ -943,22 +946,16 @@ async function checkSession() {
         USER_ID = session.user.id;
         localStorage.setItem('profitvault_user_id', USER_ID);
         
-        // Check if user is admin
         const { data: userData } = await sb.from('users')
             .select('is_admin')
             .eq('user_id', USER_ID)
             .single();
         IS_ADMIN = userData?.is_admin === true;
         
-        // Ensure the user row is fully populated (if missing any fields)
-        await ensureUserExists(session.user);
         await loadDepositSettings();
-
-        // Load all data and show admin tab if needed
         await loadAllData();
         if (IS_ADMIN) showAdminTab();
     } else {
-        // No session – show login modal
         showAuthModal();
     }
 }
