@@ -1024,11 +1024,20 @@ function setAuthMode(mode) {
 async function login() {
     const email = document.getElementById('authEmail').value.trim();
     const password = document.getElementById('authPassword').value;
-    if(!email || !password) return showToast('Email and password required','error');
+    if (!email || !password) return showToast('Email and password required', 'error');
+    
     const { error } = await sb.auth.signInWithPassword({ email, password });
-    if(error) return showToast(error.message,'error');
+    if (error) {
+        showToast(error.message, 'error');
+        return;
+    }
+    
+    // Success: close the modal and reload the page
     closeAuthModal();
-    checkSession();
+    showToast('Login successful!', 'success');
+    setTimeout(() => {
+        window.location.reload();
+    }, 500);
 }
 async function register() {
     const email = document.getElementById('authEmail').value.trim();
