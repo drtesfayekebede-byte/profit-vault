@@ -815,8 +815,8 @@ async function saveDepositSettings() {
     await updateDepositSettings(telebirr, bankName, bankAccount, holder);
     await loadAdminPanel(); // refresh admin panel to show updated values
 }
-const SUPABASE_URL = 'https://hgazgrgkfpvpmjvenqer.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhnYXpncmdrZnB2cG1qdmVucWVyIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3OTUzOTAwOCwiZXhwIjoyMDk1MTE1MDA4fQ.ucLa4M0mlGNK5StazyxRhWbCUhMnNWp5BZfUNUL-yOo';
+const SUPABASE_URL = 'https://ogtlaffkybpesaxastvx.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ndGxhZmZreWJwZXNheGFzdHZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTA4NTQsImV4cCI6MjA5NTM4Njg1NH0.toDw1_DsAjHjUuCg0hvRdEGyjA7mW2DJNlSWoVBT1qY';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 let USER_ID = null, IS_ADMIN = false, selectedPaymentMethod = "telebirr", soundEnabled = localStorage.getItem('soundEnabled') !== 'false';
 let isProcessing = { buyAirtime: false };
@@ -1436,27 +1436,23 @@ async function submitWithdraw() {
     let bank = document.getElementById('withdrawBankName').value;
     if(isNaN(amt) || amt < 100) { showToast('Minimum 100 ETB','error'); isProcessing.withdraw=false; return; }
     if(!holder || !acc) { showToast('Account details required','error'); isProcessing.withdraw=false; return; }
-    const { count: tickets } = await sb.from('lottery_tickets').select('*',{count:'exact',head:true}).eq('user_id',USER_ID).eq('status','active');
-    const quad = (currentUser.total_deposited >= 1500) && (currentUser.win_chance_plays >= 10) && (tickets >= 1) && (currentUser.active_referrals >= 1);
-    if(!quad) { showToast('Complete Quad-Lock first','error'); isProcessing.withdraw=false; return; }
-    const today = new Date().toISOString().slice(0,10);
-    if(currentUser.last_withdraw_date === today) { showToast('Daily limit reached','error'); isProcessing.withdraw=false; return; }
-    if((currentUser.bonus_balance||0) < amt) { showToast('Insufficient bonus','error'); isProcessing.withdraw=false; return; }
-    const tax = Math.floor(amt*0.1);
-    const net = amt - tax;
-    await sb.from('users').update({ bonus_balance: currentUser.bonus_balance - amt, last_withdraw_date: today }).eq('user_id', USER_ID);
-    await sb.from('pending_withdrawals').insert({
-        user_id: USER_ID, amount: amt, tax_amount: tax, net_amount: net,
-        payment_info: `Bank: ${bank}, Account: ${acc}, Holder: ${holder}`,
-        request_time: new Date().toISOString().slice(0,19).replace('T',' '), status: 'pending'
-    });
-    showToast(`Withdrawal request submitted! Net: ${net} ETB`,'success');
-    playSound('success');
-    closeModal('withdrawModal');
-    document.getElementById('withdrawAmount').value = '';
-    document.getElementById('withdrawAccountHolder').value = '';
-    document.getElementById('withdrawBankAccount').value = '';
-    await loadAllData();
+    const paymentInfo = `Bank: ${bank}, Account: ${acc}, Holder: ${holder}`;
+    try {
+        const { error } = await sb.rpc('request_withdrawal_secure', {
+            p_amount: amt,
+            p_payment_info: paymentInfo
+        });
+        if (error) throw error;
+        showToast(`Withdrawal request submitted!`,'success');
+        playSound('success');
+        closeModal('withdrawModal');
+        document.getElementById('withdrawAmount').value = '';
+        document.getElementById('withdrawAccountHolder').value = '';
+        document.getElementById('withdrawBankAccount').value = '';
+        await loadAllData();
+    } catch (err) {
+        showToast(err.message, 'error');
+    }
     isProcessing.withdraw = false;
 }
 async function buyAsset(slotId) {
