@@ -1007,7 +1007,7 @@ async function checkSession() {
         showAuthModal();
     }
 }
-async function ensureUserExists(authUser) {
+async function ensureUserExists(authUser, referredBy = null) {
     try {
         const { data: existing, error: selectError } = await sb.from('users')
             .select('user_id')
@@ -1017,16 +1017,22 @@ async function ensureUserExists(authUser) {
         if (selectError) throw selectError;
         
         if (!existing) {
-            const { error: insertError } = await sb.from('users').insert({
+            const insertData = {
                 user_id: authUser.id,
                 username: authUser.email?.split('@')[0] || 'User',
                 balance: 0, bonus_balance: 0, coin_balance: 0,
                 total_deposited: 0, total_withdrawn: 0,
                 win_chance_plays: 0, active_referrals: 0,
                 joined_date: new Date().toISOString().slice(0,10)
-            });
+            };
+            // Set referred_by if a valid referrer ID was provided
+            if (referredBy && referredBy !== authUser.id) {
+                insertData.referred_by = referredBy;
+                console.log("Setting referred_by to", referredBy);
+            }
+            const { error: insertError } = await sb.from('users').insert(insertData);
             if (insertError) throw insertError;
-            console.log("Created user row for", authUser.id);
+            console.log("Created user row for", authUser.id, referredBy ? `referred by ${referredBy}` : '');
         }
         return true;
     } catch (err) {
@@ -1107,21 +1113,24 @@ async function register() {
     if(!email || !password) return showToast('Email and password required','error');
     if(password.length < 6) return showToast('Password min 6 chars','error');
     
+    // Get referral code from URL before signup
+    const urlParams = new URLSearchParams(window.location.search);
+    const referrerId = urlParams.get('ref');
+    console.log("Referral ID from URL:", referrerId);
+    
     const { error, data } = await sb.auth.signUp({ email, password });
     if(error) return showToast(error.message,'error');
     
-    // ✅ Set flag so checkSession knows we just registered
-    sessionStorage.setItem('just_registered', 'true');
+    // Pass referrerId to ensureUserExists
+    await ensureUserExists(data.user, referrerId);
     
-    // ✅ Show info message (no automatic login)
+    sessionStorage.setItem('just_registered', 'true');
     showToast('Registration successful! Please check your email to confirm your account.', 'info');
     
-    // Clear form fields
     document.getElementById('authEmail').value = '';
     document.getElementById('authPassword').value = '';
     if(document.getElementById('authUsername')) document.getElementById('authUsername').value = '';
     
-    // Switch to login mode
     setAuthMode('login');
     showToast('After confirming your email, please log in.', 'info');
 }
@@ -1236,12 +1245,30 @@ await loadReferralEarnings();
         <div class="progress-text">${completed}/4 Complete (${Math.round(percent)}%)</div>`;
     // Exchange info
     const today = new Date().toISOString().slice(0,10);
-    const { data: exchanged } = await sb.from('daily_exchange').select('amount_exchanged').eq('user_id', USER_ID).eq('exchange_date', today);
-    const exchangedAmt = exchanged?.reduce((s,r)=>s+(r.amount_exchanged||0),0) || 0;
-    const maxEx = Math.floor((currentUser.coin_balance||0) * 0.03);
-    const rem = Math.max(0, maxEx - exchangedAmt);
-    document.getElementById('exchangeInfo').innerHTML = `<div>📊 Daily limit: 3% (${maxEx} max)</div><div>✅ Remaining today: ${rem} coins</div>`;
-    document.getElementById('exchangeInfoModal').innerHTML = `<div>Max exchange: ${maxEx} coins</div><div>Remaining: ${rem} coins</div>`;
+    const { data: exchanged } = await sb.from('daily_exchange').select('id').eq('user_id', USER_ID).eq('exchange_date', today).maybeSingle();
+const alreadyExchanged = exchanged !== null;
+const maxEx = Math.floor((currentUser.coin_balance || 0) * 0.03);
+
+if (alreadyExchanged) {
+    document.getElementById('exchangeInfo').innerHTML = `
+        <div>⚠️ You have already exchanged today.</div>
+        <div>📊 Daily limit: 3% of coins (${maxEx} max)</div>
+        <div>⏳ Please try again tomorrow.</div>
+    `;
+    document.getElementById('exchangeInfoModal').innerHTML = `
+        <div>You have already exchanged today.</div>
+        <div>Come back tomorrow to exchange again.</div>
+    `;
+} else {
+    document.getElementById('exchangeInfo').innerHTML = `
+        <div>📊 Daily limit: 3% of your coins (up to ${maxEx} coins)</div>
+        <div>✅ You can exchange today.</div>
+    `;
+    document.getElementById('exchangeInfoModal').innerHTML = `
+        <div>You can exchange up to ${maxEx} coins right now.</div>
+        <div>⚠️ Only one exchange per day allowed.</div>
+    `;
+}
     // Market & Investments
     const { data: market } = await sb.from('market').select('*').order('slot_id');
     const { data: assets } = await sb.from('user_assets').select('*').eq('user_id', USER_ID).eq('sold', false);
@@ -1451,8 +1478,23 @@ async function buyCoins() {
 }
 async function exchangeCoins() {
     if (isProcessing.exchangeCoins) return;
-    isProcessing.exchangeCoins = true;
+    
     const today = new Date().toISOString().slice(0, 10);
+    
+    // Check if user already exchanged today (avoid unnecessary RPC call)
+    const { data: existing } = await sb
+        .from('daily_exchange')
+        .select('id')
+        .eq('user_id', USER_ID)
+        .eq('exchange_date', today)
+        .maybeSingle();
+    
+    if (existing) {
+        showToast('You have already exchanged today. Please try again tomorrow.', 'error');
+        return;
+    }
+    
+    isProcessing.exchangeCoins = true;
     try {
         const { error } = await sb.rpc('exchange_coins_to_bonus_fixed_secure', { p_date: today });
         if (error) throw error;
