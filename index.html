@@ -1047,7 +1047,14 @@ async function register() {
     const urlParams = new URLSearchParams(window.location.search);
     const ref = urlParams.get('ref');
     if(ref && ref !== data.user?.id) {
-        try { await sb.rpc('increment_referral', { referrer_id:ref }); } catch(e) { console.warn(e); }
+        try { 
+    await sb.rpc('increment_referral', { 
+        referrer_id: ref, 
+        referred_user_id: data.user.id 
+    }); 
+} catch(e) { 
+    console.warn(e); 
+}
     }
     closeAuthModal();
     checkSession();
