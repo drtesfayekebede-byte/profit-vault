@@ -916,7 +916,6 @@ function confetti() {
 
 // ==================== AUTHENTICATION (EMAIL ONLY) ====================
 async function checkSession() {
-    // Remove cache‑busting parameter
     if (window.location.search.includes('t=')) {
         history.replaceState({}, document.title, window.location.pathname);
     }
@@ -928,7 +927,7 @@ async function checkSession() {
         console.log("Session:", session?.user?.id || "No session");
         
         if (session?.user) {
-            // Ensure the user row exists BEFORE checking it
+            // User is logged in and confirmed
             const userExists = await ensureUserExists(session.user);
             if (!userExists) {
                 console.error("Failed to create user row");
@@ -940,7 +939,7 @@ async function checkSession() {
                 return;
             }
             
-            // Now fetch the user row (it should exist)
+            // Fetch user row
             const { data: userRow, error: fetchError } = await sb.from('users')
                 .select('user_id')
                 .eq('user_id', session.user.id)
@@ -957,7 +956,6 @@ async function checkSession() {
                 return;
             }
             
-            // Valid session – set up the app
             USER_ID = session.user.id;
             localStorage.setItem('profitvault_user_id', USER_ID);
             
@@ -974,12 +972,34 @@ async function checkSession() {
             await loadAllData();
             if (IS_ADMIN) showAdminTab();
             
-            // Close auth modal if it's open
             const authModal = document.getElementById('authModal');
             if (authModal) authModal.remove();
             
         } else {
-            showAuthModal();
+            // No session – check if we just registered (to avoid immediate modal)
+            // We can check a flag or just show modal after a delay
+            const justRegistered = sessionStorage.getItem('just_registered');
+            if (justRegistered) {
+                // User just registered, don't show modal immediately, but clear flag after a few seconds
+                sessionStorage.removeItem('just_registered');
+                showToast('Please confirm your email address to log in.', 'info');
+                // Keep modal hidden for now? Or show it with a message.
+                // Let's show the modal but with a note.
+                showAuthModal();
+                // Add a note inside modal
+                setTimeout(() => {
+                    const authForm = document.getElementById('authForm');
+                    if (authForm) {
+                        const note = document.createElement('p');
+                        note.style.color = '#fbbf24';
+                        note.style.marginTop = '10px';
+                        note.innerHTML = '📧 If you just registered, please check your email for confirmation link.';
+                        authForm.parentNode.insertBefore(note, authForm.nextSibling);
+                    }
+                }, 100);
+            } else {
+                showAuthModal();
+            }
         }
     } catch (err) {
         console.error("checkSession error:", err);
@@ -1086,26 +1106,24 @@ async function register() {
     const username = document.getElementById('authUsername')?.value.trim() || email.split('@')[0];
     if(!email || !password) return showToast('Email and password required','error');
     if(password.length < 6) return showToast('Password min 6 chars','error');
+    
     const { error, data } = await sb.auth.signUp({ email, password });
     if(error) return showToast(error.message,'error');
     
-    // ✅ IMPORTANT: Create the user row in public.users BEFORE inserting referral
-    await ensureUserExists(data.user);
+    // ✅ Set flag so checkSession knows we just registered
+    sessionStorage.setItem('just_registered', 'true');
     
-    const urlParams = new URLSearchParams(window.location.search);
-    const ref = urlParams.get('ref');
-    if(ref && ref !== data.user?.id) {
-        try { 
-            await sb.rpc('increment_referral', { 
-                referrer_id: ref, 
-                referred_user_id: data.user.id 
-            }); 
-        } catch(e) { 
-            console.warn(e); 
-        }
-    }
-    closeAuthModal();
-    checkSession();
+    // ✅ Show info message (no automatic login)
+    showToast('Registration successful! Please check your email to confirm your account.', 'info');
+    
+    // Clear form fields
+    document.getElementById('authEmail').value = '';
+    document.getElementById('authPassword').value = '';
+    if(document.getElementById('authUsername')) document.getElementById('authUsername').value = '';
+    
+    // Switch to login mode
+    setAuthMode('login');
+    showToast('After confirming your email, please log in.', 'info');
 }
 function closeAuthModal() {
     const m = document.getElementById('authModal');
