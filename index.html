@@ -921,53 +921,97 @@ async function checkSession() {
         history.replaceState({}, document.title, window.location.pathname);
     }
     
-    const { data: { session } } = await sb.auth.getSession();
-    
-    if (session?.user) {
-        // Ensure the user row exists BEFORE checking it
-        await ensureUserExists(session.user);
+    try {
+        const { data: { session }, error: sessionError } = await sb.auth.getSession();
+        if (sessionError) throw sessionError;
         
-        // Now fetch the user row (it should exist)
-        const { data: userRow } = await sb.from('users')
-            .select('user_id')
-            .eq('user_id', session.user.id)
-            .maybeSingle();
+        console.log("Session:", session?.user?.id || "No session");
         
-        if (!userRow) {
-            // This should not happen after ensureUserExists, but handle it
-            await sb.auth.signOut();
-            localStorage.clear();
-            sessionStorage.clear();
-            window.location.reload();
-            return;
+        if (session?.user) {
+            // Ensure the user row exists BEFORE checking it
+            const userExists = await ensureUserExists(session.user);
+            if (!userExists) {
+                console.error("Failed to create user row");
+                showToast("Account setup failed. Please try again.", "error");
+                await sb.auth.signOut();
+                localStorage.clear();
+                sessionStorage.clear();
+                showAuthModal();
+                return;
+            }
+            
+            // Now fetch the user row (it should exist)
+            const { data: userRow, error: fetchError } = await sb.from('users')
+                .select('user_id')
+                .eq('user_id', session.user.id)
+                .maybeSingle();
+            
+            if (fetchError) throw fetchError;
+            
+            if (!userRow) {
+                console.error("User row missing after ensureUserExists");
+                await sb.auth.signOut();
+                localStorage.clear();
+                sessionStorage.clear();
+                showAuthModal();
+                return;
+            }
+            
+            // Valid session – set up the app
+            USER_ID = session.user.id;
+            localStorage.setItem('profitvault_user_id', USER_ID);
+            
+            const { data: userData, error: userError } = await sb.from('users')
+                .select('is_admin')
+                .eq('user_id', USER_ID)
+                .single();
+            
+            if (userError) throw userError;
+            
+            IS_ADMIN = userData?.is_admin === true;
+            
+            await loadDepositSettings();
+            await loadAllData();
+            if (IS_ADMIN) showAdminTab();
+            
+            // Close auth modal if it's open
+            const authModal = document.getElementById('authModal');
+            if (authModal) authModal.remove();
+            
+        } else {
+            showAuthModal();
         }
-        
-        // Valid session – set up the app
-        USER_ID = session.user.id;
-        localStorage.setItem('profitvault_user_id', USER_ID);
-        
-        const { data: userData } = await sb.from('users')
-            .select('is_admin')
-            .eq('user_id', USER_ID)
-            .single();
-        IS_ADMIN = userData?.is_admin === true;
-        
-        await loadDepositSettings();
-        await loadAllData();
-        if (IS_ADMIN) showAdminTab();
-    } else {
+    } catch (err) {
+        console.error("checkSession error:", err);
+        showToast("Authentication error: " + err.message, "error");
         showAuthModal();
     }
 }
 async function ensureUserExists(authUser) {
-    const { data:existing } = await sb.from('users').select('user_id').eq('user_id', authUser.id).single();
-    if(!existing) {
-        await sb.from('users').insert({
-            user_id: authUser.id,
-            username: authUser.email?.split('@')[0] || 'User',
-            balance:0, bonus_balance:0, coin_balance:0, total_deposited:0, total_withdrawn:0,
-            win_chance_plays:0, active_referrals:0, joined_date:new Date().toISOString().split('T')[0]
-        });
+    try {
+        const { data: existing, error: selectError } = await sb.from('users')
+            .select('user_id')
+            .eq('user_id', authUser.id)
+            .maybeSingle();
+        
+        if (selectError) throw selectError;
+        
+        if (!existing) {
+            const { error: insertError } = await sb.from('users').insert({
+                user_id: authUser.id,
+                username: authUser.email?.split('@')[0] || 'User',
+                balance: 0, bonus_balance: 0, coin_balance: 0,
+                total_deposited: 0, total_withdrawn: 0,
+                win_chance_plays: 0, active_referrals: 0,
+                joined_date: new Date().toISOString().slice(0,10)
+            });
+            if (insertError) throw insertError;
+            console.log("Created user row for", authUser.id);
+        }
+        return true;
+    } catch (err) {
+        console.error("ensureUserExists error:", err);
+        return false;
     }
 }
 function showAuthModal() {
