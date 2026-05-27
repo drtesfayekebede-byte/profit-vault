@@ -1100,12 +1100,12 @@ async function login() {
         return;
     }
     
-    // Success: close the modal and reload the page
-    closeAuthModal();
+    // Direct removal of modal (no function call)
+    const modal = document.getElementById('authModal');
+    if (modal) modal.remove();
+    
     showToast('Login successful!', 'success');
-    setTimeout(() => {
-        window.location.reload();
-    }, 500);
+    window.location.reload();
 }
 async function register() {
     const email = document.getElementById('authEmail').value.trim();
@@ -1114,43 +1114,37 @@ async function register() {
     if (!email || !password) return showToast('Email and password required', 'error');
     if (password.length < 6) return showToast('Password min 6 chars', 'error');
 
-    // Get referral ID from localStorage (set on page load)
-    let referrerId = localStorage.getItem('profitvault_referral');
+    // Get referral ID (just from URL, no localStorage needed)
+    let referrerId = new URLSearchParams(window.location.search).get('ref');
     if (!referrerId) {
-        const urlParams = new URLSearchParams(window.location.search);
-        referrerId = urlParams.get('ref');
+        referrerId = localStorage.getItem('profitvault_referral');
     }
-    console.log("🔗 Referral ID for new user:", referrerId);
-
-    const { error, data } = await sb.auth.signUp({ email, password });
+    
+    // Store referral in user metadata during signup
+    const { error, data } = await sb.auth.signUp({
+        email,
+        password,
+        options: {
+            data: {
+                ref: referrerId,   // This will be stored in raw_user_meta_data
+                username: username
+            }
+        }
+    });
     if (error) return showToast(error.message, 'error');
 
-    // Call ensureUserExists to create the user row (without referral for now)
+    // The trigger will automatically set referred_by in public.users
+    // We still need to create the public.users row if not exists
     await ensureUserExists(data.user, null);
-
-    // If a valid referrerId exists, set referred_by using the RPC
-    if (referrerId && referrerId !== data.user.id) {
-        const { error: rpcError } = await sb.rpc('set_referred_by', {
-            p_user_id: data.user.id,
-            p_referrer_id: referrerId
-        });
-        if (rpcError) {
-            console.error("Failed to set referred_by:", rpcError);
-        } else {
-            console.log("✅ Referral saved via RPC");
-        }
-    }
-
-    // Clear stored referral
+    
     localStorage.removeItem('profitvault_referral');
-
     sessionStorage.setItem('just_registered', 'true');
     showToast('Registration successful! Please check your email to confirm your account.', 'info');
-
+    
     document.getElementById('authEmail').value = '';
     document.getElementById('authPassword').value = '';
     if (document.getElementById('authUsername')) document.getElementById('authUsername').value = '';
-
+    
     setAuthMode('login');
     showToast('After confirming your email, please log in.', 'info');
 }
