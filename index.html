@@ -1117,7 +1117,6 @@ async function register() {
     // Get referral ID from localStorage (set on page load)
     let referrerId = localStorage.getItem('profitvault_referral');
     if (!referrerId) {
-        // fallback to URL param
         const urlParams = new URLSearchParams(window.location.search);
         referrerId = urlParams.get('ref');
     }
@@ -1126,9 +1125,23 @@ async function register() {
     const { error, data } = await sb.auth.signUp({ email, password });
     if (error) return showToast(error.message, 'error');
 
-    await ensureUserExists(data.user, referrerId);
+    // Call ensureUserExists to create the user row (without referral for now)
+    await ensureUserExists(data.user, null);
 
-    // Clear the stored referral after use
+    // If a valid referrerId exists, set referred_by using the RPC
+    if (referrerId && referrerId !== data.user.id) {
+        const { error: rpcError } = await sb.rpc('set_referred_by', {
+            p_user_id: data.user.id,
+            p_referrer_id: referrerId
+        });
+        if (rpcError) {
+            console.error("Failed to set referred_by:", rpcError);
+        } else {
+            console.log("✅ Referral saved via RPC");
+        }
+    }
+
+    // Clear stored referral
     localStorage.removeItem('profitvault_referral');
 
     sessionStorage.setItem('just_registered', 'true');
