@@ -1013,9 +1013,9 @@ async function ensureUserExists(authUser, referredBy = null) {
             .select('user_id')
             .eq('user_id', authUser.id)
             .maybeSingle();
-        
+
         if (selectError) throw selectError;
-        
+
         if (!existing) {
             const insertData = {
                 user_id: authUser.id,
@@ -1023,20 +1023,21 @@ async function ensureUserExists(authUser, referredBy = null) {
                 balance: 0, bonus_balance: 0, coin_balance: 0,
                 total_deposited: 0, total_withdrawn: 0,
                 win_chance_plays: 0, active_referrals: 0,
-                joined_date: new Date().toISOString().slice(0,10)
+                joined_date: new Date().toISOString().slice(0, 10)
             };
-            // Set referred_by if a valid referrer ID was provided
             if (referredBy && referredBy !== authUser.id) {
                 insertData.referred_by = referredBy;
-                console.log("Setting referred_by to", referredBy);
+                console.log("✅ Setting referred_by to", referredBy);
+            } else {
+                console.log("⚠️ No valid referral ID provided");
             }
             const { error: insertError } = await sb.from('users').insert(insertData);
             if (insertError) throw insertError;
-            console.log("Created user row for", authUser.id, referredBy ? `referred by ${referredBy}` : '');
+            console.log("✅ Created user row for", authUser.id, referredBy ? `referred by ${referredBy}` : '');
         }
         return true;
     } catch (err) {
-        console.error("ensureUserExists error:", err);
+        console.error("❌ ensureUserExists error:", err);
         return false;
     }
 }
@@ -1110,33 +1111,33 @@ async function register() {
     const email = document.getElementById('authEmail').value.trim();
     const password = document.getElementById('authPassword').value;
     const username = document.getElementById('authUsername')?.value.trim() || email.split('@')[0];
-    if(!email || !password) return showToast('Email and password required','error');
-    if(password.length < 6) return showToast('Password min 6 chars','error');
-    
-    // Try URL first, then sessionStorage
-    let referrerId = new URLSearchParams(window.location.search).get('ref');
+    if (!email || !password) return showToast('Email and password required', 'error');
+    if (password.length < 6) return showToast('Password min 6 chars', 'error');
+
+    // Get referral ID from localStorage (set on page load)
+    let referrerId = localStorage.getItem('profitvault_referral');
     if (!referrerId) {
-        referrerId = sessionStorage.getItem('pending_referral');
+        // fallback to URL param
+        const urlParams = new URLSearchParams(window.location.search);
+        referrerId = urlParams.get('ref');
     }
-    
-    // 🔴 TEMPORARY ALERT - shows what we found
-    alert("Referrer ID captured: " + referrerId + "\nURL: " + window.location.href);
-    
-    console.log("Referral ID from URL or storage:", referrerId);
-    
+    console.log("🔗 Referral ID for new user:", referrerId);
+
     const { error, data } = await sb.auth.signUp({ email, password });
-    if(error) return showToast(error.message,'error');
-    
+    if (error) return showToast(error.message, 'error');
+
     await ensureUserExists(data.user, referrerId);
-    
-    sessionStorage.removeItem('pending_referral');
+
+    // Clear the stored referral after use
+    localStorage.removeItem('profitvault_referral');
+
     sessionStorage.setItem('just_registered', 'true');
     showToast('Registration successful! Please check your email to confirm your account.', 'info');
-    
+
     document.getElementById('authEmail').value = '';
     document.getElementById('authPassword').value = '';
-    if(document.getElementById('authUsername')) document.getElementById('authUsername').value = '';
-    
+    if (document.getElementById('authUsername')) document.getElementById('authUsername').value = '';
+
     setAuthMode('login');
     showToast('After confirming your email, please log in.', 'info');
 }
@@ -2173,31 +2174,33 @@ async function refreshAdminStats() {
 }
 // ==================== INIT ====================
 window.addEventListener('load', () => {
-    // --- Capture referral from URL and store in sessionStorage ---
+    // --- Capture referral from URL and store in localStorage ---
     const urlParams = new URLSearchParams(window.location.search);
-    const refParam = urlParams.get('ref');
-    if (refParam) {
-        sessionStorage.setItem('pending_referral', refParam);
-        console.log("Stored referral ID:", refParam);
+    const ref = urlParams.get('ref');
+    if (ref) {
+        localStorage.setItem('profitvault_referral', ref);
+        console.log("✅ Referral ID saved to localStorage:", ref);
     }
+    
     checkSession();
-// Handle password reset redirect
-const hashParams = new URLSearchParams(window.location.hash.substring(1));
-if (hashParams.get('type') === 'recovery') {
-    const newPassword = prompt("Set a new password (min 6 characters):");
-    if (newPassword && newPassword.length >= 6) {
-        sb.auth.updateUser({ password: newPassword })
-            .then(({ error }) => {
-                if (error) showToast(error.message, 'error');
-                else {
-                    showToast("Password updated! Please log in again.", 'success');
-                    history.replaceState(null, '', window.location.pathname);
-                }
-            });
-    } else if (newPassword) {
-        showToast("Password must be at least 6 characters", 'error');
+    
+    // Handle password reset redirect
+    const hashParams = new URLSearchParams(window.location.hash.substring(1));
+    if (hashParams.get('type') === 'recovery') {
+        const newPassword = prompt("Set a new password (min 6 characters):");
+        if (newPassword && newPassword.length >= 6) {
+            sb.auth.updateUser({ password: newPassword })
+                .then(({ error }) => {
+                    if (error) showToast(error.message, 'error');
+                    else {
+                        showToast("Password updated! Please log in again.", 'success');
+                        history.replaceState(null, '', window.location.pathname);
+                    }
+                });
+        } else if (newPassword) {
+            showToast("Password must be at least 6 characters", 'error');
+        }
     }
-}
     initHistoryTabs();
     document.querySelectorAll('.tab').forEach(tab => {
     tab.addEventListener('click', () => {
