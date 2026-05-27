@@ -1113,20 +1113,25 @@ async function register() {
     if(!email || !password) return showToast('Email and password required','error');
     if(password.length < 6) return showToast('Password min 6 chars','error');
     
-    // Get referral code from URL before signup
-    const urlParams = new URLSearchParams(window.location.search);
-    const referrerId = urlParams.get('ref');
-    console.log("Referral ID from URL:", referrerId);
+    // Try URL first, then sessionStorage
+    let referrerId = new URLSearchParams(window.location.search).get('ref');
+    if (!referrerId) {
+        referrerId = sessionStorage.getItem('pending_referral');
+    }
+    console.log("Referral ID from URL or storage:", referrerId);
     
     const { error, data } = await sb.auth.signUp({ email, password });
     if(error) return showToast(error.message,'error');
     
-    // Pass referrerId to ensureUserExists
     await ensureUserExists(data.user, referrerId);
+    
+    // Clear stored referral after use
+    sessionStorage.removeItem('pending_referral');
     
     sessionStorage.setItem('just_registered', 'true');
     showToast('Registration successful! Please check your email to confirm your account.', 'info');
     
+    // Clear form fields
     document.getElementById('authEmail').value = '';
     document.getElementById('authPassword').value = '';
     if(document.getElementById('authUsername')) document.getElementById('authUsername').value = '';
@@ -2172,6 +2177,13 @@ async function refreshAdminStats() {
 }
 // ==================== INIT ====================
 window.addEventListener('load', () => {
+    // --- Capture referral from URL and store in sessionStorage ---
+    const urlParams = new URLSearchParams(window.location.search);
+    const refParam = urlParams.get('ref');
+    if (refParam) {
+        sessionStorage.setItem('pending_referral', refParam);
+        console.log("Stored referral ID:", refParam);
+    }
     checkSession();
 // Handle password reset redirect
 const hashParams = new URLSearchParams(window.location.hash.substring(1));
