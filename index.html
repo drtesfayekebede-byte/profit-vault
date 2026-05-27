@@ -1118,6 +1118,10 @@ async function register() {
     if (!referrerId) {
         referrerId = sessionStorage.getItem('pending_referral');
     }
+    
+    // 🔴 TEMPORARY ALERT - shows what we found
+    alert("Referrer ID captured: " + referrerId + "\nURL: " + window.location.href);
+    
     console.log("Referral ID from URL or storage:", referrerId);
     
     const { error, data } = await sb.auth.signUp({ email, password });
@@ -1125,24 +1129,16 @@ async function register() {
     
     await ensureUserExists(data.user, referrerId);
     
-    // Clear stored referral after use
     sessionStorage.removeItem('pending_referral');
-    
     sessionStorage.setItem('just_registered', 'true');
     showToast('Registration successful! Please check your email to confirm your account.', 'info');
     
-    // Clear form fields
     document.getElementById('authEmail').value = '';
     document.getElementById('authPassword').value = '';
     if(document.getElementById('authUsername')) document.getElementById('authUsername').value = '';
     
     setAuthMode('login');
     showToast('After confirming your email, please log in.', 'info');
-}
-function closeAuthModal() {
-    const m = document.getElementById('authModal');
-    if(m) m.remove();
-    // No automatic reopen – user can click the Login button if needed
 }
 async function forgotPassword() {
     const email = prompt("Enter your registered email address to reset password:");
