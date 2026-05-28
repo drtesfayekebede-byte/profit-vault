@@ -51,24 +51,6 @@
         50% { border-color: rgba(251, 191, 36, 0.8); }
     }
 
-    /* ===== NEW BACKGROUND ANIMATIONS (zigzag lines & particles) ===== */
-    @keyframes slideZigzag {
-        0% { background-position: 0 0; }
-        100% { background-position: 200px 200px; }
-    }
-    @keyframes slideZigzagReverse {
-        0% { background-position: 0 0; }
-        100% { background-position: -200px 200px; }
-    }
-    @keyframes slideZigzagHorizontal {
-        0% { background-position: 0 0; }
-        100% { background-position: 300px 0; }
-    }
-    @keyframes floatParticle {
-        0% { transform: translate(0, 0) scale(1); opacity: 0.1; }
-        100% { transform: translate(100px, 100px) scale(1.5); opacity: 0.4; }
-    }
-
     /* ===== BASE – DEEP BLACK BACKGROUND (replaces old body) ===== */
     body {
     background: radial-gradient(circle at 20% 30%, #05050a, #000000);
@@ -79,82 +61,6 @@
     position: relative;
     overflow-x: hidden;
 }
-
-    /* The old body::before is REMOVED – zigzag lines replace it */
-
-    /* Animated zigzag line layers */
-    .zigzag-line {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
-        z-index: 0;
-                background: repeating-linear-gradient(
-    45deg,
-    rgba(0, 255, 255, 0.06) 0px,
-    rgba(0, 255, 255, 0.06) 2px,
-    transparent 2px,
-    transparent 12px
-);
-        mask-image: repeating-linear-gradient(
-            45deg,
-            transparent 0px,
-            transparent 20px,
-            black 20px,
-            black 40px
-        );
-        animation: slideZigzag 20s linear infinite;
-    }
-
-    .zigzag-line:nth-child(2) {
-      background: repeating-linear-gradient(
-    135deg,
-    rgba(255, 0, 255, 0.06) 0px,
-    rgba(255, 0, 255, 0.06) 2px,
-    transparent 2px,
-    transparent 12px
-);
-        mask-image: repeating-linear-gradient(
-            135deg,
-            transparent 0px,
-            transparent 30px,
-            black 30px,
-            black 60px
-        );
-        animation: slideZigzagReverse 25s linear infinite;
-    }
-
-    .zigzag-line:nth-child(3) {
-      background: repeating-linear-gradient(
-    90deg,
-    rgba(255, 255, 0, 0.05) 0px,
-    rgba(255, 255, 0, 0.05) 2px,
-    transparent 2px,
-    transparent 12px
-);
-        mask-image: repeating-linear-gradient(
-            90deg,
-            transparent 0px,
-            transparent 15px,
-            black 15px,
-            black 30px
-        );
-        animation: slideZigzagHorizontal 18s linear infinite;
-    }
-
-    /* Floating color particles (dim light) */
-    .particle {
-    position: fixed;
-    border-radius: 50%;
-    filter: blur(80px);    /* was 60px */
-    opacity: 0.5;          /* was 0.3 */
-    animation: floatParticle 15s infinite alternate ease-in-out;
-    pointer-events: none;
-    z-index: 0;
-}
-
     /* ===== ENSURE CONTENT STAYS ABOVE BACKGROUND ===== */
     .header, .balance-container, .tabs, .card, .modal, .game-grid, .market-grid, .toast, .network-status {
         position: relative;
@@ -237,18 +143,17 @@
         scrollbar-width: thin;
     }
     .tab {
-        background: rgba(30, 41, 59, 0.7);
-        backdrop-filter: blur(8px);
-        border: 1px solid rgba(56, 189, 248, 0.3);
-        padding: 10px 18px;
-        border-radius: 40px;
-        color: white;
-        font-size: 13px;
-        font-weight: bold;
-        cursor: pointer;
-        white-space: nowrap;
-        transition: all 0.3s;
-    }
+    background: #0a0a0f;
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    padding: 10px 18px;
+    border-radius: 40px;
+    color: white;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.3s;
+}
     .tab.active {
         background: linear-gradient(135deg, #fbbf24, #d97706);
         color: #1a1a2e;
@@ -258,16 +163,15 @@
 
     /* CARDS */
     .card {
-        background: rgba(15, 23, 42, 0.7);
-        backdrop-filter: blur(12px);
-        border-radius: 28px;
-        padding: 18px;
-        margin-bottom: 18px;
-        border: 1px solid rgba(251, 191, 36, 0.2);
-        transition: all 0.3s;
-        animation: fadeIn 0.3s ease-out;
-        box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-    }
+    background: #0a0a0f;
+    border-radius: 28px;
+    padding: 18px;
+    margin-bottom: 18px;
+    border: 1px solid rgba(251, 191, 36, 0.2);
+    transition: all 0.3s;
+    animation: fadeIn 0.3s ease-out;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
     .card:hover {
         border-color: rgba(251, 191, 36, 0.5);
         box-shadow: 0 8px 25px rgba(0,0,0,0.3);
@@ -680,8 +584,12 @@
 </div>
 
 <!-- MARKET -->
-<div id="market" class="tab-content"><div class="card"><h3>🛒 Investment Market</h3><div id="marketGrid" class="market-grid">Loading...</div></div><div class="card"><h3>🎒 My Investments</h3><div id="investments"></div></div></div>
-
+<div id="market" class="tab-content"><div class="card"><h3>🛒 Investment Market</h3><div id="marketGrid" class="market-grid">Loading...</div></div><div class="card"><h3>🎒 My Investments</h3><div id="investments"></div><div id="investmentsPagination" class="pagination-controls"></div></div></div>
+<div class="card">
+    <h3>📦 Sold Assets <button class="btn-sm btn-danger" style="float:right;" onclick="deleteSelectedSoldAssets()">🗑️ Delete Selected</button></h3>
+    <div id="soldAssetsList"></div>
+    <div id="soldAssetsPagination" class="pagination-controls"></div>
+</div>
 <!-- GAMES -->
 <div id="games" class="tab-content">
     <div class="card">
@@ -695,10 +603,18 @@
 <div id="cards" class="tab-content"><div class="card"><h3>🃏 Airtime Cards</h3><div id="cardsGrid" style="display:flex; flex-direction:column; gap:12px;"></div></div></div>
 
 <!-- LOTTERY -->
-<div id="lottery" class="tab-content"><div class="card"><h3>🎟️ Lottery Pools</h3><div id="lotteryPools"></div></div><div class="card"><h3>🎫 My Tickets</h3><div id="myTickets"></div></div><div class="card"><h3>🏆 Recent Draws</h3><div id="recentDraws"></div></div></div>
+<div id="lottery" class="tab-content"><div class="card"><h3>🎟️ Lottery Pools</h3><div id="lotteryPools"></div></div><div class="card"><h3>🎫 My Tickets</h3><div id="myTickets"></div></div><div class="card">
+    <h3>🏆 Recent Draws <button class="btn-sm btn-danger" style="float:right;" onclick="deleteSelectedDraws()">🗑️ Delete Selected</button></h3>
+    <div id="recentDraws"></div>
+    <div id="drawsPagination" class="pagination-controls"></div>
+</div></div>
 
 <!-- CLINIC -->
-<div id="clinic" class="tab-content"><div class="card"><h3>🏥 Online Clinic (50 Coins)</h3><textarea id="healthIssue" rows="6" placeholder="Describe your health issue..." style="width: 100%; box-sizing: border-box; font-size: 16px;"></textarea><button class="btn btn-info" onclick="startConsultation()">Start Consultation</button></div><div class="card"><h3>📋 My Consultations</h3><div id="consultations"></div></div></div>
+<div id="clinic" class="tab-content"><div class="card"><h3>🏥 Online Clinic (50 Coins)</h3><textarea id="healthIssue" rows="6" placeholder="Describe your health issue..." style="width: 100%; box-sizing: border-box; font-size: 16px;"></textarea><button class="btn btn-info" onclick="startConsultation()">Start Consultation</button></div><div class="card">
+    <h3>📋 My Consultations <button class="btn-sm btn-danger" style="float:right;" onclick="deleteSelectedConsultations()">🗑️ Delete Selected</button></h3>
+    <div id="consultations"></div>
+    <div id="consPagination" class="pagination-controls"></div>
+</div></div>
 
 <!-- PROFILE -->
 <div id="profile" class="tab-content">
@@ -720,7 +636,8 @@
             <button class="btn-sm active" data-hist="all">All</button>
             <button class="btn-sm" data-hist="depwith">Deposits/Withdrawals</button>
             <button class="btn-sm" data-hist="other">Other</button>
-            <button class="btn-sm btn-danger" onclick="clearSelectedHistory()">🗑️ Clear Selected</button>
+            <label style="margin-left:15px;"><input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll()"> Select All</label>
+<button class="btn-sm btn-danger" onclick="clearSelectedHistory()">🗑️ Clear Selected</button>
         </div>
         <div id="transactionList"></div>
         <div id="paginationControls" style="display:flex; justify-content:center; gap:10px; margin-top:15px;">
@@ -822,6 +739,10 @@ let USER_ID = null, IS_ADMIN = false, selectedPaymentMethod = "telebirr", soundE
 let isProcessing = { buyAirtime: false };
 // Transaction pagination & filtering
 let currentHistoryType = 'all';    // 'all', 'depwith', 'other'
+let allDraws = [], drawsPage = 1, totalDrawsPages = 1;
+let allCons = [], consPage = 1, totalConsPages = 1;
+let allSoldAssets = [], soldAssetsPage = 1, totalSoldAssetsPages = 1;
+let allInvestments = [], investmentsPage = 1, totalInvestmentsPages = 1;
 let currentPage = 1;
 let totalPages = 1;
 let allTransactions = [];
@@ -1280,17 +1201,8 @@ if (alreadyExchanged) {
 }
     // Market & Investments
     const { data: market } = await sb.from('market').select('*').order('slot_id');
-    const { data: assets } = await sb.from('user_assets').select('*').eq('user_id', USER_ID).eq('sold', false);
-    const ownedSlots = assets?.map(a=>a.slot_id) || [];
-    if(market) document.getElementById('marketGrid').innerHTML = market.map(item => `<div class="market-item ${ownedSlots.includes(item.slot_id)?'owned':''}" onclick="${!ownedSlots.includes(item.slot_id)?`buyAsset(${item.slot_id})`:''}"><div class="market-emoji">${item.emoji}</div><div class="market-name">${item.asset_name}</div><div class="market-price">${item.cost} 🪙</div><div class="market-roi">ROI ${((item.default_roi||1.25)-1)*100}%</div>${ownedSlots.includes(item.slot_id)?'✅ Owned':''}</div>`).join('');
-    if(assets) document.getElementById('investments').innerHTML = assets.map(asset => {
-        const purchase = new Date(asset.purchase_time);
-        const maturity = new Date(purchase.getTime() + 24*3600000);
-        const ready = new Date() >= maturity;
-        const payout = Math.round(asset.purchase_price * asset.roi_at_purchase);
-        const hoursLeft = Math.ceil((maturity - new Date())/3600000);
-        return `<div class="investment-item"><div><span style="font-size:20px;">${asset.emoji}</span> <strong>${asset.asset_name}</strong><div>Invested: ${asset.purchase_price} 🪙</div><div>Payout: ${payout} 🪙</div></div>${ready ? `<button class="sell-btn" onclick="sellAsset(${asset.id})">💵 Sell</button>` : `<span class="badge">⏳ ${hoursLeft}h left</span>`}</div>`;
-    }).join('');
+        await loadInvestments();
+    await loadSoldAssets();
     // Lottery
     const pools = [];
 for(let pid of [1,2,3]) {
@@ -1348,17 +1260,9 @@ document.getElementById('lotteryPools').innerHTML = pools.map(p => `
         <div><span class="badge">Active</span></div>
     </div>
 `).join('') : '<div class="loading">No tickets</div>';
-    const { data: recent } = await sb.from('lottery_draws').select('*').order('draw_time',{ascending:false}).limit(5);
-    document.getElementById('recentDraws').innerHTML = recent?.length ? recent.map(d => `<div class="ticket-item"><div>🎰 Pool #${d.pool_id}</div><div>Winner: ${d.winner_serial}</div><div class="badge">${d.prize_amount} 🪙</div></div>`).join('') : '<div class="loading">No draws</div>';
+        await loadDraws();
     // Consultations
-const { data: cons } = await sb.from('health_consultations').select('*').eq('user_id', USER_ID).order('created_at',{ascending:false}).limit(10);
-document.getElementById('consultations').innerHTML = cons?.length ? cons.map(c => `
-    <div class="consultation-item">
-        <div><strong>📅 ${escapeHTML(c.created_at?.slice(0,10))}</strong> <span class="badge">${escapeHTML(c.status)}</span></div>
-        <div>Issue: ${escapeHTML(c.issue?.slice(0,100))}</div>
-        ${c.admin_response ? `<div style="color:#10b981; margin-top:8px;">✅ Response: ${escapeHTML(c.admin_response.slice(0,200))}</div>` : '<div style="color:#fbbf24;">⏳ Waiting for admin response...</div>'}
-    </div>
-`).join('') : '<div class="loading">No consultations</div>';
+    await loadConsultations();
     // Transactions - load all, then filter/paginate
 const { data: txs } = await sb.from('transactions').select('*').eq('user_id', USER_ID).order('timestamp', {ascending: false});
 if (txs) {
@@ -2179,6 +2083,263 @@ async function refreshAdminStats() {
         showToast('Failed to load stats', 'error');
     }
 }
+// ========== PAGINATED INVESTMENTS ==========
+async function loadInvestments() {
+    const { data } = await sb.from('user_assets')
+        .select('*')
+        .eq('user_id', USER_ID)
+        .eq('sold', false)
+        .order('purchase_time', { ascending: false });
+    if (data && data.length) {
+        allInvestments = data;
+        totalInvestmentsPages = Math.ceil(allInvestments.length / 5);
+        if (investmentsPage > totalInvestmentsPages) investmentsPage = Math.max(1, totalInvestmentsPages);
+        const start = (investmentsPage - 1) * 5;
+        const pageItems = allInvestments.slice(start, start + 5);
+        document.getElementById('investments').innerHTML = pageItems.map(asset => {
+            const purchase = new Date(asset.purchase_time);
+            const maturity = new Date(purchase.getTime() + 24 * 3600000);
+            const ready = new Date() >= maturity;
+            const hoursLeft = Math.ceil((maturity - new Date()) / 3600000);
+            return `<div class="investment-item">
+                        <span>${asset.emoji} ${asset.asset_name}</span>
+                        <span>Invested: ${asset.purchase_price} 🪙</span>
+                        ${ready ? `<button class="btn-sm" onclick="sellAsset(${asset.id})">💵 Sell</button>` : `<span class="badge">⏳ ${hoursLeft}h left</span>`}
+                    </div>`;
+        }).join('');
+        document.getElementById('investmentsPagination').innerHTML = `
+            <button class="btn-sm" onclick="changeInvestmentsPage(-1)">◀ Previous</button>
+            <span>${investmentsPage} / ${totalInvestmentsPages || 1}</span>
+            <button class="btn-sm" onclick="changeInvestmentsPage(1)">Next ▶</button>
+        `;
+    } else {
+        document.getElementById('investments').innerHTML = '<div class="loading">No active investments</div>';
+        document.getElementById('investmentsPagination').innerHTML = '';
+    }
+}
+function changeInvestmentsPage(delta) {
+    const newPage = investmentsPage + delta;
+    if (newPage >= 1 && newPage <= totalInvestmentsPages) {
+        investmentsPage = newPage;
+        loadInvestments();
+    }
+}
+
+// ========== LOTTERY DRAWS ==========
+async function loadDraws() {
+    const { data } = await sb.from('lottery_draws').select('*').order('draw_time', { ascending: false });
+    if (data && data.length) {
+        allDraws = data;
+        totalDrawsPages = Math.ceil(allDraws.length / 5);
+        if (drawsPage > totalDrawsPages) drawsPage = Math.max(1, totalDrawsPages);
+        const start = (drawsPage - 1) * 5;
+        const pageItems = allDraws.slice(start, start + 5);
+        document.getElementById('recentDraws').innerHTML = pageItems.map(d => `
+            <div class="transaction-item">
+                <input type="checkbox" class="draw-checkbox" value="${d.id}">
+                <span>🎰 Pool #${d.pool_id}</span>
+                <span>Winner: ${d.winner_serial}</span>
+                <span class="badge">${d.prize_amount} 🪙</span>
+                <span>${new Date(d.draw_time).toLocaleString()}</span>
+            </div>
+        `).join('');
+        document.getElementById('drawsPagination').innerHTML = `
+            <button class="btn-sm" onclick="changeDrawsPage(-1)">◀ Previous</button>
+            <span>${drawsPage} / ${totalDrawsPages || 1}</span>
+            <button class="btn-sm" onclick="changeDrawsPage(1)">Next ▶</button>
+            ${drawsPage === 1 ? `<label style="margin-left:15px;"><input type="checkbox" id="selectAllDrawsCheckbox" onchange="toggleSelectAllDraws()"> Select All</label>` : ''}
+        `;
+        attachDrawsCheckboxEvents();
+    } else {
+        document.getElementById('recentDraws').innerHTML = '<div class="loading">No draws</div>';
+        document.getElementById('drawsPagination').innerHTML = '';
+    }
+}
+function changeDrawsPage(delta) {
+    const newPage = drawsPage + delta;
+    if (newPage >= 1 && newPage <= totalDrawsPages) {
+        drawsPage = newPage;
+        loadDraws();
+    }
+}
+function attachDrawsCheckboxEvents() {
+    const selectAll = document.getElementById('selectAllDrawsCheckbox');
+    if (selectAll) selectAll.checked = false;
+    document.querySelectorAll('#recentDraws .draw-checkbox').forEach(cb => {
+        cb.removeEventListener('change', updateDrawsSelectAll);
+        cb.addEventListener('change', updateDrawsSelectAll);
+    });
+}
+function updateDrawsSelectAll() {
+    const selectAll = document.getElementById('selectAllDrawsCheckbox');
+    if (!selectAll) return;
+    const checkboxes = document.querySelectorAll('#recentDraws .draw-checkbox');
+    selectAll.checked = checkboxes.length > 0 && Array.from(checkboxes).every(cb => cb.checked);
+}
+function toggleSelectAllDraws() {
+    const selectAll = document.getElementById('selectAllDrawsCheckbox');
+    document.querySelectorAll('#recentDraws .draw-checkbox').forEach(cb => cb.checked = selectAll.checked);
+}
+async function deleteSelectedDraws() {
+    const selected = Array.from(document.querySelectorAll('#recentDraws .draw-checkbox:checked')).map(cb => cb.value);
+    if (selected.length === 0) return showToast('No draws selected', 'info');
+    if (!confirm(`Delete ${selected.length} draw(s)? This cannot be undone.`)) return;
+    const { error } = await sb.from('lottery_draws').delete().in('id', selected);
+    if (error) showToast(error.message, 'error');
+    else {
+        showToast(`${selected.length} draw(s) deleted`, 'success');
+        drawsPage = 1;
+        await loadDraws();
+    }
+}
+
+// ========== CLINIC CONSULTATIONS ==========
+async function loadConsultations() {
+    const { data } = await sb.from('health_consultations')
+        .select('*')
+        .eq('user_id', USER_ID)
+        .order('created_at', { ascending: false });
+    if (data && data.length) {
+        allCons = data;
+        totalConsPages = Math.ceil(allCons.length / 5);
+        if (consPage > totalConsPages) consPage = Math.max(1, totalConsPages);
+        const start = (consPage - 1) * 5;
+        const pageItems = allCons.slice(start, start + 5);
+        document.getElementById('consultations').innerHTML = pageItems.map(c => `
+            <div class="consultation-item">
+                <input type="checkbox" class="cons-checkbox" value="${c.id}">
+                <div><strong>📅 ${c.created_at?.slice(0,10)}</strong> <span class="badge">${c.status}</span></div>
+                <div>Issue: ${escapeHTML(c.issue?.slice(0,100))}</div>
+                ${c.admin_response ? `<div style="color:#10b981;">✅ Response: ${escapeHTML(c.admin_response.slice(0,200))}</div>` : '<div style="color:#fbbf24;">⏳ Waiting...</div>'}
+            </div>
+        `).join('');
+        document.getElementById('consPagination').innerHTML = `
+            <button class="btn-sm" onclick="changeConsPage(-1)">◀ Previous</button>
+            <span>${consPage} / ${totalConsPages || 1}</span>
+            <button class="btn-sm" onclick="changeConsPage(1)">Next ▶</button>
+            ${consPage === 1 ? `<label style="margin-left:15px;"><input type="checkbox" id="selectAllConsCheckbox" onchange="toggleSelectAllCons()"> Select All</label>` : ''}
+        `;
+        attachConsCheckboxEvents();
+    } else {
+        document.getElementById('consultations').innerHTML = '<div class="loading">No consultations</div>';
+        document.getElementById('consPagination').innerHTML = '';
+    }
+}
+function changeConsPage(delta) {
+    const newPage = consPage + delta;
+    if (newPage >= 1 && newPage <= totalConsPages) {
+        consPage = newPage;
+        loadConsultations();
+    }
+}
+function attachConsCheckboxEvents() {
+    const selectAll = document.getElementById('selectAllConsCheckbox');
+    if (selectAll) selectAll.checked = false;
+    document.querySelectorAll('#consultations .cons-checkbox').forEach(cb => {
+        cb.removeEventListener('change', updateConsSelectAll);
+        cb.addEventListener('change', updateConsSelectAll);
+    });
+}
+function updateConsSelectAll() {
+    const selectAll = document.getElementById('selectAllConsCheckbox');
+    if (!selectAll) return;
+    const checkboxes = document.querySelectorAll('#consultations .cons-checkbox');
+    selectAll.checked = checkboxes.length > 0 && Array.from(checkboxes).every(cb => cb.checked);
+}
+function toggleSelectAllCons() {
+    const selectAll = document.getElementById('selectAllConsCheckbox');
+    document.querySelectorAll('#consultations .cons-checkbox').forEach(cb => cb.checked = selectAll.checked);
+}
+async function deleteSelectedConsultations() {
+    const selected = Array.from(document.querySelectorAll('#consultations .cons-checkbox:checked')).map(cb => cb.value);
+    if (selected.length === 0) return showToast('No consultations selected', 'info');
+    if (!confirm(`Delete ${selected.length} consultation(s)? This cannot be undone.`)) return;
+    const { error } = await sb.from('health_consultations').delete().in('id', selected);
+    if (error) showToast(error.message, 'error');
+    else {
+        showToast(`${selected.length} consultation(s) deleted`, 'success');
+        consPage = 1;
+        await loadConsultations();
+    }
+}
+
+// ========== SOLD ASSETS ==========
+async function loadSoldAssets() {
+    const { data } = await sb.from('user_assets')
+        .select('*')
+        .eq('user_id', USER_ID)
+        .eq('sold', true)
+        .order('purchase_time', { ascending: false });
+    if (data && data.length) {
+        allSoldAssets = data;
+        totalSoldAssetsPages = Math.ceil(allSoldAssets.length / 5);
+        if (soldAssetsPage > totalSoldAssetsPages) soldAssetsPage = Math.max(1, totalSoldAssetsPages);
+        const start = (soldAssetsPage - 1) * 5;
+        const pageItems = allSoldAssets.slice(start, start + 5);
+        document.getElementById('soldAssetsList').innerHTML = pageItems.map(asset => `
+            <div class="transaction-item">
+                <input type="checkbox" class="sold-checkbox" value="${asset.id}">
+                <span>${asset.emoji} ${asset.asset_name}</span>
+                <span>Sold for ${Math.round(asset.purchase_price * asset.roi_at_purchase)} 🪙</span>
+                <span>${new Date(asset.purchase_time).toLocaleDateString()}</span>
+            </div>
+        `).join('');
+        document.getElementById('soldAssetsPagination').innerHTML = `
+            <button class="btn-sm" onclick="changeSoldAssetsPage(-1)">◀ Previous</button>
+            <span>${soldAssetsPage} / ${totalSoldAssetsPages || 1}</span>
+            <button class="btn-sm" onclick="changeSoldAssetsPage(1)">Next ▶</button>
+            ${soldAssetsPage === 1 ? `<label style="margin-left:15px;"><input type="checkbox" id="selectAllSoldCheckbox" onchange="toggleSelectAllSold()"> Select All</label>` : ''}
+        `;
+        attachSoldCheckboxEvents();
+    } else {
+        document.getElementById('soldAssetsList').innerHTML = '<div class="loading">No sold assets</div>';
+        document.getElementById('soldAssetsPagination').innerHTML = '';
+    }
+}
+function changeSoldAssetsPage(delta) {
+    const newPage = soldAssetsPage + delta;
+    if (newPage >= 1 && newPage <= totalSoldAssetsPages) {
+        soldAssetsPage = newPage;
+        loadSoldAssets();
+    }
+}
+function attachSoldCheckboxEvents() {
+    const selectAll = document.getElementById('selectAllSoldCheckbox');
+    if (selectAll) selectAll.checked = false;
+    document.querySelectorAll('#soldAssetsList .sold-checkbox').forEach(cb => {
+        cb.removeEventListener('change', updateSoldSelectAll);
+        cb.addEventListener('change', updateSoldSelectAll);
+    });
+}
+function updateSoldSelectAll() {
+    const selectAll = document.getElementById('selectAllSoldCheckbox');
+    if (!selectAll) return;
+    const checkboxes = document.querySelectorAll('#soldAssetsList .sold-checkbox');
+    selectAll.checked = checkboxes.length > 0 && Array.from(checkboxes).every(cb => cb.checked);
+}
+function toggleSelectAllSold() {
+    const selectAll = document.getElementById('selectAllSoldCheckbox');
+    document.querySelectorAll('#soldAssetsList .sold-checkbox').forEach(cb => cb.checked = selectAll.checked);
+}
+async function deleteSelectedSoldAssets() {
+    const selected = Array.from(document.querySelectorAll('#soldAssetsList .sold-checkbox:checked')).map(cb => cb.value);
+    if (selected.length === 0) return showToast('No sold assets selected', 'info');
+    if (!confirm(`Delete ${selected.length} sold asset(s)? This cannot be undone.`)) return;
+    const { error } = await sb.from('user_assets').delete().in('id', selected);
+    if (error) showToast(error.message, 'error');
+    else {
+        showToast(`${selected.length} sold asset(s) deleted`, 'success');
+        soldAssetsPage = 1;
+        await loadSoldAssets();
+    }
+}
+
+// ========== TRANSACTION HISTORY SELECT ALL ==========
+function toggleSelectAll() {
+    const selectAll = document.getElementById('selectAllCheckbox');
+    const checkboxes = document.querySelectorAll('#transactionList .txn-checkbox');
+    checkboxes.forEach(cb => cb.checked = selectAll.checked);
+}
 // ==================== INIT ====================
 window.addEventListener('load', () => {
     // --- Capture referral from URL and store in localStorage ---
@@ -2232,17 +2393,5 @@ window.addEventListener('load', () => {
     else document.getElementById('toggleKnob').style.left = '3px';
 });
 </script>
-
-<!-- Animated zigzag lines (must be inside body, before closing body) -->
-<div class="zigzag-line"></div>
-<div class="zigzag-line"></div>
-<div class="zigzag-line"></div>
-
-<!-- Floating dim‑light particles -->
-<div class="particle" style="width: 300px; height: 300px; background: #00ffff; bottom: -100px; left: -100px;"></div>
-<div class="particle" style="width: 200px; height: 200px; background: #ff00ff; top: 20%; right: -50px; animation-duration: 20s;"></div>
-<div class="particle" style="width: 400px; height: 400px; background: #ffaa00; bottom: 10%; right: 30%; animation-duration: 25s;"></div>
-<div class="particle" style="width: 250px; height: 250px; background: #00ffaa; top: 60%; left: -80px; animation-duration: 18s;"></div>
-
 </body>
 </html>
