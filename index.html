@@ -68,6 +68,87 @@
     }
 
     /* ===== ALL YOUR ORIGINAL STYLES BELOW (unchanged) ===== */
+/* Header with logo and profile */
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+.app-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.logo-icon {
+    font-size: 40px;
+}
+.app-logo h1 {
+    font-size: 24px;
+    background: linear-gradient(135deg, #FFD700, #FFA500, #FF6347);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin: 0;
+}
+.app-logo p {
+    font-size: 12px;
+    color: #ccc;
+    margin: 0;
+}
+.profile-area {
+    position: relative;
+    cursor: pointer;
+}
+.profile-avatar {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+    transition: 0.2s;
+}
+.profile-avatar:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 10px rgba(59,130,246,0.5);
+}
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 55px;
+    background: #1e293b;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+    z-index: 1000;
+    min-width: 160px;
+    overflow: hidden;
+}
+.dropdown-menu div {
+    color: white;
+    padding: 12px 16px;
+    display: block;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.dropdown-menu div:hover {
+    background: #334155;
+}
+.show {
+    display: block;
+}
+@media (max-width: 600px) {
+    .app-logo h1 { font-size: 18px; }
+    .logo-icon { font-size: 28px; }
+    .profile-avatar { width: 40px; height: 40px; font-size: 18px; }
+}
     /* CARDS & CONTAINERS */
     .header {
         text-align: center;
@@ -543,8 +624,23 @@
 <body>
 <div id="networkStatus" class="network-status"></div>
 <div class="header">
-    <h1>🏦 ፕሮፊት ቮልት</h1>
-    <p>Profit Vault - Complete Investment Platform | Premium</p>
+    <div class="header-content">
+        <div class="app-logo">
+            <span class="logo-icon">🏦</span>
+            <div>
+                <h1>Profit Vault</h1>
+                <p>Complete Investment Platform | Premium</p>
+            </div>
+        </div>
+        <div class="profile-area" id="profileArea">
+            <div class="profile-avatar" id="profileAvatar">
+                <span id="avatarInitial">👤</span>
+            </div>
+            <div class="dropdown-menu" id="dropdownMenu">
+                <div id="dropdownItems"></div>
+            </div>
+        </div>
+    </div>
 </div>
 <div class="balance-container">
     <div class="balance-card primary" onclick="showModal('depositModal')">
@@ -572,7 +668,6 @@
     <button class="tab" data-tab="clinic">🏥 Clinic</button>
     <button class="tab" data-tab="profile">👤 Profile</button>
     <button class="tab" data-tab="contact">📞 Contact</button>
-    <button class="tab" id="logoutTab" style="background: linear-gradient(135deg, #ef4444, #dc2626); border-color: #ef4444;">🚪 Logout</button>
     <button class="tab" onclick="location.reload();" style="background: #3b82f6;">🔄 Refresh</button>
 </div>
 
@@ -748,6 +843,38 @@ let totalPages = 1;
 let allTransactions = [];
 
 // ==================== UTILITIES ====================
+// ========== PROFILE AVATAR & DROPDOWN ==========
+function updateProfileAvatar() {
+    const avatarSpan = document.getElementById('avatarInitial');
+    if (USER_ID && currentUser?.username) {
+        avatarSpan.innerText = currentUser.username.charAt(0).toUpperCase();
+    } else {
+        avatarSpan.innerText = '👤';
+    }
+}
+function updateUserMenu() {
+    const items = document.getElementById('dropdownItems');
+    if (USER_ID) {
+        items.innerHTML = `<div onclick="goToProfile()">👤 Profile</div><div onclick="logout()">🚪 Logout</div>`;
+    } else {
+        items.innerHTML = `<div onclick="showAuthModal()">🔐 Login / Register</div>`;
+    }
+}
+function toggleUserMenu() {
+    document.getElementById('dropdownMenu').classList.toggle('show');
+}
+function goToProfile() {
+    document.getElementById('dropdownMenu').classList.remove('show');
+    const profileTab = document.querySelector('.tab[data-tab="profile"]');
+    if (profileTab) profileTab.click();
+}
+// Close dropdown when clicking outside
+document.addEventListener('click', function(e) {
+    const area = document.getElementById('profileArea');
+    if (area && !area.contains(e.target)) {
+        document.getElementById('dropdownMenu').classList.remove('show');
+    }
+});
 function showToast(msg, type='success') {
     const t = document.getElementById('toast');
     t.textContent = msg;
@@ -888,7 +1015,8 @@ async function checkSession() {
             if (userError) throw userError;
             
             IS_ADMIN = userData?.is_admin === true;
-            
+                updateProfileAvatar();
+                updateUserMenu();
             await loadDepositSettings();
             await loadAllData();
             if (IS_ADMIN) showAdminTab();
@@ -1089,8 +1217,10 @@ async function logout() {
     await sb.auth.signOut();
     
     // 2. Wipe all browser storage
-    localStorage.clear();
-    sessionStorage.clear();
+localStorage.clear();
+sessionStorage.clear();
+updateProfileAvatar();
+updateUserMenu();
     
     // 3. Delete all IndexedDB databases (including Supabase's)
     if (window.indexedDB && window.indexedDB.databases) {
@@ -1149,6 +1279,7 @@ async function loadUser() {
         return loadUser();
     }
     currentUser = data;
+    updateProfileAvatar();
     document.getElementById('balance').innerText = (data.balance || 0).toLocaleString();
     document.getElementById('bonus').innerText = (data.bonus_balance || 0).toLocaleString();
     document.getElementById('coins').innerText = (data.coin_balance || 0).toLocaleString();
@@ -2349,7 +2480,11 @@ window.addEventListener('load', () => {
         localStorage.setItem('profitvault_referral', ref);
         console.log("✅ Referral ID saved to localStorage:", ref);
     }
-    
+    // Attach profile avatar click
+    document.getElementById('profileArea').addEventListener('click', function(e) {
+        e.stopPropagation();
+        toggleUserMenu();
+    });    
     checkSession();
     
     // Handle password reset redirect
