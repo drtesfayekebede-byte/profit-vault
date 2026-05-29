@@ -750,7 +750,8 @@
     </div>
     <div class="card">
     <h3>🏆 Leaderboard
-        <button class="btn-sm btn-info" onclick="refreshLeaderboard()" style="float:right;">🔄 Refresh</button>
+        <button class="btn-sm btn-info" onclick="refreshLeaderboard()" style="float:right; margin-left:8px;">🔄 Refresh</button>
+        <button class="btn-sm btn-danger" onclick="deleteSelectedLeaderboardUsers()" style="float:right;">🗑️ Delete Selected</button>
     </h3>
     <div id="leaderboard"></div>
     <div id="leaderboardPagination" style="display: flex; justify-content: center; gap: 10px; margin-top: 10px;"></div>
@@ -1441,9 +1442,6 @@ if (txs) {
 } else {
     document.getElementById('transactionList').innerHTML = '<div class="loading">No transactions</div>';
 }
-    // Leaderboard
-    const { data: top } = await sb.from('users').select('username, total_deposited').order('total_deposited',{ascending:false}).limit(10);
-    document.getElementById('leaderboard').innerHTML = top?.map((u,i) => `<div class="transaction-item"><div>${i+1}. @${escapeHTML(u.username) || 'User'}</div><div>${(u.total_deposited||0).toLocaleString()} ETB</div></div>`).join('') || '<div class="loading">No data</div>';
     // Profile Info
     document.getElementById('profileInfo').innerHTML = `<div class="profile-item">👤 ${escapeHTML(currentUser.username) || 'User'}</div><div>🆔 ${USER_ID.slice(0,8)}...</div><div>📅 Joined: ${escapeHTML(currentUser.joined_date) || 'N/A'}</div><div>💰 Deposited: ${(currentUser.total_deposited||0).toLocaleString()} ETB</div><div>📤 Withdrawn: ${(currentUser.total_withdrawn||0).toLocaleString()} ETB</div><div>👥 Referrals: ${currentUser.active_referrals||0}</div><div>🎮 Games: ${currentUser.win_chance_plays||0}</div>`;
     // Airtime cards – sort available first, then sold out, then by position
