@@ -53,7 +53,11 @@
 
     /* ===== BASE – DEEP BLACK BACKGROUND (replaces old body) ===== */
     body {
-    background: radial-gradient(circle at 70% 20%, #1a1a2e, #000000);
+    background: #000000;
+    background-image: 
+        radial-gradient(circle at 20% 30%, rgba(255, 51, 102, 0.4), transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(0, 102, 255, 0.4), transparent 50%),
+        radial-gradient(circle at 40% 80%, rgba(0, 255, 102, 0.3), transparent 50%);
     min-height: 100vh;
     padding: 16px;
     padding-bottom: 100px;
@@ -745,9 +749,12 @@
         </div>
     </div>
     <div class="card">
-        <h3>🏆 Leaderboard</h3>
-        <div id="leaderboard"></div>
-    </div>
+    <h3>🏆 Leaderboard
+        <button class="btn-sm btn-info" onclick="refreshLeaderboard()" style="float:right;">🔄 Refresh</button>
+    </h3>
+    <div id="leaderboard"></div>
+    <div id="leaderboardPagination" style="display: flex; justify-content: center; gap: 10px; margin-top: 10px;"></div>
+</div>
 </div>
 
 <!-- CONTACT -->
@@ -855,6 +862,10 @@ let allInvestments = [], investmentsPage = 1, totalInvestmentsPages = 1;
 let currentPage = 1;
 let totalPages = 1;
 let allTransactions = [];
+let leaderboardData = [];
+let leaderboardPage = 1;
+let totalLeaderboardPages = 1;
+const LEADERBOARD_PER_PAGE = 5;
 
 // ==================== UTILITIES ====================
 // ========== PROFILE AVATAR & DROPDOWN ==========
@@ -1303,6 +1314,7 @@ async function loadAllData() {
     if(!USER_ID) return;
     await loadUser();
 await loadReferralEarnings();
+await loadLeaderboard();
     // Quad-Lock
     const { count: lotteryCount } = await sb.from('lottery_tickets').select('*', {count:'exact', head:true}).eq('user_id', USER_ID).eq('status','active');
     const depositDone = (currentUser.total_deposited || 0) >= 1500;
@@ -1354,7 +1366,7 @@ if (market) {
             <div class="market-emoji">${item.emoji}</div>
             <div class="market-name">${item.asset_name}</div>
             <div class="market-price">${item.cost} 🪙</div>
-            <div class="market-roi">ROI ${((item.default_roi || 1.25) - 1) * 100}%</div>
+            <div class="market-roi">ROI ${Math.round(((item.default_roi || 1.25) - 1) * 100)}%</div>
             ${ownedSlots.includes(item.slot_id) ? '✅ Owned' : ''}
         </div>
     `).join('');
@@ -1528,6 +1540,114 @@ function initHistoryTabs() {
         };
     });
 }
+async function loadLeaderboard() {
+    try {
+        // Count all users (or only those with deposits – uncomment the .gt line if desired)
+        const { count: totalUsers, error: countError } = await sb
+            .from('users')
+            .select('*', { count: 'exact', head: true });
+            // .gt('total_deposited', 0);   // uncomment to show only depositors
+        if (countError) throw countError;
+
+        totalLeaderboardPages = Math.ceil(totalUsers / LEADERBOARD_PER_PAGE);
+        if (leaderboardPage > totalLeaderboardPages) leaderboardPage = Math.max(1, totalLeaderboardPages);
+
+        const start = (leaderboardPage - 1) * LEADERBOARD_PER_PAGE;
+        const end = start + LEADERBOARD_PER_PAGE - 1;
+
+        const { data: users, error } = await sb
+            .from('users')
+            .select('user_id, username, total_deposited')
+            .order('total_deposited', { ascending: false })
+            .range(start, end);
+        if (error) throw error;
+
+        leaderboardData = users || [];
+
+        const container = document.getElementById('leaderboard');
+        if (leaderboardData.length) {
+            container.innerHTML = leaderboardData.map((u, idx) => `
+                <div class="transaction-item" data-user-id="${u.user_id}">
+                    <input type="checkbox" class="leaderboard-checkbox" value="${u.user_id}" style="margin-right:12px;">
+                    <div style="flex:2;">${start + idx + 1}. @${escapeHTML(u.username) || 'User'}</div>
+                    <div style="flex:1; text-align:right;">${(u.total_deposited || 0).toLocaleString()} ETB</div>
+                </div>
+            `).join('');
+        } else {
+            container.innerHTML = '<div class="loading">No users found</div>';
+        }
+
+        const paginationDiv = document.getElementById('leaderboardPagination');
+        if (paginationDiv) {
+            paginationDiv.innerHTML = `
+                <button class="btn-sm" onclick="changeLeaderboardPage(-1)" ${leaderboardPage === 1 ? 'disabled' : ''}>◀ Previous</button>
+                <span>Page ${leaderboardPage} of ${totalLeaderboardPages || 1}</span>
+                <button class="btn-sm" onclick="changeLeaderboardPage(1)" ${leaderboardPage === totalLeaderboardPages ? 'disabled' : ''}>Next ▶</button>
+                ${leaderboardPage === 1 ? `<label style="margin-left:15px;"><input type="checkbox" id="selectAllLeaderboardCheckbox" onchange="toggleSelectAllLeaderboard()"> Select All</label>` : ''}
+            `;
+        }
+
+        attachLeaderboardCheckboxEvents();
+    } catch (err) {
+        console.error(err);
+        document.getElementById('leaderboard').innerHTML = '<div class="loading">Failed to load leaderboard</div>';
+    }
+}
+function attachLeaderboardCheckboxEvents() {
+    const selectAll = document.getElementById('selectAllLeaderboardCheckbox');
+    if (selectAll) selectAll.checked = false;
+    document.querySelectorAll('#leaderboard .leaderboard-checkbox').forEach(cb => {
+        cb.removeEventListener('change', updateLeaderboardSelectAll);
+        cb.addEventListener('change', updateLeaderboardSelectAll);
+    });
+}
+
+function updateLeaderboardSelectAll() {
+    const selectAll = document.getElementById('selectAllLeaderboardCheckbox');
+    if (!selectAll) return;
+    const checkboxes = document.querySelectorAll('#leaderboard .leaderboard-checkbox');
+    selectAll.checked = checkboxes.length > 0 && Array.from(checkboxes).every(cb => cb.checked);
+}
+
+function toggleSelectAllLeaderboard() {
+    const selectAll = document.getElementById('selectAllLeaderboardCheckbox');
+    const checkboxes = document.querySelectorAll('#leaderboard .leaderboard-checkbox');
+    checkboxes.forEach(cb => cb.checked = selectAll.checked);
+}
+
+async function deleteSelectedLeaderboardUsers() {
+    const selected = Array.from(document.querySelectorAll('#leaderboard .leaderboard-checkbox:checked')).map(cb => cb.value);
+    if (selected.length === 0) {
+        showToast('No users selected', 'info');
+        return;
+    }
+    if (!confirm(`⚠️ Permanently delete ${selected.length} user(s) and all their data? This cannot be undone.`)) return;
+    
+    const { error } = await sb.from('users').delete().in('user_id', selected);
+    if (error) {
+        showToast('Error deleting users: ' + error.message, 'error');
+    } else {
+        showToast(`${selected.length} user(s) deleted`, 'success');
+        leaderboardPage = 1;
+        await loadLeaderboard();
+        if (typeof refreshAdminStats === 'function') refreshAdminStats();
+        if (typeof loadAllData === 'function') loadAllData();
+    }
+}
+
+function changeLeaderboardPage(delta) {
+    const newPage = leaderboardPage + delta;
+    if (newPage >= 1 && newPage <= totalLeaderboardPages) {
+        leaderboardPage = newPage;
+        loadLeaderboard();
+    }
+}
+
+async function refreshLeaderboard() {
+    leaderboardPage = 1;
+    await loadLeaderboard();
+    showToast('Leaderboard refreshed', 'success');
+}
 // ==================== FINANCIAL ACTIONS ====================
 async function buyCoins() {
     if (isProcessing.buyCoins) return;
@@ -1665,8 +1785,17 @@ async function buyAsset(slotId) {
         isProcessing.buyAsset = false;
     }
 }
-async function sellAsset(assetId) {
-    if (isProcessing.sellAsset) return;
+async function sellAsset(assetId, buttonElement = null) {
+    if (isProcessing.sellAsset) {
+        console.log("Sell already in progress, ignoring double click");
+        return;
+    }
+    // If button element is provided, disable it and show processing text
+    const originalText = buttonElement ? buttonElement.innerText : '';
+    if (buttonElement) {
+        buttonElement.disabled = true;
+        buttonElement.innerText = '⏳ Selling...';
+    }
     isProcessing.sellAsset = true;
     try {
         const { error } = await sb.rpc('sell_market_asset_secure', { p_asset_id: assetId });
@@ -1678,9 +1807,12 @@ async function sellAsset(assetId) {
         showToast(err.message, 'error');
     } finally {
         isProcessing.sellAsset = false;
+        if (buttonElement) {
+            buttonElement.disabled = false;
+            buttonElement.innerText = originalText;
+        }
     }
 }
-
 // ==================== GAME ====================
 let gameActive = true;
 function createGameGrid() {
@@ -2289,10 +2421,12 @@ async function loadInvestments() {
             const maturity = new Date(purchase.getTime() + 24 * 3600000);
             const ready = new Date() >= maturity;
             const hoursLeft = Math.ceil((maturity - new Date()) / 3600000);
+            const payout = Math.round(asset.purchase_price * asset.roi_at_purchase);
             return `<div class="investment-item">
                         <span>${asset.emoji} ${asset.asset_name}</span>
                         <span>Invested: ${asset.purchase_price} 🪙</span>
-                        ${ready ? `<button class="btn-sm" onclick="sellAsset(${asset.id})">💵 Sell</button>` : `<span class="badge">⏳ ${hoursLeft}h left</span>`}
+                        <span>${ready ? `Sell for: ${payout} 🪙` : `Payout (est.): ${payout} 🪙`}</span>
+                        ${ready ? `<button class="btn-sm" onclick="sellAsset(${asset.id}, this)">💵 Sell</button>` : `<span class="badge">⏳ ${hoursLeft}h left</span>`}
                     </div>`;
         }).join('');
         document.getElementById('investmentsPagination').innerHTML = `
@@ -2303,13 +2437,6 @@ async function loadInvestments() {
     } else {
         document.getElementById('investments').innerHTML = '<div class="loading">No active investments</div>';
         document.getElementById('investmentsPagination').innerHTML = '';
-    }
-}
-function changeInvestmentsPage(delta) {
-    const newPage = investmentsPage + delta;
-    if (newPage >= 1 && newPage <= totalInvestmentsPages) {
-        investmentsPage = newPage;
-        loadInvestments();
     }
 }
 
