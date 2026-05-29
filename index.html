@@ -62,10 +62,14 @@
     overflow-x: hidden;
 }
     /* ===== ENSURE CONTENT STAYS ABOVE BACKGROUND ===== */
-    .header, .balance-container, .tabs, .card, .modal, .game-grid, .market-grid, .toast, .network-status {
+    .balance-container, .tabs, .card, .modal, .game-grid, .market-grid, .toast, .network-status {
         position: relative;
         z-index: 1;
     }
+.header {
+    position: relative;
+    z-index: 100;
+}
 
     /* ===== ALL YOUR ORIGINAL STYLES BELOW (unchanged) ===== */
 /* Header with logo and profile */
@@ -151,12 +155,6 @@
     .profile-avatar { width: 40px; height: 40px; font-size: 18px; }
 }
     /* CARDS & CONTAINERS */
-    .header {
-        text-align: center;
-        margin-bottom: 20px;
-        position: relative;
-        z-index: 1;
-    }
     .header h1 {
         font-size: 28px;
         background: linear-gradient(135deg, #FFD700, #FFA500, #FF6347);
