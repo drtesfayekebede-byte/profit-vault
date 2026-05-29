@@ -53,7 +53,7 @@
 
     /* ===== BASE – DEEP BLACK BACKGROUND (replaces old body) ===== */
     body {
-    background: radial-gradient(circle at 20% 30%, #05050a, #000000);
+    background: radial-gradient(circle at 70% 20%, #1a1a2e, #000000);
     min-height: 100vh;
     padding: 16px;
     padding-bottom: 100px;
@@ -119,6 +119,11 @@
     transform: scale(1.05);
     box-shadow: 0 0 10px rgba(59,130,246,0.5);
 }
+.profile-area {
+    position: relative;
+    cursor: pointer;
+    z-index: 100;
+}
 .dropdown-menu {
     display: none;
     position: absolute;
@@ -127,7 +132,7 @@
     background: #1e293b;
     border-radius: 12px;
     box-shadow: 0 8px 16px rgba(0,0,0,0.3);
-    z-index: 1000;
+    z-index: 10000;   /* ← increase this */
     min-width: 160px;
     overflow: hidden;
 }
@@ -831,7 +836,18 @@ const SUPABASE_URL = 'https://ogtlaffkybpesaxastvx.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ndGxhZmZreWJwZXNheGFzdHZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTA4NTQsImV4cCI6MjA5NTM4Njg1NH0.toDw1_DsAjHjUuCg0hvRdEGyjA7mW2DJNlSWoVBT1qY';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 let USER_ID = null, IS_ADMIN = false, selectedPaymentMethod = "telebirr", soundEnabled = localStorage.getItem('soundEnabled') !== 'false';
-let isProcessing = { buyAirtime: false };
+let isProcessing = {
+    buyCoins: false,
+    exchangeCoins: false,
+    deposit: false,
+    withdraw: false,
+    buyAsset: false,
+    sellAsset: false,
+    game: false,
+    buyAirtime: false,
+    buyLottery: false,
+    adminAction: false
+};
 // Transaction pagination & filtering
 let currentHistoryType = 'all';    // 'all', 'depwith', 'other'
 let allDraws = [], drawsPage = 1, totalDrawsPages = 1;
@@ -1503,95 +1519,114 @@ function initHistoryTabs() {
 }
 // ==================== FINANCIAL ACTIONS ====================
 async function buyCoins() {
-    if(isProcessing.buyCoins) return;
+    if (isProcessing.buyCoins) return;
     isProcessing.buyCoins = true;
     let amt = parseInt(document.getElementById('buyCoinsAmount').value);
-    if(isNaN(amt) || amt < 50) { showToast('Minimum 50 ETB','error'); isProcessing.buyCoins=false; return; }
+    if (isNaN(amt) || amt < 50) {
+        showToast('Minimum 50 ETB', 'error');
+        isProcessing.buyCoins = false;
+        return;
+    }
     try {
         const { error } = await sb.rpc('buy_coins_transaction_secure', { p_amount: amt });
         if (error) throw error;
-        showToast(`Bought ${amt} coins!`,'success');
+        showToast(`Bought ${amt} coins!`, 'success');
         playSound('coin');
         closeModal('buyCoinsModal');
         document.getElementById('buyCoinsAmount').value = '';
         await loadAllData();
     } catch (err) {
         showToast(err.message, 'error');
+    } finally {
+        isProcessing.buyCoins = false;
     }
-    isProcessing.buyCoins = false;
 }
 async function exchangeCoins() {
     if (isProcessing.exchangeCoins) return;
-    
     const today = new Date().toISOString().slice(0, 10);
-    
-    // Check if user already exchanged today (avoid unnecessary RPC call)
     const { data: existing } = await sb
         .from('daily_exchange')
         .select('id')
         .eq('user_id', USER_ID)
         .eq('exchange_date', today)
         .maybeSingle();
-    
     if (existing) {
         showToast('You have already exchanged today. Please try again tomorrow.', 'error');
         return;
     }
-    
     isProcessing.exchangeCoins = true;
     try {
         const { error } = await sb.rpc('exchange_coins_to_bonus_fixed_secure', { p_date: today });
         if (error) throw error;
-        showToast(`Exchange completed successfully!`, 'success');
+        showToast('Exchange completed successfully!', 'success');
         playSound('coin');
         closeModal('exchangeModal');
         await loadAllData();
     } catch (err) {
         showToast(err.message || 'Exchange failed', 'error');
+    } finally {
+        isProcessing.exchangeCoins = false;
     }
-    isProcessing.exchangeCoins = false;
 }
 async function submitDeposit() {
-    if(isProcessing.deposit) return;
-    isProcessing.deposit = true;
+    if (isProcessing.deposit) return;
     let amt = parseInt(document.getElementById('depositAmount').value);
     let holder = document.getElementById('accountHolder').value.trim();
     let txid = document.getElementById('transactionId').value.trim();
     let note = document.getElementById('depositNote').value;
-    if(isNaN(amt) || amt < 1500) { showToast('Minimum 1500 ETB','error'); isProcessing.deposit=false; return; }
-    if(!holder || !txid) { showToast('Account Holder and Transaction ID required','error'); isProcessing.deposit=false; return; }
+    if (isNaN(amt) || amt < 1500) {
+        showToast('Minimum 1500 ETB', 'error');
+        return;
+    }
+    if (!holder || !txid) {
+        showToast('Account Holder and Transaction ID required', 'error');
+        return;
+    }
     const bank = selectedPaymentMethod === 'telebirr' ? 'Telebirr' : 'Awash Bank';
-    await sb.from('pending_deposits').insert({
-        user_id: USER_ID, amount: amt, bank_name: bank, account_holder: holder,
-        transaction_id: txid, note: note, request_time: new Date().toISOString().slice(0,19).replace('T',' '),
-        status: 'pending'
-    });
-    showToast('Deposit request submitted!','success');
-    playSound('success');
-    closeModal('depositModal');
-    document.getElementById('depositAmount').value = '';
-    document.getElementById('accountHolder').value = '';
-    document.getElementById('transactionId').value = '';
-    document.getElementById('depositNote').value = '';
-    isProcessing.deposit = false;
+    isProcessing.deposit = true;
+    try {
+        await sb.from('pending_deposits').insert({
+            user_id: USER_ID, amount: amt, bank_name: bank, account_holder: holder,
+            transaction_id: txid, note: note,
+            request_time: new Date().toISOString().slice(0, 19).replace('T', ' '),
+            status: 'pending'
+        });
+        showToast('Deposit request submitted!', 'success');
+        playSound('success');
+        closeModal('depositModal');
+        document.getElementById('depositAmount').value = '';
+        document.getElementById('accountHolder').value = '';
+        document.getElementById('transactionId').value = '';
+        document.getElementById('depositNote').value = '';
+    } catch (err) {
+        showToast(err.message, 'error');
+    } finally {
+        isProcessing.deposit = false;
+    }
 }
 async function submitWithdraw() {
-    if(isProcessing.withdraw) return;
-    isProcessing.withdraw = true;
+    if (isProcessing.withdraw) return;
     let amt = parseInt(document.getElementById('withdrawAmount').value);
     let holder = document.getElementById('withdrawAccountHolder').value.trim();
     let acc = document.getElementById('withdrawBankAccount').value.trim();
     let bank = document.getElementById('withdrawBankName').value;
-    if(isNaN(amt) || amt < 100) { showToast('Minimum 100 ETB','error'); isProcessing.withdraw=false; return; }
-    if(!holder || !acc) { showToast('Account details required','error'); isProcessing.withdraw=false; return; }
+    if (isNaN(amt) || amt < 100) {
+        showToast('Minimum 100 ETB', 'error');
+        return;
+    }
+    if (!holder || !acc) {
+        showToast('Account details required', 'error');
+        return;
+    }
     const paymentInfo = `Bank: ${bank}, Account: ${acc}, Holder: ${holder}`;
+    isProcessing.withdraw = true;
     try {
         const { error } = await sb.rpc('request_withdrawal_secure', {
             p_amount: amt,
             p_payment_info: paymentInfo
         });
         if (error) throw error;
-        showToast(`Withdrawal request submitted!`,'success');
+        showToast('Withdrawal request submitted!', 'success');
         playSound('success');
         closeModal('withdrawModal');
         document.getElementById('withdrawAmount').value = '';
@@ -1600,36 +1635,39 @@ async function submitWithdraw() {
         await loadAllData();
     } catch (err) {
         showToast(err.message, 'error');
+    } finally {
+        isProcessing.withdraw = false;
     }
-    isProcessing.withdraw = false;
 }
 async function buyAsset(slotId) {
-    if(isProcessing.buyAsset) return;
+    if (isProcessing.buyAsset) return;
     isProcessing.buyAsset = true;
     try {
         const { error } = await sb.rpc('buy_market_asset_secure', { p_slot_id: slotId });
         if (error) throw error;
-        showToast(`Invested!`,'success');
+        showToast('Invested!', 'success');
         playSound('coin');
         await loadAllData();
     } catch (err) {
         showToast(err.message, 'error');
+    } finally {
+        isProcessing.buyAsset = false;
     }
-    isProcessing.buyAsset = false;
 }
 async function sellAsset(assetId) {
-    if(isProcessing.sellAsset) return;
+    if (isProcessing.sellAsset) return;
     isProcessing.sellAsset = true;
     try {
         const { error } = await sb.rpc('sell_market_asset_secure', { p_asset_id: assetId });
         if (error) throw error;
-        showToast(`Sold!`,'success');
+        showToast('Sold!', 'success');
         playSound('coin');
         await loadAllData();
     } catch (err) {
         showToast(err.message, 'error');
+    } finally {
+        isProcessing.sellAsset = false;
     }
-    isProcessing.sellAsset = false;
 }
 
 // ==================== GAME ====================
@@ -1925,27 +1963,35 @@ function renderPendingList(items, type) {
     `).join('');
 }
 async function handleAdminAction(type, action, id, amount, userId) {
-    if(!confirm(`${action.toUpperCase()} this request?`)) return;
-    if(type === 'deposit') {
-        if(action === 'approve') {
-            const { error } = await sb.rpc('approve_deposit_secure', { p_deposit_id: id, p_amount: amount });
-            if (error) return showToast(error.message, 'error');
-        } else {
-            await sb.from('pending_deposits').update({ status:'rejected' }).eq('id',id);
+    if (isProcessing.adminAction) return;
+    if (!confirm(`${action.toUpperCase()} this request?`)) return;
+    isProcessing.adminAction = true;
+    try {
+        if (type === 'deposit') {
+            if (action === 'approve') {
+                const { error } = await sb.rpc('approve_deposit_secure', { p_deposit_id: id, p_amount: amount });
+                if (error) throw error;
+            } else {
+                await sb.from('pending_deposits').update({ status: 'rejected' }).eq('id', id);
+            }
+        } else if (type === 'withdraw') {
+            if (action === 'approve') {
+                const { error } = await sb.rpc('approve_withdrawal_secure', { p_withdrawal_id: id, p_amount: amount });
+                if (error) throw error;
+            } else {
+                const { data: wd } = await sb.from('pending_withdrawals').select('amount').eq('id', id).single();
+                await sb.from('users').update({ bonus_balance: sb.raw(`bonus_balance + ${wd.amount}`) }).eq('user_id', userId);
+                await sb.from('pending_withdrawals').update({ status: 'rejected' }).eq('id', id);
+            }
         }
-    } else if(type === 'withdraw') {
-        if(action === 'approve') {
-            const { error } = await sb.rpc('approve_withdrawal_secure', { p_withdrawal_id: id, p_amount: amount });
-            if (error) return showToast(error.message, 'error');
-        } else {
-            const { data: wd } = await sb.from('pending_withdrawals').select('amount').eq('id',id).single();
-            await sb.from('users').update({ bonus_balance: sb.raw(`bonus_balance + ${wd.amount}`) }).eq('user_id',userId);
-            await sb.from('pending_withdrawals').update({ status:'rejected' }).eq('id',id);
-        }
+        showToast(`${action}d ${type} request`, 'success');
+        await loadAdminPanel();
+        await loadAllData();
+    } catch (err) {
+        showToast(err.message, 'error');
+    } finally {
+        isProcessing.adminAction = false;
     }
-    showToast(`${action}d ${type} request`,'success');
-    loadAdminPanel();
-    loadAllData();
 }
 async function respondConsultation(id) {
     const resp = document.getElementById(`resp_${id}`).value;
