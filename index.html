@@ -98,10 +98,6 @@
     color: #ccc;
     margin: 0;
 }
-.profile-area {
-    position: relative;
-    cursor: pointer;
-}
 .profile-avatar {
     width: 48px;
     height: 48px;
@@ -122,7 +118,7 @@
 .profile-area {
     position: relative;
     cursor: pointer;
-    z-index: 100;
+    z-index: 100000;
 }
 .dropdown-menu {
     display: none;
@@ -132,7 +128,7 @@
     background: #1e293b;
     border-radius: 12px;
     box-shadow: 0 8px 16px rgba(0,0,0,0.3);
-    z-index: 10000;   /* ← increase this */
+    z-index: 100000;
     min-width: 160px;
     overflow: hidden;
 }
@@ -684,11 +680,15 @@
 </div>
 
 <!-- MARKET -->
-<div id="market" class="tab-content"><div class="card"><h3>🛒 Investment Market</h3><div id="marketGrid" class="market-grid">Loading...</div></div><div class="card"><h3>🎒 My Investments</h3><div id="investments"></div><div id="investmentsPagination" class="pagination-controls"></div></div></div>
-<div class="card">
-    <h3>📦 Sold Assets <button class="btn-sm btn-danger" style="float:right;" onclick="deleteSelectedSoldAssets()">🗑️ Delete Selected</button></h3>
-    <div id="soldAssetsList"></div>
-    <div id="soldAssetsPagination" class="pagination-controls"></div>
+<!-- MARKET -->
+<div id="market" class="tab-content">
+    <div class="card"><h3>🛒 Investment Market</h3><div id="marketGrid" class="market-grid">Loading...</div></div>
+    <div class="card"><h3>🎒 My Investments</h3><div id="investments"></div><div id="investmentsPagination" class="pagination-controls"></div></div>
+    <div class="card">
+        <h3>📦 Sold Assets <button class="btn-sm btn-danger" style="float:right;" onclick="deleteSelectedSoldAssets()">🗑️ Delete Selected</button></h3>
+        <div id="soldAssetsList"></div>
+        <div id="soldAssetsPagination" class="pagination-controls"></div>
+    </div>
 </div>
 <!-- GAMES -->
 <div id="games" class="tab-content">
@@ -1348,8 +1348,21 @@ if (alreadyExchanged) {
 }
     // Market & Investments
     const { data: market } = await sb.from('market').select('*').order('slot_id');
-        await loadInvestments();
-    await loadSoldAssets();
+const { data: assets } = await sb.from('user_assets').select('*').eq('user_id', USER_ID).eq('sold', false);
+const ownedSlots = assets?.map(a => a.slot_id) || [];
+if (market) {
+    document.getElementById('marketGrid').innerHTML = market.map(item => `
+        <div class="market-item ${ownedSlots.includes(item.slot_id) ? 'owned' : ''}" onclick="${!ownedSlots.includes(item.slot_id) ? `buyAsset(${item.slot_id})` : ''}">
+            <div class="market-emoji">${item.emoji}</div>
+            <div class="market-name">${item.asset_name}</div>
+            <div class="market-price">${item.cost} 🪙</div>
+            <div class="market-roi">ROI ${((item.default_roi || 1.25) - 1) * 100}%</div>
+            ${ownedSlots.includes(item.slot_id) ? '✅ Owned' : ''}
+        </div>
+    `).join('');
+}
+await loadInvestments();
+await loadSoldAssets();
     // Lottery
     const pools = [];
 for(let pid of [1,2,3]) {
