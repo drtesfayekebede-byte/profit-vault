@@ -114,10 +114,15 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 24px;
-    font-weight: bold;
-    color: white;
+    overflow: hidden;
+    cursor: pointer;
     transition: 0.2s;
+}
+
+.profile-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 .profile-avatar:hover {
     transform: scale(1.05);
@@ -723,8 +728,8 @@
         </div>
         <div class="profile-area" id="profileArea">
             <div class="profile-avatar" id="profileAvatar">
-                <span id="avatarInitial">👤</span>
-            </div>
+    <img id="profileImage" src="https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app-assets/1780156694418.png" alt="Profit Vault" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+</div>
             <div class="dropdown-menu" id="dropdownMenu">
                 <div id="dropdownItems"></div>
             </div>
@@ -956,15 +961,6 @@ let totalLeaderboardPages = 1;
 const LEADERBOARD_PER_PAGE = 5;
 
 // ==================== UTILITIES ====================
-// ========== PROFILE AVATAR & DROPDOWN ==========
-function updateProfileAvatar() {
-    const avatarSpan = document.getElementById('avatarInitial');
-    if (USER_ID && currentUser?.username) {
-        avatarSpan.innerText = currentUser.username.charAt(0).toUpperCase();
-    } else {
-        avatarSpan.innerText = '👤';
-    }
-}
 function updateUserMenu() {
     const items = document.getElementById('dropdownItems');
     if (USER_ID) {
@@ -1129,7 +1125,6 @@ async function checkSession() {
             if (userError) throw userError;
             
             IS_ADMIN = userData?.is_admin === true;
-                updateProfileAvatar();
                 updateUserMenu();
             await loadDepositSettings();
             await loadAllData();
@@ -1335,7 +1330,6 @@ async function logout() {
     // 2. Wipe all browser storage
 localStorage.clear();
 sessionStorage.clear();
-updateProfileAvatar();
 updateUserMenu();
     
     // 3. Delete all IndexedDB databases (including Supabase's)
@@ -1395,7 +1389,6 @@ async function loadUser() {
         return loadUser();
     }
     currentUser = data;
-    updateProfileAvatar();
     document.getElementById('balance').innerText = (data.balance || 0).toLocaleString();
     document.getElementById('bonus').innerText = (data.bonus_balance || 0).toLocaleString();
     document.getElementById('coins').innerText = (data.coin_balance || 0).toLocaleString();
