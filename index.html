@@ -328,14 +328,35 @@
         gap: 12px;
     }
     .market-item {
-        background: linear-gradient(145deg, #1e293b, #0f172a);
-        border-radius: 20px;
-        padding: 12px 8px;
-        text-align: center;
-        cursor: pointer;
-        transition: all 0.2s;
-        border: 1px solid rgba(56, 189, 248, 0.3);
-    }
+    background: linear-gradient(145deg, #1e293b, #0f172a);
+    border-radius: 20px;
+    padding: 16px 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 1px solid rgba(56, 189, 248, 0.3);
+}
+.market-item:hover {
+    transform: scale(1.02);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+}
+.market-emoji, .market-image {
+    font-size: 48px;
+    display: block;
+    margin-bottom: 8px;
+}
+.market-name {
+    font-weight: bold;
+    font-size: 16px;
+}
+.market-price {
+    font-size: 14px;
+    color: #fbbf24;
+}
+.market-roi {
+    font-size: 12px;
+    color: #ccc;
+}
     .market-item:active { transform: scale(0.96); }
     .market-item.owned { opacity: 0.6; filter: grayscale(0.3); cursor: not-allowed; }
 
@@ -777,7 +798,8 @@
 <div id="depositModal" class="modal"><div class="modal-content"><span class="close" onclick="closeModal('depositModal')">&times;</span><h3>💰 Deposit Money</h3><div class="payment-methods" style="display:flex; gap:10px; margin-bottom:15px;"><div class="payment-method" data-payment="telebirr" onclick="selectPaymentMethod('telebirr')" style="flex:1; background:rgba(255,255,255,0.1); border-radius:16px; padding:10px; text-align:center; cursor:pointer;">📱 Telebirr</div><div class="payment-method" data-payment="awash" onclick="selectPaymentMethod('awash')" style="flex:1; background:rgba(255,255,255,0.1); border-radius:16px; padding:10px; text-align:center; cursor:pointer;">🏦 Awash</div></div><div id="telebirrInfo" class="telebirr-info" style="background:rgba(0,0,0,0.4); border-radius:16px; padding:12px; margin:10px 0; text-align:center;">📱 Send to Telebirr: <strong id="telebirrNumber">0935983470</strong><br>Name: <span id="telebirrName">Tesfaye</span></div><div id="awashInfo" class="bank-info" style="display:none; background:rgba(0,0,0,0.4); border-radius:16px; padding:12px; margin:10px 0; text-align:center;">🏦 <span id="bankName">Awash Bank</span>: <strong id="bankAccount">013201372354300</strong><br>Name: <span id="bankHolder">Tesfaye</span></div><input type="number" id="depositAmount" placeholder="Amount (Min 1500 ETB)"><input type="text" id="accountHolder" placeholder="Account Holder Name"><input type="text" id="transactionId" placeholder="Transaction ID"><textarea id="depositNote" rows="2" placeholder="Note (optional)"></textarea><button class="btn btn-success" onclick="submitDeposit()">Submit Deposit Request</button><p style="font-size:11px; margin-top:12px;">Admin will verify and approve.</p></div></div>
 <div id="buyCoinsModal" class="modal"><div class="modal-content"><span class="close" onclick="closeModal('buyCoinsModal')">&times;</span><h3>💱 Buy Coins</h3><p>1 ETB = 1 Coin</p><input type="number" id="buyCoinsAmount" placeholder="Amount (Min 50)"><button class="btn" onclick="buyCoins()">Buy Coins</button></div></div>
 <div id="exchangeModal" class="modal"><div class="modal-content"><span class="close" onclick="closeModal('exchangeModal')">&times;</span><h3>🔄 Exchange Coins → Bonus</h3><p>📊 Daily limit: 3% of your coins</p><p>💱 1 Coin = 1 Bonus</p><div id="exchangeInfoModal"></div><button class="btn btn-warning" onclick="exchangeCoins()">Exchange Now</button></div></div>
-<div id="withdrawModal" class="modal"><div class="modal-content"><span class="close" onclick="closeModal('withdrawModal')">&times;</span><h3>📤 Withdraw Bonus</h3><p>⚠️ Tax: 10%</p><p>🔒 Requires Quad-Lock 4/4</p><input type="number" id="withdrawAmount" placeholder="Amount (Min 100)"><input type="text" id="withdrawAccountHolder" placeholder="Account Holder"><input type="text" id="withdrawBankAccount" placeholder="Bank Account Number"><select id="withdrawBankName"><option>Telebirr</option><option>Awash Bank</option><option>CBE</option><option>Dashen Bank</option></select><button class="btn btn-danger" onclick="submitWithdraw()">Request Withdrawal</button></div></div>
+<div id="withdrawModal" class="modal"><div class="modal-content"><span class="close" onclick="closeModal('withdrawModal')">&times;</span><h3>📤 Withdraw Bonus</h3><p>⚠️ Tax: 10%</p><p>🔒 Requires Quad-Lock 4/4</p><input type="number" id="withdrawAmount" placeholder="Amount">
+<div id="withdrawHint" style="font-size:12px; color:#fbbf24; margin:5px 0;"></div><input type="text" id="withdrawAccountHolder" placeholder="Account Holder"><input type="text" id="withdrawBankAccount" placeholder="Bank Account Number"><select id="withdrawBankName"><option>Telebirr</option><option>Awash Bank</option><option>CBE</option><option>Dashen Bank</option></select><button class="btn btn-danger" onclick="submitWithdraw()">Request Withdrawal</button></div></div>
 <div id="toast" class="toast"></div>
 <script>
 // ==================== SUPABASE CONFIG ====================
@@ -913,6 +935,7 @@ function showToast(msg, type='success') {
 function showModal(id) {
     document.getElementById(id).classList.add('active');
     if (id === 'depositModal') refreshDepositModalInfo();
+    if (id === 'withdrawModal') updateWithdrawHint();   // <-- added line
     playSound('click');
 }
 function closeModal(id) {
@@ -1209,9 +1232,7 @@ async function register() {
     if (error) return showToast(error.message, 'error');
 
     // The trigger will automatically set referred_by in public.users
-    // We still need to create the public.users row if not exists
-    await ensureUserExists(data.user, null);
-    
+    // We still need to create the public.users row if not exists 
     localStorage.removeItem('profitvault_referral');
     sessionStorage.setItem('just_registered', 'true');
     showToast('Registration successful! Please check your email to confirm your account.', 'info');
@@ -1363,14 +1384,14 @@ const { data: assets } = await sb.from('user_assets').select('*').eq('user_id', 
 const ownedSlots = assets?.map(a => a.slot_id) || [];
 if (market) {
     document.getElementById('marketGrid').innerHTML = market.map(item => `
-        <div class="market-item ${ownedSlots.includes(item.slot_id) ? 'owned' : ''}" onclick="${!ownedSlots.includes(item.slot_id) ? `buyAsset(${item.slot_id})` : ''}">
-            <div class="market-emoji">${item.emoji}</div>
-            <div class="market-name">${item.asset_name}</div>
-            <div class="market-price">${item.cost} 🪙</div>
-            <div class="market-roi">ROI ${Math.round(((item.default_roi || 1.25) - 1) * 100)}%</div>
-            ${ownedSlots.includes(item.slot_id) ? '✅ Owned' : ''}
-        </div>
-    `).join('');
+    <div class="market-item ${ownedSlots.includes(item.slot_id) ? 'owned' : ''}" onclick="${!ownedSlots.includes(item.slot_id) ? `buyAsset(${item.slot_id})` : ''}">
+        ${item.image_url ? `<img src="${item.image_url}" class="market-image" style="width:60px; height:60px; object-fit:contain; display:block; margin:0 auto 8px;">` : `<div class="market-emoji">${item.emoji}</div>`}
+        <div class="market-name">${item.asset_name}</div>
+        <div class="market-price">${item.cost} 🪙</div>
+        <div class="market-roi">ROI ${Math.round(((item.default_roi || 1.25) - 1) * 100)}%</div>
+        ${ownedSlots.includes(item.slot_id) ? '✅ Owned' : ''}
+    </div>
+`).join('');
 }
 await loadInvestments();
 await loadSoldAssets();
@@ -1739,8 +1760,17 @@ async function submitWithdraw() {
     let holder = document.getElementById('withdrawAccountHolder').value.trim();
     let acc = document.getElementById('withdrawBankAccount').value.trim();
     let bank = document.getElementById('withdrawBankName').value;
-    if (isNaN(amt) || amt < 100) {
-        showToast('Minimum 100 ETB', 'error');
+    
+    // Fetch dynamic minimum from app_settings
+    const { data: minData, error: minError } = await sb
+        .from('app_settings')
+        .select('value')
+        .eq('key', 'withdrawal_minimum')
+        .single();
+    const minWithdraw = parseInt(minData?.value) || 500;
+    
+    if (isNaN(amt) || amt < minWithdraw) {
+        showToast(`Minimum withdrawal amount is ${minWithdraw} ETB`, 'error');
         return;
     }
     if (!holder || !acc) {
@@ -2017,14 +2047,17 @@ async function loadAdminPanel() {
     <button class="btn btn-sm btn-success" onclick="startNewLotteryRound(2)">🔄 Start New Round Pool 2</button>
     <button class="btn btn-sm btn-success" onclick="startNewLotteryRound(3)">🔄 Start New Round Pool 3</button>
 </div>
-        <div class="card"><h3>🛠️ Edit Market (Name, Emoji, Price, ROI)</h3>${market?.map(m => `
-    <div style="margin-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:8px;">
-        <input type="text" id="emoji_${m.slot_id}" value="${m.emoji}" style="width:60px;"> 
-        <input type="text" id="name_${m.slot_id}" value="${m.asset_name}" style="width:120px;"> 
-        <input type="number" id="price_${m.slot_id}" value="${m.cost}" style="width:80px;"> 
-        <input type="number" id="roi_${m.slot_id}" value="${m.default_roi}" step="0.01" style="width:80px;"> 
-        <button class="btn btn-sm" onclick="updateMarketItemFull(${m.slot_id})">Update</button>
+        <div class="card"><h3>🛠️ Edit Market (Name, Emoji, Price, ROI, Image)</h3>${market?.map(m => `
+    <div style="margin-bottom:15px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:8px;">
+        <input type="text" id="emoji_${m.slot_id}" value="${m.emoji}" style="width:60px;" placeholder="Emoji"> 
+        <input type="text" id="name_${m.slot_id}" value="${m.asset_name}" style="width:120px;" placeholder="Name"> 
+        <input type="number" id="price_${m.slot_id}" value="${m.cost}" style="width:80px;" placeholder="Cost"> 
+        <input type="number" id="roi_${m.slot_id}" value="${m.default_roi}" step="0.01" style="width:80px;" placeholder="ROI"> 
+        <input type="file" id="image_file_${m.slot_id}" accept="image/*" style="width:150px;">
+        <button class="btn-sm" onclick="uploadMarketImage(${m.slot_id})">📤 Upload Image</button>
+        <button class="btn btn-sm" onclick="updateMarketItemFull(${m.slot_id})">💾 Update</button>
     </div>`).join('')}</div>
+<button class="btn-sm btn-warning" onclick="resetAllROI()" style="margin-top:10px;">🔄 Reset All ROI to Default</button>
         <div class="card"><h3>🃏 Airtime Cards</h3>${cards?.map(c=>`<div>Cost: ${c.card_cost} ETB (${c.hidden_numbers.length} left) 
     <button class="btn btn-sm" onclick="editCard(${c.id}, ${c.card_cost}, '${JSON.stringify(c.hidden_numbers)}')">Edit</button>
     <button class="btn btn-sm btn-success" onclick="addCardNumbers(${c.id})">➕ Add Numbers</button>
@@ -2050,6 +2083,24 @@ async function loadAdminPanel() {
         </div>
         <button class="btn btn-sm btn-success" onclick="saveDepositSettings()">💾 Save Deposit Settings</button>
     </div>
+
+<div class="card">
+    <h3>🔧 Withdrawal Settings</h3>
+    <div style="margin-bottom:10px;">
+        <label>Withdrawal Freeze:</label>
+        <span id="withdrawFreezeStatus"></span>
+        <button class="btn-sm btn-warning" onclick="toggleWithdrawalFreeze()">Toggle Freeze</button>
+        <p style="font-size:12px; margin-top:5px;">When frozen, users see: "Today is holiday/weekend. Please try again tomorrow."</p>
+    </div>
+    <div style="margin-bottom:10px;">
+        <label>Minimum Withdrawal (ETB):</label>
+        <input type="number" id="withdrawMin" value="500" style="width:100px;">
+        <label style="margin-left:10px;">Step (ETB):</label>
+        <input type="number" id="withdrawStep" value="500" style="width:100px;">
+        <button class="btn-sm btn-success" onclick="saveWithdrawalLevels()">Save Levels</button>
+        <p style="font-size:12px; margin-top:5px;">Allowed amounts: minimum, minimum+step, minimum+2*step, …</p>
+    </div>
+</div>
 
     <div class="card">
         <h3>🧹 Storage Cleanup (Free Up Database Space)</h3>
@@ -2080,6 +2131,7 @@ async function loadAdminPanel() {
     </div>
 `;
     await refreshAdminStats();
+await loadWithdrawalSettings();
 }
 function renderPendingList(items, type) {
     if (!items?.length) return '<div>None</div>';
@@ -2216,6 +2268,63 @@ async function updateMarketItemFull(slotId) {
         showToast('Market updated successfully!', 'success');
         await loadAdminPanel();  // Refresh admin panel
         await loadAllData();     // Refresh user view
+    }
+}
+async function uploadMarketImage(slotId) {
+    const fileInput = document.getElementById(`image_file_${slotId}`);
+    const file = fileInput.files[0];
+    if (!file) {
+        showToast("Select an image file first", "error");
+        return;
+    }
+
+    // Limit file size to 500KB
+    if (file.size > 500 * 1024) {
+        showToast("Image must be less than 500KB", "error");
+        return;
+    }
+
+    const fileExt = file.name.split('.').pop();
+    const fileName = `asset_${slotId}_${Date.now()}.${fileExt}`;
+
+    const { error: uploadError } = await sb.storage
+        .from('market-images')
+        .upload(fileName, file, { upsert: true });
+    if (uploadError) {
+        showToast("Upload failed: " + uploadError.message, "error");
+        return;
+    }
+
+    const { data: urlData } = sb.storage.from('market-images').getPublicUrl(fileName);
+    const imageUrl = urlData.publicUrl;
+
+    const { error: dbError } = await sb
+        .from('market')
+        .update({ image_url: imageUrl })
+        .eq('slot_id', slotId);
+    if (dbError) {
+        showToast("Failed to save image URL: " + dbError.message, "error");
+        return;
+    }
+
+    showToast("Image uploaded and saved!", "success");
+    await loadAdminPanel();
+    await loadAllData();
+}
+async function resetAllROI() {
+    const defaultROI = parseFloat(prompt("Enter default ROI multiplier (e.g., 1.25 for 25%):", "1.25"));
+    if (isNaN(defaultROI) || defaultROI <= 0) {
+        showToast("Invalid ROI value", "error");
+        return;
+    }
+    if (!confirm(`Set ALL market assets to ROI ${Math.round((defaultROI-1)*100)}%? This cannot be undone easily.`)) return;
+    const { error } = await sb.from('market').update({ default_roi: defaultROI }).neq('slot_id', 0); // update all rows
+    if (error) {
+        showToast("Error: " + error.message, "error");
+    } else {
+        showToast("All ROIs reset successfully!", "success");
+        await loadAdminPanel(); // refresh admin panel
+        await loadAllData();    // refresh user market view
     }
 }
 async function editCard(cardId, currentCost, numbersJson) {
@@ -2399,6 +2508,72 @@ async function refreshAdminStats() {
     } catch (err) {
         console.error(err);
         showToast('Failed to load stats', 'error');
+    }
+}
+// ========== WITHDRAWAL SETTINGS ==========
+async function loadWithdrawalSettings() {
+    try {
+        const { data: frozen } = await sb.from('app_settings').select('value').eq('key', 'withdrawal_frozen').single();
+        const { data: minData } = await sb.from('app_settings').select('value').eq('key', 'withdrawal_minimum').single();
+        const { data: stepData } = await sb.from('app_settings').select('value').eq('key', 'withdrawal_step').single();
+        
+        const statusSpan = document.getElementById('withdrawFreezeStatus');
+        if (statusSpan) {
+            const isFrozen = frozen?.value === 'true';
+            statusSpan.innerText = isFrozen ? '❄️ FROZEN' : '✅ ACTIVE';
+            statusSpan.style.color = isFrozen ? '#ff6666' : '#66ff66';
+        }
+        const minInput = document.getElementById('withdrawMin');
+        const stepInput = document.getElementById('withdrawStep');
+        if (minInput) minInput.value = minData?.value || '500';
+        if (stepInput) stepInput.value = stepData?.value || '500';
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+async function toggleWithdrawalFreeze() {
+    const { data, error } = await sb.from('app_settings').select('value').eq('key', 'withdrawal_frozen').single();
+    if (error && error.code !== 'PGRST116') {
+        showToast('Error fetching freeze status', 'error');
+        return;
+    }
+    const newValue = (data?.value === 'true') ? 'false' : 'true';
+    const { error: updateError } = await sb.from('app_settings').upsert({ key: 'withdrawal_frozen', value: newValue }, { onConflict: 'key' });
+    if (updateError) {
+        showToast(updateError.message, 'error');
+    } else {
+        showToast(`Withdrawals ${newValue === 'true' ? 'FROZEN' : 'ACTIVE'}`, 'success');
+        await loadWithdrawalSettings();
+    }
+}
+
+async function saveWithdrawalLevels() {
+    const min = parseInt(document.getElementById('withdrawMin').value);
+    const step = parseInt(document.getElementById('withdrawStep').value);
+    if (isNaN(min) || min <= 0) {
+        showToast('Minimum must be a positive number', 'error');
+        return;
+    }
+    if (isNaN(step) || step <= 0) {
+        showToast('Step must be a positive number', 'error');
+        return;
+    }
+    const { error: errMin } = await sb.from('app_settings').upsert({ key: 'withdrawal_minimum', value: min.toString() }, { onConflict: 'key' });
+    if (errMin) { showToast(errMin.message, 'error'); return; }
+    const { error: errStep } = await sb.from('app_settings').upsert({ key: 'withdrawal_step', value: step.toString() }, { onConflict: 'key' });
+    if (errStep) { showToast(errStep.message, 'error'); return; }
+    showToast('Withdrawal level settings saved!', 'success');
+    await loadWithdrawalSettings();
+}
+async function updateWithdrawHint() {
+    const { data: minData } = await sb.from('app_settings').select('value').eq('key', 'withdrawal_minimum').single();
+    const { data: stepData } = await sb.from('app_settings').select('value').eq('key', 'withdrawal_step').single();
+    const min = minData?.value || '500';
+    const step = stepData?.value || '500';
+    const hintDiv = document.getElementById('withdrawHint');
+    if (hintDiv) {
+        hintDiv.innerHTML = `ℹ️ Withdrawal amounts must be in increments of ${step} ETB, starting from ${min} ETB (${min}, ${parseInt(min)+parseInt(step)}, ${parseInt(min)+2*parseInt(step)}, …).`;
     }
 }
 // ========== PAGINATED INVESTMENTS ==========
