@@ -330,27 +330,43 @@
     .market-item {
     background: linear-gradient(145deg, #1e293b, #0f172a);
     border-radius: 20px;
-    padding: 16px 12px;
+    padding: 0;
     text-align: center;
     cursor: pointer;
     transition: transform 0.2s, box-shadow 0.2s;
     border: 1px solid rgba(56, 189, 248, 0.3);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 .market-item:hover {
     transform: scale(1.02);
     box-shadow: 0 8px 16px rgba(0,0,0,0.3);
 }
-.market-emoji, .market-image {
-    font-size: 48px;
+.market-image {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
     display: block;
-    margin-bottom: 8px;
+}
+.market-emoji {
+    font-size: 64px;
+    padding: 20px 0;
+}
+.market-name, .market-price, .market-roi {
+    background: rgba(0,0,0,0.6);
+    padding: 6px 4px;
+    margin: 0;
 }
 .market-name {
     font-weight: bold;
-    font-size: 16px;
+    font-size: 14px;
+    margin-top: auto;
 }
 .market-price {
-    font-size: 14px;
+    font-size: 12px;
     color: #fbbf24;
 }
 .market-roi {
@@ -1384,14 +1400,14 @@ const { data: assets } = await sb.from('user_assets').select('*').eq('user_id', 
 const ownedSlots = assets?.map(a => a.slot_id) || [];
 if (market) {
     document.getElementById('marketGrid').innerHTML = market.map(item => `
-    <div class="market-item ${ownedSlots.includes(item.slot_id) ? 'owned' : ''}" onclick="${!ownedSlots.includes(item.slot_id) ? `buyAsset(${item.slot_id})` : ''}">
-        ${item.image_url ? `<img src="${item.image_url}" class="market-image" style="width:60px; height:60px; object-fit:contain; display:block; margin:0 auto 8px;">` : `<div class="market-emoji">${item.emoji}</div>`}
-        <div class="market-name">${item.asset_name}</div>
-        <div class="market-price">${item.cost} 🪙</div>
-        <div class="market-roi">ROI ${Math.round(((item.default_roi || 1.25) - 1) * 100)}%</div>
-        ${ownedSlots.includes(item.slot_id) ? '✅ Owned' : ''}
-    </div>
-`).join('');
+        <div class="market-item ${ownedSlots.includes(item.slot_id) ? 'owned' : ''}" onclick="${!ownedSlots.includes(item.slot_id) ? `buyAsset(${item.slot_id})` : ''}">
+            ${item.image_url ? `<img src="${item.image_url}" class="market-image">` : `<div class="market-emoji">${item.emoji}</div>`}
+            <div class="market-name">${item.asset_name}</div>
+            <div class="market-price">${item.cost} 🪙</div>
+            <div class="market-roi">ROI ${Math.round(((item.default_roi || 1.25) - 1) * 100)}%</div>
+            ${ownedSlots.includes(item.slot_id) ? '✅ Owned' : ''}
+        </div>
+    `).join('');
 }
 await loadInvestments();
 await loadSoldAssets();
