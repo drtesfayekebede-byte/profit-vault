@@ -271,7 +271,7 @@
 .market-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 20px;
+    gap: 10px;
 }
 
 .market-item {
@@ -370,28 +370,7 @@
     filter: grayscale(0.2);
     cursor: not-allowed;
 }
-.market-owned-badge {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: #10b981;
-    color: white;
-    font-size: 12px;
-    font-weight: bold;
-    padding: 4px 8px;
-    border-radius: 30px;
-    z-index: 2;
-    backdrop-filter: blur(2px);
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
 
-.market-item.owned {
-    opacity: 0.7;
-    filter: grayscale(0.2);
-    cursor: not-allowed;
-}
     /* BUTTONS */
     .btn {
         background: linear-gradient(135deg, #3b82f6, #8b5cf6);
@@ -2159,7 +2138,8 @@ async function loadAdminPanel() {
         <input type="number" id="roi_${m.slot_id}" value="${m.default_roi}" step="0.01" style="width:80px;" placeholder="ROI"> 
         <input type="file" id="image_file_${m.slot_id}" accept="image/*" style="width:150px;">
         <button class="btn-sm" onclick="uploadMarketImage(${m.slot_id})">📤 Upload Image</button>
-        <button class="btn btn-sm" onclick="updateMarketItemFull(${m.slot_id})">💾 Update</button>
+${m.image_url ? `<button class="btn-sm btn-danger" onclick="deleteMarketImage(${m.slot_id})">🗑️ Delete Image</button>` : ''}
+<button class="btn btn-sm" onclick="updateMarketItemFull(${m.slot_id})">💾 Update</button>
     </div>`).join('')}</div>
 <button class="btn-sm btn-warning" onclick="resetAllROI()" style="margin-top:10px;">🔄 Reset All ROI to Default</button>
         <div class="card"><h3>🃏 Airtime Cards</h3>${cards?.map(c=>`<div>Cost: ${c.card_cost} ETB (${c.hidden_numbers.length} left) 
@@ -2439,6 +2419,44 @@ async function uploadMarketImage(slotId) {
     showToast("Image uploaded and saved!", "success");
     await loadAdminPanel();
     await loadAllData();
+}
+async function deleteMarketImage(slotId) {
+    if (!confirm(`Delete the image for this asset? This cannot be undone.`)) return;
+    
+    // 1. Get current image URL
+    const { data: current, error: fetchError } = await sb
+        .from('market')
+        .select('image_url')
+        .eq('slot_id', slotId)
+        .single();
+    
+    if (fetchError || !current?.image_url) {
+        showToast('No image to delete', 'error');
+        return;
+    }
+    
+    // 2. Delete the file from storage
+    const oldFileName = current.image_url.split('/').pop();
+    if (oldFileName) {
+        const { error: deleteError } = await sb.storage
+            .from('market-images')
+            .remove([oldFileName]);
+        if (deleteError) console.warn("Could not delete file:", deleteError);
+    }
+    
+    // 3. Update database to remove image_url
+    const { error: dbError } = await sb
+        .from('market')
+        .update({ image_url: null })
+        .eq('slot_id', slotId);
+    
+    if (dbError) {
+        showToast('Failed to remove image: ' + dbError.message, 'error');
+    } else {
+        showToast('Image deleted successfully!', 'success');
+        await loadAdminPanel();  // Refresh the admin panel
+        await loadAllData();     // Refresh user view
+    }
 }
 async function resetAllROI() {
     const defaultROI = parseFloat(prompt("Enter default ROI multiplier (e.g., 1.25 for 25%):", "1.25"));
