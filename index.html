@@ -275,28 +275,27 @@
 }
 
 .market-item {
-    background: #0f172a;
-    border-radius: 20px;
-    overflow: hidden;
+    background: transparent; /* no background, no border on the whole card */
     cursor: pointer;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-    border: 1px solid rgba(251, 191, 36, 0.3);
-    box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.5);
     display: flex;
     flex-direction: column;
 }
 
 .market-item:hover {
     transform: scale(1.02);
-    box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.6);
 }
 
-/* Image container – keeps square aspect ratio */
+/* Image container – square with border and rounded corners */
 .market-image-container {
-    position: relative;
     aspect-ratio: 1 / 1;
     width: 100%;
     overflow: hidden;
+    border: 2px solid rgba(251, 191, 36, 0.6);
+    border-radius: 20px;
+    background: #0f172a;
+    position: relative;
+    box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.5);
 }
 
 .market-image {
@@ -316,7 +315,7 @@
     background: linear-gradient(145deg, #1e293b, #0f172a);
 }
 
-/* Owned badge – still on the image */
+/* Owned badge – inside the image container */
 .market-owned-badge {
     position: absolute;
     top: 10px;
@@ -334,21 +333,24 @@
     gap: 4px;
 }
 
-/* Text container – below the image (no overlay) */
+/* Text container – below image, no border */
 .market-info {
     padding: 8px 6px;
     text-align: center;
-    background: #0a0a0f;
-    border-top: 1px solid rgba(251, 191, 36, 0.2);
+    background: transparent;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 6px;
 }
 
 .market-name {
     font-weight: bold;
     font-size: 13px;
     color: #fff;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 .market-price {
@@ -362,7 +364,7 @@
     color: #ccc;
 }
 
-/* Owned card dimming */
+/* Owned card dimming (affects whole card) */
 .market-item.owned {
     opacity: 0.7;
     filter: grayscale(0.2);
