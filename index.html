@@ -1116,7 +1116,25 @@ async function checkSession() {
             
             USER_ID = session.user.id;
             localStorage.setItem('profitvault_user_id', USER_ID);
-            
+            const pendingRef = localStorage.getItem('profitvault_referral');
+if (pendingRef) {
+    const { data: existingUser, error: refFetchError } = await sb
+        .from('users')
+        .select('referred_by')
+        .eq('user_id', USER_ID)
+        .single();
+    if (!refFetchError && !existingUser?.referred_by) {
+        const { error: updateError } = await sb
+            .from('users')
+            .update({ referred_by: pendingRef })
+            .eq('user_id', USER_ID);
+        if (!updateError) {
+            localStorage.removeItem('profitvault_referral');
+            console.log('✅ Referral applied for OAuth user');
+            await loadUser();
+        }
+    }
+}
             const { data: userData, error: userError } = await sb.from('users')
                 .select('is_admin')
                 .eq('user_id', USER_ID)
