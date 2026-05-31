@@ -1218,9 +1218,6 @@ function showAuthModal() {
             <button id="registerModeBtn" onclick="setAuthMode('register')">Register</button>
         </div>
         <div id="authForm"></div>
-        <div style="text-align:center; margin-top:12px;">
-            <a href="#" onclick="forgotPassword()" style="color:#fbbf24; font-size:12px;">Forgot Password?</a>
-        </div>
     </div>
     `;
     document.body.appendChild(modalDiv);
@@ -1232,24 +1229,56 @@ function closeAuthModal() {
 }
 function setAuthMode(mode) {
     const container = document.getElementById('authForm');
-    if(!container) return;
+    if (!container) return;
     const isLogin = mode === 'login';
+
     // Update active button style
     const loginBtn = document.getElementById('loginModeBtn');
     const regBtn = document.getElementById('registerModeBtn');
-    if(loginBtn && regBtn) {
-        if(isLogin) { loginBtn.classList.add('active'); regBtn.classList.remove('active'); }
-        else { regBtn.classList.add('active'); loginBtn.classList.remove('active'); }
+    if (loginBtn && regBtn) {
+        if (isLogin) {
+            loginBtn.classList.add('active');
+            regBtn.classList.remove('active');
+        } else {
+            regBtn.classList.add('active');
+            loginBtn.classList.remove('active');
+        }
     }
-    container.innerHTML = `
-        <input type="email" id="authEmail" placeholder="Email address" required>
-        <div class="password-wrapper">
-            <input type="password" id="authPassword" placeholder="Password (min 6)" required>
-            <button type="button" class="password-toggle" onclick="togglePasswordVisibility('authPassword', this)">👁️</button>
-        </div>
-        ${!isLogin ? '<input type="text" id="authUsername" placeholder="Username (optional)">' : ''}
-        <button class="btn btn-success" onclick="${isLogin ? 'login()' : 'register()'}">${isLogin ? 'Sign In' : 'Create Account'}</button>
-    `;
+
+    // Show different forms based on mode
+    if (isLogin) {
+        // LOGIN FORM
+        container.innerHTML = `
+            <input type="email" id="authEmail" placeholder="Email address" required>
+            <div class="password-wrapper">
+                <input type="password" id="authPassword" placeholder="Password" required>
+                <button type="button" class="password-toggle" onclick="togglePasswordVisibility('authPassword', this)">👁️</button>
+            </div>
+            <button class="btn btn-success" onclick="login()">Sign In</button>
+            <div style="text-align: center; margin: 8px 0;">— or —</div>
+            <button class="btn btn-google" onclick="signInWithGoogle()" style="background: #db4437; color: white;">🔐 Sign in with Google</button>
+        `;
+    } else {
+        // REGISTER FORM
+        container.innerHTML = `
+            <input type="email" id="authEmail" placeholder="Email address" required>
+            <div class="password-wrapper">
+                <input type="password" id="authPassword" placeholder="Password (min 6)" required>
+                <button type="button" class="password-toggle" onclick="togglePasswordVisibility('authPassword', this)">👁️</button>
+            </div>
+            <div class="password-wrapper">
+                <input type="password" id="authConfirmPassword" placeholder="Confirm Password" required>
+                <button type="button" class="password-toggle" onclick="togglePasswordVisibility('authConfirmPassword', this)">👁️</button>
+            </div>
+            <input type="text" id="authUsername" placeholder="Username (optional)">
+            <button class="btn btn-success" onclick="register()">Create Account</button>
+            <div style="text-align: center; margin: 8px 0;">— or —</div>
+            <button class="btn btn-google" onclick="signInWithGoogle()" style="background: #db4437; color: white;">🔐 Sign in with Google</button>
+            <div style="background: rgba(239, 68, 68, 0.2); border-left: 3px solid #ef4444; padding: 8px; margin-top: 12px; border-radius: 8px;">
+                <span style="font-size: 12px;">⚠️ <strong>Important:</strong> Password recovery is disabled. Keep your password safe – you cannot reset it if forgotten.</span>
+            </div>
+        `;
+    }
 }
 async function login() {
     const email = document.getElementById('authEmail').value.trim();
@@ -1272,52 +1301,81 @@ async function login() {
 async function register() {
     const email = document.getElementById('authEmail').value.trim();
     const password = document.getElementById('authPassword').value;
+    const confirmPassword = document.getElementById('authConfirmPassword')?.value;
     const username = document.getElementById('authUsername')?.value.trim() || email.split('@')[0];
-    if (!email || !password) return showToast('Email and password required', 'error');
-    if (password.length < 6) return showToast('Password min 6 chars', 'error');
 
-    // Get referral ID (just from URL, no localStorage needed)
+    if (!email || !password) {
+        showToast('Email and password required', 'error');
+        return;
+    }
+
+    // Valid email format
+    const emailRegex = /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        showToast('Please enter a valid email address', 'error');
+        return;
+    }
+
+    if (password.length < 6) {
+        showToast('Password must be at least 6 characters', 'error');
+        return;
+    }
+
+    if (password !== confirmPassword) {
+        showToast('Passwords do not match', 'error');
+        return;
+    }
+
     let referrerId = new URLSearchParams(window.location.search).get('ref');
     if (!referrerId) {
         referrerId = localStorage.getItem('profitvault_referral');
     }
-    
-    // Store referral in user metadata during signup
-    const { error, data } = await sb.auth.signUp({
+
+    const { error } = await sb.auth.signUp({
         email,
         password,
         options: {
             data: {
-                ref: referrerId,   // This will be stored in raw_user_meta_data
+                ref: referrerId,
                 username: username
             }
         }
     });
-    if (error) return showToast(error.message, 'error');
 
-    // The trigger will automatically set referred_by in public.users
-    // We still need to create the public.users row if not exists 
-    localStorage.removeItem('profitvault_referral');
-    sessionStorage.setItem('just_registered', 'true');
-    showToast('Registration successful! Please check your email to confirm your account.', 'info');
-    
-    document.getElementById('authEmail').value = '';
-    document.getElementById('authPassword').value = '';
-    if (document.getElementById('authUsername')) document.getElementById('authUsername').value = '';
-    
-    setAuthMode('login');
-    showToast('After confirming your email, please log in.', 'info');
-}
-async function forgotPassword() {
-    const email = prompt("Enter your registered email address to reset password:");
-    if (!email) return;
-    const { error } = await sb.auth.resetPasswordForEmail(email, {
-        redirectTo: window.location.origin + window.location.pathname,
-    });
     if (error) {
-        showToast(error.message, 'error');
-    } else {
-        showToast("Password reset email sent! Check your inbox.", 'success');
+        if (error.message.includes('already registered')) {
+            showToast('This email is already registered. Please log in.', 'error');
+        } else {
+            showToast(error.message, 'error');
+        }
+        return;
+    }
+
+    localStorage.removeItem('profitvault_referral');
+    showToast('Registration successful! You are now logged in.', 'success');
+    const modal = document.getElementById('authModal');
+    if (modal) modal.remove();
+    window.location.reload();
+}
+async function signInWithGoogle() {
+    try {
+        let referrerId = new URLSearchParams(window.location.search).get('ref');
+        if (!referrerId) {
+            referrerId = localStorage.getItem('profitvault_referral');
+        }
+
+        const { data, error } = await sb.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+                redirectTo: window.location.origin + window.location.pathname,
+                data: {
+                    ref: referrerId
+                }
+            }
+        });
+        if (error) throw error;
+    } catch (err) {
+        showToast(err.message, 'error');
     }
 }
 async function logout() {
