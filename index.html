@@ -3281,10 +3281,13 @@ window.addEventListener('load', () => {
     document.querySelectorAll('.tab').forEach(tab => {
     tab.addEventListener('click', () => {
         const id = tab.getAttribute('data-tab');
+        if (!id) return;  // skip refresh button
+        const target = document.getElementById(id);
+        if (!target) return; // safety: if content missing, do nothing
         document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
         document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
         tab.classList.add('active');
-        document.getElementById(id).classList.add('active');
+        target.classList.add('active');
         if(id === 'games') createGameGrid();
         else if(id !== 'admin') loadAllData();
     });
