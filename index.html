@@ -762,6 +762,7 @@
     <button class="tab" data-tab="clinic">🏥 Clinic</button>
     <button class="tab" data-tab="profile">👤 Profile</button>
     <button class="tab" data-tab="contact">📞 Contact</button>
+    <button class="tab" data-tab="guide">📖 Guide</button>
     <button class="tab" onclick="location.reload();" style="background: #3b82f6;">🔄 Refresh</button>
 </div>
 
@@ -827,7 +828,8 @@
         <h3>📜 Transaction History</h3>
         <div class="sub-tabs" style="display:flex; gap:10px; margin-bottom:12px; flex-wrap:wrap;">
             <button class="btn-sm active" data-hist="all">All</button>
-            <button class="btn-sm" data-hist="depwith">Deposits/Withdrawals</button>
+            <button class="btn-sm" data-hist="deposit">Deposits</button>
+            <button class="btn-sm" data-hist="withdraw">Withdrawals</button>
             <button class="btn-sm" data-hist="other">Other</button>
             <label style="margin-left:15px;"><input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll()"> Select All</label>
 <button class="btn-sm btn-danger" onclick="clearSelectedHistory()">🗑️ Clear Selected</button>
@@ -1655,11 +1657,14 @@ async function loadReferralEarnings() {
 }
 function applyTransactionFilter() {
     let filtered = allTransactions;
-    if (currentHistoryType === 'depwith') {
-        filtered = allTransactions.filter(t => t.transaction_type.includes('Deposit') || t.transaction_type.includes('Withdrawal'));
+    if (currentHistoryType === 'deposit') {
+        filtered = allTransactions.filter(t => t.transaction_type === 'Deposit');
+    } else if (currentHistoryType === 'withdraw') {
+        filtered = allTransactions.filter(t => t.transaction_type === 'Withdrawal');
     } else if (currentHistoryType === 'other') {
         filtered = allTransactions.filter(t => !t.transaction_type.includes('Deposit') && !t.transaction_type.includes('Withdrawal'));
     }
+    // 'all' remains all transactions
     totalPages = Math.ceil(filtered.length / 5);
     if (currentPage > totalPages) currentPage = Math.max(1, totalPages);
     const start = (currentPage - 1) * 5;
@@ -3083,6 +3088,152 @@ function toggleSelectAll() {
     checkboxes.forEach(cb => cb.checked = selectAll.checked);
 }
 // ==================== INIT ====================
+// ========== DETAILED GUIDE CONTENT ==========
+const guideTexts = {
+    en: `
+        <div style="line-height:1.6;">
+            <h4>💰 Balance</h4>
+            <p>Your real money balance (ETB). Use it to <strong>deposit</strong> (add funds) via Telebirr or Awash Bank (minimum 1500 ETB) and to <strong>withdraw bonus</strong> after completing Quad‑Lock. Deposits are manually approved by admin.</p>
+            
+            <h4>🎁 Bonus</h4>
+            <p>Bonus is a secondary balance that can be <strong>withdrawn</strong> (subject to 10% tax and Quad‑Lock). You get bonus by exchanging coins (1 coin → 1 bonus) or from game wins. Bonus cannot be used for investments or lottery – only withdrawal.</p>
+            
+            <h4>🪙 Coins</h4>
+            <p>Coins are the main currency inside the platform. You can get coins by:</p>
+            <ul><li>Buying them: 1 ETB = 1 coin (minimum 50 coins).</li>
+            <li>Playing the Win Chance Game (50 coins per play, prizes up to 100 coins).</li>
+            <li>Referral rewards: when a friend you referred makes their first deposit, you earn 3% of that deposit in coins (one‑time).</li></ul>
+            <p>Coins are used for: <strong>Market investments</strong>, <strong>Lottery tickets</strong>, <strong>Clinic consultations</strong>, and <strong>exchange to bonus</strong>.</p>
+            
+            <h4>🛒 Market (Investments)</h4>
+            <p>Buy digital assets (e.g., virtual crops, commodities) using coins. Each asset has a <strong>cost</strong> and a <strong>ROI</strong> (return on investment). After 24 hours, you can sell the asset and receive the original cost + profit in coins. You can own one of each asset only. Sold assets are moved to "Sold Assets" history.</p>
+            
+            <h4>🎮 Win Chance Game</h4>
+            <p>Cost: 50 coins per play. A 4×4 grid of cards is shown. Click any card to reveal your prize. Prizes are random (0, 10, 25, 50, 75, 100 coins). Winning amount is added to your coin balance. Your total plays are counted toward Quad‑Lock (need 10 plays).</p>
+            
+            <h4>🎟️ Lottery</h4>
+            <p>Three pools with ticket prices: 50, 100, 200 coins. Prizes: 500, 1000, 2000 coins. Each pool has 15 tickets per round. You can buy any available number. Draws are done by admin – one winner per pool. Winners receive the prize in coins. If you own a ticket and the pool is drawn, your ticket becomes inactive.</p>
+            
+            <h4>🏥 Online Clinic</h4>
+            <p>Cost: 50 coins per consultation. Describe your health issue (min 10 characters). The admin will reply within the app. Your consultations (issue, status, admin response) are saved and can be viewed in the "My Consultations" list. You can delete old consultations.</p>
+            
+            <h4>👥 Referral System</h4>
+            <p>Share your unique referral link (copy from Profile tab). When a new user signs up using your link and makes <strong>their first deposit</strong> (any amount, even minimum 1500 ETB), you receive <strong>3% of that deposit amount in coins</strong>. The reward is one‑time per referred user. The referral is counted for Quad‑Lock (need 3 active referrals who have deposited).</p>
+            
+            <h4>🔒 Quad‑Lock (Withdrawal Requirement)</h4>
+            <p>To withdraw your bonus balance, you must complete all four tasks:</p>
+            <ol><li>Make at least one deposit of 1500 ETB or more.</li>
+            <li>Play the Win Chance Game at least 10 times.</li>
+            <li>Buy at least one lottery ticket.</li>
+            <li>Have at least 3 active referrals (friends who registered via your link and made a deposit).</li></ol>
+            <p>Your progress is shown on the Dashboard. Once 4/4 is complete, you can request a withdrawal from the bonus balance.</p>
+            
+            <h4>💸 Withdrawals</h4>
+            <p>Only <strong>bonus balance</strong> can be withdrawn. Tax: 10% (e.g., request 1000 ETB → 100 ETB tax, net 900 ETB). Withdrawal amounts must follow a <strong>minimum</strong> and <strong>step</strong> (admin configurable, default 500 ETB minimum and step 500 ETB, so allowed amounts: 500, 1000, 1500, etc.). After submitting a request, admin approves or rejects it. If approved, the net amount is deducted from your bonus and paid to you via the bank details you provided.</p>
+            
+            <h4>🔄 Exchange (Coins → Bonus)</h4>
+            <p>You can convert coins into bonus at a 1:1 rate. However:</p>
+            <ul><li><strong>Daily limit:</strong> Once per day.</li>
+            <li><strong>Amount limit:</strong> You may exchange up to 3% of your current coin balance (e.g., if you have 1000 coins, max exchange = 30 coins).</li>
+            <li>You choose the exact amount (≤ maximum). Exchange is recorded and cannot be undone.</li></ul>
+            <p>This helps you gradually move coins into withdrawable bonus.</p>
+            
+            <h4>📜 Transaction History</h4>
+            <p>You can filter transactions by: All, Deposits, Withdrawals, Other (exchange, referral rewards, game wins, consultation fees, etc.). You can also delete selected transactions (use checkboxes).</p>
+            
+            <h4>👑 Admin Panel</h4>
+            <p>Admins can approve/reject deposits and withdrawals, reply to clinic consultations, edit market assets (name, emoji, price, ROI, images), manage lottery draws, adjust withdrawal settings (freeze, min, step), and view platform statistics.</p>
+            
+            <h4>⚠️ Critical Warning</h4>
+            <p><strong>Password recovery is disabled in this app.</strong> If you forget your password, you will lose access to your account. There is no automated "Forgot Password" email. Keep your password saved securely. For Google Sign‑in users, you can still log in with Google, but you cannot recover an email/password account without admin help (admin can manually reset your password via Supabase dashboard).</p>
+            
+            <hr>
+            <p style="font-size: 0.9em; color: #fbbf24;">Profit Vault – Complete Investment Platform. Use responsibly.</p>
+        </div>
+    `,
+    am: `
+        <div style="line-height:1.6;">
+            <h4>💰 ቀሪ ሂሳብ (Balance)</h4>
+            <p>ይህ እውነተኛ የገንዘብ ቀሪ ሂሳብዎ ነው (በብር)። ገንዘብ ለማስገባት (በቴሌብር ወይም በአዋሽ ባንክ ይጠቀሙ፣ ዝቅተኛው 1500 ብር ነው) እና መስፈርቶችን ካሟሉ ገንዘብ ማውጣት ይችላሉ። ያስገቡት ገንዘብ በአስተዳዳሪው መጽደቅ አለበት።</p>
+            
+            <h4>🎁 ቦነስ (Bonus)</h4>
+            <p>ቦነስ ለማውጣት የሚቻል ሁለተኛ ቀሪ ሂሳብ ነው (10% ታክስ እና ኳድ ሎክ ማሟላት ያስፈልጋል)። ቦነስ የሚገኘው ሳንቲም በመለዋወጥ (1 ሳንቲም → 1 ቦነስ) ወይም ከጨዋታ ነው። ቦነስን ለኢንቨስትመንት ወይም ለሎተሪ መጠቀም አይቻልም – ለማውጣት ብቻ ነው።</p>
+            
+            <h4>🪙 ሳንቲም (Coins)</h4>
+            <p>ሳንቲም በመድረኩ ውስጥ ዋና ሚና አለው። ሳንቲም ማግኘት የሚቻለው በ:</p>
+            <ul><li>በመግዛት፦ 1 ETB = 1 ሳንቲም (ዝቅተኛ 50)።</li>
+            <li>ጨዋታ በመጫወት (50 ሳንቲም ወጪ፣ ሽልማት እስከ 100)።</li>
+            <li>ሪፌራል ሽልማት፦ በእርስዎ ማገናኛ የተመዘገበ ጓደኛ ለመጀመሪያ ጊዜ ገንዘብ ሲያስገባ፣ የዚያን ገንዘብ 3% በሳንቲም ያገኛሉ።</li></ul>
+            <p>ሳንቲምን ጥቅም ላይ የሚያውሉት ለገበያ ኢንቨስትመንት፣ ለሎተሪ ቲኬት፣ ለክሊኒክ ማማከር እና ወደ ቦነስ ለመለወጥ ነው።</p>
+            
+            <h4>🛒 ገበያ (Market)</h4>
+            <p>ዲጂታል ንብረቶችን በሳንቲም ይግዙ (ለምሳሌ ምናባዊ ሰብሎች)። እያንዳንዱ ንብረት ዋጋ እና ROI (ትርፍ በመቶኛ) አለው። ከ24 ሰአት በኋላ መልሰው በተቀመጠው የትርፍ ፐርሰንት በመሽጥ መጀመሪያ ያወጡትን ሳንቲም እና ትርፉን መልሰው ማግኘት ይችላሉ። አንድን ንብረት አንድ ጊዜ ብቻ ነው መግዛት የሚችሉት።</p>
+            
+            <h4>🎮 የዕድል ጨዋታ (Win Chance Game)</h4>
+            <p>ወጪ፦ 50 ሳንቲም በአንድ ጨዋታ። 4x4 ካርዶች ይታያሉ። ማንኛውንም ካርድ ጠቅ በማድረግ ሽልማትዎን ይገልጣሉ። ሽልማቶች (0፣10፣25፣50፣75፣100 ሳንቲም) በዘፈቀደ ናቸው። ያሸነፉት መጠን ወደ ሳንቲም ቀሪ ሂሳብዎ ይጨመራል። ጨዋታዎችዎ ለኳድ ሎክ ይቆጠራሉ (10 ጨዋታ ያስፈልጋል)።</p>
+            
+            <h4>🎟️ ሎተሪ (Lottery)</h4>
+            <p>ሶስት ገንዳዎች በቲኬት ዋጋ 50፣100፣200 ሳንቲም። ሽልማቶች፦ 500፣1000፣2000 ሳንቲም። እያንዳንዱ ገንዳ 15 ቲኬቶች አሉት። ማንኛውንም ቁጥር መግዛት ይቻላል። አሸናፊው በአስተዳዳሪው ይወጣል (እያንዳንዱ ገንዳ አንድ አሸናፊ)። አሸናፊው ሽልማቱን በሳንቲም ያገኛል። ቲኬትዎ ከተሳለ በኋላ እንደ ጥቅም ላይ የዋለ ይቆጠራል።</p>
+            
+            <h4>🏥 የመስመር ላይ ክሊኒክ (Clinic)</h4>
+            <p>ወጪ፦ 50 ሳንቲም በአንድ ማማከር። የጤና ጥያቄዎን ይግለጹ (ቢያንስ 10 ፊደል)። አስተዳዳሪው በመተግበሪያው ውስጥ መልስ ይሰጣል። ማማከርዎ (ጥያቄ፣ ሁኔታ፣ መልስ) ይቀመጣል እና ማየት ይችላሉ።</p>
+            
+            <h4>👥 ሪፌራል (Referral)</h4>
+            <p>ልዩ የሪፌራል ማገናኛዎን ያጋሩ (ከፕሮፋይል ስር ይቅዱ)። አዲስ ተጠቃሚ በእርስዎ ማገናኛ ተመዝግቦ ለመጀመሪያ ጊዜ ገንዘብ ሲያስገባ (ማንኛውም መጠን፣ ቢያንስ 1500 ቢሆን)፣ የዚያ ገንዘብ 3% በሳንቲም ያገኛሉ። ሪፌራል ለኳድ ሎክ ይቆጠራል (3 ንቁ ሪፌራሎች ያስፈልጋሉ)።</p>
+            
+            <h4>🔒 ኳድ ሎክ (Quad‑Lock) – ገንዘብ ለማውጣት መስፈርቶች</h4>
+            <p>ቦነስ ለማውጣት አራቱም ተግባራት መፈጸም አለባቸው፦</p>
+            <ol><li>ቢያንስ 1500 ብር ማስገባት።</li>
+            <li>የዕድል ጨዋታ ቢያንስ 10 ጊዜ መጫወት።</li>
+            <li>ቢያንስ አንድ ሎተሪ ቲኬት መግዛት።</li>
+            <li>ቢያንስ 3 ንቁ ሪፌራሎች ማግኘት (ጓደኞች በእርስዎ ማገናኛ ከተመዘገቡ እና ገንዘብ ካስገቡ)።</li></ol>
+            <p>እድገትዎ በዳሽቦርድ ላይ ይታያል። 4/4 ሲሆን ቦነስ ማውጣት ይችላሉ።</p>
+            
+            <h4>💸 ገንዘብ ማውጣት (Withdrawal)</h4>
+            <p><strong>ቦነስ ብቻ</strong> ማውጣት ይቻላል። ታክስ፦ 10% (ለምሳሌ 1000 ብር ብትጠይቁ 100 ብር ታክስ፣ የተጣራ 900 ብር)። መጠኖች <strong>ዝቅተኛ እና እርምጃ (step)</strong> መከተል አለባቸው (ነባሪ 500 ብር እና እርምጃ 500፤ ስለዚህ የሚፈቀዱ መጠኖች 500፣1000፣1500… ናቸው)። ጥያቄ ካቀረቡ በኋላ አስተዳዳሪው ያጸድቃል ወይም ውድቅ ያደርጋል። ሲያጸድቅ የተጣራ መጠን ከቦነስዎ ይቀንስ እና በባንክ ዝርዝርዎ ይከፈልዎታል።</p>
+            
+            <h4>🔄 ሳንቲም ወደ ቦነስ መለወጥ (Exchange)</h4>
+            <p>ሳንቲሞችዎን በ1:1 ወደ ቦነስ መቀየር ይችላሉ። ግን ወሰኖች፦</p>
+            <ul><li><strong>በቀን አንድ ጊዜ ብቻ።</strong></li>
+            <li><strong>ከፍተኛ መጠን፦</strong> በአሁኑ ሳንቲም ቀሪ ሂሳብዎ 3% ድረስ ብቻ (ለምሳሌ 1000 ሳንቲም ካለዎት ከፍተኛው 30 ሳንቲም)።</li>
+            <li>እርስዎ የሚፈልጉትን ትክክለኛ መጠን መምረጥ ይችላሉ (ከከፍተኛው በታች)።</li></ul>
+            <p>ይህ ሳንቲሞችን ወደ ሊወጣ በሚችል ቦነስ ቀስ በቀስ እንዲቀይሩ ያግዛል።</p>
+            
+            <h4>📜 የግብይት ታሪክ (Transaction History)</h4>
+            <p>ግብይቶችን በሚከተሉት መሰረት ማጣራት ይችላሉ፦ ሁሉም፣ ተቀማጭጥ፣ መውጫ፣ ሌላ (ምንዛሪ መለዋወጥ፣ የሪፌራል ሽልማት፣ የጨዋታ ክፍያዎች፣ የክሊኒክ ክፍያዎች)። እንዲሁም የተመረጡ ግብይቶችን መሰረዝ ይችላሉ (አመልካች ሳጥኖችን ይጠቀሙ)።</p>
+            
+            <h4>👑 አስተዳዳሪ ፓነል (Admin Panel)</h4>
+            <p>አስተዳዳሪዎች የሚከተሉትን ማድረግ ይችላሉ፦ ገንዘብ ማስገባት/ማውጣት ጥያቄዎችን ማጽደቅ/ውድቅ ማድረግ፣ የክሊኒክ ጥያቄዎችን መልስ መስጠት፣ የገበያ ንብረቶችን ማስተካከል (ስም፣ ምልክት፣ ዋጋ፣ ROI፣ ምስል)፣ ሎተሪ ማውጣት፣ የመውጫ ቅንብሮችን መቀየር (እንቅፋት፣ ዝቅተኛ፣ እርምጃ) እና የመድረክ ስታቲስቲክስ ማየት።</p>
+            
+            <h4>⚠️ ወሳኝ ማስጠንቀቂያ</h4>
+            <p><strong>የይለፍ ቃል መልሶ ማግኛ አገልግሎት በዚህ መተግበሪያ ውስጥ ተዘግቷል።</strong> ይለፍ ቃልዎን ቢረሱት መለያዎን ማግኘት አይችሉም። ምንም አይነት አውቶማቲክ “ይለፍ ቃሌን ረሳሁ” ኢሜይል የለም። ይለፍ ቃልዎን በደህና ቦታ ያስቀምጡት። በGoogle ምዝገባ ለተመዘገቡ ተጠቃሚዎች በጉግል መግባት ይችላሉ፤ ነገር ግን ኢሜል/ይለፍ ቃል ለፈጠሩ ከረሱ በአስተዳዳሪ እርዳታ ብቻ ነው (አስተዳዳሪ ይለፍ ቃልዎን በእጅ መልሶ ማስጀመር ይችላል)።</p>
+            
+            <hr>
+            <p style="font-size: 0.9em; color: #fbbf24;">Profit Vault – የተሟላ የኢንቨስትመንት መድረክ። በኃላፊነት ይጠቀሙ።</p>
+        </div>
+    `
+};
+
+function showGuide(lang) {
+    document.getElementById('guideContent').innerHTML = guideTexts[lang];
+    // Style buttons
+    const engBtn = document.getElementById('guideEngBtn');
+    const amhBtn = document.getElementById('guideAmhBtn');
+    if (engBtn && amhBtn) {
+        engBtn.style.background = lang === 'en' ? '#fbbf24' : '#3b82f6';
+        amhBtn.style.background = lang === 'am' ? '#fbbf24' : '#10b981';
+    }
+}
+
+function initGuideTab() {
+    const engBtn = document.getElementById('guideEngBtn');
+    const amhBtn = document.getElementById('guideAmhBtn');
+    if (engBtn && amhBtn) {
+        engBtn.onclick = () => showGuide('en');
+        amhBtn.onclick = () => showGuide('am');
+        showGuide('en'); // default English
+    }
+}
 window.addEventListener('load', () => {
     // --- Capture referral from URL and store in localStorage ---
     const urlParams = new URLSearchParams(window.location.search);
@@ -3116,6 +3267,7 @@ window.addEventListener('load', () => {
         }
     }
     initHistoryTabs();
+    initGuideTab();
     document.querySelectorAll('.tab').forEach(tab => {
     tab.addEventListener('click', () => {
         const id = tab.getAttribute('data-tab');
