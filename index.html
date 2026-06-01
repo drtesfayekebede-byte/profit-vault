@@ -867,7 +867,7 @@
 <!-- MODALS -->
 <div id="depositModal" class="modal"><div class="modal-content"><span class="close" onclick="closeModal('depositModal')">&times;</span><h3>💰 Deposit Money</h3><div class="payment-methods" style="display:flex; gap:10px; margin-bottom:15px;"><div class="payment-method" data-payment="telebirr" onclick="selectPaymentMethod('telebirr')" style="flex:1; background:rgba(255,255,255,0.1); border-radius:16px; padding:10px; text-align:center; cursor:pointer;">📱 Telebirr</div><div class="payment-method" data-payment="awash" onclick="selectPaymentMethod('awash')" style="flex:1; background:rgba(255,255,255,0.1); border-radius:16px; padding:10px; text-align:center; cursor:pointer;">🏦 Awash</div></div><div id="telebirrInfo" class="telebirr-info" style="background:rgba(0,0,0,0.4); border-radius:16px; padding:12px; margin:10px 0; text-align:center;">📱 Send to Telebirr: <strong id="telebirrNumber">0935983470</strong><br>Name: <span id="telebirrName">Tesfaye</span></div><div id="awashInfo" class="bank-info" style="display:none; background:rgba(0,0,0,0.4); border-radius:16px; padding:12px; margin:10px 0; text-align:center;">🏦 <span id="bankName">Awash Bank</span>: <strong id="bankAccount">013201372354300</strong><br>Name: <span id="bankHolder">Tesfaye</span></div><input type="number" id="depositAmount" placeholder="Amount (Min 1500 ETB)"><input type="text" id="accountHolder" placeholder="Account Holder Name"><input type="text" id="transactionId" placeholder="Transaction ID"><textarea id="depositNote" rows="2" placeholder="Note (optional)"></textarea><button class="btn btn-success" onclick="submitDeposit()">Submit Deposit Request</button><p style="font-size:11px; margin-top:12px;">Admin will verify and approve.</p></div></div>
 <div id="buyCoinsModal" class="modal"><div class="modal-content"><span class="close" onclick="closeModal('buyCoinsModal')">&times;</span><h3>💱 Buy Coins</h3><p>1 ETB = 1 Coin</p><input type="number" id="buyCoinsAmount" placeholder="Amount (Min 50)"><button class="btn" onclick="buyCoins()">Buy Coins</button></div></div>
-<div id="exchangeModal" class="modal"><div class="modal-content"><span class="close" onclick="closeModal('exchangeModal')">&times;</span><h3>🔄 Exchange Coins → Bonus</h3><p>📊 Daily limit: 3% of your coins</p><p>💱 1 Coin = 1 Bonus</p><div id="exchangeInfoModal"></div><button class="btn btn-warning" onclick="exchangeCoins()">Exchange Now</button></div></div>
+<div id="exchangeModal" class="modal"><div class="modal-content"><span class="close" onclick="closeModal('exchangeModal')">&times;</span><h3>🔄 Exchange Coins → Bonus</h3><p>📊 Daily limit: 3% of your coins (once per day)</p><p>💱 1 Coin = 1 Bonus</p><div id="exchangeInfoModal"></div><input type="number" id="exchangeAmount" placeholder="Amount to exchange (max)" style="margin: 10px 0; width: 100%; padding: 8px; border-radius: 12px;"><button class="btn btn-warning" onclick="exchangeCoins()">Exchange Now</button></div></div>
 <div id="withdrawModal" class="modal"><div class="modal-content"><span class="close" onclick="closeModal('withdrawModal')">&times;</span><h3>📤 Withdraw Bonus</h3><p>⚠️ Tax: 10%</p><p>🔒 Requires Quad-Lock 4/4</p><input type="number" id="withdrawAmount" placeholder="Amount">
 <div id="withdrawHint" style="font-size:12px; color:#fbbf24; margin:5px 0;"></div><input type="text" id="withdrawAccountHolder" placeholder="Account Holder"><input type="text" id="withdrawBankAccount" placeholder="Bank Account Number"><select id="withdrawBankName"><option>Telebirr</option><option>Awash Bank</option><option>CBE</option><option>Dashen Bank</option></select><button class="btn btn-danger" onclick="submitWithdraw()">Request Withdrawal</button></div></div>
 <div id="toast" class="toast"></div>
@@ -1515,6 +1515,8 @@ if (alreadyExchanged) {
         <div>You can exchange up to ${maxEx} coins right now.</div>
         <div>⚠️ Only one exchange per day allowed.</div>
     `;
+    const exchangeInput = document.getElementById('exchangeAmount');
+    if (exchangeInput) exchangeInput.placeholder = `Amount (max ${maxEx})`;
 }
     // Market & Investments
 const { data: market } = await sb.from('market').select('*').order('slot_id');
@@ -1846,6 +1848,7 @@ async function buyCoins() {
 async function exchangeCoins() {
     if (isProcessing.exchangeCoins) return;
     const today = new Date().toISOString().slice(0, 10);
+    
     const { data: existing } = await sb
         .from('daily_exchange')
         .select('id')
@@ -1856,13 +1859,35 @@ async function exchangeCoins() {
         showToast('You have already exchanged today. Please try again tomorrow.', 'error');
         return;
     }
+    
+    const { data: user } = await sb.from('users').select('coin_balance').eq('user_id', USER_ID).single();
+    const maxAllowed = Math.floor((user.coin_balance || 0) * 0.03);
+    if (maxAllowed <= 0) {
+        showToast('No coins available to exchange (minimum 34 coins needed).', 'error');
+        return;
+    }
+    
+    let amount = parseInt(document.getElementById('exchangeAmount').value);
+    if (isNaN(amount) || amount <= 0) {
+        showToast('Please enter a valid amount', 'error');
+        return;
+    }
+    if (amount > maxAllowed) {
+        showToast(`You can only exchange up to ${maxAllowed} coins today (3% of your coins).`, 'error');
+        return;
+    }
+    
     isProcessing.exchangeCoins = true;
     try {
-        const { error } = await sb.rpc('exchange_coins_to_bonus_fixed_secure', { p_date: today });
+        const { error } = await sb.rpc('exchange_coins_to_bonus_secure', { 
+            p_amount: amount,
+            p_date: today 
+        });
         if (error) throw error;
-        showToast('Exchange completed successfully!', 'success');
+        showToast(`Exchanged ${amount} coins to bonus!`, 'success');
         playSound('coin');
         closeModal('exchangeModal');
+        document.getElementById('exchangeAmount').value = '';
         await loadAllData();
     } catch (err) {
         showToast(err.message || 'Exchange failed', 'error');
@@ -1912,23 +1937,30 @@ async function submitWithdraw() {
     let holder = document.getElementById('withdrawAccountHolder').value.trim();
     let acc = document.getElementById('withdrawBankAccount').value.trim();
     let bank = document.getElementById('withdrawBankName').value;
-    
-    // Fetch dynamic minimum from app_settings
-    const { data: minData, error: minError } = await sb
-        .from('app_settings')
-        .select('value')
-        .eq('key', 'withdrawal_minimum')
-        .single();
-    const minWithdraw = parseInt(minData?.value) || 500;
-    
+
+    // Fetch dynamic settings
+    const { data: settings } = await sb.from('app_settings').select('key, value');
+    const minWithdraw = parseInt(settings?.find(s => s.key === 'withdrawal_minimum')?.value) || 500;
+    const step = parseInt(settings?.find(s => s.key === 'withdrawal_step')?.value) || 500;
+    const frozen = settings?.find(s => s.key === 'withdrawal_frozen')?.value === 'true';
+
+    if (frozen) {
+        showToast('Withdrawals are currently frozen (holiday/weekend). Please try again tomorrow.', 'error');
+        return;
+    }
     if (isNaN(amt) || amt < minWithdraw) {
         showToast(`Minimum withdrawal amount is ${minWithdraw} ETB`, 'error');
+        return;
+    }
+    if ((amt - minWithdraw) % step !== 0) {
+        showToast(`Amount must be ${minWithdraw} + multiple of ${step} ETB (e.g., ${minWithdraw}, ${minWithdraw+step}, ${minWithdraw+2*step}, …)`, 'error');
         return;
     }
     if (!holder || !acc) {
         showToast('Account details required', 'error');
         return;
     }
+
     const paymentInfo = `Bank: ${bank}, Account: ${acc}, Holder: ${holder}`;
     isProcessing.withdraw = true;
     try {
