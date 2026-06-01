@@ -865,7 +865,17 @@
         <a href="https://t.me/profitpv" target="_blank" class="btn btn-info" style="text-decoration:none; display:block; margin-top:10px;">📢 Join our Channel @profitpv</a>
     </div>
 </div>
-
+<!-- GUIDE -->
+<div id="guide" class="tab-content">
+    <div class="card">
+        <h3>📖 መመሪያ / Guide</h3>
+        <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+            <button id="guideEngBtn" class="btn-sm" style="background: #3b82f6;">🇬🇧 English</button>
+            <button id="guideAmhBtn" class="btn-sm" style="background: #10b981;">🇪🇹 አማርኛ</button>
+        </div>
+        <div id="guideContent"></div>
+    </div>
+</div>
 <!-- MODALS -->
 <div id="depositModal" class="modal"><div class="modal-content"><span class="close" onclick="closeModal('depositModal')">&times;</span><h3>💰 Deposit Money</h3><div class="payment-methods" style="display:flex; gap:10px; margin-bottom:15px;"><div class="payment-method" data-payment="telebirr" onclick="selectPaymentMethod('telebirr')" style="flex:1; background:rgba(255,255,255,0.1); border-radius:16px; padding:10px; text-align:center; cursor:pointer;">📱 Telebirr</div><div class="payment-method" data-payment="awash" onclick="selectPaymentMethod('awash')" style="flex:1; background:rgba(255,255,255,0.1); border-radius:16px; padding:10px; text-align:center; cursor:pointer;">🏦 Awash</div></div><div id="telebirrInfo" class="telebirr-info" style="background:rgba(0,0,0,0.4); border-radius:16px; padding:12px; margin:10px 0; text-align:center;">📱 Send to Telebirr: <strong id="telebirrNumber">0935983470</strong><br>Name: <span id="telebirrName">Tesfaye</span></div><div id="awashInfo" class="bank-info" style="display:none; background:rgba(0,0,0,0.4); border-radius:16px; padding:12px; margin:10px 0; text-align:center;">🏦 <span id="bankName">Awash Bank</span>: <strong id="bankAccount">013201372354300</strong><br>Name: <span id="bankHolder">Tesfaye</span></div><input type="number" id="depositAmount" placeholder="Amount (Min 1500 ETB)"><input type="text" id="accountHolder" placeholder="Account Holder Name"><input type="text" id="transactionId" placeholder="Transaction ID"><textarea id="depositNote" rows="2" placeholder="Note (optional)"></textarea><button class="btn btn-success" onclick="submitDeposit()">Submit Deposit Request</button><p style="font-size:11px; margin-top:12px;">Admin will verify and approve.</p></div></div>
 <div id="buyCoinsModal" class="modal"><div class="modal-content"><span class="close" onclick="closeModal('buyCoinsModal')">&times;</span><h3>💱 Buy Coins</h3><p>1 ETB = 1 Coin</p><input type="number" id="buyCoinsAmount" placeholder="Amount (Min 50)"><button class="btn" onclick="buyCoins()">Buy Coins</button></div></div>
