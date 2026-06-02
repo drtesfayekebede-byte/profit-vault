@@ -3283,7 +3283,6 @@ function showGuide(lang) {
     if (engBtn) engBtn.style.background = lang === 'en' ? '#fbbf24' : '#3b82f6';
     if (amhBtn) amhBtn.style.background = lang === 'am' ? '#fbbf24' : '#10b981';
     if (oroBtn) oroBtn.style.background = lang === 'om' ? '#fbbf24' : '#f59e0b';
-    }
 }
 
 function initGuideTab() {
@@ -3294,8 +3293,8 @@ function initGuideTab() {
     if (amhBtn) amhBtn.onclick = () => showGuide('am');
     if (oroBtn) oroBtn.onclick = () => showGuide('om');
     showGuide('en');
-    }
 }
+
 window.addEventListener('load', () => {
     // --- Capture referral from URL and store in localStorage ---
     const urlParams = new URLSearchParams(window.location.search);
