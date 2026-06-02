@@ -870,9 +870,10 @@
     <div class="card">
         <h3>📖 መመሪያ / Guide</h3>
         <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
-            <button id="guideEngBtn" class="btn-sm" style="background: #3b82f6;">🇬🇧 English</button>
-            <button id="guideAmhBtn" class="btn-sm" style="background: #10b981;">🇪🇹 አማርኛ</button>
-        </div>
+    <button id="guideEngBtn" class="btn-sm" style="background: #3b82f6;">🇬🇧 English</button>
+    <button id="guideAmhBtn" class="btn-sm" style="background: #10b981;">🇪🇹 አማርኛ</button>
+    <button id="guideOroBtn" class="btn-sm" style="background: #f59e0b;">🇪🇹 Afaan Oromo</button>
+</div>
         <div id="guideContent"></div>
     </div>
 </div>
@@ -3116,7 +3117,7 @@ const guideTexts = {
             <p>Coins are used for: <strong>Market investments</strong>, <strong>Lottery tickets</strong>, <strong>Clinic consultations</strong>, and <strong>exchange to bonus</strong>.</p>
             
             <h4>🛒 Market (Investments)</h4>
-            <p>Buy digital assets (e.g., virtual crops, commodities) using coins. Each asset has a <strong>cost</strong> and a <strong>ROI</strong> (return on investment). After 24 hours, you can sell the asset and receive the original cost + profit in coins. You can own one of each asset only. Sold assets are moved to "Sold Assets" history.</p>
+            <p>Buy digital assets (e.g., virtual flower, commodities) using coins. Each asset has a <strong>cost</strong> and a <strong>ROI</strong> (return on investment). After 24 hours, you can sell the asset and receive the original cost + profit in coins. You can own one of each asset only. Sold assets are moved to "Sold Assets" history.</p>
             
             <h4>🎮 Win Chance Game</h4>
             <p>Cost: 50 coins per play. A 4×4 grid of cards is shown. Click any card to reveal your prize. Prizes are random (0, 10, 25, 50, 75, 100 coins). Winning amount is added to your coin balance. Your total plays are counted toward Quad‑Lock (need 10 plays).</p>
@@ -3151,11 +3152,8 @@ const guideTexts = {
             <h4>📜 Transaction History</h4>
             <p>You can filter transactions by: All, Deposits, Withdrawals, Other (exchange, referral rewards, game wins, consultation fees, etc.). You can also delete selected transactions (use checkboxes).</p>
             
-            <h4>👑 Admin Panel</h4>
-            <p>Admins can approve/reject deposits and withdrawals, reply to clinic consultations, edit market assets (name, emoji, price, ROI, images), manage lottery draws, adjust withdrawal settings (freeze, min, step), and view platform statistics.</p>
-            
             <h4>⚠️ Critical Warning</h4>
-            <p><strong>Password recovery is disabled in this app.</strong> If you forget your password, you will lose access to your account. There is no automated "Forgot Password" email. Keep your password saved securely. For Google Sign‑in users, you can still log in with Google, but you cannot recover an email/password account without admin help (admin can manually reset your password via Supabase dashboard).</p>
+            <p><strong>Password recovery is disabled in this app.</strong> If you forget your password, you will lose access to your account. There is no automated "Forgot Password" email. Keep your password saved securely. For Google Sign‑in users, you can still log in with Google, but you cannot recover an email/password account without admin help (admin can manually reset your password).</p>
             
             <hr>
             <p style="font-size: 0.9em; color: #fbbf24;">Profit Vault – Complete Investment Platform. Use responsibly.</p>
@@ -3177,7 +3175,7 @@ const guideTexts = {
             <p>ሳንቲምን ጥቅም ላይ የሚያውሉት ለገበያ ኢንቨስትመንት፣ ለሎተሪ ቲኬት፣ ለክሊኒክ ማማከር እና ወደ ቦነስ ለመለወጥ ነው።</p>
             
             <h4>🛒 ገበያ (Market)</h4>
-            <p>ዲጂታል ንብረቶችን በሳንቲም ይግዙ (ለምሳሌ ምናባዊ ሰብሎች)። እያንዳንዱ ንብረት ዋጋ እና ROI (ትርፍ በመቶኛ) አለው። ከ24 ሰአት በኋላ መልሰው በተቀመጠው የትርፍ ፐርሰንት በመሽጥ መጀመሪያ ያወጡትን ሳንቲም እና ትርፉን መልሰው ማግኘት ይችላሉ። አንድን ንብረት አንድ ጊዜ ብቻ ነው መግዛት የሚችሉት።</p>
+            <p>ዲጂታል ንብረቶችን በሳንቲም ይግዙ (ለምሳሌ ምናባዊ አበባ)። እያንዳንዱ ንብረት ዋጋ እና ROI (ትርፍ በመቶኛ) አለው። ከ24 ሰአት በኋላ መልሰው በተቀመጠው የትርፍ ፐርሰንት በመሽጥ መጀመሪያ ያወጡትን ሳንቲም እና ትርፉን መልሰው ማግኘት ይችላሉ። አንድን ንብረት አንድ ጊዜ ብቻ ነው መግዛት የሚችሉት።</p>
             
             <h4>🎮 የዕድል ጨዋታ (Win Chance Game)</h4>
             <p>ወጪ፦ 50 ሳንቲም በአንድ ጨዋታ። 4x4 ካርዶች ይታያሉ። ማንኛውንም ካርድ ጠቅ በማድረግ ሽልማትዎን ይገልጣሉ። ሽልማቶች (0፣10፣25፣50፣75፣100 ሳንቲም) በዘፈቀደ ናቸው። ያሸነፉት መጠን ወደ ሳንቲም ቀሪ ሂሳብዎ ይጨመራል። ጨዋታዎችዎ ለኳድ ሎክ ይቆጠራሉ (10 ጨዋታ ያስፈልጋል)።</p>
@@ -3191,7 +3189,7 @@ const guideTexts = {
             <h4>👥 ሪፌራል (Referral)</h4>
             <p>ልዩ የሪፌራል ማገናኛዎን ያጋሩ (ከፕሮፋይል ስር ይቅዱ)። አዲስ ተጠቃሚ በእርስዎ ማገናኛ ተመዝግቦ ለመጀመሪያ ጊዜ ገንዘብ ሲያስገባ (ማንኛውም መጠን፣ ቢያንስ 1500 ቢሆን)፣ የዚያ ገንዘብ 3% በሳንቲም ያገኛሉ። ሪፌራል ለኳድ ሎክ ይቆጠራል (3 ንቁ ሪፌራሎች ያስፈልጋሉ)።</p>
             
-            <h4>🔒 ኳድ ሎክ (Quad‑Lock) – ገንዘብ ለማውጣት መስፈርቶች</h4>
+            <h4>🔒 ኳድ ሎክ (Quad‑Lock) – ገንዘብ ለማውጣት መስፈርቶች ናቸው</h4>
             <p>ቦነስ ለማውጣት አራቱም ተግባራት መፈጸም አለባቸው፦</p>
             <ol><li>ቢያንስ 1500 ብር ማስገባት።</li>
             <li>የዕድል ጨዋታ ቢያንስ 10 ጊዜ መጫወት።</li>
@@ -3212,36 +3210,90 @@ const guideTexts = {
             <h4>📜 የግብይት ታሪክ (Transaction History)</h4>
             <p>ግብይቶችን በሚከተሉት መሰረት ማጣራት ይችላሉ፦ ሁሉም፣ ተቀማጭጥ፣ መውጫ፣ ሌላ (ምንዛሪ መለዋወጥ፣ የሪፌራል ሽልማት፣ የጨዋታ ክፍያዎች፣ የክሊኒክ ክፍያዎች)። እንዲሁም የተመረጡ ግብይቶችን መሰረዝ ይችላሉ (አመልካች ሳጥኖችን ይጠቀሙ)።</p>
             
-            <h4>👑 አስተዳዳሪ ፓነል (Admin Panel)</h4>
-            <p>አስተዳዳሪዎች የሚከተሉትን ማድረግ ይችላሉ፦ ገንዘብ ማስገባት/ማውጣት ጥያቄዎችን ማጽደቅ/ውድቅ ማድረግ፣ የክሊኒክ ጥያቄዎችን መልስ መስጠት፣ የገበያ ንብረቶችን ማስተካከል (ስም፣ ምልክት፣ ዋጋ፣ ROI፣ ምስል)፣ ሎተሪ ማውጣት፣ የመውጫ ቅንብሮችን መቀየር (እንቅፋት፣ ዝቅተኛ፣ እርምጃ) እና የመድረክ ስታቲስቲክስ ማየት።</p>
-            
             <h4>⚠️ ወሳኝ ማስጠንቀቂያ</h4>
             <p><strong>የይለፍ ቃል መልሶ ማግኛ አገልግሎት በዚህ መተግበሪያ ውስጥ ተዘግቷል።</strong> ይለፍ ቃልዎን ቢረሱት መለያዎን ማግኘት አይችሉም። ምንም አይነት አውቶማቲክ “ይለፍ ቃሌን ረሳሁ” ኢሜይል የለም። ይለፍ ቃልዎን በደህና ቦታ ያስቀምጡት። በGoogle ምዝገባ ለተመዘገቡ ተጠቃሚዎች በጉግል መግባት ይችላሉ፤ ነገር ግን ኢሜል/ይለፍ ቃል ለፈጠሩ ከረሱ በአስተዳዳሪ እርዳታ ብቻ ነው (አስተዳዳሪ ይለፍ ቃልዎን በእጅ መልሶ ማስጀመር ይችላል)።</p>
             
-            <hr>
-            <p style="font-size: 0.9em; color: #fbbf24;">Profit Vault – የተሟላ የኢንቨስትመንት መድረክ። በኃላፊነት ይጠቀሙ።</p>
-        </div>
-    `
+            <hr><p style="font-size: 0.9em; color: #fbbf24;">Profit Vault – የተሟላ የኢንቨስትመንት መድረክ። በኃላፊነት ይጠቀሙ።</p>
+    </div>
+`,
+om: `
+    <div style="line-height:1.6;">
+        <h4>💰 kuusa (Balance)</h4>
+        <p>kuusa maallaqa keessan kan dhugaati (ETB). Itti <strong>kuusuuf</strong> (telebirr ykn Awash Bank) fi <strong>baasuuf</strong> (booda Quad‑Lock xummuruudhaan) ni dandaʼu. Kuusni adminiin mirkaneessamuu qaba.</p>
+        
+        <h4>🎁 Bonus</h4>
+        <p>Bonus kuusa lammaffaa kan <strong>baafamuu</strong> dandaʼudha (taxa 10% fi Quad‑Lock barbaada). Boonasiin saantima jijjiiruun (1 saantima → 1 bonus) ykn moʼannaa tapharraa argama. Boonasiin baafachuuf ykn fudhachuuf qofa oola.</p>
+        
+        <h4>🪙 Saantima (Coins)</h4>
+        <p>Saantimni platfoormii kana keessatti maallaqa qooda guddaa qabudha. Saantima kan argachuu dandeessan:</p>
+        <ul><li>Bituudhaan: 1 ETB = 1 saantima (xiqqaa 50).</li>
+        <li>Tapha Win Chance taphachuudhaan (50 saantima taphatti, badhaasni hanga saantima 100ttti).</li>
+        <li>Badhaasa wabii: hiriyaan waraabbii keessanitti galmaaʼe yeroo jalqabaaf maallaqa yeroo kuusu, 3% kuusa sanaa saantimatti ni argattu.</li></ul>
+        <p>Saantimni kan fayyadu: <strong>Investimentiif</strong>, <strong>tikeetti Lootarii bituuf</strong>, <strong>kilinika kessatti dhimma fayyaa ofii gaafachuuf</strong>, fi <strong>gara bonusiitti jijjiirufi</strong>.</p>
+        
+        <h4>🛒 Gabaa (Market)</h4>
+        <p>Saantima qabdaniin qabeenya dijitaala (fknf, abaaboo) bittu. Qabeenyi tokkoon tokkoon <strong>ROI</strong> (buʼaa) fi <strong>gatii</strong> qaba. sa'aatii 24 booda, qabeenya bittan gurguruu ni dandeessa – gatii jalqabaa fi buʼaan saantimaaan isiniif deebi'a. Qabeenya tokko yeroo tokko qofa bituu dandeessu.</p>
+        
+        <h4>🎮 Tapha Win Chance</h4>
+        <p>Gatiin: saantima 50 taphatti. Kaardiin 4×4 ni mulʼata. Kaardii kamiyyuu xuquun badhaasa keessan argittu. Badhaasni (0,10,25,50,75,100 saantima) carraadhumti. Moʼattan sun kuusa saantima keessanitti dabalama. Taphawwan keessan Quad‑Lockf ni lakkaawwamu (tapha 10 barbaada).</p>
+        
+        <h4>🎟️ Lootarii (Lottery)</h4>
+        <p>Ganda sadeen tikeetti 50, 100, 200 saantima. Badhaasni: 500, 1000, 2000 saantima. Poolni hundi tikeetti 15 qaba. Lakkoobsa argame kamiyyuu bituu dandeessu. Baʼumsi adminiin baafama (pool tokkoof moʼataa tokko). Moʼataan badhaasa saantimatti argata.</p>
+        
+        <h4>🏥 Online Clinic</h4>
+        <p>Gatii: saantima 50 yeroo marii. Rakkoo fayyaa keessan ibsaa (xiqqaan 10 qubedhaan). Adminiin app keessaatti deebisa. Mareen keessan (rakkoo, haala, deebiisa admin) ni kuufama.</p>
+        
+        <h4>👥 Wabii (Referral)</h4>
+        <p>Lakkoofsa kaardii wabiikeessan qoodaa (Profaayla keessaa). Hiriyaan waraabbii keessanitti galmaaʼee <strong>yeroo jalqabaaf maallaqa yeroo kuuse</strong> (hangam iyyuu), <strong>3% kuusa sanaa saantimatti argattu</strong>. Badhaasi kun yeroo tokko qofa. Wabiin kun Quad‑Lockf ni lakkaawa (wabii 3 barbaada).</p>
+        
+        <h4>🔒 Quad‑Lock (Gaaffii baasuu)</h4>
+        <p>Bonusii keessan baasuuf seerota afran kana guutuu qabdu:</p>
+        <ol><li>1500 ETB fi sana ol kuusuu.</li>
+        <li>Tapha Win Chance yeroo 10 ol taphachuu.</li>
+        <li>Tikeetti lootarii tokko bituu.</li>
+        <li>Wabii sochiisa 3 qabaachuu (hiriyaan waraabbii keessanitti galmaaʼee maallaqa kuusuu qabu).</li></ol>
+        <p>Itti aanumsi Dashbaardii irratti mulʼata. 4/4 yoo xumurtan, bonusii keessan baasuu dandeessu.</p>
+        
+        <h4>💸 Maallaqa baasuu (Withdrawal)</h4>
+        <p><strong>Bonusiidha malee kuusa dhugaa baasuun hin danda'amu</strong>. Taxii: 10% (fknf. 1000 ETB → tax 100, net 900 ETB). Maallaqa xiqqaa <strong>ximxaa fi sadarkaa (step)</strong> fayyadamuu qabdu (admiiniin jijjiiruu danda’a, kan ammaa 500 ETB xiqqaa fi 500 step, ta'u maallaqaawwan baasuun danda'amu 500,1000,1500,…). Odeeffannoo baankii keessan yeroo ergitan adminiin ni mirkaneessa ykn ni kuffisa. Mirkaneesinaan, maallaqni kuusa bonasii keessan irraa hirʼaate gara baankii keessanitti dabarfama.</p>
+        
+        <h4>🔄 Saantima jijjiiruu → Bonus</h4>
+        <p>Saantima keessan reeshoo 1:1 taheen bonusitti jijjiiruu dandeessu. Haaluma kanaan:</p>
+        <ul><li><strong>Guyyaatti yeroo tokko qofa.</strong></li>
+        <li><strong>Daangaa hanga 3% saantima keessanii</strong> (fknf. 1000 saantima yoo qabaattan max 30).</li>
+        <li>Hanga jijjiirtan ofii keessanii filachuu dandeessu (max caaluu hinqabu).</li></ul>
+        
+        <h4>📜 Seenaa bittaa (Transaction History)</h4>
+        <p>Seenaa bittaa kanaan ilaallachuu dandeessu: Hunduma, Kuusa, Baasa, Kaan (jijjiirra, badhaasa wabii, moʼannaa taphaa, gatii clinic). Seenaa filatamees haquu ni dandeessu (checkboksota fayyadamaa).</p>
+        
+        <h4>⚠️ Akeekkachiisa barbaachisaa</h4>
+        <p><strong>Deebifannoon jacha beektuu (password) cufaadha (disabled).</strong> Yoo jacha beektuu keessan irraanfattan, akkaawuntii keessan galuu hin dandeessan. Jacha beektuu keessan iddoo amantaa qabu kaa'un eegaa. Fudhannoo Google fayyadamtanii lufa googiliidhaan lufuu ni dandeessu, garuu akkaawuntii email/password jacha beektuu irraanfattan taanaan adminiidhaan qofaa gargaaramuu dandeessu.</p>
+        
+        <hr>
+        <p style="font-size: 0.9em; color: #fbbf24;">Profit Vault – Bu’uura Investimenti Dhumaa. Ittigaafatamummaadhaan fayyadamaa.</p>
+    </div>
+`,
 };
 
 function showGuide(lang) {
     document.getElementById('guideContent').innerHTML = guideTexts[lang];
-    // Style buttons
     const engBtn = document.getElementById('guideEngBtn');
     const amhBtn = document.getElementById('guideAmhBtn');
-    if (engBtn && amhBtn) {
-        engBtn.style.background = lang === 'en' ? '#fbbf24' : '#3b82f6';
-        amhBtn.style.background = lang === 'am' ? '#fbbf24' : '#10b981';
+    const oroBtn = document.getElementById('guideOroBtn');
+    if (engBtn) engBtn.style.background = lang === 'en' ? '#fbbf24' : '#3b82f6';
+    if (amhBtn) amhBtn.style.background = lang === 'am' ? '#fbbf24' : '#10b981';
+    if (oroBtn) oroBtn.style.background = lang === 'om' ? '#fbbf24' : '#f59e0b';
     }
 }
 
 function initGuideTab() {
     const engBtn = document.getElementById('guideEngBtn');
     const amhBtn = document.getElementById('guideAmhBtn');
-    if (engBtn && amhBtn) {
-        engBtn.onclick = () => showGuide('en');
-        amhBtn.onclick = () => showGuide('am');
-        showGuide('en'); // default English
+    const oroBtn = document.getElementById('guideOroBtn');
+    if (engBtn) engBtn.onclick = () => showGuide('en');
+    if (amhBtn) amhBtn.onclick = () => showGuide('am');
+    if (oroBtn) oroBtn.onclick = () => showGuide('om');
+    showGuide('en');
     }
 }
 window.addEventListener('load', () => {
