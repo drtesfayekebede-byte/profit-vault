@@ -763,7 +763,7 @@
     <button class="tab" data-tab="profile">👤 Profile</button>
     <button class="tab" data-tab="contact">📞 Contact</button>
     <button class="tab" data-tab="guide">📖 Guide</button>
-    <button class="tab" onclick="location.reload();" style="background: #3b82f6;">🔄 Refresh</button>
+    <button class="tab" onclick="hardRefresh();" style="background: #3b82f6;">🔄 Refresh</button>
 </div>
 
 <!-- DASHBOARD -->
@@ -1417,9 +1417,9 @@ async function logout() {
     await sb.auth.signOut();
     
     // 2. Wipe all browser storage
-localStorage.clear();
-sessionStorage.clear();
-updateUserMenu();
+    localStorage.clear();
+    sessionStorage.clear();
+    updateUserMenu();
     
     // 3. Delete all IndexedDB databases (including Supabase's)
     if (window.indexedDB && window.indexedDB.databases) {
@@ -1463,11 +1463,31 @@ updateUserMenu();
     const adminDiv = document.getElementById('admin');
     if (adminDiv) adminDiv.remove();
     
-    // 7. Immediately show the login modal
-    showAuthModal();
+    // 7. Reload the page to reset everything completely
+    window.location.reload();
+}
+async function hardRefresh() {
+    showToast('Refreshing app...', 'info');
     
-    // 8. Clear the loading toast
-    showToast('Logged out', 'success');
+    // Clear all browser storage
+    localStorage.clear();
+    sessionStorage.clear();
+    
+    // Delete all IndexedDB databases (including Supabase cache)
+    if (window.indexedDB && window.indexedDB.databases) {
+        try {
+            const dbs = await indexedDB.databases();
+            dbs.forEach(db => {
+                if (db.name) indexedDB.deleteDatabase(db.name);
+            });
+        } catch(e) { console.warn("IndexedDB clear error", e); }
+    }
+    ['supabase', 'supabase-auth', '_supabase', 'supabase-auth-token'].forEach(dbName => {
+        try { indexedDB.deleteDatabase(dbName); } catch(e) {}
+    });
+    
+    // Reload the page
+    window.location.reload();
 }
 // ==================== DATA LOADING (FULL FEATURES) ====================
 let currentUser = null;
