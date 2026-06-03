@@ -546,21 +546,47 @@
     }
 
     /* ===== AUTH MODAL – NEON NOIR (NO BORDER) ===== */
+/* Fullscreen auth modal with glowing RGB background */
 #authModal {
-    background: rgba(0, 0, 0, 0.7);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 20% 30%, rgba(255, 51, 102, 0.8), rgba(0, 102, 255, 0.8), rgba(0, 255, 102, 0.8));
     backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    animation: rgbGlow 6s infinite alternate;
 }
+
+@keyframes rgbGlow {
+    0% {
+        background: radial-gradient(circle at 20% 30%, rgba(255, 51, 102, 0.9), rgba(0, 102, 255, 0.7), rgba(0, 255, 102, 0.5));
+    }
+    33% {
+        background: radial-gradient(circle at 60% 70%, rgba(0, 255, 102, 0.9), rgba(255, 51, 102, 0.7), rgba(0, 102, 255, 0.5));
+    }
+    66% {
+        background: radial-gradient(circle at 80% 40%, rgba(0, 102, 255, 0.9), rgba(0, 255, 102, 0.7), rgba(255, 51, 102, 0.5));
+    }
+    100% {
+        background: radial-gradient(circle at 40% 80%, rgba(255, 51, 102, 0.9), rgba(0, 102, 255, 0.7), rgba(0, 255, 102, 0.5));
+    }
+}
+
 #authModal .modal-content {
-    background: #1a1a1f;  /* dark gray-black panel */
-    border: none;  /* no border */
+    background: #1a1a1f;
     border-radius: 48px;
-    box-shadow: 0 25px 40px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.05);
     padding: 30px 25px;
     width: 90%;
     max-width: 420px;
+    box-shadow: 0 25px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 255, 255, 0.3);
+    border: none;
     animation: slideUpFlicker 0.4s ease-out;
 }
-
 @keyframes slideUpFlicker {
     0% {
         opacity: 0;
@@ -648,15 +674,7 @@
     transform: scale(1.02);
     box-shadow: 0 0 15px #ffcc00;
 }
-#authModal .modal-content .close {
-    color: #ff66cc;
-    opacity: 0.9;
-    transition: 0.2s;
-}
-#authModal .modal-content .close:hover {
-    color: #ff3399;
-    opacity: 1;
-}
+
 /* Password toggle inside auth modal – adjust for dark background */
 #authForm .password-wrapper {
     position: relative;
@@ -736,6 +754,7 @@
         </div>
     </div>
 </div>
+<div id="appContent" style="display: none;">
 <div class="balance-container">
     <div class="balance-card primary" onclick="showModal('depositModal')">
         <div class="balance-emoji">💰</div>
@@ -884,6 +903,7 @@
 <div id="withdrawModal" class="modal"><div class="modal-content"><span class="close" onclick="closeModal('withdrawModal')">&times;</span><h3>📤 Withdraw Bonus</h3><p>⚠️ Tax: 10%</p><p>🔒 Requires Quad-Lock 4/4</p><input type="number" id="withdrawAmount" placeholder="Amount">
 <div id="withdrawHint" style="font-size:12px; color:#fbbf24; margin:5px 0;"></div><input type="text" id="withdrawAccountHolder" placeholder="Account Holder"><input type="text" id="withdrawBankAccount" placeholder="Bank Account Number"><select id="withdrawBankName"><option>Telebirr</option><option>Awash Bank</option><option>CBE</option><option>Dashen Bank</option></select><button class="btn btn-danger" onclick="submitWithdraw()">Request Withdrawal</button></div></div>
 <div id="toast" class="toast"></div>
+</div>
 <script>
 // ==================== SUPABASE CONFIG ====================
 function escapeHTML(str) {
@@ -1159,6 +1179,7 @@ if (pendingRef) {
                 updateUserMenu();
             await loadDepositSettings();
             await loadAllData();
+            document.getElementById('appContent').style.display = 'block';
             if (IS_ADMIN) showAdminTab();
             
             const authModal = document.getElementById('authModal');
@@ -1239,7 +1260,6 @@ function showAuthModal() {
     modalDiv.className = 'modal active';
     modalDiv.innerHTML = `
     <div class="modal-content">
-        <span class="close" onclick="closeAuthModal()">&times;</span>
         <div class="auth-header">
             <h2>🏆 ፕሮፊት ቮልት</h2>
             <p>Secure Investment Platform</p>
@@ -3319,6 +3339,12 @@ function initGuideTab() {
 }
 
 window.addEventListener('load', () => {
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && document.getElementById('authModal')?.classList.contains('active')) {
+        e.preventDefault();
+        showToast('Please log in to continue', 'info');
+    }
+});
     // --- Capture referral from URL and store in localStorage ---
     const urlParams = new URLSearchParams(window.location.search);
     const ref = urlParams.get('ref');
