@@ -975,6 +975,7 @@ const SUPABASE_URL = 'https://ogtlaffkybpesaxastvx.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ndGxhZmZreWJwZXNheGFzdHZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTA4NTQsImV4cCI6MjA5NTM4Njg1NH0.toDw1_DsAjHjUuCg0hvRdEGyjA7mW2DJNlSWoVBT1qY';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 let USER_ID = null, IS_ADMIN = false, selectedPaymentMethod = "telebirr", soundEnabled = localStorage.getItem('soundEnabled') !== 'false';
+let isLoggingOut = false;
 let isProcessing = {
     buyCoins: false,
     exchangeCoins: false,
@@ -1441,6 +1442,7 @@ async function signInWithGoogle() {
     }
 }
 async function logout() {
+isLoggingOut = true;
     // Show feedback
     showToast('Logging out...', 'info');
     
@@ -3384,13 +3386,17 @@ document.addEventListener('keydown', function(e) {
     });    
     checkSession();
     sb.auth.onAuthStateChange((event, session) => {
-        if (event === 'SIGNED_OUT' || (event === 'TOKEN_REFRESHED' && !session)) {
-            if (USER_ID) {
-                console.log("Session lost, logging out...");
-                logout();
-            }
+    // Don't trigger if we're already in the process of logging out
+    if (isLoggingOut) return;
+    
+    if (event === 'SIGNED_OUT' || (event === 'TOKEN_REFRESHED' && !session)) {
+        if (USER_ID) {
+            console.log("Session lost, logging out...");
+            isLoggingOut = true;
+            logout();
         }
-    });
+    }
+});
     // Handle password reset redirect
     const hashParams = new URLSearchParams(window.location.hash.substring(1));
     if (hashParams.get('type') === 'recovery') {
