@@ -1492,23 +1492,30 @@ function setAuthMode(mode) {
 async function login() {
     const email = document.getElementById('authEmail').value.trim();
     const password = document.getElementById('authPassword').value;
-    if (!email || !password) return showToast('Email and password required', 'error');
     
-    const { error } = await sb.auth.signInWithPassword({ 
-    email, 
-    password,
-    options: {
-        expiresIn: 60 * 60 * 24 * 7 // 7 days
-    }
-});
-if (error) {
-    showToast(error.message, 'error');
-    return;
-}
-    
-    // Direct removal of modal (no function call)
+    // Show spinner and close modal IMMEDIATELY
     const modal = document.getElementById('authModal');
     if (modal) modal.remove();
+    document.getElementById('loadingOverlay').style.display = 'flex';
+    showToast('Logging in...', 'info');
+    
+    if (!email || !password) {
+        document.getElementById('loadingOverlay').style.display = 'none';
+        showToast('Email and password required', 'error');
+        return;
+    }
+    
+    const { error } = await sb.auth.signInWithPassword({ 
+        email, 
+        password,
+        options: { expiresIn: 60 * 60 * 24 * 7 }
+    });
+    
+    if (error) {
+        document.getElementById('loadingOverlay').style.display = 'none';
+        showToast(error.message, 'error');
+        return;
+    }
     
     showToast('Login successful!', 'success');
     window.location.reload();
@@ -2293,7 +2300,7 @@ async function submitWithdraw() {
 async function buyAsset(slotId) {
     if (isProcessing.buyAsset) return;
     
-    // Check if session is still valid BEFORE buying
+    // Check session first
     const { data: { session }, error: sessionError } = await sb.auth.getSession();
     if (sessionError || !session) {
         showToast('Your session has expired. Please log in again.', 'error');
@@ -2302,13 +2309,38 @@ async function buyAsset(slotId) {
     }
     
     isProcessing.buyAsset = true;
+    
+    // Get asset details for optimistic update
+    const { data: asset } = await sb.from('market').select('cost, asset_name').eq('slot_id', slotId).single();
+    const cost = asset?.cost || 0;
+    const oldCoins = currentUser?.coin_balance || 0;
+    
+    // OPTIMISTIC UPDATE - Deduct coins immediately
+    if (currentUser) {
+        currentUser.coin_balance = oldCoins - cost;
+        updateBalanceDisplay();
+        showToast(`Investing in ${asset?.asset_name || 'asset'}...`, 'info');
+    }
+    
     try {
         const { error } = await sb.rpc('buy_market_asset_secure', { p_slot_id: slotId });
         if (error) throw error;
-        showToast('Invested!', 'success');
+        
+        showToast('Invested successfully!', 'success');
         playSound('coin');
-        await loadAllData();
+        
+        // Clear cache to refresh market grid
+        cache.clear(`user_${USER_ID}`);
+        cache.clear('dashboard_data');
+        await loadMarketAndInvestments();
+        
     } catch (err) {
+        // ROLLBACK on error
+        if (currentUser) {
+            currentUser.coin_balance = oldCoins;
+            updateBalanceDisplay();
+        }
+        
         if (err.message.includes('not authenticated') || err.message.includes('JWT')) {
             showToast('Session expired. Please refresh the page.', 'error');
             logout();
@@ -2320,23 +2352,47 @@ async function buyAsset(slotId) {
     }
 }
 async function sellAsset(assetId, buttonElement = null) {
-    if (isProcessing.sellAsset) {
-        return;
-    }
-    // If button element is provided, disable it and show processing text
+    if (isProcessing.sellAsset) return;
+    
+    // Disable button immediately
     const originalText = buttonElement ? buttonElement.innerText : '';
     if (buttonElement) {
         buttonElement.disabled = true;
         buttonElement.innerText = '⏳ Selling...';
     }
+    
     isProcessing.sellAsset = true;
+    
+    // Get asset details for optimistic update
+    const { data: asset } = await sb.from('user_assets').select('purchase_price, roi_at_purchase, asset_name').eq('id', assetId).single();
+    const payout = Math.round((asset?.purchase_price || 0) * (asset?.roi_at_purchase || 1));
+    const oldCoins = currentUser?.coin_balance || 0;
+    
+    // OPTIMISTIC UPDATE - Add coins immediately
+    if (currentUser && payout) {
+        currentUser.coin_balance = oldCoins + payout;
+        updateBalanceDisplay();
+        showToast(`Selling ${asset?.asset_name || 'asset'}...`, 'info');
+    }
+    
     try {
         const { error } = await sb.rpc('sell_market_asset_secure', { p_asset_id: assetId });
         if (error) throw error;
-        showToast('Sold!', 'success');
+        
+        showToast('Sold successfully!', 'success');
         playSound('coin');
-        await loadAllData();
+        
+        // Clear cache
+        cache.clear(`user_${USER_ID}`);
+        cache.clear('dashboard_data');
+        await loadMarketAndInvestments();
+        
     } catch (err) {
+        // ROLLBACK on error
+        if (currentUser) {
+            currentUser.coin_balance = oldCoins;
+            updateBalanceDisplay();
+        }
         showToast(err.message, 'error');
     } finally {
         isProcessing.sellAsset = false;
@@ -2357,27 +2413,42 @@ function createGameGrid() {
 }
 async function playGame(pos) {
     if (!gameActive || isProcessing.game) return;
+    
     isProcessing.game = true;
     gameActive = false;
+    
+    // OPTIMISTIC UPDATE - Deduct 50 coins immediately
+    const oldCoins = currentUser?.coin_balance || 0;
+    if (currentUser) {
+        currentUser.coin_balance = oldCoins - 50;
+        updateBalanceDisplay();
+        showToast('Playing game...', 'info');
+    }
+    
     try {
         const { data: win, error } = await sb.rpc('play_game_secure');
         if (error) throw error;
+        
+        // Update with actual win amount (adjust from -50 to actual win)
+        if (currentUser) {
+            // Revert the -50 then add win
+            currentUser.coin_balance = oldCoins - 50 + win;
+            updateBalanceDisplay();
+        }
+        
         const resultDiv = document.getElementById('gameResult');
         resultDiv.className = `game-result ${win > 0 ? 'win' : 'lose'}`;
         resultDiv.innerHTML = win > 0 ? `🎉 You won ${win} coins! 🎉` : `💨 Better luck next time!`;
+        
         if (win > 0) { playSound('win'); confetti(); } else playSound('lose');
         showToast(win > 0 ? `Won ${win} coins!` : 'No win', win > 0 ? 'success' : 'error');
         
+        // Rest of your reveal logic...
         const cells = document.querySelectorAll('.game-card');
-        // Prize pool for visual effect
         const prizePool = [100, 75, 75, 50, 50, 50, 25, 25, 25, 25, 10, 10, 10, 10, 10, 0];
-        // Create an array for the 16 card values: the clicked card gets the actual win, others get random values from prizePool
         let displayValues = new Array(16);
-        // Set the clicked card to the actual win amount
         displayValues[pos] = win;
-        // Fill the rest with random values from prizePool (excluding win if needed, but not required)
         let otherIndices = [...Array(16).keys()].filter(i => i !== pos);
-        // Shuffle the prizePool for randomness
         let shuffledPool = [...prizePool];
         for (let i = shuffledPool.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -2387,18 +2458,21 @@ async function playGame(pos) {
             displayValues[otherIndices[i]] = shuffledPool[i % shuffledPool.length];
         }
         
-        // Reveal all cards
         cells.forEach((cell, idx) => {
             cell.classList.add('revealed');
             cell.setAttribute('data-prize', displayValues[idx]);
             cell.innerHTML = displayValues[idx];
         });
         
-        // Reset the game grid after a short delay (800ms for faster restart)
         setTimeout(() => { createGameGrid(); isProcessing.game = false; }, 1500);
-        // Refresh data in the background (balances, etc.) – does NOT block the reset
         await loadAllData();
+        
     } catch (err) {
+        // ROLLBACK on error
+        if (currentUser) {
+            currentUser.coin_balance = oldCoins;
+            updateBalanceDisplay();
+        }
         showToast(err.message || 'Game failed', 'error');
         gameActive = true;
         isProcessing.game = false;
@@ -2424,10 +2498,15 @@ function showLotteryNumbers(poolId, price, taken, round) {
 }
 async function buyLotteryTicket(poolId, number, round) {
     const price = [50,100,200][poolId-1];
-    if ((currentUser.coin_balance || 0) < price) {
-        showToast(`Need ${price} coins`, 'error');
-        return;
+    
+    // OPTIMISTIC UPDATE - Deduct coins immediately
+    const oldCoins = currentUser?.coin_balance || 0;
+    if (currentUser) {
+        currentUser.coin_balance = oldCoins - price;
+        updateBalanceDisplay();
+        showToast(`Purchasing ticket #${number}...`, 'info');
     }
+    
     const { data: success, error } = await sb.rpc('buy_lottery_ticket_fast', {
         p_user_id: USER_ID,
         p_pool_id: poolId,
@@ -2435,9 +2514,20 @@ async function buyLotteryTicket(poolId, number, round) {
         p_price: price,
         p_username: currentUser.username || 'User'
     });
+    
     if (error) {
+        // ROLLBACK on error
+        if (currentUser) {
+            currentUser.coin_balance = oldCoins;
+            updateBalanceDisplay();
+        }
         showToast('Error: ' + error.message, 'error');
     } else if (success === false) {
+        // ROLLBACK on failure
+        if (currentUser) {
+            currentUser.coin_balance = oldCoins;
+            updateBalanceDisplay();
+        }
         showToast('Ticket already taken, pool full, or insufficient coins', 'error');
     } else {
         showToast(`✅ Ticket #${number} purchased!`, 'success');
@@ -2467,13 +2557,29 @@ async function buyLotteryTicketWithDisable(poolId, number, round, element) {
 async function startConsultation() {
     const issue = document.getElementById('healthIssue').value.trim();
     if(!issue || issue.length < 10) return showToast('Describe issue (min 10 chars)','error');
+    
+    // OPTIMISTIC UPDATE - Deduct 50 coins immediately
+    const oldCoins = currentUser?.coin_balance || 0;
+    if (currentUser) {
+        currentUser.coin_balance = oldCoins - 50;
+        updateBalanceDisplay();
+        showToast('Sending consultation...', 'info');
+    }
+    
     try {
         const { error } = await sb.rpc('start_consultation_secure', { p_issue: issue });
         if (error) throw error;
-        showToast('Consultation request sent!','success');
+        
+        showToast('Consultation request sent!', 'success');
         document.getElementById('healthIssue').value = '';
         await loadAllData();
+        
     } catch (err) {
+        // ROLLBACK on error
+        if (currentUser) {
+            currentUser.coin_balance = oldCoins;
+            updateBalanceDisplay();
+        }
         showToast(err.message, 'error');
     }
 }
