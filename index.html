@@ -748,6 +748,10 @@
         border: none;
         color: #fbbf24;
     }
+    /* Dropdown visibility */
+    .dropdown-menu.show {
+        display: block !important;
+    }
 </style>
 </head>
 <body>
@@ -3768,6 +3772,22 @@ document.addEventListener('keydown', function(e) {
         toggleUserMenu();
     });    
     checkSession();
+const fixAvatar = document.getElementById('profileAvatar');
+    const fixMenu = document.getElementById('dropdownMenu');
+    
+    if (fixAvatar && fixMenu) {
+        fixAvatar.onclick = function(e) {
+            e.stopPropagation();
+            fixMenu.classList.toggle('show');
+        };
+        
+        document.addEventListener('click', function(e) {
+            if (!fixAvatar.contains(e.target) && !fixMenu.contains(e.target)) {
+                fixMenu.classList.remove('show');
+            }
+        });
+        console.log('✅ Dropdown fix applied');
+    }
     // Track session refresh to prevent loops
 let lastSessionRefresh = 0;
 
