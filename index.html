@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Profit Vault - Complete Investment Platform | Premium</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -14,20 +14,6 @@
     }
 
     /* ===== ORIGINAL ANIMATIONS ===== */
-    @keyframes float {
-        0% { transform: translateY(0px) scale(1); opacity: 1; }
-        100% { transform: translateY(-80px) scale(1.5); opacity: 0; }
-    }
-    @keyframes pulse {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.05); }
-        100% { transform: scale(1); }
-    }
-    @keyframes shake {
-        0%,100% { transform: translateX(0); }
-        25% { transform: translateX(-5px); }
-        75% { transform: translateX(5px); }
-    }
     @keyframes fadeIn {
         from { opacity: 0; transform: translateY(10px); }
         to { opacity: 1; transform: translateY(0); }
@@ -40,15 +26,6 @@
         0% { box-shadow: 0 0 5px rgba(0, 255, 255, 0.3); }
         50% { box-shadow: 0 0 20px rgba(0, 255, 255, 0.8); }
         100% { box-shadow: 0 0 5px rgba(0, 255, 255, 0.3); }
-    }
-    @keyframes winnerGlow {
-        0% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.7); }
-        70% { box-shadow: 0 0 0 15px rgba(251, 191, 36, 0); }
-        100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0); }
-    }
-    @keyframes borderPulse {
-        0%,100% { border-color: rgba(251, 191, 36, 0.3); }
-        50% { border-color: rgba(251, 191, 36, 0.8); }
     }
 
     /* ===== BASE – DEEP BLACK BACKGROUND (replaces old body) ===== */
@@ -514,7 +491,46 @@
     }
     .toast.error::before { content: "⚠️"; }
     .toast.info::before { content: "ℹ️"; }
+/* ===== SPARKLE BURST LOADER (Premium) ===== */
+@keyframes sparkle {
+    0% { transform: scale(1); opacity: 1; text-shadow: 0 0 0px #FFD700; }
+    50% { transform: scale(1.4); opacity: 0.8; text-shadow: 0 0 30px #FFD700, 0 0 20px #FF6347, 0 0 10px #10b981; }
+    100% { transform: scale(1); opacity: 1; text-shadow: 0 0 0px #FFD700; }
+}
 
+@keyframes particle-burst {
+    0% { transform: scale(0); opacity: 0; }
+    50% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(0) translate(var(--tx, 30px), var(--ty, -30px)); opacity: 0; }
+}
+
+@keyframes spin-coin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-sparkle {
+    font-size: 64px;
+    animation: sparkle 1.2s ease-in-out infinite;
+    display: inline-block;
+}
+
+.loading-particle {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: radial-gradient(circle, #FFD700, #FF6347);
+    border-radius: 50%;
+    pointer-events: none;
+    animation: particle-burst 1s ease-out infinite;
+}
+
+.loading-coin {
+    display: inline-block;
+    font-size: 32px;
+    animation: spin-coin 1s linear infinite;
+    margin: 0 5px;
+}
     /* UTILITIES */
     .tab-content { display: none; }
     .tab-content.active { display: block; }
@@ -732,15 +748,27 @@
 </style>
 </head>
 <body>
-<div id="loadingOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10000; justify-content: center; align-items: center; flex-direction: column; backdrop-filter: blur(5px);">
-    <div style="font-size: 48px; animation: spin 1s linear infinite;">🔄</div>
-    <p style="color: white; margin-top: 20px; font-size: 18px;">Loading your dashboard...</p>
+<div id="loadingOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 20% 30%, rgba(255, 51, 102, 0.95), rgba(0, 102, 255, 0.95), rgba(0, 255, 102, 0.85)); z-index: 10000; justify-content: center; align-items: center; flex-direction: column;">
+    <div style="position: relative;">
+        <div class="loading-sparkle">💎</div>
+        <div class="loading-particle" style="--tx: -30px; --ty: -40px; left: 50%; top: 50%;"></div>
+        <div class="loading-particle" style="--tx: 30px; --ty: -40px; left: 50%; top: 50%; animation-delay: 0.2s;"></div>
+        <div class="loading-particle" style="--tx: -40px; --ty: 20px; left: 50%; top: 50%; animation-delay: 0.4s;"></div>
+        <div class="loading-particle" style="--tx: 40px; --ty: 20px; left: 50%; top: 50%; animation-delay: 0.6s;"></div>
+        <div class="loading-particle" style="--tx: 0px; --ty: -50px; left: 50%; top: 50%; animation-delay: 0.3s;"></div>
+        <div class="loading-particle" style="--tx: 50px; --ty: 0px; left: 50%; top: 50%; animation-delay: 0.5s;"></div>
+        <div class="loading-particle" style="--tx: -50px; --ty: 0px; left: 50%; top: 50%; animation-delay: 0.7s;"></div>
+    </div>
+    <div style="margin-top: 30px;">
+        <span class="loading-coin">🪙</span>
+        <span class="loading-coin" style="animation-delay: 0.2s;">🪙</span>
+        <span class="loading-coin" style="animation-delay: 0.4s;">🪙</span>
+    </div>
+    <p style="color: #FFD700; margin-top: 20px; font-size: 18px; font-weight: bold;">Loading your dashboard...</p>
+    <p style="color: #ccc; margin-top: 10px; font-size: 12px;">Please wait...</p>
 </div>
 <style>
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
+
 </style>
 <div id="networkStatus" class="network-status"></div>
 <div class="header">
@@ -753,7 +781,9 @@
             </div>
         </div>
         <div class="profile-area" id="profileArea">
-            <div class="profile-avatar" id="profileAvatar">
+            <div class="profile-avatar" id="profileAvatar" role="button" tabindex="0" 
+     onclick="toggleUserMenu()" 
+     onkeydown="if(event.key==='Enter'||event.key===' ') toggleUserMenu()">
     <img id="profileImage" src="https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app-assets/1780156694418.png" alt="Profit Vault" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
 </div>
             <div class="dropdown-menu" id="dropdownMenu">
@@ -764,17 +794,23 @@
 </div>
 <div id="appContent" style="display: none;">
 <div class="balance-container">
-    <div class="balance-card primary" onclick="showModal('depositModal')">
+    <div class="balance-card primary" role="button" tabindex="0" 
+     onclick="showModal('depositModal')" 
+     onkeydown="if(event.key==='Enter'||event.key===' ') showModal('depositModal')">
         <div class="balance-emoji">💰</div>
         <div class="balance-value" id="balance">0</div>
         <div class="balance-label">Balance (ETB)</div>
     </div>
-    <div class="balance-card bonus" onclick="showModal('exchangeModal')">
+    <div class="balance-card bonus" role="button" tabindex="0" 
+     onclick="showModal('exchangeModal')" 
+     onkeydown="if(event.key==='Enter'||event.key===' ') showModal('exchangeModal')">
         <div class="balance-emoji">🎁</div>
         <div class="balance-value" id="bonus">0</div>
         <div class="balance-label">Bonus (ETB)</div>
     </div>
-    <div class="balance-card coins" onclick="showModal('buyCoinsModal')">
+    <div class="balance-card coins" role="button" tabindex="0" 
+     onclick="showModal('buyCoinsModal')" 
+     onkeydown="if(event.key==='Enter'||event.key===' ') showModal('buyCoinsModal')">
         <div class="balance-emoji">🪙</div>
         <div class="balance-value" id="coins">0</div>
         <div class="balance-label">Coins</div>
@@ -790,7 +826,7 @@
     <button class="tab" data-tab="profile">👤 Profile</button>
     <button class="tab" data-tab="contact">📞 Contact</button>
     <button class="tab" data-tab="guide">📖 Guide</button>
-    <button class="tab" onclick="if(USER_ID) { loadAllData(); showToast('Data refreshed!', 'success'); } else { hardRefresh(); }" style="background: #3b82f6;">🔄 Refresh</button>
+    <button class="tab" id="refreshBtn" style="background: #3b82f6;">🔄 Refresh</button>
 </div>
 
 <!-- DASHBOARD -->
@@ -883,13 +919,15 @@
     <div class="card">
         <h3>📞 Contact Admin</h3>
         <div class="contact-methods">
-            <div class="contact-method" onclick="contactAdmin('telegram')">
+            <div class="contact-method" role="button" tabindex="0" 
+     onclick="contactAdmin('telegram')" 
+     onkeydown="if(event.key==='Enter'||event.key===' ') contactAdmin('telegram')">
                 <div>📱 Telegram Admin</div>
                 <div>@profitvaultinvestment</div>
                 <button class="btn btn-sm">Message</button>
             </div>
         </div>
-        <a href="https://t.me/profitpv" target="_blank" class="btn btn-info" style="text-decoration:none; display:block; margin-top:10px;">📢 Join our Channel @profitpv</a>
+        <a href="https://t.me/profitpv" target="_blank" rel="noopener noreferrer" class="btn btn-info" style="text-decoration:none; display:block; margin-top:10px;">📢 Join our Channel @profitpv</a>
     </div>
 </div>
 <!-- GUIDE -->
@@ -922,6 +960,81 @@ function escapeHTML(str) {
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#39;');
+}
+// ==================== REUSABLE MODAL FUNCTION ====================
+function createModal(title, content, onClose = null) {
+    const modal = document.createElement('div');
+    modal.className = 'modal active';
+    modal.innerHTML = `
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>${escapeHTML(title)}</h3>
+            ${content}
+            <button class="btn" style="margin-top:15px;">Close</button>
+        </div>
+    `;
+    const closeBtn = modal.querySelector('.close');
+    const closeButton = modal.querySelector('.btn');
+    const cleanup = () => {
+        if (onClose) onClose();
+        modal.remove();
+    };
+    closeBtn.onclick = cleanup;
+    closeButton.onclick = cleanup;
+    document.body.appendChild(modal);
+    return modal;
+}
+// ==================== CACHE SYSTEM FOR OPTIMIZATION ====================
+const cache = {
+    data: {},
+    set(key, value, ttl = 30000) {
+        this.data[key] = {
+            value: value,
+            expiry: Date.now() + ttl
+        };
+    },
+    get(key) {
+        const item = this.data[key];
+        if (item && Date.now() < item.expiry) {
+            return item.value;
+        }
+        delete this.data[key];
+        return null;
+    },
+    clear(key) {
+        if (key) delete this.data[key];
+        else this.data = {};
+    }
+};
+
+// Debounce function - prevents rapid repeated calls
+function debounce(func, delay) {
+    let timeout;
+    return function(...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), delay);
+    };
+}
+
+// Throttle function - limits how often a function can run
+function throttle(func, limit) {
+    let inThrottle;
+    return function(...args) {
+        if (!inThrottle) {
+            func.apply(this, args);
+            inThrottle = true;
+            setTimeout(() => inThrottle = false, limit);
+        }
+    };
+}
+function updateBalanceDisplay() {
+    if (!currentUser) return;
+    const balanceEl = document.getElementById('balance');
+    const bonusEl = document.getElementById('bonus');
+    const coinsEl = document.getElementById('coins');
+    if (balanceEl) balanceEl.innerText = (currentUser.balance || 0).toLocaleString();
+    if (bonusEl) bonusEl.innerText = (currentUser.bonus_balance || 0).toLocaleString();
+    if (coinsEl) coinsEl.innerText = (currentUser.coin_balance || 0).toLocaleString();
 }
 // ==================== DEPOSIT SETTINGS ====================
 let depositSettings = { telebirr_number: '', bank_name: '', bank_account: '', account_holder: '' };
@@ -1045,21 +1158,38 @@ function closeModal(id) {
     const modal = document.getElementById(id);
     if (modal) modal.classList.remove('active');
 }
-function playSound(name) {
-    if(!soundEnabled) return;
+let audioContext = null;
+
+async function playSound(name) {
+    if (!soundEnabled) return;
     try {
-        const ac = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = ac.createOscillator(), gain = ac.createGain();
-        osc.connect(gain); gain.connect(ac.destination);
-        switch(name) {
-            case 'click': osc.frequency.value=800; gain.gain.value=0.3; osc.type='sine'; osc.start(); osc.stop(ac.currentTime+0.1); break;
-            case 'coin': osc.frequency.value=1200; gain.gain.value=0.2; osc.type='sine'; osc.start(); osc.stop(ac.currentTime+0.2); break;
-            case 'win': osc.frequency.value=1500; gain.gain.value=0.4; osc.type='sine'; osc.start(); setTimeout(()=>osc.frequency.value=1000,100); osc.stop(ac.currentTime+0.3); break;
-            case 'lose': osc.frequency.value=300; gain.gain.value=0.3; osc.type='sawtooth'; osc.start(); osc.stop(ac.currentTime+0.3); break;
-            case 'success': osc.frequency.value=1000; gain.gain.value=0.3; osc.type='sine'; osc.start(); setTimeout(()=>osc.frequency.value=1200,100); osc.stop(ac.currentTime+0.2); break;
-            case 'error': osc.frequency.value=400; gain.gain.value=0.3; osc.type='square'; osc.start(); osc.stop(ac.currentTime+0.2); break;
+        if (!audioContext) {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
         }
-        setTimeout(()=>ac.close(),500);
+        if (audioContext.state === 'suspended') {
+            await audioContext.resume();
+        }
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        osc.connect(gain);
+        gain.connect(audioContext.destination);
+        gain.gain.value = 0.2;
+        switch(name) {
+            case 'click': osc.frequency.value = 800; osc.type = 'sine'; break;
+            case 'coin': osc.frequency.value = 1200; osc.type = 'sine'; break;
+            case 'win': 
+                osc.frequency.value = 1500; osc.type = 'sine'; 
+                setTimeout(() => { if(osc) osc.frequency.value = 1000; }, 100); 
+                break;
+            case 'lose': osc.frequency.value = 300; osc.type = 'sawtooth'; break;
+            case 'success': 
+                osc.frequency.value = 1000; osc.type = 'sine';
+                setTimeout(() => { if(osc) osc.frequency.value = 1200; }, 100); 
+                break;
+            case 'error': osc.frequency.value = 400; osc.type = 'square'; break;
+        }
+        osc.start();
+        osc.stop(audioContext.currentTime + 0.3);
     } catch(e) {}
 }
 function selectPaymentMethod(method) {
@@ -1078,8 +1208,9 @@ function toggleSound() {
     playSound('click');
 }
 function contactAdmin(method) {
-    if(method==='telegram') window.open('https://t.me/profitvaultinvestment','_blank');
+    if(method==='telegram') window.open('https://t.me/profitvaultinvestment','_blank','noopener,noreferrer');
 }
+
 function togglePasswordVisibility(inputId, btnElement) {
     const input = document.getElementById(inputId);
     if (input.type === 'password') {
@@ -1115,6 +1246,27 @@ function confetti() {
 }
 
 // ==================== AUTHENTICATION (EMAIL ONLY) ====================
+// Session heartbeat - keeps session alive
+let heartbeatInterval = null;
+
+function startSessionHeartbeat() {
+    if (heartbeatInterval) clearInterval(heartbeatInterval);
+    
+    heartbeatInterval = setInterval(async () => {
+        if (USER_ID && !isLoggingOut) {
+            try {
+                await sb.auth.getSession();
+            } catch (e) {}
+        }
+    }, 10 * 60 * 1000);
+}
+
+function stopSessionHeartbeat() {
+    if (heartbeatInterval) {
+        clearInterval(heartbeatInterval);
+        heartbeatInterval = null;
+    }
+}
 async function checkSession() {
     if (window.location.search.includes('t=')) {
         history.replaceState({}, document.title, window.location.pathname);
@@ -1124,13 +1276,10 @@ async function checkSession() {
         const { data: { session }, error: sessionError } = await sb.auth.getSession();
         if (sessionError) throw sessionError;
         
-        console.log("Session:", session?.user?.id || "No session");
-        
         if (session?.user) {
             // User is logged in and confirmed
             const userExists = await ensureUserExists(session.user);
             if (!userExists) {
-                console.error("Failed to create user row");
                 showToast("Account setup failed. Please try again.", "error");
                 await sb.auth.signOut();
                 localStorage.clear();
@@ -1148,7 +1297,6 @@ async function checkSession() {
             if (fetchError) throw fetchError;
             
             if (!userRow) {
-                console.error("User row missing after ensureUserExists");
                 await sb.auth.signOut();
                 localStorage.clear();
                 sessionStorage.clear();
@@ -1157,6 +1305,7 @@ async function checkSession() {
             }
             
             USER_ID = session.user.id;
+            startSessionHeartbeat();
             localStorage.setItem('profitvault_user_id', USER_ID);
             document.getElementById('loadingOverlay').style.display = 'flex';
             const pendingRef = localStorage.getItem('profitvault_referral');
@@ -1173,7 +1322,6 @@ if (pendingRef) {
             .eq('user_id', USER_ID);
         if (!updateError) {
             localStorage.removeItem('profitvault_referral');
-            console.log('✅ Referral applied for OAuth user');
             await loadUser();
         }
     }
@@ -1249,13 +1397,11 @@ async function ensureUserExists(authUser, referredBy = null) {
             };
             if (referredBy && referredBy !== authUser.id) {
                 insertData.referred_by = referredBy;
-                console.log("✅ Setting referred_by to", referredBy);
             } else {
-                console.log("⚠️ No valid referral ID provided");
+   
             }
             const { error: insertError } = await sb.from('users').insert(insertData);
             if (insertError) throw insertError;
-            console.log("✅ Created user row for", authUser.id, referredBy ? `referred by ${referredBy}` : '');
         }
         return true;
     } catch (err) {
@@ -1348,11 +1494,17 @@ async function login() {
     const password = document.getElementById('authPassword').value;
     if (!email || !password) return showToast('Email and password required', 'error');
     
-    const { error } = await sb.auth.signInWithPassword({ email, password });
-    if (error) {
-        showToast(error.message, 'error');
-        return;
+    const { error } = await sb.auth.signInWithPassword({ 
+    email, 
+    password,
+    options: {
+        expiresIn: 60 * 60 * 24 * 7 // 7 days
     }
+});
+if (error) {
+    showToast(error.message, 'error');
+    return;
+}
     
     // Direct removal of modal (no function call)
     const modal = document.getElementById('authModal');
@@ -1441,7 +1593,55 @@ async function signInWithGoogle() {
         showToast(err.message, 'error');
     }
 }
+// Show spinner during logout
+let logoutOverlay = null;
+
+function showLogoutSpinner() {
+    if (logoutOverlay) return;
+    
+    logoutOverlay = document.createElement('div');
+    logoutOverlay.id = 'logoutOverlay';
+    logoutOverlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle at 20% 30%, rgba(255, 51, 102, 0.98), rgba(0, 102, 255, 0.98), rgba(0, 255, 102, 0.9));
+        z-index: 20000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        backdrop-filter: blur(8px);
+    `;
+    logoutOverlay.innerHTML = `
+        <div style="position: relative;">
+            <div class="loading-sparkle">💎</div>
+            <div class="loading-particle" style="--tx: -30px; --ty: -40px; left: 50%; top: 50%;"></div>
+            <div class="loading-particle" style="--tx: 30px; --ty: -40px; left: 50%; top: 50%; animation-delay: 0.2s;"></div>
+            <div class="loading-particle" style="--tx: -40px; --ty: 20px; left: 50%; top: 50%; animation-delay: 0.4s;"></div>
+            <div class="loading-particle" style="--tx: 40px; --ty: 20px; left: 50%; top: 50%; animation-delay: 0.6s;"></div>
+        </div>
+        <div style="margin-top: 30px;">
+            <span class="loading-coin">🪙</span>
+            <span class="loading-coin" style="animation-delay: 0.2s;">🪙</span>
+            <span class="loading-coin" style="animation-delay: 0.4s;">🪙</span>
+        </div>
+        <p style="color: #FFD700; margin-top: 20px; font-size: 18px; font-weight: bold;">Logging out...</p>
+        <p style="color: #ccc; margin-top: 10px; font-size: 12px;">Please wait</p>
+    `;
+    document.body.appendChild(logoutOverlay);
+}
+
+function hideLogoutSpinner() {
+    if (logoutOverlay) {
+        logoutOverlay.remove();
+        logoutOverlay = null;
+    }
+}
 async function logout() {
+showLogoutSpinner();
 isLoggingOut = true;
     // Show feedback
     showToast('Logging out...', 'info');
@@ -1473,6 +1673,7 @@ isLoggingOut = true;
     IS_ADMIN = false;
     currentUser = null;
     allTransactions = [];
+    stopSessionHeartbeat();
     
     // 5. Reset UI to initial state (clear all dynamic content)
     document.getElementById('balance').innerText = '0';
@@ -1524,187 +1725,189 @@ async function hardRefresh() {
 }
 // ==================== DATA LOADING (FULL FEATURES) ====================
 let currentUser = null;
-async function loadUser() {
+async function loadUser(forceRefresh = false) {
+    if (!USER_ID) return;
+    
+    // Check cache first (unless force refresh)
+    if (!forceRefresh) {
+        const cached = cache.get(`user_${USER_ID}`);
+        if (cached) {
+            currentUser = cached;
+            updateBalanceDisplay();
+            return cached;
+        }
+    }
+    
     const { data, error } = await sb.from('users').select('*').eq('user_id', USER_ID).single();
     if(error && error.code === 'PGRST116') {
         await ensureUserExists({ id: USER_ID, email: 'temp@temp.com' });
         return loadUser();
     }
     currentUser = data;
-    document.getElementById('balance').innerText = (data.balance || 0).toLocaleString();
-    document.getElementById('bonus').innerText = (data.bonus_balance || 0).toLocaleString();
-    document.getElementById('coins').innerText = (data.coin_balance || 0).toLocaleString();
+    updateBalanceDisplay();
+    
+    // Cache for 30 seconds (reduces repeated calls)
+    cache.set(`user_${USER_ID}`, data, 30000);
     return data;
 }
-async function loadAllData() {
-    if(!USER_ID) return;
-    await loadUser();
-await loadReferralEarnings();
-await loadLeaderboard();
-    // Quad-Lock
-    const { count: lotteryCount } = await sb.from('lottery_tickets').select('*', {count:'exact', head:true}).eq('user_id', USER_ID).eq('status','active');
+// NEW FUNCTION 1: Load Quad Lock and Exchange Info
+async function loadQuadLockAndExchange() {
+    const { count: lotteryCount } = await sb.from('lottery_tickets')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', USER_ID).eq('status', 'active');
+    
     const depositDone = (currentUser.total_deposited || 0) >= 1500;
     const gameDone = (currentUser.win_chance_plays || 0) >= 10;
     const lotteryDone = (lotteryCount || 0) >= 1;
     const referralDone = (currentUser.active_referrals || 0) >= 3;
     const completed = [depositDone, gameDone, lotteryDone, referralDone].filter(Boolean).length;
-    const percent = (completed/4)*100;
+    const percent = (completed / 4) * 100;
+    
     document.getElementById('quadlock').innerHTML = `
-        <div class="quad-item ${depositDone?'unlocked':'locked'}"><div>💰 Deposit 1500 ETB</div><div>${(currentUser.total_deposited||0)}/1500</div></div>
-        <div class="quad-item ${gameDone?'unlocked':'locked'}"><div>🎮 Play 10 Games</div><div>${currentUser.win_chance_plays||0}/10</div></div>
-        <div class="quad-item ${lotteryDone?'unlocked':'locked'}"><div>🎟️ Buy 1 Ticket</div><div>${lotteryCount||0}/1</div></div>
-        <div class="quad-item ${referralDone?'unlocked':'locked'}"><div>👥 3 Referrals</div><div>${currentUser.active_referrals||0}/3</div></div>
+        <div class="quad-item ${depositDone ? 'unlocked' : 'locked'}"><div>💰 Deposit 1500 ETB</div><div>${(currentUser.total_deposited || 0)}/1500</div></div>
+        <div class="quad-item ${gameDone ? 'unlocked' : 'locked'}"><div>🎮 Play 10 Games</div><div>${currentUser.win_chance_plays || 0}/10</div></div>
+        <div class="quad-item ${lotteryDone ? 'unlocked' : 'locked'}"><div>🎟️ Buy 1 Ticket</div><div>${lotteryCount || 0}/1</div></div>
+        <div class="quad-item ${referralDone ? 'unlocked' : 'locked'}"><div>👥 3 Referrals</div><div>${currentUser.active_referrals || 0}/3</div></div>
         <div class="progress-bar"><div class="progress-fill" style="width:${percent}%"></div></div>
         <div class="progress-text">${completed}/4 Complete (${Math.round(percent)}%)</div>`;
-    // Exchange info
-    const today = new Date().toISOString().slice(0,10);
-    const { data: exchanged } = await sb.from('daily_exchange').select('id').eq('user_id', USER_ID).eq('exchange_date', today).maybeSingle();
-const alreadyExchanged = exchanged !== null;
-const maxEx = Math.floor((currentUser.coin_balance || 0) * 0.03);
-
-if (alreadyExchanged) {
-    document.getElementById('exchangeInfo').innerHTML = `
-        <div>⚠️ You have already exchanged today.</div>
-        <div>📊 Daily limit: 3% of coins (${maxEx} max)</div>
-        <div>⏳ Please try again tomorrow.</div>
-    `;
-    document.getElementById('exchangeInfoModal').innerHTML = `
-        <div>You have already exchanged today.</div>
-        <div>Come back tomorrow to exchange again.</div>
-    `;
-} else {
-    document.getElementById('exchangeInfo').innerHTML = `
-        <div>📊 Daily limit: 3% of your coins (up to ${maxEx} coins)</div>
-        <div>✅ You can exchange today.</div>
-    `;
-    document.getElementById('exchangeInfoModal').innerHTML = `
-        <div>You can exchange up to ${maxEx} coins right now.</div>
-        <div>⚠️ Only one exchange per day allowed.</div>
-    `;
-    const exchangeInput = document.getElementById('exchangeAmount');
-    if (exchangeInput) exchangeInput.placeholder = `Amount (max ${maxEx})`;
+    
+    const today = new Date().toISOString().slice(0, 10);
+    const { data: exchanged } = await sb.from('daily_exchange')
+        .select('id').eq('user_id', USER_ID).eq('exchange_date', today).maybeSingle();
+    const alreadyExchanged = exchanged !== null;
+    const maxEx = Math.floor((currentUser.coin_balance || 0) * 0.03);
+    
+    if (alreadyExchanged) {
+        document.getElementById('exchangeInfo').innerHTML = `<div>⚠️ You have already exchanged today.</div><div>📊 Daily limit: 3% of coins (${maxEx} max)</div><div>⏳ Please try again tomorrow.</div>`;
+        document.getElementById('exchangeInfoModal').innerHTML = `<div>You have already exchanged today.</div><div>Come back tomorrow to exchange again.</div>`;
+    } else {
+        document.getElementById('exchangeInfo').innerHTML = `<div>📊 Daily limit: 3% of your coins (up to ${maxEx} coins)</div><div>✅ You can exchange today.</div>`;
+        document.getElementById('exchangeInfoModal').innerHTML = `<div>You can exchange up to ${maxEx} coins right now.</div><div>⚠️ Only one exchange per day allowed.</div>`;
+        const exchangeInput = document.getElementById('exchangeAmount');
+        if (exchangeInput) exchangeInput.placeholder = `Amount (max ${maxEx})`;
+    }
 }
-    // Market & Investments
-const { data: market } = await sb.from('market').select('*').order('slot_id');
-const { data: assets } = await sb.from('user_assets').select('*').eq('user_id', USER_ID).eq('sold', false);
-const ownedSlots = assets?.map(a => a.slot_id) || [];
 
-if (market) {
-    document.getElementById('marketGrid').innerHTML = market.map(item => {
-        const owned = ownedSlots.includes(item.slot_id);
-        const mediaContent = item.image_url 
-            ? `<div class="market-image-container">
-                   <img src="${item.image_url}" class="market-image" alt="${escapeHTML(item.asset_name)}">
-                   ${owned ? '<div class="market-owned-badge">✅ Owned</div>' : ''}
-               </div>`
-            : `<div class="market-image-container">
-                   <div class="market-emoji">${item.emoji}</div>
-                   ${owned ? '<div class="market-owned-badge">✅ Owned</div>' : ''}
-               </div>`;
-        return `
-            <div class="market-item ${owned ? 'owned' : ''}" onclick="${!owned ? `buyAsset(${item.slot_id})` : ''}">
-                ${mediaContent}
-                <div class="market-info">
-                    <div class="market-name">${escapeHTML(item.asset_name)}</div>
-                    <div class="market-price">${item.cost} 🪙</div>
-                    <div class="market-roi">ROI ${Math.round(((item.default_roi || 1.25) - 1) * 100)}%</div>
+// NEW FUNCTION 2: Load Market and Investments
+async function loadMarketAndInvestments() {
+    const [marketResult, assetsResult] = await Promise.all([
+        sb.from('market').select('*').order('slot_id'),
+        sb.from('user_assets').select('*').eq('user_id', USER_ID).eq('sold', false)
+    ]);
+    
+    const market = marketResult.data;
+    const assets = assetsResult.data;
+    const ownedSlots = assets?.map(a => a.slot_id) || [];
+    
+    if (market) {
+        document.getElementById('marketGrid').innerHTML = market.map(item => {
+            const owned = ownedSlots.includes(item.slot_id);
+            const mediaContent = item.image_url 
+                ? `<div class="market-image-container"><img src="${item.image_url}" class="market-image" alt="${escapeHTML(item.asset_name)}">${owned ? '<div class="market-owned-badge">✅ Owned</div>' : ''}</div>`
+                : `<div class="market-image-container"><div class="market-emoji">${item.emoji}</div>${owned ? '<div class="market-owned-badge">✅ Owned</div>' : ''}</div>`;
+            return `
+                <div class="market-item ${owned ? 'owned' : ''}" onclick="${!owned ? `buyAsset(${item.slot_id})` : ''}">
+                    ${mediaContent}
+                    <div class="market-info">
+                        <div class="market-name">${escapeHTML(item.asset_name)}</div>
+                        <div class="market-price">${item.cost} 🪙</div>
+                        <div class="market-roi">ROI ${Math.round(((item.default_roi || 1.25) - 1) * 100)}%</div>
+                    </div>
                 </div>
-            </div>
-        `;
-    }).join('');
+            `;
+        }).join('');
+    }
+    await loadInvestments();
+    await loadSoldAssets();
 }
-await loadInvestments();
-await loadSoldAssets();
-    // Lottery
+
+// NEW FUNCTION 3: Load Lottery Pools
+async function loadLotteryPools() {
     const pools = [];
-for(let pid of [1,2,3]) {
-    const { data: roundInfo } = await sb.from('lottery_pool_rounds')
-        .select('current_round, is_active')
-        .eq('pool_id', pid)
-        .single();
-    const currentRound = roundInfo?.current_round || 1;
-    const isActive = roundInfo?.is_active !== false;
-    
-    const { count: sold } = await sb.from('lottery_tickets')
-        .select('*', {count:'exact', head:true})
-        .eq('pool_id', pid)
-        .eq('round', currentRound)
-        .eq('status', 'active');
-    
-    const { data: taken } = await sb.from('lottery_tickets')
-        .select('ticket_number')
-        .eq('pool_id', pid)
-        .eq('round', currentRound)
-        .eq('status', 'active');
-    const takenList = taken?.map(t=>t.ticket_number)||[];
-    
-    const price = [50,100,200][pid-1];
-    const reward = [500,1000,2000][pid-1];
-    const full = (sold||0) >= 15;
-    
-    pools.push({
-        id: pid,
-        round: currentRound,
-        isActive: isActive,
-        price: price,
-        reward: reward,
-        sold: sold||0,
-        total: 15,
-        taken: takenList,
-        full: full
-    });
-}
-document.getElementById('lotteryPools').innerHTML = pools.map(p => `
-    <div class="lottery-pool">
-        <div><strong>🎰 Pool #${p.id} (Round ${p.round})</strong> <span class="badge">Prize: ${p.reward} 🪙</span></div>
-        <div>💰 Ticket: ${p.price} 🪙</div>
-        <div class="progress-bar"><div class="progress-fill" style="width:${(p.sold/p.total)*100}%"></div></div>
-        <div>${p.sold}/${p.total} sold</div>
-        ${!p.full && p.isActive ? 
-            `<button class="btn btn-sm" onclick="showLotteryNumbers(${p.id}, ${p.price}, ${JSON.stringify(p.taken)}, ${p.round})">Buy Ticket</button>` : 
-            (p.isActive ? '<div>✅ Pool Full</div>' : '<div>⏳ Waiting for admin to start new round</div>')}
-    </div>
-`).join('');
-    const { data: myTickets } = await sb.from('lottery_tickets').select('*').eq('user_id', USER_ID).eq('status','active');
-    document.getElementById('myTickets').innerHTML = myTickets?.length ? myTickets.map(t => `
-    <div class="ticket-item">
-        <div>🎫 ${escapeHTML(t.serial_number)}</div>
-        <div><span class="badge">Active</span></div>
-    </div>
-`).join('') : '<div class="loading">No tickets</div>';
-        await loadDraws();
-    // Consultations
-    await loadConsultations();
-    // Transactions - load all, then filter/paginate
-const { data: txs } = await sb.from('transactions').select('*').eq('user_id', USER_ID).order('timestamp', {ascending: false});
-if (txs) {
-    allTransactions = txs;
-    applyTransactionFilter();
-} else {
-    document.getElementById('transactionList').innerHTML = '<div class="loading">No transactions</div>';
-}
-    // Profile Info
-    document.getElementById('profileInfo').innerHTML = `<div class="profile-item">👤 ${escapeHTML(currentUser.username) || 'User'}</div><div>🆔 ${USER_ID.slice(0,8)}...</div><div>📅 Joined: ${escapeHTML(currentUser.joined_date) || 'N/A'}</div><div>💰 Deposited: ${(currentUser.total_deposited||0).toLocaleString()} ETB</div><div>📤 Withdrawn: ${(currentUser.total_withdrawn||0).toLocaleString()} ETB</div><div>👥 Referrals: ${currentUser.active_referrals||0}</div><div>🎮 Games: ${currentUser.win_chance_plays||0}</div>`;
-    // Airtime cards – sort available first, then sold out, then by position
-const { data: cards } = await sb.from('global_cards').select('*').order('position');
-if (cards) {
-    const sortedCards = [...cards].sort((a, b) => {
-        const aAvailable = (a.hidden_numbers?.length > 0) ? 0 : 1;
-        const bAvailable = (b.hidden_numbers?.length > 0) ? 0 : 1;
-        if (aAvailable !== bAvailable) return aAvailable - bAvailable;
-        return a.position - b.position;
-    });
-    document.getElementById('cardsGrid').innerHTML = sortedCards.map(card => `
-        <div class="market-item" onclick="buyAirtimeCard(${card.id}, ${card.card_cost})">
-            <div class="market-emoji">🎫</div>
-            <div class="market-name">Airtime - ${card.card_cost} ETB</div>
-            <div class="market-price">Cost: ${card.card_cost} ETB</div>
-            <div>${card.hidden_numbers?.length ? '✅ Available' : '❌ Sold Out'}</div>
+    for (let pid of [1, 2, 3]) {
+        const { data: roundInfo } = await sb.from('lottery_pool_rounds')
+            .select('current_round, is_active').eq('pool_id', pid).single();
+        const currentRound = roundInfo?.current_round || 1;
+        const isActive = roundInfo?.is_active !== false;
+        const { count: sold } = await sb.from('lottery_tickets')
+            .select('*', { count: 'exact', head: true })
+            .eq('pool_id', pid).eq('round', currentRound).eq('status', 'active');
+        const { data: taken } = await sb.from('lottery_tickets')
+            .select('ticket_number').eq('pool_id', pid).eq('round', currentRound).eq('status', 'active');
+        const price = [50, 100, 200][pid - 1];
+        const reward = [500, 1000, 2000][pid - 1];
+        const full = (sold || 0) >= 15;
+        pools.push({ id: pid, round: currentRound, isActive, price, reward, sold: sold || 0, total: 15, taken: taken?.map(t => t.ticket_number) || [], full });
+    }
+    document.getElementById('lotteryPools').innerHTML = pools.map(p => `
+        <div class="lottery-pool">
+            <div><strong>🎰 Pool #${p.id} (Round ${p.round})</strong> <span class="badge">Prize: ${p.reward} 🪙</span></div>
+            <div>💰 Ticket: ${p.price} 🪙</div>
+            <div class="progress-bar"><div class="progress-fill" style="width:${(p.sold / p.total) * 100}%"></div></div>
+            <div>${p.sold}/${p.total} sold</div>
+            ${!p.full && p.isActive ? `<button class="btn btn-sm" onclick="showLotteryNumbers(${p.id}, ${p.price}, ${JSON.stringify(p.taken)}, ${p.round})">Buy Ticket</button>` : (p.isActive ? '<div>✅ Pool Full</div>' : '<div>⏳ Waiting for admin to start new round</div>')}
         </div>
     `).join('');
-} else {
+    
+    const { data: myTickets } = await sb.from('lottery_tickets').select('*').eq('user_id', USER_ID).eq('status', 'active');
+    document.getElementById('myTickets').innerHTML = myTickets?.length ? myTickets.map(t => `<div class="ticket-item"><div>🎫 ${escapeHTML(t.serial_number)}</div><div><span class="badge">Active</span></div></div>`).join('') : '<div class="loading">No tickets</div>';
+}
+
+// NEW FUNCTION 4: Load Profile and Airtime Cards
+async function loadProfileAndCards() {
+    document.getElementById('profileInfo').innerHTML = `
+        <div class="profile-item">👤 ${escapeHTML(currentUser.username) || 'User'}</div>
+        <div>🆔 ${USER_ID.slice(0, 8)}...</div>
+        <div>📅 Joined: ${escapeHTML(currentUser.joined_date) || 'N/A'}</div>
+        <div>💰 Deposited: ${(currentUser.total_deposited || 0).toLocaleString()} ETB</div>
+        <div>📤 Withdrawn: ${(currentUser.total_withdrawn || 0).toLocaleString()} ETB</div>
+        <div>👥 Referrals: ${currentUser.active_referrals || 0}</div>
+        <div>🎮 Games: ${currentUser.win_chance_plays || 0}</div>`;
+    
+    const { data: cards } = await sb.from('global_cards').select('*').order('position');
+    if (cards) {
+        const sortedCards = [...cards].sort((a, b) => {
+            const aAvailable = (a.hidden_numbers?.length > 0) ? 0 : 1;
+            const bAvailable = (b.hidden_numbers?.length > 0) ? 0 : 1;
+            if (aAvailable !== bAvailable) return aAvailable - bAvailable;
+            return a.position - b.position;
+        });
+        document.getElementById('cardsGrid').innerHTML = sortedCards.map(card => `
+            <div class="market-item" onclick="buyAirtimeCard(${card.id}, ${card.card_cost})">
+                <div class="market-emoji">🎫</div>
+                <div class="market-name">Airtime - ${card.card_cost} ETB</div>
+                <div class="market-price">Cost: ${card.card_cost} ETB</div>
+                <div>${card.hidden_numbers?.length ? '✅ Available' : '❌ Sold Out'}</div>
+            </div>
+        `).join('');
+    } else {
         document.getElementById('cardsGrid').innerHTML = '<div class="loading">No cards</div>';
     }
+}
+
+// NEW FUNCTION 5: Load Transactions (extract from existing)
+async function loadTransactions() {
+    const { data: txs } = await sb.from('transactions')
+        .select('*').eq('user_id', USER_ID).order('timestamp', { ascending: false });
+    if (txs) {
+        allTransactions = txs;
+        applyTransactionFilter();
+    } else {
+        document.getElementById('transactionList').innerHTML = '<div class="loading">No transactions</div>';
+    }
+}
+async function loadAllData() {
+    if (!USER_ID) return;
+    await loadUser();
+    await loadReferralEarnings();
+    await loadLeaderboard();
+    await loadQuadLockAndExchange();
+    await loadMarketAndInvestments();
+    await loadLotteryPools();
+    await loadDraws();
+    await loadConsultations();
+    await loadTransactions();
+    await loadProfileAndCards();
 }
 async function loadReferralEarnings() {
     if (!USER_ID) return;
@@ -1785,13 +1988,12 @@ function initHistoryTabs() {
 async function loadLeaderboard() {
     try {
         // Count all users (or only those with deposits – uncomment the .gt line if desired)
-        const { count: totalUsers, error: countError } = await sb
-            .from('users')
-            .select('*', { count: 'exact', head: true });
-            // .gt('total_deposited', 0);   // uncomment to show only depositors
-        if (countError) throw countError;
+        const { count, error: countError } = await sb
+    .from('users')
+    .select('*', { count: 'exact', head: true });
+if (countError) throw countError;
 
-        totalLeaderboardPages = Math.ceil(totalUsers / LEADERBOARD_PER_PAGE);
+totalLeaderboardPages = Math.ceil(count / LEADERBOARD_PER_PAGE);
         if (leaderboardPage > totalLeaderboardPages) leaderboardPage = Math.max(1, totalLeaderboardPages);
 
         const start = (leaderboardPage - 1) * LEADERBOARD_PER_PAGE;
@@ -1831,7 +2033,6 @@ async function loadLeaderboard() {
 
         attachLeaderboardCheckboxEvents();
     } catch (err) {
-        console.error(err);
         document.getElementById('leaderboard').innerHTML = '<div class="loading">Failed to load leaderboard</div>';
     }
 }
@@ -1893,22 +2094,45 @@ async function refreshLeaderboard() {
 // ==================== FINANCIAL ACTIONS ====================
 async function buyCoins() {
     if (isProcessing.buyCoins) return;
-    isProcessing.buyCoins = true;
+    
     let amt = parseInt(document.getElementById('buyCoinsAmount').value);
     if (isNaN(amt) || amt < 50) {
         showToast('Minimum 50 ETB', 'error');
-        isProcessing.buyCoins = false;
         return;
     }
+    
+    isProcessing.buyCoins = true;
+    
+    // OPTIMISTIC UPDATE - Update UI immediately (no waiting)
+    const oldBalance = currentUser?.balance || 0;
+    const oldCoins = currentUser?.coin_balance || 0;
+    if (currentUser) {
+        currentUser.balance = oldBalance - amt;
+        currentUser.coin_balance = oldCoins + amt;
+        updateBalanceDisplay();
+    }
+    showToast(`Processing ${amt} coins...`, 'info');
+    
     try {
         const { error } = await sb.rpc('buy_coins_transaction_secure', { p_amount: amt });
         if (error) throw error;
+        
         showToast(`Bought ${amt} coins!`, 'success');
         playSound('coin');
         closeModal('buyCoinsModal');
         document.getElementById('buyCoinsAmount').value = '';
-        await loadAllData();
+        
+        // Clear cache to force fresh data
+        cache.clear(`user_${USER_ID}`);
+        cache.clear('dashboard_data');
+        
     } catch (err) {
+        // ROLLBACK on error - revert the optimistic update
+        if (currentUser) {
+            currentUser.balance = oldBalance;
+            currentUser.coin_balance = oldCoins;
+            updateBalanceDisplay();
+        }
         showToast(err.message, 'error');
     } finally {
         isProcessing.buyCoins = false;
@@ -1916,21 +2140,16 @@ async function buyCoins() {
 }
 async function exchangeCoins() {
     if (isProcessing.exchangeCoins) return;
-    const today = new Date().toISOString().slice(0, 10);
     
-    const { data: existing } = await sb
-        .from('daily_exchange')
-        .select('id')
-        .eq('user_id', USER_ID)
-        .eq('exchange_date', today)
-        .maybeSingle();
+    const today = new Date().toISOString().slice(0, 10);
+    const { data: existing } = await sb.from('daily_exchange')
+        .select('id').eq('user_id', USER_ID).eq('exchange_date', today).maybeSingle();
     if (existing) {
         showToast('You have already exchanged today. Please try again tomorrow.', 'error');
         return;
     }
     
-    const { data: user } = await sb.from('users').select('coin_balance').eq('user_id', USER_ID).single();
-    const maxAllowed = Math.floor((user.coin_balance || 0) * 0.03);
+    const maxAllowed = Math.floor((currentUser?.coin_balance || 0) * 0.03);
     if (maxAllowed <= 0) {
         showToast('No coins available to exchange (minimum 34 coins needed).', 'error');
         return;
@@ -1947,18 +2166,38 @@ async function exchangeCoins() {
     }
     
     isProcessing.exchangeCoins = true;
+    
+    // Optimistic update
+    const oldCoins = currentUser.coin_balance;
+    const oldBonus = currentUser.bonus_balance;
+    if (currentUser) {
+        currentUser.coin_balance -= amount;
+        currentUser.bonus_balance += amount;
+        updateBalanceDisplay();
+    }
+    
     try {
         const { error } = await sb.rpc('exchange_coins_to_bonus_secure', { 
             p_amount: amount,
             p_date: today 
         });
         if (error) throw error;
+        
         showToast(`Exchanged ${amount} coins to bonus!`, 'success');
         playSound('coin');
         closeModal('exchangeModal');
         document.getElementById('exchangeAmount').value = '';
-        await loadAllData();
+        
+        cache.clear(`user_${USER_ID}`);
+        cache.clear('dashboard_data');
+        
     } catch (err) {
+        // Rollback on error
+        if (currentUser) {
+            currentUser.coin_balance = oldCoins;
+            currentUser.bonus_balance = oldBonus;
+            updateBalanceDisplay();
+        }
         showToast(err.message || 'Exchange failed', 'error');
     } finally {
         isProcessing.exchangeCoins = false;
@@ -2082,7 +2321,6 @@ async function buyAsset(slotId) {
 }
 async function sellAsset(assetId, buttonElement = null) {
     if (isProcessing.sellAsset) {
-        console.log("Sell already in progress, ignoring double click");
         return;
     }
     // If button element is provided, disable it and show processing text
@@ -2173,22 +2411,16 @@ function showLotteryNumbers(poolId, price, taken, round) {
     for(let i=1;i<=15;i++) {
         const isTaken = taken.includes(i);
         html += `<div class="lottery-number ${isTaken ? 'taken' : ''}" 
-            onclick="${!isTaken ? `buyLotteryTicket(${poolId}, ${i}, ${round})` : ''}" 
-            style="background:${isTaken?'#ef4444':'#3b82f6'}; padding:12px; border-radius:12px; text-align:center; cursor:pointer;">
+            id="lottery-num-${poolId}-${round}-${i}"
+            onclick="${!isTaken ? `buyLotteryTicketWithDisable(${poolId}, ${i}, ${round}, this)` : ''}"
+            onkeydown="${!isTaken ? `if(event.key==='Enter'||event.key===' ') buyLotteryTicketWithDisable(${poolId}, ${i}, ${round}, this)` : ''}"
+            role="button" tabindex="${!isTaken ? '0' : '-1'}"
+            style="background:${isTaken?'#ef4444':'#3b82f6'}; padding:12px; border-radius:12px; text-align:center; cursor:${isTaken?'not-allowed':'pointer'};">
             ${String(i).padStart(2,'0')}
         </div>`;
     }
     html += '</div>';
-    const modal = document.createElement('div');
-    modal.className = 'modal active';
-    modal.innerHTML = `<div class="modal-content">
-        <span class="close" onclick="this.parentElement.parentElement.remove()">&times;</span>
-        <h3>🎟️ Select Number</h3>
-        <p>Pool #${poolId} (Round ${round}) - Price: ${price} 🪙</p>
-        ${html}
-        <button class="btn" onclick="this.parentElement.parentElement.remove()">Cancel</button>
-    </div>`;
-    document.body.appendChild(modal);
+    createModal(`🎟️ Select Number - Pool #${poolId} (Round ${round})`, `<p>Price: ${price} 🪙</p>${html}`);
 }
 async function buyLotteryTicket(poolId, number, round) {
     const price = [50,100,200][poolId-1];
@@ -2214,6 +2446,24 @@ async function buyLotteryTicket(poolId, number, round) {
         await loadAllData();
     }
 }
+// New function with disable protection to prevent double clicks
+async function buyLotteryTicketWithDisable(poolId, number, round, element) {
+    // Disable button immediately
+    const originalText = element.innerHTML;
+    const originalBg = element.style.background;
+    element.style.background = '#666';
+    element.style.cursor = 'wait';
+    element.style.pointerEvents = 'none';
+    
+    try {
+        await buyLotteryTicket(poolId, number, round);
+    } finally {
+        // Re-enable (modal will close anyway, but safe to reset)
+        element.style.background = originalBg;
+        element.style.cursor = 'pointer';
+        element.style.pointerEvents = 'auto';
+    }
+}
 async function startConsultation() {
     const issue = document.getElementById('healthIssue').value.trim();
     if(!issue || issue.length < 10) return showToast('Describe issue (min 10 chars)','error');
@@ -2228,7 +2478,27 @@ async function startConsultation() {
     }
 }
 async function buyAirtimeCard(cardId, cost) {
-    if (isProcessing.buyAirtime) return;
+    // Prevent multiple simultaneous purchases
+    if (isProcessing.buyAirtime) {
+        showToast('Purchase already in progress...', 'info');
+        return;
+    }
+    
+    // Disable the clicked button immediately
+    let clickedButton = null;
+    try {
+        // Find the clicked element
+        const activeModal = document.querySelector('.modal.active');
+        if (activeModal) {
+            clickedButton = activeModal.querySelector('.market-item');
+        }
+    } catch(e) {}
+    
+    if (clickedButton) {
+        clickedButton.style.opacity = '0.5';
+        clickedButton.style.pointerEvents = 'none';
+    }
+    
     isProcessing.buyAirtime = true;
     
     // Show loading toast immediately
@@ -2242,36 +2512,45 @@ async function buyAirtimeCard(cardId, cost) {
         showToast(`Airtime purchased!`, 'success');
         playSound('coin');
         
-        // Create modal with revealed number (already fast)
-        const modal = document.createElement('div');
-        modal.className = 'modal active';
-        modal.innerHTML = `
-            <div class="modal-content" style="text-align:center;">
-                <span class="close" onclick="this.parentElement.parentElement.remove()">&times;</span>
-                <h3>🎉 Airtime Revealed!</h3>
+        // Create modal with revealed number using reusable function
+        const modal = createModal('🎉 Airtime Revealed!', `
+            <div style="text-align:center;">
                 <div style="font-size:32px; margin:20px 0; background:#000; padding:15px; border-radius:16px;">${revealed}</div>
                 <p>This number will disappear in <span id="countdownTimer">20</span> seconds.</p>
-                <button class="btn" onclick="this.closest('.modal').remove()">Dismiss Now</button>
             </div>
-        `;
-        document.body.appendChild(modal);
+        `);
         
-        // Auto-close after 20 seconds
+        // Auto-close after 20 seconds with proper cleanup
         let seconds = 20;
         const timerSpan = modal.querySelector('#countdownTimer');
-        const interval = setInterval(() => {
+        let interval = null;
+        
+        const cleanupModal = () => {
+            if (interval) clearInterval(interval);
+            modal.remove();
+        };
+        
+        interval = setInterval(() => {
             seconds--;
             if (timerSpan) timerSpan.innerText = seconds;
-            if (seconds <= 0) { clearInterval(interval); if (modal.parentNode) modal.remove(); }
+            if (seconds <= 0) cleanupModal();
         }, 1000);
-        modal.querySelector('.close').onclick = () => { clearInterval(interval); modal.remove(); };
+        
+        modal.querySelector('.close').onclick = cleanupModal;
+        modal.querySelector('.btn').onclick = cleanupModal;
         
         await loadAllData();
     } catch (err) {
         showToast(err.message, 'error');
+    } finally {
+        isProcessing.buyAirtime = false;
+        if (clickedButton) {
+            clickedButton.style.opacity = '';
+            clickedButton.style.pointerEvents = '';
+        }
     }
-    isProcessing.buyAirtime = false;
 }
+
 // ==================== ADMIN PANEL ====================
 function showAdminTab() {
     if(document.querySelector('.tab[data-tab="admin"]')) return;
@@ -2469,7 +2748,6 @@ async function respondConsultation(id) {
             })
             .eq('id', id);
         if (error) {
-            console.error('Supabase error:', error);
             showToast('Error: ' + error.message, 'error');
         } else {
             showToast('Response sent successfully!', 'success');
@@ -2481,7 +2759,6 @@ async function respondConsultation(id) {
             }
         }
     } catch (err) {
-        console.error('Unexpected error:', err);
         showToast('An unexpected error occurred', 'error');
     }
 }
@@ -2503,15 +2780,7 @@ async function drawLottery(poolId) {
     loadAdminPanel();
     loadAllData();
 }
-async function updateMarketItem(slotId) {
-    const newPrice = parseInt(document.getElementById(`price_${slotId}`).value);
-    const newRoi = parseFloat(document.getElementById(`roi_${slotId}`).value);
-    if(isNaN(newPrice) || newPrice<=0 || isNaN(newRoi) || newRoi<=0) return showToast('Invalid','error');
-    await sb.from('market').update({ cost:newPrice, default_roi:newRoi }).eq('slot_id',slotId);
-    showToast('Market updated','success');
-    loadAdminPanel();
-    loadAllData();
-}
+
 async function updateMarketItemFull(slotId) {
     const newEmoji = document.getElementById(`emoji_${slotId}`).value.trim();
     const newName = document.getElementById(`name_${slotId}`).value.trim();
@@ -2559,7 +2828,6 @@ async function uploadMarketImage(slotId) {
         .eq('slot_id', slotId)
         .single();
     if (fetchError && fetchError.code !== 'PGRST116') {
-        console.error("Error fetching current image:", fetchError);
     }
 
     // 2. Upload new file first (so we don't lose the old one if upload fails)
@@ -2594,7 +2862,6 @@ async function uploadMarketImage(slotId) {
                 .from('market-images')
                 .remove([oldFileName]);
             if (deleteError) {
-                console.warn("Could not delete old image:", deleteError);
                 // Not a critical error, so we don't show toast
             }
         }
@@ -2625,7 +2892,7 @@ async function deleteMarketImage(slotId) {
         const { error: deleteError } = await sb.storage
             .from('market-images')
             .remove([oldFileName]);
-        if (deleteError) console.warn("Could not delete file:", deleteError);
+        if (deleteError)
     }
     
     // 3. Update database to remove image_url
@@ -2717,7 +2984,11 @@ async function shuffleCards() {
     if(!cards) return;
     const shuffled = [...cards];
     for(let i=shuffled.length-1;i>0;i--) { const j=Math.floor(Math.random()*(i+1)); [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]; }
-    for(let i=0;i<shuffled.length;i++) await sb.from('global_cards').update({ position:i }).eq('id',shuffled[i].id);
+    const updates = shuffled.map((card, index) => ({
+    id: card.id,
+    position: index
+}));
+await sb.from('global_cards').upsert(updates, { onConflict: 'id' });
     showToast('Order shuffled','success');
     loadAdminPanel();
     loadAllData();
@@ -2837,7 +3108,6 @@ async function refreshAdminStats() {
         document.getElementById('statDeposited').innerText = (deposited.data || 0).toLocaleString();
         document.getElementById('statWithdrawn').innerText = (withdrawn.data || 0).toLocaleString();
     } catch (err) {
-        console.error(err);
         showToast('Failed to load stats', 'error');
     }
 }
@@ -2859,7 +3129,6 @@ async function loadWithdrawalSettings() {
         if (minInput) minInput.value = minData?.value || '500';
         if (stepInput) stepInput.value = stepData?.value || '500';
     } catch (err) {
-        console.error(err);
     }
 }
 
@@ -3377,7 +3646,6 @@ document.addEventListener('keydown', function(e) {
     const ref = urlParams.get('ref');
     if (ref) {
         localStorage.setItem('profitvault_referral', ref);
-        console.log("✅ Referral ID saved to localStorage:", ref);
     }
     // Attach profile avatar click
     document.getElementById('profileArea').addEventListener('click', function(e) {
@@ -3385,14 +3653,24 @@ document.addEventListener('keydown', function(e) {
         toggleUserMenu();
     });    
     checkSession();
-    sb.auth.onAuthStateChange((event, session) => {
+    // Track session refresh to prevent loops
+let lastSessionRefresh = 0;
+
+sb.auth.onAuthStateChange((event, session) => {
     // Don't trigger if we're already in the process of logging out
     if (isLoggingOut) return;
     
-    if (event === 'SIGNED_OUT' || (event === 'TOKEN_REFRESHED' && !session)) {
+    // Prevent multiple rapid session events
+    const now = Date.now();
+    if (now - lastSessionRefresh < 5000) return;
+    lastSessionRefresh = now;
+    
+    // Only handle SIGNED_OUT, ignore TOKEN_REFRESHED to prevent loops
+    if (event === 'SIGNED_OUT') {
         if (USER_ID) {
-            console.log("Session lost, logging out...");
             isLoggingOut = true;
+            showToast('Session ended. Please log in again.', 'info');
+            showLogoutSpinner();
             logout();
         }
     }
@@ -3416,20 +3694,44 @@ document.addEventListener('keydown', function(e) {
     }
     initHistoryTabs();
     initGuideTab();
+    // Debounced refresh button (prevents spam clicking)
+    const refreshBtn = document.getElementById('refreshBtn');
+    if (refreshBtn) {
+        refreshBtn.onclick = debounce(() => {
+            if (USER_ID) {
+                cache.clear('dashboard_data');
+                cache.clear(`user_${USER_ID}`);
+                loadAllData(true);
+                showToast('Data refreshed!', 'success');
+            } else {
+                hardRefresh();
+            }
+        }, 2000);
+    }
+        // Throttled tab clicks - prevents rapid tab switching
     document.querySelectorAll('.tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-        const id = tab.getAttribute('data-tab');
-        if (!id) return;  // skip refresh button
-        const target = document.getElementById(id);
-        if (!target) return; // safety: if content missing, do nothing
-        document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
-        tab.classList.add('active');
-        target.classList.add('active');
-        if(id === 'games') createGameGrid();
-        else if(id !== 'admin') loadAllData();
+        // Skip the refresh button (already handled by debounce)
+        if (tab.id === 'refreshBtn') return;
+        
+        tab.addEventListener('click', throttle((e) => {
+            const id = tab.getAttribute('data-tab');
+            if (!id) return;
+            const target = document.getElementById(id);
+            if (!target) return;
+            
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            tab.classList.add('active');
+            target.classList.add('active');
+            
+            if (id === 'games') {
+                createGameGrid();
+            } else if (id !== 'admin' && id !== 'dashboard') {
+                // Only load data for non-dashboard tabs
+                loadAllData();
+            }
+        }, 1000));
     });
-});
     window.addEventListener('online', () => { document.getElementById('networkStatus').classList.remove('offline'); showToast('Back online','success'); loadAllData(); });
     window.addEventListener('offline', () => { document.getElementById('networkStatus').classList.add('offline'); showToast('No internet','error'); });
     if(soundEnabled) document.getElementById('toggleKnob').style.left = '27px';
