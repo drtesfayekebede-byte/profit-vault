@@ -2892,7 +2892,10 @@ async function deleteMarketImage(slotId) {
         const { error: deleteError } = await sb.storage
             .from('market-images')
             .remove([oldFileName]);
-        if (deleteError)
+        if (deleteError) {
+            // Not a critical error, continue with database update
+            console.warn("Could not delete file from storage:", deleteError);
+        }
     }
     
     // 3. Update database to remove image_url
