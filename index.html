@@ -1128,7 +1128,10 @@ function updateUserMenu() {
     }
 }
 function toggleUserMenu() {
-    document.getElementById('dropdownMenu').classList.toggle('show');
+    const menu = document.getElementById('dropdownMenu');
+    if (menu) {
+        menu.classList.toggle('show');
+    }
 }
 function goToProfile() {
     document.getElementById('dropdownMenu').classList.remove('show');
