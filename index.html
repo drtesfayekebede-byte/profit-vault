@@ -242,7 +242,7 @@
     }
 
     /* CARDS */
-    .card {
+   .card {
     background: rgba(10, 10, 15, 0.85);
     backdrop-filter: blur(2px);
     border-radius: 28px;
@@ -832,10 +832,13 @@
     }
 /* ===== ONE COMMON BORDER FOR ALL TAB CONTENT ===== */
 
+/* ===== ONE COMMON BORDER FOR ALL TAB CONTENT ===== */
+
 /* Each tab content gets ONE border around everything */
 .tab-content {
-    background: #0a0a0f;
-    border: 1px solid rgba(251, 191, 36, 0.3);
+    background: rgba(10, 10, 15, 0.7);
+    backdrop-filter: blur(2px);
+    border: 2px solid rgba(251, 191, 36, 0.4);
     border-radius: 28px;
     padding: 20px;
     margin-bottom: 20px;
@@ -843,11 +846,21 @@
 }
 
 .tab-content:hover {
-    border-color: rgba(251, 191, 36, 0.6);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    border-color: rgba(251, 191, 36, 0.8);
+    box-shadow: 0 8px 25px rgba(251, 191, 36, 0.2);
 }
 
-/* Keep card headers styling */
+/* Make cards inside transparent so only ONE border shows */
+.tab-content .card {
+    background: transparent !important;
+    backdrop-filter: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 12px 0 !important;
+    margin-bottom: 0 !important;
+}
+
+/* But keep the card headers visible */
 .tab-content .card h3 {
     margin-bottom: 15px;
     font-size: 18px;
