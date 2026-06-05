@@ -832,25 +832,23 @@
     }
 /* ===== ONE COMMON BORDER FOR ALL TAB CONTENT ===== */
 
-/* ===== ONE COMMON BORDER FOR ALL TAB CONTENT ===== */
-
-/* Each tab content gets ONE border around everything */
+/* FORCE one common border around entire tab content - HIGHEST PRIORITY */
 .tab-content {
-    background: rgba(10, 10, 15, 0.7);
-    backdrop-filter: blur(2px);
-    border: 2px solid rgba(251, 191, 36, 0.4);
-    border-radius: 28px;
-    padding: 20px;
-    margin-bottom: 20px;
-    transition: all 0.3s;
+    background: rgba(10, 10, 15, 0.7) !important;
+    backdrop-filter: blur(2px) !important;
+    border: 2px solid rgba(251, 191, 36, 0.5) !important;
+    border-radius: 28px !important;
+    padding: 20px !important;
+    margin-bottom: 20px !important;
+    transition: all 0.3s !important;
 }
 
 .tab-content:hover {
-    border-color: rgba(251, 191, 36, 0.8);
-    box-shadow: 0 8px 25px rgba(251, 191, 36, 0.2);
+    border-color: rgba(251, 191, 36, 0.8) !important;
+    box-shadow: 0 8px 25px rgba(251, 191, 36, 0.2) !important;
 }
 
-/* Make cards inside transparent so only ONE border shows */
+/* FORCE remove borders from ALL cards inside tabs */
 .tab-content .card {
     background: transparent !important;
     backdrop-filter: none !important;
@@ -860,18 +858,23 @@
     margin-bottom: 0 !important;
 }
 
-/* But keep the card headers visible */
+/* Keep card headers visible */
 .tab-content .card h3 {
-    margin-bottom: 15px;
-    font-size: 18px;
-    border-left: 4px solid #fbbf24;
-    padding-left: 12px;
-    color: #fbbf24;
+    margin-bottom: 15px !important;
+    font-size: 18px !important;
+    border-left: 4px solid #fbbf24 !important;
+    padding-left: 12px !important;
+    color: #fbbf24 !important;
 }
 
-/* Keep game cards styling - they can keep their individual look */
-.game-grid .game-card {
-    /* Keep existing styles */
+/* Keep buttons and other elements inside cards working */
+.tab-content .card .btn,
+.tab-content .card .btn-sm,
+.tab-content .card .row,
+.tab-content .card .quad-item,
+.tab-content .card .progress-bar {
+    background: transparent !important;
+    border: none !important;
 }
 </style>
 </head>
