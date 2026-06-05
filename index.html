@@ -3923,47 +3923,6 @@ document.addEventListener('keydown', function(e) {
         localStorage.setItem('profitvault_referral', ref);
         console.log("✅ Referral ID saved to localStorage:", ref);
     }
-    
-    // Handle Refresh button (bottom left)
-    const refreshBtn = document.getElementById('refreshTabBtn');
-    if (refreshBtn) {
-        refreshBtn.addEventListener('click', () => {
-            if(USER_ID) { 
-                loadAllData(); 
-                showToast('Data refreshed!', 'success'); 
-            } else { 
-                hardRefresh(); 
-            }
-        });
-    }
-    
-    // Handle Admin button (bottom right)
-    const adminBtn = document.getElementById('adminTabBtn');
-    if (adminBtn) {
-        adminBtn.addEventListener('click', () => {
-            if (!IS_ADMIN) {
-                showToast('Admin access only', 'error');
-                return;
-            }
-            document.querySelectorAll('.tabs-grid .tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            
-            const adminDiv = document.getElementById('admin');
-            if (adminDiv) {
-                adminDiv.classList.add('active');
-                loadAdminPanel();
-            }
-        });
-    }
-}
-
-// Override showAdminTab to work with new structure
-function showAdminTab() {
-    const adminBtn = document.getElementById('adminTabBtn');
-    if (adminBtn) {
-        adminBtn.style.display = 'flex';
-    }
-}
     // Attach profile avatar click
     document.getElementById('profileArea').addEventListener('click', function(e) {
         e.stopPropagation();
@@ -3999,13 +3958,12 @@ function showAdminTab() {
             showToast("Password must be at least 6 characters", 'error');
         }
     }
-    initHistoryTabs();
+        initHistoryTabs();
     initGuideTab();
     window.addEventListener('online', () => { document.getElementById('networkStatus').classList.remove('offline'); showToast('Back online','success'); loadAllData(); });
     window.addEventListener('offline', () => { document.getElementById('networkStatus').classList.add('offline'); showToast('No internet','error'); });
     if(soundEnabled) document.getElementById('toggleKnob').style.left = '27px';
     else document.getElementById('toggleKnob').style.left = '3px';
-    });
 });
 </script>
 </body>
