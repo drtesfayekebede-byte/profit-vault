@@ -46,6 +46,115 @@
         70% { box-shadow: 0 0 0 15px rgba(251, 191, 36, 0); }
         100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0); }
     }
+	/* DIAMOND SPINNER - PREMIUM LOADING ANIMATION */
+.diamond-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000000;
+    background-image: 
+        radial-gradient(circle at 20% 30%, rgba(255, 51, 102, 0.5), transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(0, 102, 255, 0.5), transparent 50%),
+        radial-gradient(circle at 40% 80%, rgba(0, 255, 102, 0.4), transparent 50%);
+    backdrop-filter: blur(8px);
+    z-index: 99999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+.diamond-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+.diamond {
+    width: 90px;
+    height: 90px;
+    background: linear-gradient(135deg, #ff0000, #0000ff, #00ff00, #ffd700);
+    background-size: 400% 400%;
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    animation: diamondSpin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite, gradientShift 3s ease infinite;
+    margin-bottom: 20px;
+    position: relative;
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
+}
+.diamond::before {
+    content: "💎";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 42px;
+    animation: sparkle 0.8s ease-in-out infinite alternate;
+}
+.orb {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    animation: orbit 1.5s linear infinite;
+}
+.orb1 {
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+.orb2 {
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    animation-delay: 0.5s;
+}
+.orb3 {
+    left: -20px;
+    top: 50%;
+    transform: translateY(-50%);
+    animation-delay: 0.25s;
+}
+.orb4 {
+    right: -20px;
+    top: 50%;
+    transform: translateY(-50%);
+    animation-delay: 0.75s;
+}
+.spinner-text {
+    color: #ffd700;
+    font-size: 16px;
+    font-weight: bold;
+    letter-spacing: 3px;
+    margin-top: 20px;
+    animation: textFade 1s ease-in-out infinite alternate;
+    text-transform: uppercase;
+}
+@keyframes diamondSpin {
+    0% { transform: rotate(0deg) scale(1); }
+    50% { transform: rotate(180deg) scale(1.1); }
+    100% { transform: rotate(360deg) scale(1); }
+}
+@keyframes gradientShift {
+    0% { background-position: 0% 0%; }
+    33% { background-position: 100% 0%; }
+    66% { background-position: 100% 100%; }
+    100% { background-position: 0% 0%; }
+}
+@keyframes sparkle {
+    0% { opacity: 0.7; transform: translate(-50%, -50%) scale(0.9); text-shadow: 0 0 5px gold; }
+    100% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); text-shadow: 0 0 20px gold, 0 0 30px orange; }
+}
+@keyframes orbit {
+    0% { transform: scale(1); opacity: 1; background: #ffd700; }
+    50% { transform: scale(1.5); opacity: 0.5; background: #ff6347; }
+    100% { transform: scale(1); opacity: 1; background: #ffd700; }
+}
+@keyframes textFade {
+    0% { opacity: 0.5; text-shadow: none; }
+    100% { opacity: 1; text-shadow: 0 0 10px gold, 0 0 15px orange; }
+}
     @keyframes borderPulse {
         0%,100% { border-color: rgba(251, 191, 36, 0.3); }
         50% { border-color: rgba(251, 191, 36, 0.8); }
@@ -221,35 +330,133 @@
     }
     .balance-label { font-size: 10px; font-weight: 800; margin-top: 5px; text-transform: uppercase; letter-spacing: 1px; }
 
-    /* TABS */
-    .tabs {
-        display: flex;
-        gap: 8px;
-        margin-bottom: 20px;
-        overflow-x: auto;
-        flex-wrap: wrap;
-        justify-content: center;
-        scrollbar-width: thin;
-    }
-    .tab {
-    background: #0a0a0f;
-    border: 1px solid rgba(56, 189, 248, 0.3);
-    padding: 10px 18px;
+    /* ===== COMMON BALANCE CONTAINER - ONE BORDER FOR ALL 3 CARDS ===== */
+.balance-wrapper {
+    background: rgba(10, 10, 15, 0.6);
+    border-radius: 32px;
+    padding: 20px 16px;
+    margin-bottom: 24px;
+    border: 1px solid rgba(251, 191, 36, 0.5);
+    box-shadow: 0 0 20px rgba(251, 191, 36, 0.2), 0 0 40px rgba(0, 255, 255, 0.1);
+    backdrop-filter: blur(4px);
+}
+
+.balance-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    position: relative;
+    z-index: 1;
+}
+
+/* ===== COMMON TAB CONTAINER - ONE BORDER FOR ALL TABS ===== */
+.tabs-wrapper {
+    background: rgba(10, 10, 15, 0.4);
+    border-radius: 28px;
+    padding: 16px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(251, 191, 36, 0.3);
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.05);
+}
+
+/* 3x3 Grid for main tabs (first 9 tabs) */
+.tabs-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+/* Bottom row for Refresh and Admin */
+.tabs-bottom {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(251, 191, 36, 0.2);
+}
+
+/* Individual tab buttons - NO BORDER */
+.tab {
+    background: rgba(10, 10, 15, 0.8);
+    border: none;
+    padding: 12px 8px;
     border-radius: 40px;
-    color: white;
+    color: #e2e8f0;
     font-size: 13px;
     font-weight: bold;
     cursor: pointer;
     white-space: nowrap;
     transition: all 0.3s;
+    text-align: center;
 }
-    .tab.active {
-        background: linear-gradient(135deg, #fbbf24, #d97706);
-        color: #1a1a2e;
-        box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4);
-        border-color: transparent;
-    }
 
+.tab:hover {
+    background: rgba(251, 191, 36, 0.2);
+    color: #fbbf24;
+    transform: translateY(-2px);
+}
+
+.tab.active {
+    background: linear-gradient(135deg, #fbbf24, #d97706);
+    color: #1a1a2e;
+    box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4);
+}
+
+/* Bottom tabs (Refresh and Admin) */
+.tab-bottom {
+    flex: 1;
+    background: rgba(10, 10, 15, 0.9);
+    border: none;
+    padding: 12px 8px;
+    border-radius: 40px;
+    color: #e2e8f0;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: center;
+}
+
+.tab-bottom:hover {
+    background: rgba(251, 191, 36, 0.2);
+    color: #fbbf24;
+}
+
+.tab-bottom.admin {
+    background: linear-gradient(135deg, #8b0000, #dc143c);
+    color: white;
+}
+
+.tab-bottom.admin:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 15px rgba(220, 20, 60, 0.5);
+}
+
+.tab-bottom.refresh {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+}
+
+.tab-bottom.refresh:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+}
+
+/* Responsive */
+@media (max-width: 500px) {
+    .tabs-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+    .balance-container {
+        gap: 8px;
+    }
+    .balance-wrapper {
+        padding: 12px;
+    }
+}
     /* CARDS */
     .card {
     background: #0a0a0f;
@@ -514,6 +721,94 @@
     }
     .toast.error::before { content: "⚠️"; }
     .toast.info::before { content: "ℹ️"; }
+    /* ===== ADMIN PROFILE PICTURE EDITOR ===== */
+.profile-pic-editor {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 20px;
+    margin-bottom: 15px;
+}
+
+.current-profile-pic {
+    text-align: center;
+}
+
+.current-profile-pic p {
+    margin-bottom: 10px;
+    color: #fbbf24;
+    font-size: 14px;
+}
+
+.preview-image {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #fbbf24;
+    box-shadow: 0 0 20px rgba(251, 191, 36, 0.3);
+    background: #0a0a0f;
+}
+
+.preview-image.placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 80px;
+    background: linear-gradient(135deg, #1e293b, #0f172a);
+}
+
+.pic-upload-area {
+    width: 100%;
+    text-align: center;
+}
+
+.pic-upload-area input[type="file"] {
+    display: none;
+}
+
+.upload-pic-btn {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    border: none;
+    padding: 12px 24px;
+    border-radius: 40px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 5px;
+    transition: 0.2s;
+}
+
+.upload-pic-btn:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 15px #3b82f6;
+}
+
+.remove-pic-btn {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    border: none;
+    padding: 12px 24px;
+    border-radius: 40px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 5px;
+    transition: 0.2s;
+}
+
+.remove-pic-btn:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 15px #ef4444;
+}
+
+.pic-upload-status {
+    margin-top: 10px;
+    font-size: 12px;
+    color: #fbbf24;
+}
 
     /* UTILITIES */
     .tab-content { display: none; }
@@ -732,21 +1027,27 @@
 </style>
 </head>
 <body>
-<div id="loadingOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10000; justify-content: center; align-items: center; flex-direction: column; backdrop-filter: blur(5px);">
-    <div style="font-size: 48px; animation: spin 1s linear infinite;">🔄</div>
-    <p style="color: white; margin-top: 20px; font-size: 18px;">Loading your dashboard...</p>
-</div>
+
 <style>
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
 </style>
+<!-- Diamond Spinner Overlay -->
+<div id="diamondOverlay" class="diamond-overlay">
+    <div class="diamond"></div>
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+    <div class="orb orb3"></div>
+    <div class="orb orb4"></div>
+    <div class="spinner-text" id="diamondText">LOADING</div>
+</div>
 <div id="networkStatus" class="network-status"></div>
 <div class="header">
     <div class="header-content">
         <div class="app-logo">
-            <span class="logo-icon">🏦</span>
+            <span class="logo-icon" id="appLogoIcon">🏦</span>
             <div>
                 <h1>Profit Vault</h1>
                 <p>Complete Investment Platform | Premium</p>
@@ -763,34 +1064,41 @@
     </div>
 </div>
 <div id="appContent" style="display: none;">
-<div class="balance-container">
-    <div class="balance-card primary" onclick="showModal('depositModal')">
-        <div class="balance-emoji">💰</div>
-        <div class="balance-value" id="balance">0</div>
-        <div class="balance-label">Balance (ETB)</div>
-    </div>
-    <div class="balance-card bonus" onclick="showModal('exchangeModal')">
-        <div class="balance-emoji">🎁</div>
-        <div class="balance-value" id="bonus">0</div>
-        <div class="balance-label">Bonus (ETB)</div>
-    </div>
-    <div class="balance-card coins" onclick="showModal('buyCoinsModal')">
-        <div class="balance-emoji">🪙</div>
-        <div class="balance-value" id="coins">0</div>
-        <div class="balance-label">Coins</div>
+<div class="balance-wrapper">
+    <div class="balance-container">
+        <div class="balance-card primary" onclick="showModal('depositModal')">
+            <div class="balance-emoji">💰</div>
+            <div class="balance-value" id="balance">0</div>
+            <div class="balance-label">Balance (ETB)</div>
+        </div>
+        <div class="balance-card bonus" onclick="showModal('exchangeModal')">
+            <div class="balance-emoji">🎁</div>
+            <div class="balance-value" id="bonus">0</div>
+            <div class="balance-label">Bonus (ETB)</div>
+        </div>
+        <div class="balance-card coins" onclick="showModal('buyCoinsModal')">
+            <div class="balance-emoji">🪙</div>
+            <div class="balance-value" id="coins">0</div>
+            <div class="balance-label">Coins</div>
+        </div>
     </div>
 </div>
-<div class="tabs">
-    <button class="tab active" data-tab="dashboard">📊 Dashboard</button>
-    <button class="tab" data-tab="market">🛒 Market</button>
-    <button class="tab" data-tab="games">🎮 Games</button>
-    <button class="tab" data-tab="cards">🃏 Airtime</button>
-    <button class="tab" data-tab="lottery">🎟️ Lottery</button>
-    <button class="tab" data-tab="clinic">🏥 Clinic</button>
-    <button class="tab" data-tab="profile">👤 Profile</button>
-    <button class="tab" data-tab="contact">📞 Contact</button>
-    <button class="tab" data-tab="guide">📖 Guide</button>
-    <button class="tab" onclick="if(USER_ID) { loadAllData(); showToast('Data refreshed!', 'success'); } else { hardRefresh(); }" style="background: #3b82f6;">🔄 Refresh</button>
+<div class="tabs-wrapper">
+    <div class="tabs-grid">
+        <button class="tab active" data-tab="dashboard">📊 Dashboard</button>
+        <button class="tab" data-tab="market">🛒 Market</button>
+        <button class="tab" data-tab="games">🎮 Games</button>
+        <button class="tab" data-tab="cards">🃏 Airtime</button>
+        <button class="tab" data-tab="lottery">🎟️ Lottery</button>
+        <button class="tab" data-tab="clinic">🏥 Clinic</button>
+        <button class="tab" data-tab="profile">👤 Profile</button>
+        <button class="tab" data-tab="contact">📞 Contact</button>
+        <button class="tab" data-tab="guide">📖 Guide</button>
+    </div>
+    <div class="tabs-bottom">
+        <button class="tab-bottom refresh" id="refreshTabBtn">🔄 Refresh</button>
+        <button class="tab-bottom admin" id="adminTabBtn">👑 Admin</button>
+    </div>
 </div>
 
 <!-- DASHBOARD -->
@@ -922,6 +1230,18 @@ function escapeHTML(str) {
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#39;');
+}
+// ===== DIAMOND SPINNER FUNCTIONS =====
+function showDiamond(message) {
+    const overlay = document.getElementById('diamondOverlay');
+    const textEl = document.getElementById('diamondText');
+    if (textEl) textEl.innerText = message;
+    if (overlay) overlay.classList.add('active');
+}
+
+function hideDiamond() {
+    const overlay = document.getElementById('diamondOverlay');
+    if (overlay) overlay.classList.remove('active');
 }
 // ==================== DEPOSIT SETTINGS ====================
 let depositSettings = { telebirr_number: '', bank_name: '', bank_account: '', account_holder: '' };
@@ -1158,7 +1478,7 @@ async function checkSession() {
             
             USER_ID = session.user.id;
             localStorage.setItem('profitvault_user_id', USER_ID);
-            document.getElementById('loadingOverlay').style.display = 'flex';
+            showDiamond('LOADING DASHBOARD...');
             const pendingRef = localStorage.getItem('profitvault_referral');
 if (pendingRef) {
     const { data: existingUser, error: refFetchError } = await sb
@@ -1189,7 +1509,7 @@ if (pendingRef) {
                 updateUserMenu();
             await loadDepositSettings();
             await loadAllData();
-            document.getElementById('loadingOverlay').style.display = 'none';
+            hideDiamond();
             document.getElementById('appContent').style.display = 'block';
             if (IS_ADMIN) showAdminTab();
             
@@ -1225,7 +1545,7 @@ if (pendingRef) {
     } catch (err) {
         console.error("checkSession error:", err);
         showToast("Authentication error: " + err.message, "error");
-        document.getElementById('loadingOverlay').style.display = 'none';
+        hideDiamond();
         showAuthModal();
     }
 }
@@ -1344,17 +1664,21 @@ function setAuthMode(mode) {
     }
 }
 async function login() {
+    showDiamond('LOGGING IN...');
     const email = document.getElementById('authEmail').value.trim();
     const password = document.getElementById('authPassword').value;
-    if (!email || !password) return showToast('Email and password required', 'error');
+    if (!email || !password) {
+        hideDiamond();
+        return showToast('Email and password required', 'error');
+    }
     
     const { error } = await sb.auth.signInWithPassword({ email, password });
     if (error) {
+        hideDiamond();
         showToast(error.message, 'error');
         return;
     }
     
-    // Direct removal of modal (no function call)
     const modal = document.getElementById('authModal');
     if (modal) modal.remove();
     
@@ -1362,29 +1686,33 @@ async function login() {
     window.location.reload();
 }
 async function register() {
+    showDiamond('CREATING ACCOUNT...');
     const email = document.getElementById('authEmail').value.trim();
     const password = document.getElementById('authPassword').value;
     const confirmPassword = document.getElementById('authConfirmPassword')?.value;
     const username = document.getElementById('authUsername')?.value.trim() || email.split('@')[0];
 
     if (!email || !password) {
+        hideDiamond();
         showToast('Email and password required', 'error');
         return;
     }
 
-    // Valid email format
     const emailRegex = /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/;
     if (!emailRegex.test(email)) {
+        hideDiamond();
         showToast('Please enter a valid email address', 'error');
         return;
     }
 
     if (password.length < 6) {
+        hideDiamond();
         showToast('Password must be at least 6 characters', 'error');
         return;
     }
 
     if (password !== confirmPassword) {
+        hideDiamond();
         showToast('Passwords do not match', 'error');
         return;
     }
@@ -1406,6 +1734,7 @@ async function register() {
     });
 
     if (error) {
+        hideDiamond();
         if (error.message.includes('already registered')) {
             showToast('This email is already registered. Please log in.', 'error');
         } else {
@@ -1442,19 +1771,15 @@ async function signInWithGoogle() {
     }
 }
 async function logout() {
-isLoggingOut = true;
-    // Show feedback
+    showDiamond('LOGGING OUT...');
+    isLoggingOut = true;
     showToast('Logging out...', 'info');
     
-    // 1. Sign out from Supabase (invalidates session on server)
     await sb.auth.signOut();
-    
-    // 2. Wipe all browser storage
     localStorage.clear();
     sessionStorage.clear();
     updateUserMenu();
     
-    // 3. Delete all IndexedDB databases (including Supabase's)
     if (window.indexedDB && window.indexedDB.databases) {
         try {
             const dbs = await indexedDB.databases();
@@ -1463,18 +1788,15 @@ isLoggingOut = true;
             });
         } catch(e) { console.warn("IndexedDB clear error", e); }
     }
-    // Fallback: delete known Supabase DBs
     ['supabase', 'supabase-auth', '_supabase', 'supabase-auth-token'].forEach(dbName => {
         try { indexedDB.deleteDatabase(dbName); } catch(e) {}
     });
     
-    // 4. Clear all global variables
     USER_ID = null;
     IS_ADMIN = false;
     currentUser = null;
     allTransactions = [];
     
-    // 5. Reset UI to initial state (clear all dynamic content)
     document.getElementById('balance').innerText = '0';
     document.getElementById('bonus').innerText = '0';
     document.getElementById('coins').innerText = '0';
@@ -1490,13 +1812,11 @@ isLoggingOut = true;
     document.getElementById('profileInfo').innerHTML = '';
     document.getElementById('cardsGrid').innerHTML = 'Loading...';
     
-    // 6. Remove admin tab if it exists
     const adminTab = document.querySelector('.tab[data-tab="admin"]');
     if (adminTab) adminTab.remove();
     const adminDiv = document.getElementById('admin');
     if (adminDiv) adminDiv.remove();
     
-    // 7. Reload the page to reset everything completely
     window.location.reload();
 }
 async function hardRefresh() {
@@ -2385,6 +2705,29 @@ ${m.image_url ? `<button class="btn-sm btn-danger" onclick="deleteMarketImage(${
         </div>
         <div id="cleanupResult" style="margin-top: 10px; color: #fbbf24;"></div>
     </div>
+	<div class="card">
+    <h3>🖼️ App Profile Picture</h3>
+    <div class="profile-pic-editor">
+        <div class="current-profile-pic">
+            <p>Current App Logo</p>
+            <div style="position: relative; display: inline-block;">
+                <img id="adminProfilePreview" class="preview-image" style="display: none;" alt="Profile Preview">
+                <div id="profilePlaceholder" class="preview-image placeholder" style="display: flex; align-items: center; justify-content: center; font-size: 80px;">🏦</div>
+            </div>
+        </div>
+        <div class="pic-upload-area">
+            <input type="file" id="profilePicInput" accept="image/png, image/jpeg, image/webp, image/jpg">
+            <button class="upload-pic-btn" onclick="document.getElementById('profilePicInput').click()">📤 Upload New Image</button>
+            <button class="remove-pic-btn" onclick="removeProfilePicture()">🗑️ Remove Image</button>
+            <div id="picUploadStatus" class="pic-upload-status"></div>
+            <p style="font-size: 11px; color: #888; margin-top: 10px;">
+                ⚠️ Max size: 1MB<br>
+                ✅ Formats: PNG, JPG, WEBP<br>
+                💡 Old image deleted automatically
+            </p>
+        </div>
+    </div>
+</div>
 <div class="card">
         <h3>📊 Platform Statistics</h3>
         <div id="adminStats" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
@@ -2400,6 +2743,17 @@ ${m.image_url ? `<button class="btn-sm btn-danger" onclick="deleteMarketImage(${
 `;
     await refreshAdminStats();
 await loadWithdrawalSettings();
+// Load current profile picture in admin panel
+const currentPic = await loadCurrentProfilePic();
+const adminPreview = document.getElementById('adminProfilePreview');
+const placeholder = document.getElementById('profilePlaceholder');
+if (adminPreview && currentPic) {
+    adminPreview.src = currentPic;
+    adminPreview.style.display = 'block';
+    if (placeholder) placeholder.style.display = 'none';
+} else if (placeholder) {
+    placeholder.style.display = 'flex';
+}
 }
 function renderPendingList(items, type) {
     if (!items?.length) return '<div>None</div>';
@@ -2810,6 +3164,200 @@ async function cleanupSoldAssets() {
     if (error) showToast('Error: ' + error.message, 'error');
     else showToast(`Deleted ${data} sold assets`, 'success');
     document.getElementById('cleanupResult').innerText = `✅ Deleted ${data} sold assets`;
+}
+// ========== ADMIN PROFILE PICTURE MANAGER ==========
+const PROFILE_PIC_BUCKET = 'app-assets';
+
+async function loadCurrentProfilePic() {
+    try {
+        const { data, error } = await sb
+            .from('app_settings')
+            .select('value')
+            .eq('key', 'profile_pic_url')
+            .single();
+        
+        if (error && error.code !== 'PGRST116') {
+            console.error('Error loading profile pic:', error);
+            return null;
+        }
+        
+        if (data && data.value) {
+            return data.value;
+        }
+        return null;
+    } catch (err) {
+        console.error(err);
+        return null;
+    }
+}
+
+async function uploadProfilePicture(file) {
+    if (file.size > 1048576) {
+        showToast('Image must be less than 1MB', 'error');
+        return false;
+    }
+    
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
+    if (!allowedTypes.includes(file.type)) {
+        showToast('Only PNG, JPG, or WEBP images allowed', 'error');
+        return false;
+    }
+    
+    const statusDiv = document.getElementById('picUploadStatus');
+    if (statusDiv) {
+        statusDiv.innerHTML = '⏳ Uploading... Deleting old image...';
+        statusDiv.style.color = '#fbbf24';
+    }
+    
+    try {
+        const { data: currentData } = await sb
+            .from('app_settings')
+            .select('value')
+            .eq('key', 'profile_pic_url')
+            .single();
+        
+        if (currentData && currentData.value) {
+            const oldFileName = currentData.value.split('/').pop();
+            if (oldFileName) {
+                await sb.storage.from(PROFILE_PIC_BUCKET).remove([oldFileName]);
+                console.log('✅ Old profile picture deleted from storage');
+            }
+        }
+        
+        const fileExt = file.name.split('.').pop();
+        const fileName = `profile_${Date.now()}.${fileExt}`;
+        
+        const { error: uploadError } = await sb.storage
+            .from(PROFILE_PIC_BUCKET)
+            .upload(fileName, file, { upsert: true });
+        
+        if (uploadError) throw uploadError;
+        
+        const { data: urlData } = sb.storage.from(PROFILE_PIC_BUCKET).getPublicUrl(fileName);
+        const imageUrl = urlData.publicUrl;
+        
+        const { error: dbError } = await sb
+            .from('app_settings')
+            .upsert({ key: 'profile_pic_url', value: imageUrl }, { onConflict: 'key' });
+        
+        if (dbError) throw dbError;
+        
+        const profileImg = document.getElementById('profileImage');
+        if (profileImg) profileImg.src = imageUrl;
+        
+        const logoIcon = document.querySelector('.logo-icon');
+        if (logoIcon) {
+            logoIcon.innerHTML = `<img src="${imageUrl}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">`;
+        }
+        
+        const adminPreview = document.getElementById('adminProfilePreview');
+        const placeholder = document.getElementById('profilePlaceholder');
+        if (adminPreview) {
+            adminPreview.src = imageUrl;
+            adminPreview.style.display = 'block';
+            if (placeholder) placeholder.style.display = 'none';
+        }
+        
+        if (statusDiv) {
+            statusDiv.innerHTML = '✅ Profile picture updated successfully!';
+            statusDiv.style.color = '#10b981';
+        }
+        
+        showToast('Profile picture updated!', 'success');
+        setTimeout(() => { if (statusDiv) statusDiv.innerHTML = ''; }, 3000);
+        return true;
+        
+    } catch (err) {
+        console.error('Upload error:', err);
+        showToast('Upload failed: ' + err.message, 'error');
+        if (statusDiv) {
+            statusDiv.innerHTML = '❌ Upload failed: ' + err.message;
+            statusDiv.style.color = '#ef4444';
+        }
+        return false;
+    }
+}
+
+async function removeProfilePicture() {
+    if (!confirm('⚠️ Remove current profile picture? This will restore default emoji logo.')) return;
+    
+    const statusDiv = document.getElementById('picUploadStatus');
+    if (statusDiv) {
+        statusDiv.innerHTML = '⏳ Removing image...';
+        statusDiv.style.color = '#fbbf24';
+    }
+    
+    try {
+        const { data: currentData } = await sb
+            .from('app_settings')
+            .select('value')
+            .eq('key', 'profile_pic_url')
+            .single();
+        
+        if (currentData && currentData.value) {
+            const oldFileName = currentData.value.split('/').pop();
+            if (oldFileName) {
+                await sb.storage.from(PROFILE_PIC_BUCKET).remove([oldFileName]);
+            }
+        }
+        
+        await sb.from('app_settings').upsert({ key: 'profile_pic_url', value: null }, { onConflict: 'key' });
+        
+        const profileImg = document.getElementById('profileImage');
+        if (profileImg) {
+            profileImg.src = 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app-assets/1780156694418.png';
+        }
+        
+        const logoIcon = document.querySelector('.logo-icon');
+        if (logoIcon) logoIcon.innerHTML = '🏦';
+        
+        const adminPreview = document.getElementById('adminProfilePreview');
+        const placeholder = document.getElementById('profilePlaceholder');
+        if (adminPreview) {
+            adminPreview.style.display = 'none';
+            if (placeholder) placeholder.style.display = 'flex';
+        }
+        
+        if (statusDiv) {
+            statusDiv.innerHTML = '✅ Profile picture removed. Default restored.';
+            statusDiv.style.color = '#10b981';
+        }
+        
+        showToast('Profile picture removed', 'success');
+        setTimeout(() => { if (statusDiv) statusDiv.innerHTML = ''; }, 3000);
+        
+    } catch (err) {
+        showToast('Remove failed: ' + err.message, 'error');
+    }
+}
+
+function initProfilePicUploader() {
+    const fileInput = document.getElementById('profilePicInput');
+    if (fileInput) {
+        fileInput.addEventListener('change', async (e) => {
+            if (e.target.files && e.target.files[0]) {
+                await uploadProfilePicture(e.target.files[0]);
+                fileInput.value = '';
+            }
+        });
+    }
+}
+
+async function refreshAllProfilePictures() {
+    const imageUrl = await loadCurrentProfilePic();
+    const profileImg = document.getElementById('profileImage');
+    if (profileImg && imageUrl) {
+        profileImg.src = imageUrl;
+    } else if (profileImg && !imageUrl) {
+        profileImg.src = 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app-assets/1780156694418.png';
+    }
+    
+    const logoIcon = document.querySelector('.logo-icon');
+    if (logoIcon && imageUrl) {
+        logoIcon.innerHTML = `<img src="${imageUrl}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">`;
+    } else if (logoIcon && !imageUrl) {
+        logoIcon.innerHTML = '🏦';
+    }
 }
 // ========== ADMIN STATISTICS FUNCTION ==========
 async function refreshAdminStats() {
@@ -3358,6 +3906,10 @@ function initGuideTab() {
 }
 
 window.addEventListener('load', () => {
+    hideDiamond();
+	setupNewTabs();
+	refreshAllProfilePictures();
+    initProfilePicUploader();
 document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape' && document.getElementById('authModal')?.classList.contains('active')) {
         e.preventDefault();
@@ -3371,6 +3923,47 @@ document.addEventListener('keydown', function(e) {
         localStorage.setItem('profitvault_referral', ref);
         console.log("✅ Referral ID saved to localStorage:", ref);
     }
+    
+    // Handle Refresh button (bottom left)
+    const refreshBtn = document.getElementById('refreshTabBtn');
+    if (refreshBtn) {
+        refreshBtn.addEventListener('click', () => {
+            if(USER_ID) { 
+                loadAllData(); 
+                showToast('Data refreshed!', 'success'); 
+            } else { 
+                hardRefresh(); 
+            }
+        });
+    }
+    
+    // Handle Admin button (bottom right)
+    const adminBtn = document.getElementById('adminTabBtn');
+    if (adminBtn) {
+        adminBtn.addEventListener('click', () => {
+            if (!IS_ADMIN) {
+                showToast('Admin access only', 'error');
+                return;
+            }
+            document.querySelectorAll('.tabs-grid .tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            const adminDiv = document.getElementById('admin');
+            if (adminDiv) {
+                adminDiv.classList.add('active');
+                loadAdminPanel();
+            }
+        });
+    }
+}
+
+// Override showAdminTab to work with new structure
+function showAdminTab() {
+    const adminBtn = document.getElementById('adminTabBtn');
+    if (adminBtn) {
+        adminBtn.style.display = 'flex';
+    }
+}
     // Attach profile avatar click
     document.getElementById('profileArea').addEventListener('click', function(e) {
         e.stopPropagation();
@@ -3408,20 +4001,6 @@ document.addEventListener('keydown', function(e) {
     }
     initHistoryTabs();
     initGuideTab();
-    document.querySelectorAll('.tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-        const id = tab.getAttribute('data-tab');
-        if (!id) return;  // skip refresh button
-        const target = document.getElementById(id);
-        if (!target) return; // safety: if content missing, do nothing
-        document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
-        tab.classList.add('active');
-        target.classList.add('active');
-        if(id === 'games') createGameGrid();
-        else if(id !== 'admin') loadAllData();
-    });
-});
     window.addEventListener('online', () => { document.getElementById('networkStatus').classList.remove('offline'); showToast('Back online','success'); loadAllData(); });
     window.addEventListener('offline', () => { document.getElementById('networkStatus').classList.add('offline'); showToast('No internet','error'); });
     if(soundEnabled) document.getElementById('toggleKnob').style.left = '27px';
