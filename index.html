@@ -2593,26 +2593,6 @@ async function buyAirtimeCard(cardId, cost) {
     isProcessing.buyAirtime = false;
 }
 // ==================== ADMIN PANEL ====================
-function showAdminTab() {
-    if(document.querySelector('.tab[data-tab="admin"]')) return;
-    const tabs = document.querySelector('.tabs');
-    const adminBtn = document.createElement('button');
-    adminBtn.className = 'tab';
-    adminBtn.setAttribute('data-tab','admin');
-    adminBtn.innerHTML = '👑 Admin';
-    tabs.appendChild(adminBtn);
-    const adminDiv = document.createElement('div');
-    adminDiv.id = 'admin';
-    adminDiv.className = 'tab-content';
-    tabs.insertAdjacentElement('afterend', adminDiv);
-    adminBtn.addEventListener('click', () => {
-        document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
-        adminBtn.classList.add('active');
-        adminDiv.classList.add('active');
-        loadAdminPanel();
-    });
-}
 async function loadAdminPanel() {
     const adminDiv = document.getElementById('admin');
     adminDiv.innerHTML = '<div class="loading">Loading admin...</div>';
@@ -3704,6 +3684,66 @@ function toggleSelectAll() {
     const selectAll = document.getElementById('selectAllCheckbox');
     const checkboxes = document.querySelectorAll('#transactionList .txn-checkbox');
     checkboxes.forEach(cb => cb.checked = selectAll.checked);
+}
+// ===== NEW TAB HANDLERS FOR REFRESH AND ADMIN BUTTONS =====
+function setupNewTabs() {
+    // Handle all main tabs
+    document.querySelectorAll('.tabs-grid .tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            const id = tab.getAttribute('data-tab');
+            if (!id) return;
+            const target = document.getElementById(id);
+            if (!target) return;
+            
+            document.querySelectorAll('.tabs-grid .tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            tab.classList.add('active');
+            target.classList.add('active');
+            
+            if(id === 'games') createGameGrid();
+            else if(id !== 'admin') loadAllData();
+        });
+    });
+    
+    // Handle Refresh button (bottom left)
+    const refreshBtn = document.getElementById('refreshTabBtn');
+    if (refreshBtn) {
+        refreshBtn.addEventListener('click', () => {
+            if(USER_ID) { 
+                loadAllData(); 
+                showToast('Data refreshed!', 'success'); 
+            } else { 
+                hardRefresh(); 
+            }
+        });
+    }
+    
+    // Handle Admin button (bottom right)
+    const adminBtn = document.getElementById('adminTabBtn');
+    if (adminBtn) {
+        adminBtn.addEventListener('click', () => {
+            if (!IS_ADMIN) {
+                showToast('Admin access only', 'error');
+                return;
+            }
+            document.querySelectorAll('.tabs-grid .tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            const adminDiv = document.getElementById('admin');
+            if (adminDiv) {
+                adminDiv.classList.add('active');
+                loadAdminPanel();
+            }
+        });
+    }
+}
+
+// Override showAdminTab to work with new structure
+function showAdminTab() {
+    const adminBtn = document.getElementById('adminTabBtn');
+    if (adminBtn) {
+        adminBtn.style.display = 'flex';
+    }
 }
 // ==================== INIT ====================
 // ========== DETAILED GUIDE CONTENT ==========
