@@ -3154,9 +3154,9 @@ async function loadCurrentProfilePic() {
             .from('app_settings')
             .select('value')
             .eq('key', 'profile_pic_url')
-            .single();
+            .maybeSingle();  // CHANGED: .single() to .maybeSingle()
         
-        if (error && error.code !== 'PGRST116') {
+        if (error) {
             console.error('Error loading profile pic:', error);
             return null;
         }
@@ -3170,7 +3170,6 @@ async function loadCurrentProfilePic() {
         return null;
     }
 }
-
 async function uploadProfilePicture(file) {
     if (file.size > 1048576) {
         showToast('Image must be less than 1MB', 'error');
@@ -3685,7 +3684,7 @@ function toggleSelectAll() {
     const checkboxes = document.querySelectorAll('#transactionList .txn-checkbox');
     checkboxes.forEach(cb => cb.checked = selectAll.checked);
 }
-// ===== NEW TAB HANDLERS FOR REFRESH AND ADMIN BUTTONS =====
+// ===== TAB HANDLERS FOR NEW STRUCTURE =====
 function setupNewTabs() {
     // Handle all main tabs
     document.querySelectorAll('.tabs-grid .tab').forEach(tab => {
@@ -3726,19 +3725,34 @@ function setupNewTabs() {
                 showToast('Admin access only', 'error');
                 return;
             }
+            
+            // Deactivate all main tabs
             document.querySelectorAll('.tabs-grid .tab').forEach(t => t.classList.remove('active'));
+            // Hide all tab content
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             
-            const adminDiv = document.getElementById('admin');
-            if (adminDiv) {
-                adminDiv.classList.add('active');
-                loadAdminPanel();
+            // Check if admin div exists, if not create it
+            let adminDiv = document.getElementById('admin');
+            if (!adminDiv) {
+                // Create admin div if it doesn't exist
+                adminDiv = document.createElement('div');
+                adminDiv.id = 'admin';
+                adminDiv.className = 'tab-content';
+                // Insert after tabs-wrapper
+                const tabsWrapper = document.querySelector('.tabs-wrapper');
+                if (tabsWrapper) {
+                    tabsWrapper.insertAdjacentElement('afterend', adminDiv);
+                } else {
+                    document.body.appendChild(adminDiv);
+                }
             }
+            
+            adminDiv.classList.add('active');
+            loadAdminPanel();
         });
     }
 }
 
-// Override showAdminTab to work with new structure
 function showAdminTab() {
     const adminBtn = document.getElementById('adminTabBtn');
     if (adminBtn) {
