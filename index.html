@@ -1,10 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="preconnect" href="https://ogtlaffkybpesaxastvx.supabase.co">
-    <link rel="dns-prefetch" href="https://ogtlaffkybpesaxastvx.supabase.co">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Profit Vault - Complete Investment Platform | Premium</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -16,20 +14,6 @@
     }
 
     /* ===== ORIGINAL ANIMATIONS ===== */
-    @keyframes float {
-        0% { transform: translateY(0px) scale(1); opacity: 1; }
-        100% { transform: translateY(-80px) scale(1.5); opacity: 0; }
-    }
-    @keyframes pulse {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.05); }
-        100% { transform: scale(1); }
-    }
-    @keyframes shake {
-        0%,100% { transform: translateX(0); }
-        25% { transform: translateX(-5px); }
-        75% { transform: translateX(5px); }
-    }
     @keyframes fadeIn {
         from { opacity: 0; transform: translateY(10px); }
         to { opacity: 1; transform: translateY(0); }
@@ -43,134 +27,31 @@
         50% { box-shadow: 0 0 20px rgba(0, 255, 255, 0.8); }
         100% { box-shadow: 0 0 5px rgba(0, 255, 255, 0.3); }
     }
-    @keyframes winnerGlow {
-        0% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.7); }
-        70% { box-shadow: 0 0 0 15px rgba(251, 191, 36, 0); }
-        100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0); }
-    }
-	/* DIAMOND SPINNER - PREMIUM LOADING ANIMATION */
-.diamond-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: #000000;
-    background-image: 
-        radial-gradient(circle at 20% 30%, rgba(255, 51, 102, 0.5), transparent 50%),
-        radial-gradient(circle at 80% 70%, rgba(0, 102, 255, 0.5), transparent 50%),
-        radial-gradient(circle at 40% 80%, rgba(0, 255, 102, 0.4), transparent 50%);
-    backdrop-filter: blur(8px);
-    z-index: 99999;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
-}
-.diamond-overlay.active {
-    opacity: 1;
-    visibility: visible;
-}
-.diamond {
-    width: 100px;
-    height: 100px;
-    background: linear-gradient(135deg, #ff0000, #0000ff, #00ff00, #ffd700);
-    background-size: 400% 400%;
-    border-radius: 50%;
-    animation: diamondSpin 1.2s linear infinite, gradientShift 3s ease infinite;
-    margin-bottom: 20px;
-    position: relative;
-    box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
-}
-.diamond::before {
-    content: "ðŸ’Ž";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 48px;
-    animation: sparkle 0.8s ease-in-out infinite alternate;
-}
-.orb {
-    position: absolute;
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    animation: orbit 1.5s linear infinite;
-}
-.orb1 {
-    top: -25px;
-    left: 50%;
-    transform: translateX(-50%);
-}
-.orb2 {
-    bottom: -25px;
-    left: 50%;
-    transform: translateX(-50%);
-    animation-delay: 0.5s;
-}
-.orb3 {
-    left: -25px;
-    top: 50%;
-    transform: translateY(-50%);
-    animation-delay: 0.25s;
-}
-.orb4 {
-    right: -25px;
-    top: 50%;
-    transform: translateY(-50%);
-    animation-delay: 0.75s;
-}
-.spinner-text {
-    color: #ffd700;
-    font-size: 16px;
-    font-weight: bold;
-    letter-spacing: 3px;
-    margin-top: 20px;
-    animation: textFade 1s ease-in-out infinite alternate;
-    text-transform: uppercase;
-}
-@keyframes diamondSpin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-@keyframes gradientShift {
-    0% { background-position: 0% 0%; }
-    33% { background-position: 100% 0%; }
-    66% { background-position: 100% 100%; }
-    100% { background-position: 0% 0%; }
-}
-@keyframes sparkle {
-    0% { opacity: 0.7; transform: translate(-50%, -50%) scale(0.9); text-shadow: 0 0 5px gold; }
-    100% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); text-shadow: 0 0 20px gold, 0 0 30px orange; }
-}
-@keyframes orbit {
-    0% { transform: scale(1); opacity: 1; background: #ffd700; }
-    50% { transform: scale(1.5); opacity: 0.5; background: #ff6347; }
-    100% { transform: scale(1); opacity: 1; background: #ffd700; }
-}
-@keyframes textFade {
-    0% { opacity: 0.5; text-shadow: none; }
-    100% { opacity: 1; text-shadow: 0 0 10px gold, 0 0 15px orange; }
-}
 
-    /* ===== BASE â€“ DEEP BLACK BACKGROUND (replaces old body) ===== */
+    /* ===== BASE – DEEP BLACK BACKGROUND (replaces old body) ===== */
     body {
     background: #000000;
-    background-image: 
-        radial-gradient(circle at 20% 30%, rgba(255, 51, 102, 0.4), transparent 50%),
-        radial-gradient(circle at 80% 70%, rgba(0, 102, 255, 0.4), transparent 50%),
-        radial-gradient(circle at 40% 80%, rgba(0, 255, 102, 0.3), transparent 50%);
     min-height: 100vh;
     padding: 16px;
     padding-bottom: 100px;
     color: #e2e8f0;
     position: relative;
     overflow-x: hidden;
-    scroll-padding-top: 100px;
+}
+/* ===== COMMON BACKGROUND FOR ALL 11 TABS ===== */
+.background-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background: #000000;
+    background-image: 
+        radial-gradient(circle at 20% 30%, rgba(255, 51, 102, 0.3), transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(0, 102, 255, 0.3), transparent 50%),
+        radial-gradient(circle at 40% 80%, rgba(0, 255, 102, 0.25), transparent 50%);
+    pointer-events: none;
 }
     /* ===== ENSURE CONTENT STAYS ABOVE BACKGROUND ===== */
     .balance-container, .tabs, .card, .modal, .game-grid, .market-grid, .toast, .network-status {
@@ -265,6 +146,9 @@
 .show {
     display: block;
 }
+.dropdown-menu.show {
+    display: block !important;
+}
 @media (max-width: 600px) {
     .app-logo h1 { font-size: 18px; }
     .logo-icon { font-size: 28px; }
@@ -328,60 +212,20 @@
     }
     .balance-label { font-size: 10px; font-weight: 800; margin-top: 5px; text-transform: uppercase; letter-spacing: 1px; }
 
-    /* ===== COMMON BALANCE CONTAINER - ONE BORDER FOR ALL 3 CARDS ===== */
-.balance-wrapper {
-    background: rgba(10, 10, 15, 0.6);
-    border-radius: 32px;
-    padding: 20px 16px;
-    margin-bottom: 24px;
-    border: 1px solid rgba(251, 191, 36, 0.5);
-    box-shadow: 0 0 20px rgba(251, 191, 36, 0.2), 0 0 40px rgba(0, 255, 255, 0.1);
-    backdrop-filter: blur(4px);
-    position: sticky;
-    top: 0;
-    z-index: 10;
-}
-
-.balance-container {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    position: relative;
-    z-index: 1;
-}
-
-/* ===== COMMON TAB CONTAINER - ONE BORDER FOR ALL TABS ===== */
-.tabs-wrapper {
-    background: rgba(10, 10, 15, 0.4);
-    border-radius: 28px;
-    padding: 16px;
-    margin-bottom: 20px;
-    border: 1px solid rgba(251, 191, 36, 0.3);
-    box-shadow: 0 0 15px rgba(0, 255, 255, 0.05);
-}
-
-/* 3x3 Grid for main tabs (first 9 tabs) */
-.tabs-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin-bottom: 16px;
-}
-
-/* Bottom row for Refresh and Admin */
-.tabs-bottom {
-    display: flex;
-    justify-content: space-between;
-    gap: 12px;
-    margin-top: 8px;
-    padding-top: 8px;
-    border-top: 1px solid rgba(251, 191, 36, 0.2);
-}
-
-/* Individual tab buttons - EACH WITH UNIQUE COLOR */
-.tab {
-    border: none;
-    padding: 12px 8px;
+    /* TABS */
+    .tabs {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 20px;
+        overflow-x: auto;
+        flex-wrap: wrap;
+        justify-content: center;
+        scrollbar-width: thin;
+    }
+    .tab {
+    background: #0a0a0f;
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    padding: 10px 18px;
     border-radius: 40px;
     color: white;
     font-size: 13px;
@@ -389,157 +233,18 @@
     cursor: pointer;
     white-space: nowrap;
     transition: all 0.3s;
-    text-align: center;
 }
-
-.tab:hover {
-    transform: translateY(-2px);
-    filter: brightness(1.1);
-}
-
-.tab.active {
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-    filter: brightness(1.05);
-}
-
-/* Dashboard Tab - Gold */
-.tab[data-tab="dashboard"] {
-    background: linear-gradient(135deg, #ffd700, #ff8c00);
-}
-.tab[data-tab="dashboard"].active {
-    background: linear-gradient(135deg, #ffea00, #ffa500);
-    box-shadow: 0 0 15px gold;
-}
-
-/* Market Tab - Emerald Green */
-.tab[data-tab="market"] {
-    background: linear-gradient(135deg, #059669, #10b981);
-}
-.tab[data-tab="market"].active {
-    background: linear-gradient(135deg, #10b981, #34d399);
-    box-shadow: 0 0 15px #10b981;
-}
-
-/* Games Tab - Purple */
-.tab[data-tab="games"] {
-    background: linear-gradient(135deg, #7c3aed, #8b5cf6);
-}
-.tab[data-tab="games"].active {
-    background: linear-gradient(135deg, #8b5cf6, #a78bfa);
-    box-shadow: 0 0 15px #8b5cf6;
-}
-
-/* Airtime Tab - Cyan */
-.tab[data-tab="cards"] {
-    background: linear-gradient(135deg, #0891b2, #06b6d4);
-}
-.tab[data-tab="cards"].active {
-    background: linear-gradient(135deg, #06b6d4, #22d3ee);
-    box-shadow: 0 0 15px #06b6d4;
-}
-
-/* Lottery Tab - Pink */
-.tab[data-tab="lottery"] {
-    background: linear-gradient(135deg, #db2777, #ec4899);
-}
-.tab[data-tab="lottery"].active {
-    background: linear-gradient(135deg, #ec4899, #f472b6);
-    box-shadow: 0 0 15px #ec4899;
-}
-
-/* Clinic Tab - Teal */
-.tab[data-tab="clinic"] {
-    background: linear-gradient(135deg, #0d9488, #14b8a6);
-}
-.tab[data-tab="clinic"].active {
-    background: linear-gradient(135deg, #14b8a6, #2dd4bf);
-    box-shadow: 0 0 15px #14b8a6;
-}
-
-/* Profile Tab - Indigo */
-.tab[data-tab="profile"] {
-    background: linear-gradient(135deg, #4338ca, #4f46e5);
-}
-.tab[data-tab="profile"].active {
-    background: linear-gradient(135deg, #4f46e5, #6366f1);
-    box-shadow: 0 0 15px #4f46e5;
-}
-
-/* Contact Tab - Orange */
-.tab[data-tab="contact"] {
-    background: linear-gradient(135deg, #ea580c, #f97316);
-}
-.tab[data-tab="contact"].active {
-    background: linear-gradient(135deg, #f97316, #fb923c);
-    box-shadow: 0 0 15px #f97316;
-}
-
-/* Guide Tab - Slate */
-.tab[data-tab="guide"] {
-    background: linear-gradient(135deg, #475569, #64748b);
-}
-.tab[data-tab="guide"].active {
-    background: linear-gradient(135deg, #64748b, #94a3b8);
-    box-shadow: 0 0 15px #64748b;
-}
-
-/* Refresh Tab - Blue (stays as you like it) */
-.tab.refresh {
-    background: linear-gradient(135deg, #2563eb, #3b82f6);
-}
-.tab.refresh:hover {
-    background: linear-gradient(135deg, #3b82f6, #60a5fa);
-}
-.tab.refresh.active {
-    background: linear-gradient(135deg, #3b82f6, #60a5fa);
-    box-shadow: 0 0 15px #3b82f6;
-}
-
-/* Bottom tabs (Admin only) */
-.tabs-bottom {
-    display: flex;
-    justify-content: center;
-    margin-top: 12px;
-    padding-top: 8px;
-    border-top: 1px solid rgba(251, 191, 36, 0.2);
-}
-
-.tab-bottom {
-    flex: 0 1 auto;
-    min-width: 120px;
-    background: linear-gradient(135deg, #8b0000, #dc143c);
-    border: none;
-    padding: 12px 24px;
-    border-radius: 40px;
-    color: white;
-    font-size: 14px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s;
-    text-align: center;
-}
-
-.tab-bottom:hover {
-    transform: scale(1.02);
-    box-shadow: 0 0 15px rgba(220, 20, 60, 0.5);
-}
-
-/* Responsive */
-@media (max-width: 500px) {
-    .tabs-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 8px;
+    .tab.active {
+        background: linear-gradient(135deg, #fbbf24, #d97706);
+        color: #1a1a2e;
+        box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4);
+        border-color: transparent;
     }
-    .balance-container {
-        gap: 8px;
-    }
-    .balance-wrapper {
-        padding: 12px;
-    }
-}
+
     /* CARDS */
-    .card {
-    background: #0a0a0f;
+   .card {
+    background: rgba(10, 10, 15, 0.85);
+    backdrop-filter: blur(2px);
     border-radius: 28px;
     padding: 18px;
     margin-bottom: 18px;
@@ -578,7 +283,7 @@
     transform: scale(1.02);
 }
 
-/* Image container â€“ square with border and rounded corners */
+/* Image container – square with border and rounded corners */
 .market-image-container {
     aspect-ratio: 1 / 1;
     width: 100%;
@@ -607,7 +312,7 @@
     background: linear-gradient(145deg, #1e293b, #0f172a);
 }
 
-/* Owned badge â€“ inside the image container */
+/* Owned badge – inside the image container */
 .market-owned-badge {
     position: absolute;
     top: 10px;
@@ -625,7 +330,7 @@
     gap: 4px;
 }
 
-/* Text container â€“ below image, no border */
+/* Text container – below image, no border */
 .market-info {
     padding: 8px 6px;
     text-align: center;
@@ -796,100 +501,117 @@
     .toast.error { border-left-color: #ef4444; background: #1e293b; color: white; }
     .toast.info { border-left-color: #06b6d4; background: #1e293b; color: white; }
     .toast::before {
-        content: "ðŸ””";
+        content: "🔔";
         font-size: 20px;
     }
-    .toast.error::before { content: "âš ï¸"; }
-    .toast.info::before { content: "â„¹ï¸"; }
-    /* ===== ADMIN PROFILE PICTURE EDITOR ===== */
-.profile-pic-editor {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
-    padding: 15px;
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 20px;
-    margin-bottom: 15px;
+    .toast.error::before { content: "⚠️"; }
+    .toast.info::before { content: "ℹ️"; }
+/* ===== SPARKLE BURST LOADER (Premium) ===== */
+@keyframes sparkle {
+    0% { transform: scale(1); opacity: 1; text-shadow: 0 0 0px #FFD700; }
+    50% { transform: scale(1.4); opacity: 0.8; text-shadow: 0 0 30px #FFD700, 0 0 20px #FF6347, 0 0 10px #10b981; }
+    100% { transform: scale(1); opacity: 1; text-shadow: 0 0 0px #FFD700; }
 }
 
-.current-profile-pic {
-    text-align: center;
+@keyframes particle-burst {
+    0% { transform: scale(0); opacity: 0; }
+    50% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(0) translate(var(--tx, 30px), var(--ty, -30px)); opacity: 0; }
 }
 
-.current-profile-pic p {
-    margin-bottom: 10px;
-    color: #fbbf24;
-    font-size: 14px;
+@keyframes spin-coin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
-.preview-image {
-    width: 180px;
-    height: 180px;
+.loading-sparkle {
+    font-size: 64px;
+    animation: sparkle 1.2s ease-in-out infinite;
+    display: inline-block;
+}
+
+.loading-particle {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: radial-gradient(circle, #FFD700, #FF6347);
     border-radius: 50%;
-    object-fit: cover;
-    border: 3px solid #fbbf24;
-    box-shadow: 0 0 20px rgba(251, 191, 36, 0.3);
-    background: #0a0a0f;
+    pointer-events: none;
+    animation: particle-burst 1s ease-out infinite;
 }
 
-.preview-image.placeholder {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 80px;
-    background: linear-gradient(135deg, #1e293b, #0f172a);
+.loading-coin {
+    display: inline-block;
+    font-size: 32px;
+    animation: spin-coin 1s linear infinite;
+    margin: 0 5px;
+}
+/* ===== TABS GRID LAYOUT ===== */
+.tabs-container {
+    margin-bottom: 20px;
 }
 
-.pic-upload-area {
-    width: 100%;
+.tabs-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.tab {
+    background: rgba(10, 10, 15, 0.8);
+    backdrop-filter: blur(2px);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    padding: 12px 8px;
+    border-radius: 12px;
+    color: white;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
     text-align: center;
+    transition: all 0.3s;
 }
 
-.pic-upload-area input[type="file"] {
-    display: none;
+.tab.active {
+    background: linear-gradient(135deg, #fbbf24, #d97706);
+    color: #1a1a2e;
+    box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4);
+    border-color: transparent;
 }
 
-.upload-pic-btn {
-    background: linear-gradient(135deg, #3b82f6, #2563eb);
-    border: none;
-    padding: 12px 24px;
-    border-radius: 40px;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-    margin: 5px;
-    transition: 0.2s;
+.bottom-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-top: 5px;
 }
 
-.upload-pic-btn:hover {
-    transform: scale(1.02);
-    box-shadow: 0 0 15px #3b82f6;
+.bottom-row.two-columns {
+    grid-template-columns: 1fr 1fr;
 }
 
-.remove-pic-btn {
+.refresh-tab {
+    background: #3b82f6;
+}
+
+.refresh-tab:hover {
+    background: #2563eb;
+}
+
+.admin-tab {
     background: linear-gradient(135deg, #ef4444, #dc2626);
-    border: none;
-    padding: 12px 24px;
-    border-radius: 40px;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-    margin: 5px;
-    transition: 0.2s;
 }
 
-.remove-pic-btn:hover {
-    transform: scale(1.02);
-    box-shadow: 0 0 15px #ef4444;
+.admin-tab:hover {
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
 }
 
-.pic-upload-status {
-    margin-top: 10px;
-    font-size: 12px;
-    color: #fbbf24;
+@media (max-width: 600px) {
+    .tab {
+        padding: 10px 5px;
+        font-size: 11px;
+    }
 }
-
     /* UTILITIES */
     .tab-content { display: none; }
     .tab-content.active { display: block; }
@@ -920,7 +642,7 @@
         .balance-value { font-size: 22px; }
     }
 
-    /* ===== AUTH MODAL â€“ NEON NOIR (NO BORDER) ===== */
+    /* ===== AUTH MODAL – NEON NOIR (NO BORDER) ===== */
 /* Fullscreen auth modal with glowing RGB background */
 /* Fullscreen auth modal with static gradient background */
 #authModal {
@@ -1048,7 +770,7 @@
     box-shadow: 0 0 15px #ffcc00;
 }
 
-/* Password toggle inside auth modal â€“ adjust for dark background */
+/* Password toggle inside auth modal – adjust for dark background */
 #authForm .password-wrapper {
     position: relative;
     width: 100%;
@@ -1104,38 +826,92 @@
         border: none;
         color: #fbbf24;
     }
+    /* Dropdown visibility */
+    .dropdown-menu.show {
+        display: block !important;
+    }
+/* ===== ONE COMMON BORDER FOR ALL TAB CONTENT ===== */
+
+/* ===== ONE COMMON BORDER FOR ALL TAB CONTENT ===== */
+
+/* Each tab content gets ONE border around everything */
+.tab-content {
+    background: rgba(10, 10, 15, 0.7);
+    backdrop-filter: blur(2px);
+    border: 2px solid rgba(251, 191, 36, 0.4);
+    border-radius: 28px;
+    padding: 20px;
+    margin-bottom: 20px;
+    transition: all 0.3s;
+}
+
+.tab-content:hover {
+    border-color: rgba(251, 191, 36, 0.8);
+    box-shadow: 0 8px 25px rgba(251, 191, 36, 0.2);
+}
+
+/* Make cards inside transparent so only ONE border shows */
+.tab-content .card {
+    background: transparent !important;
+    backdrop-filter: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 12px 0 !important;
+    margin-bottom: 0 !important;
+}
+
+/* But keep the card headers visible */
+.tab-content .card h3 {
+    margin-bottom: 15px;
+    font-size: 18px;
+    border-left: 4px solid #fbbf24;
+    padding-left: 12px;
+    color: #fbbf24;
+}
+
+/* Keep game cards styling - they can keep their individual look */
+.game-grid .game-card {
+    /* Keep existing styles */
+}
 </style>
 </head>
 <body>
-
-<style>
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-</style>
-<!-- Diamond Spinner Overlay -->
-<div id="diamondOverlay" class="diamond-overlay">
-    <div class="diamond"></div>
-    <div class="orb orb1"></div>
-    <div class="orb orb2"></div>
-    <div class="orb orb3"></div>
-    <div class="orb orb4"></div>
-    <div class="spinner-text" id="diamondText">LOADING</div>
+<div class="background-wrapper"></div>
+<div id="loadingOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 20% 30%, rgba(255, 51, 102, 0.95), rgba(0, 102, 255, 0.95), rgba(0, 255, 102, 0.85)); z-index: 10000; justify-content: center; align-items: center; flex-direction: column;">
+    <div style="position: relative;">
+        <div class="loading-sparkle">💎</div>
+        <div class="loading-particle" style="--tx: -30px; --ty: -40px; left: 50%; top: 50%;"></div>
+        <div class="loading-particle" style="--tx: 30px; --ty: -40px; left: 50%; top: 50%; animation-delay: 0.2s;"></div>
+        <div class="loading-particle" style="--tx: -40px; --ty: 20px; left: 50%; top: 50%; animation-delay: 0.4s;"></div>
+        <div class="loading-particle" style="--tx: 40px; --ty: 20px; left: 50%; top: 50%; animation-delay: 0.6s;"></div>
+        <div class="loading-particle" style="--tx: 0px; --ty: -50px; left: 50%; top: 50%; animation-delay: 0.3s;"></div>
+        <div class="loading-particle" style="--tx: 50px; --ty: 0px; left: 50%; top: 50%; animation-delay: 0.5s;"></div>
+        <div class="loading-particle" style="--tx: -50px; --ty: 0px; left: 50%; top: 50%; animation-delay: 0.7s;"></div>
+    </div>
+    <div style="margin-top: 30px;">
+        <span class="loading-coin">🪙</span>
+        <span class="loading-coin" style="animation-delay: 0.2s;">🪙</span>
+        <span class="loading-coin" style="animation-delay: 0.4s;">🪙</span>
+    </div>
+    <p style="color: #FFD700; margin-top: 20px; font-size: 18px; font-weight: bold;">Loading your dashboard...</p>
+    <p style="color: #ccc; margin-top: 10px; font-size: 12px;">Please wait...</p>
 </div>
+
 <div id="networkStatus" class="network-status"></div>
 <div class="header">
     <div class="header-content">
         <div class="app-logo">
-            <span class="logo-icon" id="appLogoIcon">ðŸ¦</span>
+            <span class="logo-icon">🏦</span>
             <div>
                 <h1>Profit Vault</h1>
                 <p>Complete Investment Platform | Premium</p>
             </div>
         </div>
         <div class="profile-area" id="profileArea">
-            <div class="profile-avatar" id="profileAvatar">
-    <img loading="lazy" id="profileImage" src="https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app-assets/1780156694418.png" alt="Profit Vault" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+            <div class="profile-avatar" id="profileAvatar" role="button" tabindex="0" 
+     onclick="toggleUserMenu()" 
+     onkeydown="if(event.key==='Enter'||event.key===' ') toggleUserMenu()">
+    <img id="profileImage" src="https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app-assets/1780156694418.png" alt="Profit Vault" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
 </div>
             <div class="dropdown-menu" id="dropdownMenu">
                 <div id="dropdownItems"></div>
@@ -1144,56 +920,63 @@
     </div>
 </div>
 <div id="appContent" style="display: none;">
-<div class="balance-wrapper">
-    <div class="balance-container">
-        <div class="balance-card primary" onclick="showModal('depositModal')">
-            <div class="balance-emoji">💰</div>
-            <div class="balance-value" id="balance">0</div>
-            <div class="balance-label">Balance (ETB)</div>
-        </div>
-        <div class="balance-card bonus" onclick="showModal('exchangeModal')">
-            <div class="balance-emoji">🎁</div>
-            <div class="balance-value" id="bonus">0</div>
-            <div class="balance-label">Bonus (ETB)</div>
-        </div>
-        <div class="balance-card coins" onclick="showModal('buyCoinsModal')">
-            <div class="balance-emoji">🪙</div>
-            <div class="balance-value" id="coins">0</div>
-            <div class="balance-label">Coins</div>
-        </div>
+<div class="balance-container">
+    <div class="balance-card primary" role="button" tabindex="0" 
+     onclick="showModal('depositModal')" 
+     onkeydown="if(event.key==='Enter'||event.key===' ') showModal('depositModal')">
+        <div class="balance-emoji">💰</div>
+        <div class="balance-value" id="balance">0</div>
+        <div class="balance-label">Balance (ETB)</div>
+    </div>
+    <div class="balance-card bonus" role="button" tabindex="0" 
+     onclick="showModal('exchangeModal')" 
+     onkeydown="if(event.key==='Enter'||event.key===' ') showModal('exchangeModal')">
+        <div class="balance-emoji">🎁</div>
+        <div class="balance-value" id="bonus">0</div>
+        <div class="balance-label">Bonus (ETB)</div>
+    </div>
+    <div class="balance-card coins" role="button" tabindex="0" 
+     onclick="showModal('buyCoinsModal')" 
+     onkeydown="if(event.key==='Enter'||event.key===' ') showModal('buyCoinsModal')">
+        <div class="balance-emoji">🪙</div>
+        <div class="balance-value" id="coins">0</div>
+        <div class="balance-label">Coins</div>
     </div>
 </div>
-<div class="tabs-grid">
-    <button class="tab active" data-tab="dashboard">📊 Dashboard</button>
-    <button class="tab" data-tab="market">🛒 Market</button>
-    <button class="tab" data-tab="games">🎮 Games</button>
-    <button class="tab" data-tab="cards">🃏 Airtime</button>
-    <button class="tab" data-tab="lottery">🎟️ Lottery</button>
-    <button class="tab" data-tab="clinic">🏥 Clinic</button>
-    <button class="tab" data-tab="profile">👤 Profile</button>
-    <button class="tab" data-tab="contact">📞 Contact</button>
-    <button class="tab" data-tab="guide">📖 Guide</button>
-    <button class="tab refresh" id="refreshTabBtn">🔄 Refresh</button>
-</div>
-<div class="tabs-bottom">
-    <button class="tab-bottom admin" id="adminTabBtn">👑 Admin</button>
-</div>
+<div class="tabs-container">
+    <!-- 3x3 Grid of Tabs -->
+    <div class="tabs-grid">
+        <button class="tab active" data-tab="dashboard">📊 Dashboard</button>
+        <button class="tab" data-tab="market">🛒 Market</button>
+        <button class="tab" data-tab="games">🎮 Games</button>
+        <button class="tab" data-tab="cards">🃏 Airtime</button>
+        <button class="tab" data-tab="lottery">🎟️ Lottery</button>
+        <button class="tab" data-tab="clinic">🏥 Clinic</button>
+        <button class="tab" data-tab="profile">👤 Profile</button>
+        <button class="tab" data-tab="contact">📞 Contact</button>
+        <button class="tab" data-tab="guide">📖 Guide</button>
+    </div>
+    
+    <!-- Bottom Row -->
+    <div class="bottom-row" id="bottomRow">
+        <button class="tab refresh-tab" id="refreshBtn">🔄 Refresh</button>
+    </div>
 </div>
 
 <!-- DASHBOARD -->
 <div id="dashboard" class="tab-content active">
-    <div class="card"><h3>âš¡ Quick Actions</h3><button class="btn btn-success" onclick="showModal('depositModal')">💰 Deposit</button><div class="row"><button class="btn" onclick="showModal('buyCoinsModal')">ðŸ’± Buy Coins</button><button class="btn btn-warning" onclick="showModal('exchangeModal')">🔄 Exchange to Bonus</button></div><button class="btn btn-danger" onclick="showModal('withdrawModal')">📤 Withdraw Bonus</button></div>
-    <div class="card"><h3>ðŸ”’ QUAD-LOCK PROGRESS</h3><div id="quadlock">Loading...</div></div>
-    <div class="card"><h3>ðŸ“ˆ Exchange Info</h3><div id="exchangeInfo"></div></div>
+    <div class="card"><h3>⚡ Quick Actions</h3><button class="btn btn-success" onclick="showModal('depositModal')">💰 Deposit</button><div class="row"><button class="btn" onclick="showModal('buyCoinsModal')">💱 Buy Coins</button><button class="btn btn-warning" onclick="showModal('exchangeModal')">🔄 Exchange to Bonus</button></div><button class="btn btn-danger" onclick="showModal('withdrawModal')">📤 Withdraw Bonus</button></div>
+    <div class="card"><h3>🔒 QUAD-LOCK PROGRESS</h3><div id="quadlock">Loading...</div></div>
+    <div class="card"><h3>📈 Exchange Info</h3><div id="exchangeInfo"></div></div>
 </div>
 
 <!-- MARKET -->
 <!-- MARKET -->
 <div id="market" class="tab-content">
     <div class="card"><h3>🛒 Investment Market</h3><div id="marketGrid" class="market-grid">Loading...</div></div>
-    <div class="card"><h3>ðŸŽ’ My Investments</h3><div id="investments"></div><div id="investmentsPagination" class="pagination-controls"></div></div>
+    <div class="card"><h3>🎒 My Investments</h3><div id="investments"></div><div id="investmentsPagination" class="pagination-controls"></div></div>
     <div class="card">
-        <h3>ðŸ“¦ Sold Assets <button class="btn-sm btn-danger" style="float:right;" onclick="deleteSelectedSoldAssets()">ðŸ—‘ï¸ Delete Selected</button></h3>
+        <h3>📦 Sold Assets <button class="btn-sm btn-danger" style="float:right;" onclick="deleteSelectedSoldAssets()">🗑️ Delete Selected</button></h3>
         <div id="soldAssetsList"></div>
         <div id="soldAssetsPagination" class="pagination-controls"></div>
     </div>
@@ -1212,14 +995,14 @@
 
 <!-- LOTTERY -->
 <div id="lottery" class="tab-content"><div class="card"><h3>🎟️ Lottery Pools</h3><div id="lotteryPools"></div></div><div class="card"><h3>🎫 My Tickets</h3><div id="myTickets"></div></div><div class="card">
-    <h3>ðŸ† Recent Draws <button class="btn-sm btn-danger" style="float:right;" onclick="deleteSelectedDraws()">ðŸ—‘ï¸ Delete Selected</button></h3>
+    <h3>🏆 Recent Draws <button class="btn-sm btn-danger" style="float:right;" onclick="deleteSelectedDraws()">🗑️ Delete Selected</button></h3>
     <div id="recentDraws"></div>
     <div id="drawsPagination" class="pagination-controls"></div>
 </div></div>
 
 <!-- CLINIC -->
 <div id="clinic" class="tab-content"><div class="card"><h3>🏥 Online Clinic (50 Coins)</h3><textarea id="healthIssue" rows="6" placeholder="Describe your health issue..." style="width: 100%; box-sizing: border-box; font-size: 16px;"></textarea><button class="btn btn-info" onclick="startConsultation()">Start Consultation</button></div><div class="card">
-    <h3>ðŸ“‹ My Consultations <button class="btn-sm btn-danger" style="float:right;" onclick="deleteSelectedConsultations()">ðŸ—‘ï¸ Delete Selected</button></h3>
+    <h3>📋 My Consultations <button class="btn-sm btn-danger" style="float:right;" onclick="deleteSelectedConsultations()">🗑️ Delete Selected</button></h3>
     <div id="consultations"></div>
     <div id="consPagination" class="pagination-controls"></div>
 </div></div>
@@ -1232,21 +1015,21 @@
         <div id="referralEarnings" style="margin-top: 10px; color: #fbbf24;">💰 Referral earnings: 0 ETB</div>
         <button class="btn" onclick="copyReferral()">📤 Copy Referral Link</button>
         <div class="sound-toggle" style="margin-top:15px; display:flex; justify-content:space-between;">
-            <span>ðŸ”Š Sound Effects</span>
+            <span>🔊 Sound Effects</span>
             <div id="soundToggle" class="toggle-switch" style="width:50px; height:24px; background:#4b5563; border-radius:12px; cursor:pointer; position:relative;" onclick="toggleSound()">
                 <div id="toggleKnob" style="width:20px; height:20px; background:white; border-radius:50%; position:absolute; top:2px; left:3px; transition:0.2s;"></div>
             </div>
         </div>
     </div>
     <div class="card">
-        <h3>ðŸ“œ Transaction History</h3>
+        <h3>📜 Transaction History</h3>
         <div class="sub-tabs" style="display:flex; gap:10px; margin-bottom:12px; flex-wrap:wrap;">
             <button class="btn-sm active" data-hist="all">All</button>
             <button class="btn-sm" data-hist="deposit">Deposits</button>
             <button class="btn-sm" data-hist="withdraw">Withdrawals</button>
             <button class="btn-sm" data-hist="other">Other</button>
             <label style="margin-left:15px;"><input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll()"> Select All</label>
-<button class="btn-sm btn-danger" onclick="clearSelectedHistory()">ðŸ—‘ï¸ Clear Selected</button>
+<button class="btn-sm btn-danger" onclick="clearSelectedHistory()">🗑️ Clear Selected</button>
         </div>
         <div id="transactionList"></div>
         <div id="paginationControls" style="display:flex; justify-content:center; gap:10px; margin-top:15px;">
@@ -1256,9 +1039,9 @@
         </div>
     </div>
     <div class="card">
-    <h3>ðŸ† Leaderboard
+    <h3>🏆 Leaderboard
         <button class="btn-sm btn-info" onclick="refreshLeaderboard()" style="float:right; margin-left:8px;">🔄 Refresh</button>
-        <button class="btn-sm btn-danger" onclick="deleteSelectedLeaderboardUsers()" style="float:right;">ðŸ—‘ï¸ Delete Selected</button>
+        <button class="btn-sm btn-danger" onclick="deleteSelectedLeaderboardUsers()" style="float:right;">🗑️ Delete Selected</button>
     </h3>
     <div id="leaderboard"></div>
     <div id="leaderboardPagination" style="display: flex; justify-content: center; gap: 10px; margin-top: 10px;"></div>
@@ -1270,13 +1053,15 @@
     <div class="card">
         <h3>📞 Contact Admin</h3>
         <div class="contact-methods">
-            <div class="contact-method" onclick="contactAdmin('telegram')">
-                <div>ðŸ“± Telegram Admin</div>
+            <div class="contact-method" role="button" tabindex="0" 
+     onclick="contactAdmin('telegram')" 
+     onkeydown="if(event.key==='Enter'||event.key===' ') contactAdmin('telegram')">
+                <div>📱 Telegram Admin</div>
                 <div>@profitvaultinvestment</div>
                 <button class="btn btn-sm">Message</button>
             </div>
         </div>
-        <a href="https://t.me/profitpv" target="_blank" class="btn btn-info" style="text-decoration:none; display:block; margin-top:10px;">ðŸ“¢ Join our Channel @profitpv</a>
+        <a href="https://t.me/profitpv" target="_blank" rel="noopener noreferrer" class="btn btn-info" style="text-decoration:none; display:block; margin-top:10px;">📢 Join our Channel @profitpv</a>
     </div>
 </div>
 <!-- GUIDE -->
@@ -1285,17 +1070,17 @@
         <h3>📖 መመሪያ / Guide</h3>
         <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
     <button id="guideEngBtn" class="btn-sm" style="background: #3b82f6;">🇬🇧 English</button>
-<button id="guideAmhBtn" class="btn-sm" style="background: #10b981;">🇪🇹 አማርኛ</button>
-<button id="guideOroBtn" class="btn-sm" style="background: #f59e0b;">🇪🇹 Oromic</button>
+    <button id="guideAmhBtn" class="btn-sm" style="background: #10b981;">🇪🇹 አማርኛ</button>
+    <button id="guideOroBtn" class="btn-sm" style="background: #f59e0b;">🇪🇹 Oromiffa</button>
 </div>
         <div id="guideContent"></div>
     </div>
 </div>
 <!-- MODALS -->
-<div id="depositModal" class="modal"><div class="modal-content"><span class="close" onclick="closeModal('depositModal')">&times;</span><h3>💰 Deposit Money</h3><div class="payment-methods" style="display:flex; gap:10px; margin-bottom:15px;"><div class="payment-method" data-payment="telebirr" onclick="selectPaymentMethod('telebirr')" style="flex:1; background:rgba(255,255,255,0.1); border-radius:16px; padding:10px; text-align:center; cursor:pointer;">ðŸ“± Telebirr</div><div class="payment-method" data-payment="awash" onclick="selectPaymentMethod('awash')" style="flex:1; background:rgba(255,255,255,0.1); border-radius:16px; padding:10px; text-align:center; cursor:pointer;">ðŸ¦ Awash</div></div><div id="telebirrInfo" class="telebirr-info" style="background:rgba(0,0,0,0.4); border-radius:16px; padding:12px; margin:10px 0; text-align:center;">ðŸ“± Send to Telebirr: <strong id="telebirrNumber">0935983470</strong><br>Name: <span id="telebirrName">Tesfaye</span></div><div id="awashInfo" class="bank-info" style="display:none; background:rgba(0,0,0,0.4); border-radius:16px; padding:12px; margin:10px 0; text-align:center;">ðŸ¦ <span id="bankName">Awash Bank</span>: <strong id="bankAccount">013201372354300</strong><br>Name: <span id="bankHolder">Tesfaye</span></div><input type="number" id="depositAmount" placeholder="Amount (Min 1500 ETB)"><input type="text" id="accountHolder" placeholder="Account Holder Name"><input type="text" id="transactionId" placeholder="Transaction ID"><textarea id="depositNote" rows="2" placeholder="Note (optional)"></textarea><button class="btn btn-success" onclick="submitDeposit()">Submit Deposit Request</button><p style="font-size:11px; margin-top:12px;">Admin will verify and approve.</p></div></div>
-<div id="buyCoinsModal" class="modal"><div class="modal-content"><span class="close" onclick="closeModal('buyCoinsModal')">&times;</span><h3>ðŸ’± Buy Coins</h3><p>1 ETB = 1 Coin</p><input type="number" id="buyCoinsAmount" placeholder="Amount (Min 50)"><button class="btn" onclick="buyCoins()">Buy Coins</button></div></div>
-<div id="exchangeModal" class="modal"><div class="modal-content"><span class="close" onclick="closeModal('exchangeModal')">&times;</span><h3>🔄 Exchange Coins â†’ Bonus</h3><p>📊 Daily limit: 3% of your coins (once per day)</p><p>ðŸ’± 1 Coin = 1 Bonus</p><div id="exchangeInfoModal"></div><input type="number" id="exchangeAmount" placeholder="Amount to exchange (max)" style="margin: 10px 0; width: 100%; padding: 8px; border-radius: 12px;"><button class="btn btn-warning" onclick="exchangeCoins()">Exchange Now</button></div></div>
-<div id="withdrawModal" class="modal"><div class="modal-content"><span class="close" onclick="closeModal('withdrawModal')">&times;</span><h3>📤 Withdraw Bonus</h3><p>âš ï¸ Tax: 10%</p><p>ðŸ”’ Requires Quad-Lock 4/4</p><input type="number" id="withdrawAmount" placeholder="Amount">
+<div id="depositModal" class="modal"><div class="modal-content"><span class="close" onclick="closeModal('depositModal')">&times;</span><h3>💰 Deposit Money</h3><div class="payment-methods" style="display:flex; gap:10px; margin-bottom:15px;"><div class="payment-method" data-payment="telebirr" onclick="selectPaymentMethod('telebirr')" style="flex:1; background:rgba(255,255,255,0.1); border-radius:16px; padding:10px; text-align:center; cursor:pointer;">📱 Telebirr</div><div class="payment-method" data-payment="awash" onclick="selectPaymentMethod('awash')" style="flex:1; background:rgba(255,255,255,0.1); border-radius:16px; padding:10px; text-align:center; cursor:pointer;">🏦 Awash</div></div><div id="telebirrInfo" class="telebirr-info" style="background:rgba(0,0,0,0.4); border-radius:16px; padding:12px; margin:10px 0; text-align:center;">📱 Send to Telebirr: <strong id="telebirrNumber">0935983470</strong><br>Name: <span id="telebirrName">Tesfaye</span></div><div id="awashInfo" class="bank-info" style="display:none; background:rgba(0,0,0,0.4); border-radius:16px; padding:12px; margin:10px 0; text-align:center;">🏦 <span id="bankName">Awash Bank</span>: <strong id="bankAccount">013201372354300</strong><br>Name: <span id="bankHolder">Tesfaye</span></div><input type="number" id="depositAmount" placeholder="Amount (Min 1500 ETB)"><input type="text" id="accountHolder" placeholder="Account Holder Name"><input type="text" id="transactionId" placeholder="Transaction ID"><textarea id="depositNote" rows="2" placeholder="Note (optional)"></textarea><button class="btn btn-success" onclick="submitDeposit()">Submit Deposit Request</button><p style="font-size:11px; margin-top:12px;">Admin will verify and approve.</p></div></div>
+<div id="buyCoinsModal" class="modal"><div class="modal-content"><span class="close" onclick="closeModal('buyCoinsModal')">&times;</span><h3>💱 Buy Coins</h3><p>1 ETB = 1 Coin</p><input type="number" id="buyCoinsAmount" placeholder="Amount (Min 50)"><button class="btn" onclick="buyCoins()">Buy Coins</button></div></div>
+<div id="exchangeModal" class="modal"><div class="modal-content"><span class="close" onclick="closeModal('exchangeModal')">&times;</span><h3>🔄 Exchange Coins → Bonus</h3><p>📊 Daily limit: 3% of your coins (once per day)</p><p>💱 1 Coin = 1 Bonus</p><div id="exchangeInfoModal"></div><input type="number" id="exchangeAmount" placeholder="Amount to exchange (max)" style="margin: 10px 0; width: 100%; padding: 8px; border-radius: 12px;"><button class="btn btn-warning" onclick="exchangeCoins()">Exchange Now</button></div></div>
+<div id="withdrawModal" class="modal"><div class="modal-content"><span class="close" onclick="closeModal('withdrawModal')">&times;</span><h3>📤 Withdraw Bonus</h3><p>⚠️ Tax: 10%</p><p>🔒 Requires Quad-Lock 4/4</p><input type="number" id="withdrawAmount" placeholder="Amount">
 <div id="withdrawHint" style="font-size:12px; color:#fbbf24; margin:5px 0;"></div><input type="text" id="withdrawAccountHolder" placeholder="Account Holder"><input type="text" id="withdrawBankAccount" placeholder="Bank Account Number"><select id="withdrawBankName"><option>Telebirr</option><option>Awash Bank</option><option>CBE</option><option>Dashen Bank</option></select><button class="btn btn-danger" onclick="submitWithdraw()">Request Withdrawal</button></div></div>
 <div id="toast" class="toast"></div>
 </div>
@@ -1310,17 +1095,80 @@ function escapeHTML(str) {
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#39;');
 }
-// ===== DIAMOND SPINNER FUNCTIONS =====
-function showDiamond(message) {
-    const overlay = document.getElementById('diamondOverlay');
-    const textEl = document.getElementById('diamondText');
-    if (textEl) textEl.innerText = message;
-    if (overlay) overlay.classList.add('active');
+// ==================== REUSABLE MODAL FUNCTION ====================
+function createModal(title, content, onClose = null) {
+    const modal = document.createElement('div');
+    modal.className = 'modal active';
+    modal.innerHTML = `
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>${escapeHTML(title)}</h3>
+            ${content}
+            <button class="btn" style="margin-top:15px;">Close</button>
+        </div>
+    `;
+    const closeBtn = modal.querySelector('.close');
+    const closeButton = modal.querySelector('.btn');
+    const cleanup = () => {
+        if (onClose) onClose();
+        modal.remove();
+    };
+    closeBtn.onclick = cleanup;
+    closeButton.onclick = cleanup;
+    document.body.appendChild(modal);
+    return modal;
+}
+// ==================== CACHE SYSTEM FOR OPTIMIZATION ====================
+const cache = {
+    data: {},
+    set(key, value, ttl = 30000) {
+        this.data[key] = {
+            value: value,
+            expiry: Date.now() + ttl
+        };
+    },
+    get(key) {
+        const item = this.data[key];
+        if (item && Date.now() < item.expiry) {
+            return item.value;
+        }
+        delete this.data[key];
+        return null;
+    },
+    clear(key) {
+        if (key) delete this.data[key];
+        else this.data = {};
+    }
+};
+
+// Debounce function - prevents rapid repeated calls
+function debounce(func, delay) {
+    let timeout;
+    return function(...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), delay);
+    };
 }
 
-function hideDiamond() {
-    const overlay = document.getElementById('diamondOverlay');
-    if (overlay) overlay.classList.remove('active');
+// Throttle function - limits how often a function can run
+function throttle(func, limit) {
+    let inThrottle;
+    return function(...args) {
+        if (!inThrottle) {
+            func.apply(this, args);
+            inThrottle = true;
+            setTimeout(() => inThrottle = false, limit);
+        }
+    };
+}
+function updateBalanceDisplay() {
+    if (!currentUser) return;
+    const balanceEl = document.getElementById('balance');
+    const bonusEl = document.getElementById('bonus');
+    const coinsEl = document.getElementById('coins');
+    if (balanceEl) balanceEl.innerText = (currentUser.balance || 0).toLocaleString();
+    if (bonusEl) bonusEl.innerText = (currentUser.bonus_balance || 0).toLocaleString();
+    if (coinsEl) coinsEl.innerText = (currentUser.coin_balance || 0).toLocaleString();
 }
 // ==================== DEPOSIT SETTINGS ====================
 let depositSettings = { telebirr_number: '', bank_name: '', bank_account: '', account_holder: '' };
@@ -1373,17 +1221,6 @@ async function saveDepositSettings() {
 const SUPABASE_URL = 'https://ogtlaffkybpesaxastvx.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ndGxhZmZreWJwZXNheGFzdHZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTA4NTQsImV4cCI6MjA5NTM4Njg1NH0.toDw1_DsAjHjUuCg0hvRdEGyjA7mW2DJNlSWoVBT1qY';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-let realtimeChannel = null;
-function startRealtime(){
-    if(realtimeChannel) return;
-    realtimeChannel = sb.channel(`user-${USER_ID}`).on('postgres_changes',{event:'UPDATE',schema:'public',table:'users',filter:`user_id=eq.${USER_ID}`},(payload)=>{
-        document.getElementById('balance').innerText = (payload.new.balance||0).toLocaleString();
-        document.getElementById('bonus').innerText = (payload.new.bonus_balance||0).toLocaleString();
-        document.getElementById('coins').innerText = (payload.new.coin_balance||0).toLocaleString();
-        if(currentUser) Object.assign(currentUser, payload.new);
-    }).subscribe();
-}
-function stopRealtime(){ if(realtimeChannel){ sb.removeChannel(realtimeChannel); realtimeChannel = null; } }
 let USER_ID = null, IS_ADMIN = false, selectedPaymentMethod = "telebirr", soundEnabled = localStorage.getItem('soundEnabled') !== 'false';
 let isLoggingOut = false;
 let isProcessing = {
@@ -1413,223 +1250,65 @@ let totalLeaderboardPages = 1;
 const LEADERBOARD_PER_PAGE = 5;
 
 // ==================== UTILITIES ====================
-const cache = { market: null, cards: null, marketTime: 0, cardsTime: 0 };
-function getCache(key, ttl=60000) { 
-    const item = cache[key+'Time']; 
-    return (cache[key] && Date.now()-item < ttl) ? cache[key] : null; 
-}
-function setCache(key, data) { cache[key] = data; cache[key+'Time'] = Date.now(); }
-function clearCache(key) { if(key){ cache[key]=null; cache[key+'Time']=0; } else { Object.keys(cache).forEach(k=>cache[k]=null); } }
-// ===== TARGETED UPDATE FUNCTIONS (FAST & EFFICIENT) =====
-async function updateRecentTransactions() {
-    const { data } = await sb
-        .from('transactions')
-        .select('*')
-        .eq('user_id', USER_ID)
-        .order('timestamp', { ascending: false })
-        .limit(10);
-    
-    if (data) {
-        allTransactions = data;
-        applyTransactionFilter();
-    }
-}
-// Update ONLY user balances (coins, bonus, real balance)
-async function updateUserBalances() {
-    try {
-        const { data, error } = await sb
-            .from('users')
-            .select('balance, bonus_balance, coin_balance, win_chance_plays, total_deposited, total_withdrawn, active_referrals, username, joined_date')
-            .eq('user_id', USER_ID)
-            .single();
-        
-        if (error) throw error;
-        
-        if (data) {
-            document.getElementById('balance').innerText = (data.balance || 0).toLocaleString();
-            document.getElementById('bonus').innerText = (data.bonus_balance || 0).toLocaleString();
-            document.getElementById('coins').innerText = (data.coin_balance || 0).toLocaleString();
-            
-            // Update currentUser object
-            if (currentUser) {
-                Object.assign(currentUser, data);
-            } else {
-                currentUser = data;
-            }
-        }
-        return data;
-    } catch (err) {
-        console.error("updateUserBalances error:", err);
-        return null;
-    }
-}
-
-// Update ONLY user's active investments
-async function updateInvestments() {
-    const { data } = await sb
-        .from('user_assets')
-        .select('*')
-        .eq('user_id', USER_ID)
-        .eq('sold', false)
-        .order('purchase_time', { ascending: false });
-    
-    if (data && data.length) {
-        allInvestments = data;
-        totalInvestmentsPages = Math.ceil(allInvestments.length / 5);
-        if (investmentsPage > totalInvestmentsPages) investmentsPage = Math.max(1, totalInvestmentsPages);
-        const start = (investmentsPage - 1) * 5;
-        const pageItems = allInvestments.slice(start, start + 5);
-        document.getElementById('investments').innerHTML = pageItems.map(asset => {
-            const purchase = new Date(asset.purchase_time);
-            const maturity = new Date(purchase.getTime() + 24 * 3600000);
-            const ready = new Date() >= maturity;
-            const hoursLeft = Math.ceil((maturity - new Date()) / 3600000);
-            const payout = Math.round(asset.purchase_price * asset.roi_at_purchase);
-            return `<div class="investment-item">
-                        <span>${asset.emoji} ${asset.asset_name}</span>
-                        <span>Invested: ${asset.purchase_price} 🪙</span>
-                        <span>${ready ? `Sell for: ${payout} 🪙` : `Payout (est.): ${payout} 🪙`}</span>
-                        ${ready ? `<button class="btn-sm" onclick="sellAsset(${asset.id}, this)">💵 Sell</button>` : `<span class="badge">⏳ ${hoursLeft}h left</span>`}
-                    </div>`;
-        }).join('');
-        document.getElementById('investmentsPagination').innerHTML = `
-            <button class="btn-sm" onclick="changeInvestmentsPage(-1)">◀ Previous</button>
-            <span>${investmentsPage} / ${totalInvestmentsPages || 1}</span>
-            <button class="btn-sm" onclick="changeInvestmentsPage(1)">Next ▶</button>
-        `;
-    } else {
-        document.getElementById('investments').innerHTML = '<div class="loading">No active investments</div>';
-        document.getElementById('investmentsPagination').innerHTML = '';
-    }
-}
-
-// Update ONLY sold assets list
-async function updateSoldAssets() {
-    const { data } = await sb
-        .from('user_assets')
-        .select('*')
-        .eq('user_id', USER_ID)
-        .eq('sold', true)
-        .order('purchase_time', { ascending: false });
-    
-    if (data && data.length) {
-        allSoldAssets = data;
-        totalSoldAssetsPages = Math.ceil(allSoldAssets.length / 5);
-        if (soldAssetsPage > totalSoldAssetsPages) soldAssetsPage = Math.max(1, totalSoldAssetsPages);
-        const start = (soldAssetsPage - 1) * 5;
-        const pageItems = allSoldAssets.slice(start, start + 5);
-        document.getElementById('soldAssetsList').innerHTML = pageItems.map(asset => `
-            <div class="transaction-item">
-                <input type="checkbox" class="sold-checkbox" value="${asset.id}">
-                <span>${asset.emoji} ${asset.asset_name}</span>
-                <span>Sold for ${Math.round(asset.purchase_price * asset.roi_at_purchase)} 🪙</span>
-                <span>${new Date(asset.purchase_time).toLocaleDateString()}</span>
-            </div>
-        `).join('');
-        document.getElementById('soldAssetsPagination').innerHTML = `
-            <button class="btn-sm" onclick="changeSoldAssetsPage(-1)">◀ Previous</button>
-            <span>${soldAssetsPage} / ${totalSoldAssetsPages || 1}</span>
-            <button class="btn-sm" onclick="changeSoldAssetsPage(1)">Next ▶</button>
-            ${soldAssetsPage === 1 ? `<label style="margin-left:15px;"><input type="checkbox" id="selectAllSoldCheckbox" onchange="toggleSelectAllSold()"> Select All</label>` : ''}
-        `;
-        attachSoldCheckboxEvents();
-    } else {
-        document.getElementById('soldAssetsList').innerHTML = '<div class="loading">No sold assets</div>';
-        document.getElementById('soldAssetsPagination').innerHTML = '';
-    }
-}
-
-// Update ONLY lottery tickets owned by user
-async function updateMyTickets() {
-    const { data } = await sb
-        .from('lottery_tickets')
-        .select('*')
-        .eq('user_id', USER_ID)
-        .eq('status', 'active');
-    
-    document.getElementById('myTickets').innerHTML = data?.length ? data.map(t => `
-        <div class="ticket-item">
-            <div>🎫 ${escapeHTML(t.serial_number)}</div>
-            <div><span class="badge">Active</span></div>
-        </div>
-    `).join('') : '<div class="loading">No tickets</div>';
-}
-
-// Update ONLY Quad-Lock progress
-async function updateQuadLock() {
-    const { count: lotteryCount } = await sb
-        .from('lottery_tickets')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', USER_ID)
-        .eq('status', 'active');
-    
-    const depositDone = (currentUser.total_deposited || 0) >= 1500;
-    const gameDone = (currentUser.win_chance_plays || 0) >= 10;
-    const lotteryDone = (lotteryCount || 0) >= 1;
-    const referralDone = (currentUser.active_referrals || 0) >= 3;
-    const completed = [depositDone, gameDone, lotteryDone, referralDone].filter(Boolean).length;
-    const percent = (completed / 4) * 100;
-    
-    document.getElementById('quadlock').innerHTML = `
-        <div class="quad-item ${depositDone ? 'unlocked' : 'locked'}"><div>💰 Deposit 1500 ETB</div><div>${(currentUser.total_deposited || 0)}/1500</div></div>
-        <div class="quad-item ${gameDone ? 'unlocked' : 'locked'}"><div>🎮 Play 10 Games</div><div>${currentUser.win_chance_plays || 0}/10</div></div>
-        <div class="quad-item ${lotteryDone ? 'unlocked' : 'locked'}"><div>🎟️ Buy 1 Ticket</div><div>${lotteryCount || 0}/1</div></div>
-        <div class="quad-item ${referralDone ? 'unlocked' : 'locked'}"><div>ðŸ‘¥ 3 Referrals</div><div>${currentUser.active_referrals || 0}/3</div></div>
-        <div class="progress-bar"><div class="progress-fill" style="width:${percent}%"></div></div>
-        <div class="progress-text">${completed}/4 Complete (${Math.round(percent)}%)</div>`;
-}
-
-// Update ONLY exchange info display
-async function updateExchangeInfo() {
-    const today = new Date().toISOString().slice(0, 10);
-    const { data: exchanged } = await sb
-        .from('daily_exchange')
-        .select('id')
-        .eq('user_id', USER_ID)
-        .eq('exchange_date', today)
-        .maybeSingle();
-    
-    const alreadyExchanged = exchanged !== null;
-    const maxEx = Math.floor((currentUser.coin_balance || 0) * 0.03);
-    
-    if (alreadyExchanged) {
-        document.getElementById('exchangeInfo').innerHTML = `
-            <div>âš ï¸ You have already exchanged today.</div>
-            <div>📊 Daily limit: 3% of coins (${maxEx} max)</div>
-            <div>⏳ Please try again tomorrow.</div>
-        `;
-        document.getElementById('exchangeInfoModal').innerHTML = `
-            <div>You have already exchanged today.</div>
-            <div>Come back tomorrow to exchange again.</div>
-        `;
-    } else {
-        document.getElementById('exchangeInfo').innerHTML = `
-            <div>📊 Daily limit: 3% of your coins (up to ${maxEx} coins)</div>
-            <div>✅ You can exchange today.</div>
-        `;
-        document.getElementById('exchangeInfoModal').innerHTML = `
-            <div>You can exchange up to ${maxEx} coins right now.</div>
-            <div>âš ï¸ Only one exchange per day allowed.</div>
-        `;
-        const exchangeInput = document.getElementById('exchangeAmount');
-        if (exchangeInput) exchangeInput.placeholder = `Amount (max ${maxEx})`;
-    }
-}
-
-// Update ONLY profile info display
-async function updateProfileInfo() {
-    document.getElementById('profileInfo').innerHTML = `<div class="profile-item">👤 ${escapeHTML(currentUser.username) || 'User'}</div><div>ðŸ†” ${USER_ID.slice(0, 8)}...</div><div>ðŸ“… Joined: ${escapeHTML(currentUser.joined_date) || 'N/A'}</div><div>💰 Deposited: ${(currentUser.total_deposited || 0).toLocaleString()} ETB</div><div>📤 Withdrawn: ${(currentUser.total_withdrawn || 0).toLocaleString()} ETB</div><div>ðŸ‘¥ Referrals: ${currentUser.active_referrals || 0}</div><div>🎮 Games: ${currentUser.win_chance_plays || 0}</div>`;
-}
 function updateUserMenu() {
     const items = document.getElementById('dropdownItems');
     if (USER_ID) {
-        items.innerHTML = `<div onclick="goToProfile()">👤 Profile</div><div onclick="logout()">ðŸšª Logout</div>`;
+        items.innerHTML = `<div onclick="goToProfile()">👤 Profile</div><div onclick="logout()">🚪 Logout</div>`;
     } else {
-        items.innerHTML = `<div onclick="showAuthModal()">ðŸ” Login / Register</div>`;
+        items.innerHTML = `<div onclick="showAuthModal()">🔐 Login / Register</div>`;
+    }
+    setupAdminBottomRow();
+}
+
+function setupAdminBottomRow() {
+    const bottomRow = document.getElementById('bottomRow');
+    const refreshBtn = document.getElementById('refreshBtn');
+    
+    if (!bottomRow) return;
+    
+    if (IS_ADMIN) {
+        // Change to 2 columns
+        bottomRow.classList.add('two-columns');
+        
+        // Check if admin tab already exists
+        if (!document.querySelector('.admin-tab')) {
+            // Create admin tab button
+            const adminBtn = document.createElement('button');
+            adminBtn.className = 'tab admin-tab';
+            adminBtn.setAttribute('data-tab', 'admin');
+            adminBtn.innerHTML = '👑 Admin';
+            bottomRow.appendChild(adminBtn);
+            
+            // Create admin content div if not exists
+            if (!document.getElementById('admin')) {
+                const adminDiv = document.createElement('div');
+                adminDiv.id = 'admin';
+                adminDiv.className = 'tab-content';
+                const tabsContainer = document.querySelector('.tabs-container');
+                tabsContainer.insertAdjacentElement('afterend', adminDiv);
+            }
+            
+            // Add click event to admin tab
+            adminBtn.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                adminBtn.classList.add('active');
+                document.getElementById('admin').classList.add('active');
+                loadAdminPanel();
+            });
+        }
+    } else {
+        // Regular user - single column, no admin tab
+        bottomRow.classList.remove('two-columns');
+        const adminTab = document.querySelector('.admin-tab');
+        if (adminTab) adminTab.remove();
     }
 }
 function toggleUserMenu() {
-    document.getElementById('dropdownMenu').classList.toggle('show');
+    const menu = document.getElementById('dropdownMenu');
+    if (menu) {
+        menu.classList.toggle('show');
+    }
 }
 function goToProfile() {
     document.getElementById('dropdownMenu').classList.remove('show');
@@ -1662,23 +1341,54 @@ function closeModal(id) {
     const modal = document.getElementById(id);
     if (modal) modal.classList.remove('active');
 }
-function playSound(name) {
-    if(!soundEnabled) return;
+let audioContext = null;
+
+async function playSound(name) {
+    if (!soundEnabled) return;
     try {
-        const ac = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = ac.createOscillator(), gain = ac.createGain();
-        osc.connect(gain); gain.connect(ac.destination);
-        switch(name) {
-            case 'click': osc.frequency.value=800; gain.gain.value=0.3; osc.type='sine'; osc.start(); osc.stop(ac.currentTime+0.1); break;
-            case 'coin': osc.frequency.value=1200; gain.gain.value=0.2; osc.type='sine'; osc.start(); osc.stop(ac.currentTime+0.2); break;
-            case 'win': osc.frequency.value=1500; gain.gain.value=0.4; osc.type='sine'; osc.start(); setTimeout(()=>osc.frequency.value=1000,100); osc.stop(ac.currentTime+0.3); break;
-            case 'lose': osc.frequency.value=300; gain.gain.value=0.3; osc.type='sawtooth'; osc.start(); osc.stop(ac.currentTime+0.3); break;
-            case 'success': osc.frequency.value=1000; gain.gain.value=0.3; osc.type='sine'; osc.start(); setTimeout(()=>osc.frequency.value=1200,100); osc.stop(ac.currentTime+0.2); break;
-            case 'error': osc.frequency.value=400; gain.gain.value=0.3; osc.type='square'; osc.start(); osc.stop(ac.currentTime+0.2); break;
+        if (!audioContext) {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
         }
-        setTimeout(()=>ac.close(),500);
+        // Resume audio context on any user gesture
+        if (audioContext.state === 'suspended') {
+            await audioContext.resume();
+        }
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        osc.connect(gain);
+        gain.connect(audioContext.destination);
+        gain.gain.value = 0.2;
+        switch(name) {
+            case 'click': osc.frequency.value = 800; osc.type = 'sine'; break;
+            case 'coin': osc.frequency.value = 1200; osc.type = 'sine'; break;
+            case 'win': 
+                osc.frequency.value = 1500; osc.type = 'sine'; 
+                setTimeout(() => { if(osc) osc.frequency.value = 1000; }, 100); 
+                break;
+            case 'lose': osc.frequency.value = 300; osc.type = 'sawtooth'; break;
+            case 'success': 
+                osc.frequency.value = 1000; osc.type = 'sine';
+                setTimeout(() => { if(osc) osc.frequency.value = 1200; }, 100); 
+                break;
+            case 'error': osc.frequency.value = 400; osc.type = 'square'; break;
+        }
+        osc.start();
+        osc.stop(audioContext.currentTime + 0.3);
     } catch(e) {}
 }
+
+// Add this to resume audio on first user click
+function initAudio() {
+    document.body.addEventListener('click', async () => {
+        if (audioContext && audioContext.state === 'suspended') {
+            await audioContext.resume();
+        }
+    }, { once: true });
+}
+
+// Call this in window.addEventListener('load', ...)
+initAudio();
+
 function selectPaymentMethod(method) {
     selectedPaymentMethod = method;
     document.getElementById('telebirrInfo').style.display = method==='telebirr' ? 'block' : 'none';
@@ -1695,16 +1405,17 @@ function toggleSound() {
     playSound('click');
 }
 function contactAdmin(method) {
-    if(method==='telegram') window.open('https://t.me/profitvaultinvestment','_blank');
+    if(method==='telegram') window.open('https://t.me/profitvaultinvestment','_blank','noopener,noreferrer');
 }
+
 function togglePasswordVisibility(inputId, btnElement) {
     const input = document.getElementById(inputId);
     if (input.type === 'password') {
         input.type = 'text';
-        btnElement.textContent = 'ðŸ™ˆ';
+        btnElement.textContent = '🙈';
     } else {
         input.type = 'password';
-        btnElement.textContent = 'ðŸ‘ï¸';
+        btnElement.textContent = '👁️';
     }
 }
 function copyReferral() {
@@ -1714,7 +1425,7 @@ function copyReferral() {
 function confetti() {
     for(let i=0;i<50;i++) {
         let conf = document.createElement('div');
-        conf.innerHTML = ['🎉','âœ¨','â­','ðŸ’Ž'][Math.floor(Math.random()*4)];
+        conf.innerHTML = ['🎉','✨','⭐','💎'][Math.floor(Math.random()*4)];
         conf.style.position = 'fixed';
         conf.style.left = Math.random() * window.innerWidth + 'px';
         conf.style.bottom = '-20px';   // start from bottom
@@ -1732,6 +1443,27 @@ function confetti() {
 }
 
 // ==================== AUTHENTICATION (EMAIL ONLY) ====================
+// Session heartbeat - keeps session alive
+let heartbeatInterval = null;
+
+function startSessionHeartbeat() {
+    if (heartbeatInterval) clearInterval(heartbeatInterval);
+    
+    heartbeatInterval = setInterval(async () => {
+        if (USER_ID && !isLoggingOut) {
+            try {
+                await sb.auth.getSession();
+            } catch (e) {}
+        }
+    }, 10 * 60 * 1000);
+}
+
+function stopSessionHeartbeat() {
+    if (heartbeatInterval) {
+        clearInterval(heartbeatInterval);
+        heartbeatInterval = null;
+    }
+}
 async function checkSession() {
     if (window.location.search.includes('t=')) {
         history.replaceState({}, document.title, window.location.pathname);
@@ -1741,13 +1473,10 @@ async function checkSession() {
         const { data: { session }, error: sessionError } = await sb.auth.getSession();
         if (sessionError) throw sessionError;
         
-        console.log("Session:", session?.user?.id || "No session");
-        
         if (session?.user) {
             // User is logged in and confirmed
             const userExists = await ensureUserExists(session.user);
             if (!userExists) {
-                console.error("Failed to create user row");
                 showToast("Account setup failed. Please try again.", "error");
                 await sb.auth.signOut();
                 localStorage.clear();
@@ -1765,7 +1494,6 @@ async function checkSession() {
             if (fetchError) throw fetchError;
             
             if (!userRow) {
-                console.error("User row missing after ensureUserExists");
                 await sb.auth.signOut();
                 localStorage.clear();
                 sessionStorage.clear();
@@ -1774,9 +1502,9 @@ async function checkSession() {
             }
             
             USER_ID = session.user.id;
-            startRealtime();
+            startSessionHeartbeat();
             localStorage.setItem('profitvault_user_id', USER_ID);
-            showDiamond('LOADING DASHBOARD...');
+            document.getElementById('loadingOverlay').style.display = 'flex';
             const pendingRef = localStorage.getItem('profitvault_referral');
 if (pendingRef) {
     const { data: existingUser, error: refFetchError } = await sb
@@ -1791,7 +1519,6 @@ if (pendingRef) {
             .eq('user_id', USER_ID);
         if (!updateError) {
             localStorage.removeItem('profitvault_referral');
-            console.log('✅ Referral applied for OAuth user');
             await loadUser();
         }
     }
@@ -1807,7 +1534,7 @@ if (pendingRef) {
                 updateUserMenu();
             await loadDepositSettings();
             await loadAllData();
-            hideDiamond();
+            document.getElementById('loadingOverlay').style.display = 'none';
             document.getElementById('appContent').style.display = 'block';
             if (IS_ADMIN) showAdminTab();
             
@@ -1815,7 +1542,7 @@ if (pendingRef) {
             if (authModal) authModal.remove();
             
         } else {
-            // No session â€“ check if we just registered (to avoid immediate modal)
+            // No session – check if we just registered (to avoid immediate modal)
             // We can check a flag or just show modal after a delay
             const justRegistered = sessionStorage.getItem('just_registered');
             if (justRegistered) {
@@ -1832,7 +1559,7 @@ if (pendingRef) {
                         const note = document.createElement('p');
                         note.style.color = '#fbbf24';
                         note.style.marginTop = '10px';
-                        note.innerHTML = 'ðŸ“§ If you just registered, please check your email for confirmation link.';
+                        note.innerHTML = '📧 If you just registered, please check your email for confirmation link.';
                         authForm.parentNode.insertBefore(note, authForm.nextSibling);
                     }
                 }, 100);
@@ -1843,7 +1570,7 @@ if (pendingRef) {
     } catch (err) {
         console.error("checkSession error:", err);
         showToast("Authentication error: " + err.message, "error");
-        hideDiamond();
+        document.getElementById('loadingOverlay').style.display = 'none';
         showAuthModal();
     }
 }
@@ -1867,13 +1594,11 @@ async function ensureUserExists(authUser, referredBy = null) {
             };
             if (referredBy && referredBy !== authUser.id) {
                 insertData.referred_by = referredBy;
-                console.log("✅ Setting referred_by to", referredBy);
             } else {
-                console.log("âš ï¸ No valid referral ID provided");
+   
             }
             const { error: insertError } = await sb.from('users').insert(insertData);
             if (insertError) throw insertError;
-            console.log("✅ Created user row for", authUser.id, referredBy ? `referred by ${referredBy}` : '');
         }
         return true;
     } catch (err) {
@@ -1933,11 +1658,11 @@ function setAuthMode(mode) {
             <input type="email" id="authEmail" placeholder="Email address" required>
             <div class="password-wrapper">
                 <input type="password" id="authPassword" placeholder="Password" required>
-                <button type="button" class="password-toggle" onclick="togglePasswordVisibility('authPassword', this)">ðŸ‘ï¸</button>
+                <button type="button" class="password-toggle" onclick="togglePasswordVisibility('authPassword', this)">👁️</button>
             </div>
             <button class="btn btn-success" onclick="login()">Sign In</button>
-            <div style="text-align: center; margin: 8px 0;">â€” or â€”</div>
-            <button class="btn btn-google" onclick="signInWithGoogle()" style="background: #db4437; color: white;">ðŸ” Sign in with Google</button>
+            <div style="text-align: center; margin: 8px 0;">— or —</div>
+            <button class="btn btn-google" onclick="signInWithGoogle()" style="background: #db4437; color: white;">🔐 Sign in with Google</button>
         `;
     } else {
         // REGISTER FORM
@@ -1945,72 +1670,91 @@ function setAuthMode(mode) {
             <input type="email" id="authEmail" placeholder="Email address" required>
             <div class="password-wrapper">
                 <input type="password" id="authPassword" placeholder="Password (min 6)" required>
-                <button type="button" class="password-toggle" onclick="togglePasswordVisibility('authPassword', this)">ðŸ‘ï¸</button>
+                <button type="button" class="password-toggle" onclick="togglePasswordVisibility('authPassword', this)">👁️</button>
             </div>
             <div class="password-wrapper">
                 <input type="password" id="authConfirmPassword" placeholder="Confirm Password" required>
-                <button type="button" class="password-toggle" onclick="togglePasswordVisibility('authConfirmPassword', this)">ðŸ‘ï¸</button>
+                <button type="button" class="password-toggle" onclick="togglePasswordVisibility('authConfirmPassword', this)">👁️</button>
             </div>
             <input type="text" id="authUsername" placeholder="Username (optional)">
             <button class="btn btn-success" onclick="register()">Create Account</button>
-            <div style="text-align: center; margin: 8px 0;">â€” or â€”</div>
-            <button class="btn btn-google" onclick="signInWithGoogle()" style="background: #db4437; color: white;">ðŸ” Sign in with Google</button>
+            <div style="text-align: center; margin: 8px 0;">— or —</div>
+            <button class="btn btn-google" onclick="signInWithGoogle()" style="background: #db4437; color: white;">🔐 Sign in with Google</button>
             <div style="background: rgba(239, 68, 68, 0.2); border-left: 3px solid #ef4444; padding: 8px; margin-top: 12px; border-radius: 8px;">
-                <span style="font-size: 12px;">âš ï¸ <strong>Important:</strong> Password recovery is disabled. Keep your password safe â€“ you cannot reset it if forgotten.</span>
+                <span style="font-size: 12px;">⚠️ <strong>Important:</strong> Password recovery is disabled. Keep your password safe – you cannot reset it if forgotten.</span>
             </div>
         `;
     }
 }
 async function login() {
-    showDiamond('LOGGING IN...');
     const email = document.getElementById('authEmail').value.trim();
     const password = document.getElementById('authPassword').value;
+    
+    // Close modal immediately
+    const modal = document.getElementById('authModal');
+    if (modal) modal.remove();
+    
+    // Show spinner ONCE - it will stay visible until done
+    document.getElementById('loadingOverlay').style.display = 'flex';
+    showToast('Logging in...', 'info');
+    
+    // Validate inputs
     if (!email || !password) {
-        hideDiamond();
-        return showToast('Email and password required', 'error');
+        document.getElementById('loadingOverlay').style.display = 'none';
+        showToast('Email and password required', 'error');
+        return;
     }
     
-    const { error } = await sb.auth.signInWithPassword({ email, password });
+    // Perform login
+    const { error } = await sb.auth.signInWithPassword({ 
+        email, 
+        password,
+        options: { expiresIn: 60 * 60 * 24 * 7 }
+    });
+    
     if (error) {
-        hideDiamond();
+        document.getElementById('loadingOverlay').style.display = 'none';
         showToast(error.message, 'error');
         return;
     }
     
-    const modal = document.getElementById('authModal');
-    if (modal) modal.remove();
-    
     showToast('Login successful!', 'success');
-    window.location.reload();
+    
+    // Load all user data WITHOUT page reload (prevents spinner glitch)
+    await loadUser();
+    await loadAllData();
+    
+    // Hide spinner only once when everything is done
+    document.getElementById('loadingOverlay').style.display = 'none';
+    document.getElementById('appContent').style.display = 'block';
+    updateUserMenu();
+    
+    // IMPORTANT: DO NOT use window.location.reload() here!
 }
 async function register() {
-    showDiamond('CREATING ACCOUNT...');
     const email = document.getElementById('authEmail').value.trim();
     const password = document.getElementById('authPassword').value;
     const confirmPassword = document.getElementById('authConfirmPassword')?.value;
     const username = document.getElementById('authUsername')?.value.trim() || email.split('@')[0];
 
     if (!email || !password) {
-        hideDiamond();
         showToast('Email and password required', 'error');
         return;
     }
 
+    // Valid email format
     const emailRegex = /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/;
     if (!emailRegex.test(email)) {
-        hideDiamond();
         showToast('Please enter a valid email address', 'error');
         return;
     }
 
     if (password.length < 6) {
-        hideDiamond();
         showToast('Password must be at least 6 characters', 'error');
         return;
     }
 
     if (password !== confirmPassword) {
-        hideDiamond();
         showToast('Passwords do not match', 'error');
         return;
     }
@@ -2032,7 +1776,6 @@ async function register() {
     });
 
     if (error) {
-        hideDiamond();
         if (error.message.includes('already registered')) {
             showToast('This email is already registered. Please log in.', 'error');
         } else {
@@ -2049,6 +1792,9 @@ async function register() {
 }
 async function signInWithGoogle() {
     try {
+        document.getElementById('loadingOverlay').style.display = 'flex';
+        showToast('Redirecting to Google...', 'info');
+        
         let referrerId = new URLSearchParams(window.location.search).get('ref');
         if (!referrerId) {
             referrerId = localStorage.getItem('profitvault_referral');
@@ -2058,28 +1804,83 @@ async function signInWithGoogle() {
             provider: 'google',
             options: {
                 redirectTo: window.location.origin + window.location.pathname,
-                data: {
-                    ref: referrerId
-                }
+                data: { ref: referrerId }
             }
         });
         if (error) throw error;
+        
+        // Note: OAuth redirects away, spinner will disappear naturally
     } catch (err) {
+        document.getElementById('loadingOverlay').style.display = 'none';
         showToast(err.message, 'error');
     }
 }
+// Show spinner during logout
+let logoutOverlay = null;
+
+function showLogoutSpinner() {
+    if (logoutOverlay) return;
+    
+    logoutOverlay = document.createElement('div');
+    logoutOverlay.id = 'logoutOverlay';
+    logoutOverlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle at 20% 30%, rgba(255, 51, 102, 0.98), rgba(0, 102, 255, 0.98), rgba(0, 255, 102, 0.9));
+        z-index: 20000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        backdrop-filter: blur(8px);
+    `;
+    logoutOverlay.innerHTML = `
+        <div style="position: relative;">
+            <div class="loading-sparkle">💎</div>
+            <div class="loading-particle" style="--tx: -30px; --ty: -40px; left: 50%; top: 50%;"></div>
+            <div class="loading-particle" style="--tx: 30px; --ty: -40px; left: 50%; top: 50%; animation-delay: 0.2s;"></div>
+            <div class="loading-particle" style="--tx: -40px; --ty: 20px; left: 50%; top: 50%; animation-delay: 0.4s;"></div>
+            <div class="loading-particle" style="--tx: 40px; --ty: 20px; left: 50%; top: 50%; animation-delay: 0.6s;"></div>
+        </div>
+        <div style="margin-top: 30px;">
+            <span class="loading-coin">🪙</span>
+            <span class="loading-coin" style="animation-delay: 0.2s;">🪙</span>
+            <span class="loading-coin" style="animation-delay: 0.4s;">🪙</span>
+        </div>
+        <p style="color: #FFD700; margin-top: 20px; font-size: 18px; font-weight: bold;">Logging out...</p>
+        <p style="color: #ccc; margin-top: 10px; font-size: 12px;">Please wait</p>
+    `;
+    document.body.appendChild(logoutOverlay);
+}
+
+function hideLogoutSpinner() {
+    if (logoutOverlay) {
+        logoutOverlay.remove();
+        logoutOverlay = null;
+    }
+}
 async function logout() {
-    showDiamond('LOGGING OUT...');
-    stopRealtime();
-    clearCache();
-    isLoggingOut = true;
+// Clear local data first
+    USER_ID = null;
+    IS_ADMIN = false;
+    currentUser = null;
+showLogoutSpinner();
+isLoggingOut = true;
+    // Show feedback
     showToast('Logging out...', 'info');
     
+    // 1. Sign out from Supabase (invalidates session on server)
     await sb.auth.signOut();
+    
+    // 2. Wipe all browser storage
     localStorage.clear();
     sessionStorage.clear();
     updateUserMenu();
     
+    // 3. Delete all IndexedDB databases (including Supabase's)
     if (window.indexedDB && window.indexedDB.databases) {
         try {
             const dbs = await indexedDB.databases();
@@ -2088,15 +1889,19 @@ async function logout() {
             });
         } catch(e) { console.warn("IndexedDB clear error", e); }
     }
+    // Fallback: delete known Supabase DBs
     ['supabase', 'supabase-auth', '_supabase', 'supabase-auth-token'].forEach(dbName => {
         try { indexedDB.deleteDatabase(dbName); } catch(e) {}
     });
     
+    // 4. Clear all global variables
     USER_ID = null;
     IS_ADMIN = false;
     currentUser = null;
     allTransactions = [];
+    stopSessionHeartbeat();
     
+    // 5. Reset UI to initial state (clear all dynamic content)
     document.getElementById('balance').innerText = '0';
     document.getElementById('bonus').innerText = '0';
     document.getElementById('coins').innerText = '0';
@@ -2112,11 +1917,13 @@ async function logout() {
     document.getElementById('profileInfo').innerHTML = '';
     document.getElementById('cardsGrid').innerHTML = 'Loading...';
     
+    // 6. Remove admin tab if it exists
     const adminTab = document.querySelector('.tab[data-tab="admin"]');
     if (adminTab) adminTab.remove();
     const adminDiv = document.getElementById('admin');
     if (adminDiv) adminDiv.remove();
     
+    // 7. Reload the page to reset everything completely
     window.location.reload();
 }
 async function hardRefresh() {
@@ -2144,195 +1951,189 @@ async function hardRefresh() {
 }
 // ==================== DATA LOADING (FULL FEATURES) ====================
 let currentUser = null;
-async function loadUser() {
+async function loadUser(forceRefresh = false) {
+    if (!USER_ID) return;
+    
+    // Check cache first (unless force refresh)
+    if (!forceRefresh) {
+        const cached = cache.get(`user_${USER_ID}`);
+        if (cached) {
+            currentUser = cached;
+            updateBalanceDisplay();
+            return cached;
+        }
+    }
+    
     const { data, error } = await sb.from('users').select('*').eq('user_id', USER_ID).single();
     if(error && error.code === 'PGRST116') {
         await ensureUserExists({ id: USER_ID, email: 'temp@temp.com' });
         return loadUser();
     }
     currentUser = data;
-    document.getElementById('balance').innerText = (data.balance || 0).toLocaleString();
-    document.getElementById('bonus').innerText = (data.bonus_balance || 0).toLocaleString();
-    document.getElementById('coins').innerText = (data.coin_balance || 0).toLocaleString();
+    updateBalanceDisplay();
+    
+    // Cache for 30 seconds (reduces repeated calls)
+    cache.set(`user_${USER_ID}`, data, 30000);
     return data;
 }
-async function loadAllData() {
-    if(!USER_ID) return;
-    await loadUser();
-await loadReferralEarnings();
-await loadLeaderboard();
-    // Quad-Lock
-    const { count: lotteryCount } = await sb.from('lottery_tickets').select('*', {count:'exact', head:true}).eq('user_id', USER_ID).eq('status','active');
+// NEW FUNCTION 1: Load Quad Lock and Exchange Info
+async function loadQuadLockAndExchange() {
+    const { count: lotteryCount } = await sb.from('lottery_tickets')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', USER_ID).eq('status', 'active');
+    
     const depositDone = (currentUser.total_deposited || 0) >= 1500;
     const gameDone = (currentUser.win_chance_plays || 0) >= 10;
     const lotteryDone = (lotteryCount || 0) >= 1;
     const referralDone = (currentUser.active_referrals || 0) >= 3;
     const completed = [depositDone, gameDone, lotteryDone, referralDone].filter(Boolean).length;
-    const percent = (completed/4)*100;
+    const percent = (completed / 4) * 100;
+    
     document.getElementById('quadlock').innerHTML = `
-        <div class="quad-item ${depositDone?'unlocked':'locked'}"><div>💰 Deposit 1500 ETB</div><div>${(currentUser.total_deposited||0)}/1500</div></div>
-        <div class="quad-item ${gameDone?'unlocked':'locked'}"><div>🎮 Play 10 Games</div><div>${currentUser.win_chance_plays||0}/10</div></div>
-        <div class="quad-item ${lotteryDone?'unlocked':'locked'}"><div>🎟️ Buy 1 Ticket</div><div>${lotteryCount||0}/1</div></div>
-        <div class="quad-item ${referralDone?'unlocked':'locked'}"><div>ðŸ‘¥ 3 Referrals</div><div>${currentUser.active_referrals||0}/3</div></div>
+        <div class="quad-item ${depositDone ? 'unlocked' : 'locked'}"><div>💰 Deposit 1500 ETB</div><div>${(currentUser.total_deposited || 0)}/1500</div></div>
+        <div class="quad-item ${gameDone ? 'unlocked' : 'locked'}"><div>🎮 Play 10 Games</div><div>${currentUser.win_chance_plays || 0}/10</div></div>
+        <div class="quad-item ${lotteryDone ? 'unlocked' : 'locked'}"><div>🎟️ Buy 1 Ticket</div><div>${lotteryCount || 0}/1</div></div>
+        <div class="quad-item ${referralDone ? 'unlocked' : 'locked'}"><div>👥 3 Referrals</div><div>${currentUser.active_referrals || 0}/3</div></div>
         <div class="progress-bar"><div class="progress-fill" style="width:${percent}%"></div></div>
         <div class="progress-text">${completed}/4 Complete (${Math.round(percent)}%)</div>`;
-    // Exchange info
-    const today = new Date().toISOString().slice(0,10);
-    const { data: exchanged } = await sb.from('daily_exchange').select('id').eq('user_id', USER_ID).eq('exchange_date', today).maybeSingle();
-const alreadyExchanged = exchanged !== null;
-const maxEx = Math.floor((currentUser.coin_balance || 0) * 0.03);
-
-if (alreadyExchanged) {
-    document.getElementById('exchangeInfo').innerHTML = `
-        <div>âš ï¸ You have already exchanged today.</div>
-        <div>📊 Daily limit: 3% of coins (${maxEx} max)</div>
-        <div>⏳ Please try again tomorrow.</div>
-    `;
-    document.getElementById('exchangeInfoModal').innerHTML = `
-        <div>You have already exchanged today.</div>
-        <div>Come back tomorrow to exchange again.</div>
-    `;
-} else {
-    document.getElementById('exchangeInfo').innerHTML = `
-        <div>📊 Daily limit: 3% of your coins (up to ${maxEx} coins)</div>
-        <div>✅ You can exchange today.</div>
-    `;
-    document.getElementById('exchangeInfoModal').innerHTML = `
-        <div>You can exchange up to ${maxEx} coins right now.</div>
-        <div>âš ï¸ Only one exchange per day allowed.</div>
-    `;
-    const exchangeInput = document.getElementById('exchangeAmount');
-    if (exchangeInput) exchangeInput.placeholder = `Amount (max ${maxEx})`;
+    
+    const today = new Date().toISOString().slice(0, 10);
+    const { data: exchanged } = await sb.from('daily_exchange')
+        .select('id').eq('user_id', USER_ID).eq('exchange_date', today).maybeSingle();
+    const alreadyExchanged = exchanged !== null;
+    const maxEx = Math.floor((currentUser.coin_balance || 0) * 0.03);
+    
+    if (alreadyExchanged) {
+        document.getElementById('exchangeInfo').innerHTML = `<div>⚠️ You have already exchanged today.</div><div>📊 Daily limit: 3% of coins (${maxEx} max)</div><div>⏳ Please try again tomorrow.</div>`;
+        document.getElementById('exchangeInfoModal').innerHTML = `<div>You have already exchanged today.</div><div>Come back tomorrow to exchange again.</div>`;
+    } else {
+        document.getElementById('exchangeInfo').innerHTML = `<div>📊 Daily limit: 3% of your coins (up to ${maxEx} coins)</div><div>✅ You can exchange today.</div>`;
+        document.getElementById('exchangeInfoModal').innerHTML = `<div>You can exchange up to ${maxEx} coins right now.</div><div>⚠️ Only one exchange per day allowed.</div>`;
+        const exchangeInput = document.getElementById('exchangeAmount');
+        if (exchangeInput) exchangeInput.placeholder = `Amount (max ${maxEx})`;
+    }
 }
-    // Market & Investments
-let market = getCache('market');
-if(!market) { 
-    const { data } = await sb.from('market').select('*').order('slot_id'); 
-    market = data; setCache('market', market); 
-}
-const { data: assets } = await sb.from('user_assets').select('*').eq('user_id', USER_ID).eq('sold', false);
-const ownedSlots = assets?.map(a => a.slot_id) || [];
 
-if (market) {
-    document.getElementById('marketGrid').innerHTML = market.map(item => {
-        const owned = ownedSlots.includes(item.slot_id);
-        const mediaContent = item.image_url 
-            ? `<div class="market-image-container">
-                   <img loading="lazy" src="${item.image_url}" class="market-image" alt="${escapeHTML(item.asset_name)}">
-                   ${owned ? '<div class="market-owned-badge">✅ Owned</div>' : ''}
-               </div>`
-            : `<div class="market-image-container">
-                   <div class="market-emoji">${item.emoji}</div>
-                   ${owned ? '<div class="market-owned-badge">✅ Owned</div>' : ''}
-               </div>`;
-        return `
-            <div class="market-item ${owned ? 'owned' : ''}" onclick="${!owned ? `buyAsset(${item.slot_id})` : ''}">
-                ${mediaContent}
-                <div class="market-info">
-                    <div class="market-name">${escapeHTML(item.asset_name)}</div>
-                    <div class="market-price">${item.cost} 🪙</div>
-                    <div class="market-roi">ROI ${Math.round(((item.default_roi || 1.25) - 1) * 100)}%</div>
+// NEW FUNCTION 2: Load Market and Investments
+async function loadMarketAndInvestments() {
+    const [marketResult, assetsResult] = await Promise.all([
+        sb.from('market').select('*').order('slot_id'),
+        sb.from('user_assets').select('*').eq('user_id', USER_ID).eq('sold', false)
+    ]);
+    
+    const market = marketResult.data;
+    const assets = assetsResult.data;
+    const ownedSlots = assets?.map(a => a.slot_id) || [];
+    
+    if (market) {
+        document.getElementById('marketGrid').innerHTML = market.map(item => {
+            const owned = ownedSlots.includes(item.slot_id);
+            const mediaContent = item.image_url 
+                ? `<div class="market-image-container"><img src="${item.image_url}" class="market-image" alt="${escapeHTML(item.asset_name)}">${owned ? '<div class="market-owned-badge">✅ Owned</div>' : ''}</div>`
+                : `<div class="market-image-container"><div class="market-emoji">${item.emoji}</div>${owned ? '<div class="market-owned-badge">✅ Owned</div>' : ''}</div>`;
+            return `
+                <div class="market-item ${owned ? 'owned' : ''}" onclick="${!owned ? `buyAsset(${item.slot_id})` : ''}">
+                    ${mediaContent}
+                    <div class="market-info">
+                        <div class="market-name">${escapeHTML(item.asset_name)}</div>
+                        <div class="market-price">${item.cost} 🪙</div>
+                        <div class="market-roi">ROI ${Math.round(((item.default_roi || 1.25) - 1) * 100)}%</div>
+                    </div>
                 </div>
-            </div>
-        `;
-    }).join('');
+            `;
+        }).join('');
+    }
+    await loadInvestments();
+    await loadSoldAssets();
 }
-await loadInvestments();
-await loadSoldAssets();
-    // Lottery
+
+// NEW FUNCTION 3: Load Lottery Pools
+async function loadLotteryPools() {
     const pools = [];
-for(let pid of [1,2,3]) {
-    const { data: roundInfo } = await sb.from('lottery_pool_rounds')
-        .select('current_round, is_active')
-        .eq('pool_id', pid)
-        .single();
-    const currentRound = roundInfo?.current_round || 1;
-    const isActive = roundInfo?.is_active !== false;
-    
-    const { count: sold } = await sb.from('lottery_tickets')
-        .select('*', {count:'exact', head:true})
-        .eq('pool_id', pid)
-        .eq('round', currentRound)
-        .eq('status', 'active');
-    
-    const { data: taken } = await sb.from('lottery_tickets')
-        .select('ticket_number')
-        .eq('pool_id', pid)
-        .eq('round', currentRound)
-        .eq('status', 'active');
-    const takenList = taken?.map(t=>t.ticket_number)||[];
-    
-    const price = [50,100,200][pid-1];
-    const reward = [500,1000,2000][pid-1];
-    const full = (sold||0) >= 15;
-    
-    pools.push({
-        id: pid,
-        round: currentRound,
-        isActive: isActive,
-        price: price,
-        reward: reward,
-        sold: sold||0,
-        total: 15,
-        taken: takenList,
-        full: full
-    });
-}
-document.getElementById('lotteryPools').innerHTML = pools.map(p => `
-    <div class="lottery-pool">
-        <div><strong>🎰 Pool #${p.id} (Round ${p.round})</strong> <span class="badge">Prize: ${p.reward} 🪙</span></div>
-        <div>💰 Ticket: ${p.price} 🪙</div>
-        <div class="progress-bar"><div class="progress-fill" style="width:${(p.sold/p.total)*100}%"></div></div>
-        <div>${p.sold}/${p.total} sold</div>
-        ${!p.full && p.isActive ? 
-            `<button class="btn btn-sm" onclick="showLotteryNumbers(${p.id}, ${p.price}, ${JSON.stringify(p.taken)}, ${p.round})">Buy Ticket</button>` : 
-            (p.isActive ? '<div>✅ Pool Full</div>' : '<div>⏳ Waiting for admin to start new round</div>')}
-    </div>
-`).join('');
-    const { data: myTickets } = await sb.from('lottery_tickets').select('*').eq('user_id', USER_ID).eq('status','active');
-    document.getElementById('myTickets').innerHTML = myTickets?.length ? myTickets.map(t => `
-    <div class="ticket-item">
-        <div>🎫 ${escapeHTML(t.serial_number)}</div>
-        <div><span class="badge">Active</span></div>
-    </div>
-`).join('') : '<div class="loading">No tickets</div>';
-        await loadDraws();
-    // Consultations
-    await loadConsultations();
-    // Transactions - load all, then filter/paginate
-const { data: txs } = await sb.from('transactions').select('*').eq('user_id', USER_ID).order('timestamp', {ascending: false});
-if (txs) {
-    allTransactions = txs;
-    applyTransactionFilter();
-} else {
-    document.getElementById('transactionList').innerHTML = '<div class="loading">No transactions</div>';
-}
-    // Profile Info
-    document.getElementById('profileInfo').innerHTML = `<div class="profile-item">👤 ${escapeHTML(currentUser.username) || 'User'}</div><div>ðŸ†” ${USER_ID.slice(0,8)}...</div><div>ðŸ“… Joined: ${escapeHTML(currentUser.joined_date) || 'N/A'}</div><div>💰 Deposited: ${(currentUser.total_deposited||0).toLocaleString()} ETB</div><div>📤 Withdrawn: ${(currentUser.total_withdrawn||0).toLocaleString()} ETB</div><div>ðŸ‘¥ Referrals: ${currentUser.active_referrals||0}</div><div>🎮 Games: ${currentUser.win_chance_plays||0}</div>`;
-    // Airtime cards â€“ sort available first, then sold out, then by position
-let cards = getCache('cards');
-if(!cards) { 
-    const { data } = await sb.from('global_cards').select('*').order('position'); 
-    cards = data; setCache('cards', cards); 
-}
-if (cards) {
-    const sortedCards = [...cards].sort((a, b) => {
-        const aAvailable = (a.hidden_numbers?.length > 0) ? 0 : 1;
-        const bAvailable = (b.hidden_numbers?.length > 0) ? 0 : 1;
-        if (aAvailable !== bAvailable) return aAvailable - bAvailable;
-        return a.position - b.position;
-    });
-    document.getElementById('cardsGrid').innerHTML = sortedCards.map(card => `
-        <div class="market-item" onclick="buyAirtimeCard(${card.id}, ${card.card_cost})">
-            <div class="market-emoji">🎫</div>
-            <div class="market-name">Airtime - ${card.card_cost} ETB</div>
-            <div class="market-price">Cost: ${card.card_cost} ETB</div>
-            <div>${card.hidden_numbers?.length ? '✅ Available' : '❌ Sold Out'}</div>
+    for (let pid of [1, 2, 3]) {
+        const { data: roundInfo } = await sb.from('lottery_pool_rounds')
+            .select('current_round, is_active').eq('pool_id', pid).single();
+        const currentRound = roundInfo?.current_round || 1;
+        const isActive = roundInfo?.is_active !== false;
+        const { count: sold } = await sb.from('lottery_tickets')
+            .select('*', { count: 'exact', head: true })
+            .eq('pool_id', pid).eq('round', currentRound).eq('status', 'active');
+        const { data: taken } = await sb.from('lottery_tickets')
+            .select('ticket_number').eq('pool_id', pid).eq('round', currentRound).eq('status', 'active');
+        const price = [50, 100, 200][pid - 1];
+        const reward = [500, 1000, 2000][pid - 1];
+        const full = (sold || 0) >= 15;
+        pools.push({ id: pid, round: currentRound, isActive, price, reward, sold: sold || 0, total: 15, taken: taken?.map(t => t.ticket_number) || [], full });
+    }
+    document.getElementById('lotteryPools').innerHTML = pools.map(p => `
+        <div class="lottery-pool">
+            <div><strong>🎰 Pool #${p.id} (Round ${p.round})</strong> <span class="badge">Prize: ${p.reward} 🪙</span></div>
+            <div>💰 Ticket: ${p.price} 🪙</div>
+            <div class="progress-bar"><div class="progress-fill" style="width:${(p.sold / p.total) * 100}%"></div></div>
+            <div>${p.sold}/${p.total} sold</div>
+            ${!p.full && p.isActive ? `<button class="btn btn-sm" onclick="showLotteryNumbers(${p.id}, ${p.price}, ${JSON.stringify(p.taken)}, ${p.round})">Buy Ticket</button>` : (p.isActive ? '<div>✅ Pool Full</div>' : '<div>⏳ Waiting for admin to start new round</div>')}
         </div>
     `).join('');
-} else {
+    
+    const { data: myTickets } = await sb.from('lottery_tickets').select('*').eq('user_id', USER_ID).eq('status', 'active');
+    document.getElementById('myTickets').innerHTML = myTickets?.length ? myTickets.map(t => `<div class="ticket-item"><div>🎫 ${escapeHTML(t.serial_number)}</div><div><span class="badge">Active</span></div></div>`).join('') : '<div class="loading">No tickets</div>';
+}
+
+// NEW FUNCTION 4: Load Profile and Airtime Cards
+async function loadProfileAndCards() {
+    document.getElementById('profileInfo').innerHTML = `
+        <div class="profile-item">👤 ${escapeHTML(currentUser.username) || 'User'}</div>
+        <div>🆔 ${USER_ID.slice(0, 8)}...</div>
+        <div>📅 Joined: ${escapeHTML(currentUser.joined_date) || 'N/A'}</div>
+        <div>💰 Deposited: ${(currentUser.total_deposited || 0).toLocaleString()} ETB</div>
+        <div>📤 Withdrawn: ${(currentUser.total_withdrawn || 0).toLocaleString()} ETB</div>
+        <div>👥 Referrals: ${currentUser.active_referrals || 0}</div>
+        <div>🎮 Games: ${currentUser.win_chance_plays || 0}</div>`;
+    
+    const { data: cards } = await sb.from('global_cards').select('*').order('position');
+    if (cards) {
+        const sortedCards = [...cards].sort((a, b) => {
+            const aAvailable = (a.hidden_numbers?.length > 0) ? 0 : 1;
+            const bAvailable = (b.hidden_numbers?.length > 0) ? 0 : 1;
+            if (aAvailable !== bAvailable) return aAvailable - bAvailable;
+            return a.position - b.position;
+        });
+        document.getElementById('cardsGrid').innerHTML = sortedCards.map(card => `
+            <div class="market-item" onclick="buyAirtimeCard(${card.id}, ${card.card_cost})">
+                <div class="market-emoji">🎫</div>
+                <div class="market-name">Airtime - ${card.card_cost} ETB</div>
+                <div class="market-price">Cost: ${card.card_cost} ETB</div>
+                <div>${card.hidden_numbers?.length ? '✅ Available' : '❌ Sold Out'}</div>
+            </div>
+        `).join('');
+    } else {
         document.getElementById('cardsGrid').innerHTML = '<div class="loading">No cards</div>';
     }
+}
+
+// NEW FUNCTION 5: Load Transactions (extract from existing)
+async function loadTransactions() {
+    const { data: txs } = await sb.from('transactions')
+        .select('*').eq('user_id', USER_ID).order('timestamp', { ascending: false });
+    if (txs) {
+        allTransactions = txs;
+        applyTransactionFilter();
+    } else {
+        document.getElementById('transactionList').innerHTML = '<div class="loading">No transactions</div>';
+    }
+}
+async function loadAllData() {
+    if (!USER_ID) return;
+    await loadUser();
+    await loadReferralEarnings();
+    await loadLeaderboard();
+    await loadQuadLockAndExchange();
+    await loadMarketAndInvestments();
+    await loadLotteryPools();
+    await loadDraws();
+    await loadConsultations();
+    await loadTransactions();
+    await loadProfileAndCards();
 }
 async function loadReferralEarnings() {
     if (!USER_ID) return;
@@ -2394,11 +2195,11 @@ async function clearSelectedHistory() {
         showToast('Error deleting: ' + error.message, 'error');
     } else {
         showToast(`${idsToDelete.length} transaction(s) deleted`, 'success');
-        await updateRecentTransactions();
+        await loadAllData();
     }
 }
 
-// Attach subâ€‘tab event listeners (run after DOM ready)
+// Attach sub‑tab event listeners (run after DOM ready)
 function initHistoryTabs() {
     document.querySelectorAll('[data-hist]').forEach(btn => {
         btn.onclick = (e) => {
@@ -2412,14 +2213,13 @@ function initHistoryTabs() {
 }
 async function loadLeaderboard() {
     try {
-        // Count all users (or only those with deposits â€“ uncomment the .gt line if desired)
-        const { count: totalUsers, error: countError } = await sb
-            .from('users')
-            .select('*', { count: 'exact', head: true });
-            // .gt('total_deposited', 0);   // uncomment to show only depositors
-        if (countError) throw countError;
+        // Count all users (or only those with deposits – uncomment the .gt line if desired)
+        const { count, error: countError } = await sb
+    .from('users')
+    .select('*', { count: 'exact', head: true });
+if (countError) throw countError;
 
-        totalLeaderboardPages = Math.ceil(totalUsers / LEADERBOARD_PER_PAGE);
+totalLeaderboardPages = Math.ceil(count / LEADERBOARD_PER_PAGE);
         if (leaderboardPage > totalLeaderboardPages) leaderboardPage = Math.max(1, totalLeaderboardPages);
 
         const start = (leaderboardPage - 1) * LEADERBOARD_PER_PAGE;
@@ -2459,7 +2259,6 @@ async function loadLeaderboard() {
 
         attachLeaderboardCheckboxEvents();
     } catch (err) {
-        console.error(err);
         document.getElementById('leaderboard').innerHTML = '<div class="loading">Failed to load leaderboard</div>';
     }
 }
@@ -2491,7 +2290,7 @@ async function deleteSelectedLeaderboardUsers() {
         showToast('No users selected', 'info');
         return;
     }
-    if (!confirm(`âš ï¸ Permanently delete ${selected.length} user(s) and all their data? This cannot be undone.`)) return;
+    if (!confirm(`⚠️ Permanently delete ${selected.length} user(s) and all their data? This cannot be undone.`)) return;
     
     const { error } = await sb.from('users').delete().in('user_id', selected);
     if (error) {
@@ -2501,6 +2300,7 @@ async function deleteSelectedLeaderboardUsers() {
         leaderboardPage = 1;
         await loadLeaderboard();
         if (typeof refreshAdminStats === 'function') refreshAdminStats();
+        if (typeof loadAllData === 'function') loadAllData();
     }
 }
 
@@ -2520,25 +2320,45 @@ async function refreshLeaderboard() {
 // ==================== FINANCIAL ACTIONS ====================
 async function buyCoins() {
     if (isProcessing.buyCoins) return;
-    isProcessing.buyCoins = true;
+    
     let amt = parseInt(document.getElementById('buyCoinsAmount').value);
     if (isNaN(amt) || amt < 50) {
         showToast('Minimum 50 ETB', 'error');
-        isProcessing.buyCoins = false;
         return;
     }
+    
+    isProcessing.buyCoins = true;
+    
+    // OPTIMISTIC UPDATE - Update UI immediately (no waiting)
+    const oldBalance = currentUser?.balance || 0;
+    const oldCoins = currentUser?.coin_balance || 0;
+    if (currentUser) {
+        currentUser.balance = oldBalance - amt;
+        currentUser.coin_balance = oldCoins + amt;
+        updateBalanceDisplay();
+    }
+    showToast(`Processing ${amt} coins...`, 'info');
+    
     try {
         const { error } = await sb.rpc('buy_coins_transaction_secure', { p_amount: amt });
         if (error) throw error;
+        
         showToast(`Bought ${amt} coins!`, 'success');
         playSound('coin');
         closeModal('buyCoinsModal');
         document.getElementById('buyCoinsAmount').value = '';
         
-        // Only update balances (1 call instead of 25)
-        await updateUserBalances();
+        // Clear cache to force fresh data
+        cache.clear(`user_${USER_ID}`);
+        cache.clear('dashboard_data');
         
     } catch (err) {
+        // ROLLBACK on error - revert the optimistic update
+        if (currentUser) {
+            currentUser.balance = oldBalance;
+            currentUser.coin_balance = oldCoins;
+            updateBalanceDisplay();
+        }
         showToast(err.message, 'error');
     } finally {
         isProcessing.buyCoins = false;
@@ -2546,21 +2366,16 @@ async function buyCoins() {
 }
 async function exchangeCoins() {
     if (isProcessing.exchangeCoins) return;
-    const today = new Date().toISOString().slice(0, 10);
     
-    const { data: existing } = await sb
-        .from('daily_exchange')
-        .select('id')
-        .eq('user_id', USER_ID)
-        .eq('exchange_date', today)
-        .maybeSingle();
+    const today = new Date().toISOString().slice(0, 10);
+    const { data: existing } = await sb.from('daily_exchange')
+        .select('id').eq('user_id', USER_ID).eq('exchange_date', today).maybeSingle();
     if (existing) {
         showToast('You have already exchanged today. Please try again tomorrow.', 'error');
         return;
     }
     
-    const { data: user } = await sb.from('users').select('coin_balance').eq('user_id', USER_ID).single();
-    const maxAllowed = Math.floor((user.coin_balance || 0) * 0.03);
+    const maxAllowed = Math.floor((currentUser?.coin_balance || 0) * 0.03);
     if (maxAllowed <= 0) {
         showToast('No coins available to exchange (minimum 34 coins needed).', 'error');
         return;
@@ -2577,22 +2392,38 @@ async function exchangeCoins() {
     }
     
     isProcessing.exchangeCoins = true;
+    
+    // Optimistic update
+    const oldCoins = currentUser.coin_balance;
+    const oldBonus = currentUser.bonus_balance;
+    if (currentUser) {
+        currentUser.coin_balance -= amount;
+        currentUser.bonus_balance += amount;
+        updateBalanceDisplay();
+    }
+    
     try {
         const { error } = await sb.rpc('exchange_coins_to_bonus_secure', { 
             p_amount: amount,
             p_date: today 
         });
         if (error) throw error;
+        
         showToast(`Exchanged ${amount} coins to bonus!`, 'success');
         playSound('coin');
         closeModal('exchangeModal');
         document.getElementById('exchangeAmount').value = '';
         
-        // Only update balances and exchange info (2 calls instead of 25)
-        await updateUserBalances();
-        await updateExchangeInfo();
+        cache.clear(`user_${USER_ID}`);
+        cache.clear('dashboard_data');
         
     } catch (err) {
+        // Rollback on error
+        if (currentUser) {
+            currentUser.coin_balance = oldCoins;
+            currentUser.bonus_balance = oldBonus;
+            updateBalanceDisplay();
+        }
         showToast(err.message || 'Exchange failed', 'error');
     } finally {
         isProcessing.exchangeCoins = false;
@@ -2656,7 +2487,7 @@ async function submitWithdraw() {
         return;
     }
     if ((amt - minWithdraw) % step !== 0) {
-        showToast(`Amount must be ${minWithdraw} + multiple of ${step} ETB (e.g., ${minWithdraw}, ${minWithdraw+step}, ${minWithdraw+2*step}, â€¦)`, 'error');
+        showToast(`Amount must be ${minWithdraw} + multiple of ${step} ETB (e.g., ${minWithdraw}, ${minWithdraw+step}, ${minWithdraw+2*step}, …)`, 'error');
         return;
     }
     if (!holder || !acc) {
@@ -2678,7 +2509,7 @@ async function submitWithdraw() {
         document.getElementById('withdrawAmount').value = '';
         document.getElementById('withdrawAccountHolder').value = '';
         document.getElementById('withdrawBankAccount').value = '';
-        await updateUserBalances();
+        await loadAllData();
     } catch (err) {
         showToast(err.message, 'error');
     } finally {
@@ -2688,6 +2519,7 @@ async function submitWithdraw() {
 async function buyAsset(slotId) {
     if (isProcessing.buyAsset) return;
     
+    // Check session first
     const { data: { session }, error: sessionError } = await sb.auth.getSession();
     if (sessionError || !session) {
         showToast('Your session has expired. Please log in again.', 'error');
@@ -2696,17 +2528,38 @@ async function buyAsset(slotId) {
     }
     
     isProcessing.buyAsset = true;
+    
+    // Get asset details for optimistic update
+    const { data: asset } = await sb.from('market').select('cost, asset_name').eq('slot_id', slotId).single();
+    const cost = asset?.cost || 0;
+    const oldCoins = currentUser?.coin_balance || 0;
+    
+    // OPTIMISTIC UPDATE - Deduct coins immediately
+    if (currentUser) {
+        currentUser.coin_balance = oldCoins - cost;
+        updateBalanceDisplay();
+        showToast(`Investing in ${asset?.asset_name || 'asset'}...`, 'info');
+    }
+    
     try {
         const { error } = await sb.rpc('buy_market_asset_secure', { p_slot_id: slotId });
         if (error) throw error;
-        showToast('Invested!', 'success');
+        
+        showToast('Invested successfully!', 'success');
         playSound('coin');
         
-        // Only update balances and investments (2 calls instead of 25)
-        await updateUserBalances();
-        await updateInvestments();
+        // Clear cache to refresh market grid
+        cache.clear(`user_${USER_ID}`);
+        cache.clear('dashboard_data');
+        await loadMarketAndInvestments();
         
     } catch (err) {
+        // ROLLBACK on error
+        if (currentUser) {
+            currentUser.coin_balance = oldCoins;
+            updateBalanceDisplay();
+        }
+        
         if (err.message.includes('not authenticated') || err.message.includes('JWT')) {
             showToast('Session expired. Please refresh the page.', 'error');
             logout();
@@ -2718,28 +2571,47 @@ async function buyAsset(slotId) {
     }
 }
 async function sellAsset(assetId, buttonElement = null) {
-    if (isProcessing.sellAsset) {
-        console.log("Sell already in progress, ignoring double click");
-        return;
-    }
+    if (isProcessing.sellAsset) return;
+    
+    // Disable button immediately
     const originalText = buttonElement ? buttonElement.innerText : '';
     if (buttonElement) {
         buttonElement.disabled = true;
         buttonElement.innerText = '⏳ Selling...';
     }
+    
     isProcessing.sellAsset = true;
+    
+    // Get asset details for optimistic update
+    const { data: asset } = await sb.from('user_assets').select('purchase_price, roi_at_purchase, asset_name').eq('id', assetId).single();
+    const payout = Math.round((asset?.purchase_price || 0) * (asset?.roi_at_purchase || 1));
+    const oldCoins = currentUser?.coin_balance || 0;
+    
+    // OPTIMISTIC UPDATE - Add coins immediately
+    if (currentUser && payout) {
+        currentUser.coin_balance = oldCoins + payout;
+        updateBalanceDisplay();
+        showToast(`Selling ${asset?.asset_name || 'asset'}...`, 'info');
+    }
+    
     try {
         const { error } = await sb.rpc('sell_market_asset_secure', { p_asset_id: assetId });
         if (error) throw error;
-        showToast('Sold!', 'success');
+        
+        showToast('Sold successfully!', 'success');
         playSound('coin');
         
-        // Only update balances, investments, and sold assets (3 calls instead of 25)
-        await updateUserBalances();
-        await updateInvestments();
-        await updateSoldAssets();
+        // Clear cache
+        cache.clear(`user_${USER_ID}`);
+        cache.clear('dashboard_data');
+        await loadMarketAndInvestments();
         
     } catch (err) {
+        // ROLLBACK on error
+        if (currentUser) {
+            currentUser.coin_balance = oldCoins;
+            updateBalanceDisplay();
+        }
         showToast(err.message, 'error');
     } finally {
         isProcessing.sellAsset = false;
@@ -2760,32 +2632,37 @@ function createGameGrid() {
 }
 async function playGame(pos) {
     if (!gameActive || isProcessing.game) return;
+    
     isProcessing.game = true;
     gameActive = false;
+    
+    // OPTIMISTIC UPDATE - Deduct 50 coins immediately
+    const oldCoins = currentUser?.coin_balance || 0;
+    if (currentUser) {
+        currentUser.coin_balance = oldCoins - 50;
+        updateBalanceDisplay();
+        showToast('Playing game...', 'info');
+    }
+    
     try {
         const { data: win, error } = await sb.rpc('play_game_secure');
         if (error) throw error;
+        
+        // Update with actual win amount (adjust from -50 to actual win)
+        if (currentUser) {
+            // Revert the -50 then add win
+            currentUser.coin_balance = oldCoins - 50 + win;
+            updateBalanceDisplay();
+        }
         
         const resultDiv = document.getElementById('gameResult');
         resultDiv.className = `game-result ${win > 0 ? 'win' : 'lose'}`;
         resultDiv.innerHTML = win > 0 ? `🎉 You won ${win} coins! 🎉` : `💨 Better luck next time!`;
         
-        if (win > 0) { 
-            playSound('win'); 
-            confetti(); 
-        } else { 
-            playSound('lose'); 
-        }
+        if (win > 0) { playSound('win'); confetti(); } else playSound('lose');
         showToast(win > 0 ? `Won ${win} coins!` : 'No win', win > 0 ? 'success' : 'error');
         
-        // Update balances only (1 call instead of 25)
-        await updateUserBalances();
-        
-        // Update Quad-Lock if games played might have reached 10
-        if (currentUser && (currentUser.win_chance_plays + (win > 0 ? 1 : 1)) >= 10) {
-            await updateQuadLock();
-        }
-        
+        // Rest of your reveal logic...
         const cells = document.querySelectorAll('.game-card');
         const prizePool = [100, 75, 75, 50, 50, 50, 25, 25, 25, 25, 10, 10, 10, 10, 10, 0];
         let displayValues = new Array(16);
@@ -2807,8 +2684,14 @@ async function playGame(pos) {
         });
         
         setTimeout(() => { createGameGrid(); isProcessing.game = false; }, 1500);
+        await loadAllData();
         
     } catch (err) {
+        // ROLLBACK on error
+        if (currentUser) {
+            currentUser.coin_balance = oldCoins;
+            updateBalanceDisplay();
+        }
         showToast(err.message || 'Game failed', 'error');
         gameActive = true;
         isProcessing.game = false;
@@ -2821,29 +2704,28 @@ function showLotteryNumbers(poolId, price, taken, round) {
     for(let i=1;i<=15;i++) {
         const isTaken = taken.includes(i);
         html += `<div class="lottery-number ${isTaken ? 'taken' : ''}" 
-            onclick="${!isTaken ? `buyLotteryTicket(${poolId}, ${i}, ${round})` : ''}" 
-            style="background:${isTaken?'#ef4444':'#3b82f6'}; padding:12px; border-radius:12px; text-align:center; cursor:pointer;">
+            id="lottery-num-${poolId}-${round}-${i}"
+            onclick="${!isTaken ? `buyLotteryTicketWithDisable(${poolId}, ${i}, ${round}, this)` : ''}"
+            onkeydown="${!isTaken ? `if(event.key==='Enter'||event.key===' ') buyLotteryTicketWithDisable(${poolId}, ${i}, ${round}, this)` : ''}"
+            role="button" tabindex="${!isTaken ? '0' : '-1'}"
+            style="background:${isTaken?'#ef4444':'#3b82f6'}; padding:12px; border-radius:12px; text-align:center; cursor:${isTaken?'not-allowed':'pointer'};">
             ${String(i).padStart(2,'0')}
         </div>`;
     }
     html += '</div>';
-    const modal = document.createElement('div');
-    modal.className = 'modal active';
-    modal.innerHTML = `<div class="modal-content">
-        <span class="close" onclick="this.parentElement.parentElement.remove()">&times;</span>
-        <h3>🎟️ Select Number</h3>
-        <p>Pool #${poolId} (Round ${round}) - Price: ${price} 🪙</p>
-        ${html}
-        <button class="btn" onclick="this.parentElement.parentElement.remove()">Cancel</button>
-    </div>`;
-    document.body.appendChild(modal);
+    createModal(`🎟️ Select Number - Pool #${poolId} (Round ${round})`, `<p>Price: ${price} 🪙</p>${html}`);
 }
 async function buyLotteryTicket(poolId, number, round) {
     const price = [50,100,200][poolId-1];
-    if ((currentUser.coin_balance || 0) < price) {
-        showToast(`Need ${price} coins`, 'error');
-        return;
+    
+    // OPTIMISTIC UPDATE - Deduct coins immediately
+    const oldCoins = currentUser?.coin_balance || 0;
+    if (currentUser) {
+        currentUser.coin_balance = oldCoins - price;
+        updateBalanceDisplay();
+        showToast(`Purchasing ticket #${number}...`, 'info');
     }
+    
     const { data: success, error } = await sb.rpc('buy_lottery_ticket_fast', {
         p_user_id: USER_ID,
         p_pool_id: poolId,
@@ -2851,98 +2733,340 @@ async function buyLotteryTicket(poolId, number, round) {
         p_price: price,
         p_username: currentUser.username || 'User'
     });
+    
     if (error) {
+        // ROLLBACK on error
+        if (currentUser) {
+            currentUser.coin_balance = oldCoins;
+            updateBalanceDisplay();
+        }
         showToast('Error: ' + error.message, 'error');
     } else if (success === false) {
+        // ROLLBACK on failure
+        if (currentUser) {
+            currentUser.coin_balance = oldCoins;
+            updateBalanceDisplay();
+        }
         showToast('Ticket already taken, pool full, or insufficient coins', 'error');
     } else {
         showToast(`✅ Ticket #${number} purchased!`, 'success');
         playSound('coin');
         document.querySelector('.modal.active')?.remove();
-        
-        // Only update balances, my tickets, and Quad-Lock (3 calls instead of 25)
-        await updateUserBalances();
-        await updateMyTickets();
-        await updateQuadLock();
+        await loadAllData();
+    }
+}
+// New function with disable protection to prevent double clicks
+async function buyLotteryTicketWithDisable(poolId, number, round, element) {
+    // Disable button immediately
+    const originalText = element.innerHTML;
+    const originalBg = element.style.background;
+    element.style.background = '#666';
+    element.style.cursor = 'wait';
+    element.style.pointerEvents = 'none';
+    
+    try {
+        await buyLotteryTicket(poolId, number, round);
+    } finally {
+        // Re-enable (modal will close anyway, but safe to reset)
+        element.style.background = originalBg;
+        element.style.cursor = 'pointer';
+        element.style.pointerEvents = 'auto';
     }
 }
 async function startConsultation() {
     const issue = document.getElementById('healthIssue').value.trim();
     if(!issue || issue.length < 10) return showToast('Describe issue (min 10 chars)','error');
+    
+    // OPTIMISTIC UPDATE - Deduct 50 coins immediately
+    const oldCoins = currentUser?.coin_balance || 0;
+    if (currentUser) {
+        currentUser.coin_balance = oldCoins - 50;
+        updateBalanceDisplay();
+        showToast('Sending consultation...', 'info');
+    }
+    
     try {
         const { error } = await sb.rpc('start_consultation_secure', { p_issue: issue });
         if (error) throw error;
-        showToast('Consultation request sent!','success');
-        document.getElementById('healthIssue').value = '';
         
-        // Only update consultations list (1 call instead of 25)
-        await loadConsultations();
+        showToast('Consultation request sent!', 'success');
+        document.getElementById('healthIssue').value = '';
+        await loadAllData();
         
     } catch (err) {
+        // ROLLBACK on error
+        if (currentUser) {
+            currentUser.coin_balance = oldCoins;
+            updateBalanceDisplay();
+        }
         showToast(err.message, 'error');
     }
 }
 async function buyAirtimeCard(cardId, cost) {
-    if (isProcessing.buyAirtime) return;
+    // Prevent multiple simultaneous purchases
+    if (isProcessing.buyAirtime) {
+        showToast('Purchase already in progress...', 'info');
+        return;
+    }
+    
+    // Disable the clicked button immediately
+    let clickedButton = null;
+    try {
+        // Find the clicked element
+        const activeModal = document.querySelector('.modal.active');
+        if (activeModal) {
+            clickedButton = activeModal.querySelector('.market-item');
+        }
+    } catch(e) {}
+    
+    if (clickedButton) {
+        clickedButton.style.opacity = '0.5';
+        clickedButton.style.pointerEvents = 'none';
+    }
+    
     isProcessing.buyAirtime = true;
     
+    // Show loading toast immediately
     showToast('Processing purchase...', 'info');
     
     try {
         const { data: revealed, error } = await sb.rpc('buy_airtime_card_secure', { p_card_id: cardId });
         if (error) throw error;
         
+        // Hide loading toast (by showing a success toast)
         showToast(`Airtime purchased!`, 'success');
         playSound('coin');
         
-        // Create modal with revealed number
-        const modal = document.createElement('div');
-        modal.className = 'modal active';
-        modal.innerHTML = `
-            <div class="modal-content" style="text-align:center;">
-                <span class="close" onclick="this.parentElement.parentElement.remove()">&times;</span>
-                <h3>🎉 Airtime Revealed!</h3>
+        // Create modal with revealed number using reusable function
+        const modal = createModal('🎉 Airtime Revealed!', `
+            <div style="text-align:center;">
                 <div style="font-size:32px; margin:20px 0; background:#000; padding:15px; border-radius:16px;">${revealed}</div>
                 <p>This number will disappear in <span id="countdownTimer">20</span> seconds.</p>
-                <button class="btn" onclick="this.closest('.modal').remove()">Dismiss Now</button>
             </div>
-        `;
-        document.body.appendChild(modal);
+        `);
         
+        // Auto-close after 20 seconds with proper cleanup
         let seconds = 20;
         const timerSpan = modal.querySelector('#countdownTimer');
-        const interval = setInterval(() => {
+        let interval = null;
+        
+        const cleanupModal = () => {
+            if (interval) clearInterval(interval);
+            modal.remove();
+        };
+        
+        interval = setInterval(() => {
             seconds--;
             if (timerSpan) timerSpan.innerText = seconds;
-            if (seconds <= 0) { clearInterval(interval); if (modal.parentNode) modal.remove(); }
+            if (seconds <= 0) cleanupModal();
         }, 1000);
-        modal.querySelector('.close').onclick = () => { clearInterval(interval); modal.remove(); };
         
-        // Only update user balances (1 call instead of 25)
-        await updateUserBalances();
+        modal.querySelector('.close').onclick = cleanupModal;
+        modal.querySelector('.btn').onclick = cleanupModal;
         
+        await loadAllData();
     } catch (err) {
         showToast(err.message, 'error');
+    } finally {
+        isProcessing.buyAirtime = false;
+        if (clickedButton) {
+            clickedButton.style.opacity = '';
+            clickedButton.style.pointerEvents = '';
+        }
     }
-    isProcessing.buyAirtime = false;
 }
+
 // ==================== ADMIN PANEL ====================
+// ==================== ADMIN PROFILE PICTURE FUNCTIONS ====================
+
+const DEFAULT_APP_PROFILE = 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app-assets/1780156694418.png';
+
+async function loadAppProfileImage() {
+    try {
+        const { data, error } = await sb
+            .from('app_settings')
+            .select('value')
+            .eq('key', 'app_profile_image')
+            .single();
+        
+        const imageUrl = data?.value || DEFAULT_APP_PROFILE;
+        
+        // Update header profile image for all users
+        const profileImg = document.getElementById('profileImage');
+        if (profileImg) profileImg.src = imageUrl;
+        
+        // Update admin preview if it exists
+        const preview = document.getElementById('adminProfilePreview');
+        if (preview) preview.src = imageUrl;
+        
+    } catch (e) {
+        // Use default if error
+        const profileImg = document.getElementById('profileImage');
+        if (profileImg) profileImg.src = DEFAULT_APP_PROFILE;
+    }
+}
+
+async function adminUploadProfileImage(file) {
+    if (!IS_ADMIN) {
+        showToast('Admin access required', 'error');
+        return false;
+    }
+    
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+        showToast('Please upload JPG, PNG, or WEBP', 'error');
+        return false;
+    }
+    
+    if (file.size > 1024 * 1024) {
+        showToast('Image must be less than 1MB', 'error');
+        return false;
+    }
+    
+    showToast('Uploading...', 'info');
+    
+    try {
+        // Get old image URL
+        const { data: oldData } = await sb
+            .from('app_settings')
+            .select('value')
+            .eq('key', 'app_profile_image')
+            .single();
+        
+        const oldImageUrl = oldData?.value;
+        
+        // Upload new image
+        const fileExt = file.name.split('.').pop();
+        const fileName = `app_profile_${Date.now()}.${fileExt}`;
+        const filePath = `app-assets/${fileName}`;
+        
+        const { error: uploadError } = await sb.storage
+            .from('app-assets')
+            .upload(filePath, file);
+        
+        if (uploadError) throw uploadError;
+        
+        const { data: urlData } = sb.storage
+            .from('app-assets')
+            .getPublicUrl(filePath);
+        
+        // Save to database
+        const { error: saveError } = await sb
+            .from('app_settings')
+            .upsert({ key: 'app_profile_image', value: urlData.publicUrl });
+        
+        if (saveError) throw saveError;
+        
+        // Delete old image if not default
+        if (oldImageUrl && !oldImageUrl.includes('1780156694418.png')) {
+            const oldPath = oldImageUrl.split('/app-assets/')[1];
+            if (oldPath) {
+                await sb.storage.from('app-assets').remove([oldPath]);
+            }
+        }
+        
+        // Update all displays
+        const profileImg = document.getElementById('profileImage');
+        if (profileImg) profileImg.src = urlData.publicUrl;
+        
+        const preview = document.getElementById('adminProfilePreview');
+        if (preview) preview.src = urlData.publicUrl;
+        
+        showToast('Profile picture updated!', 'success');
+        return true;
+        
+    } catch (err) {
+        showToast('Upload failed: ' + err.message, 'error');
+        return false;
+    }
+}
+
+async function adminResetProfileImage() {
+    if (!IS_ADMIN) return;
+    if (!confirm('Reset to default diamond image?')) return;
+    
+    try {
+        // Get old image URL
+        const { data: oldData } = await sb
+            .from('app_settings')
+            .select('value')
+            .eq('key', 'app_profile_image')
+            .single();
+        
+        // Delete old image if not default
+        if (oldData?.value && !oldData.value.includes('1780156694418.png')) {
+            const oldPath = oldData.value.split('/app-assets/')[1];
+            if (oldPath) {
+                await sb.storage.from('app-assets').remove([oldPath]);
+            }
+        }
+        
+        // Save default
+        await sb
+            .from('app_settings')
+            .upsert({ key: 'app_profile_image', value: DEFAULT_APP_PROFILE });
+        
+        // Update displays
+        const profileImg = document.getElementById('profileImage');
+        if (profileImg) profileImg.src = DEFAULT_APP_PROFILE;
+        
+        const preview = document.getElementById('adminProfilePreview');
+        if (preview) preview.src = DEFAULT_APP_PROFILE;
+        
+        showToast('Reset to default!', 'success');
+        
+    } catch (err) {
+        showToast('Reset failed: ' + err.message, 'error');
+    }
+}
+
+function initAdminProfilePicture() {
+    const fileInput = document.getElementById('adminProfileImageInput');
+    const changeBtn = document.getElementById('adminChangeProfileBtn');
+    const resetBtn = document.getElementById('adminResetProfileBtn');
+    
+    if (changeBtn && fileInput) {
+        changeBtn.onclick = () => fileInput.click();
+        fileInput.onchange = async (e) => {
+            if (e.target.files && e.target.files[0]) {
+                await adminUploadProfileImage(e.target.files[0]);
+                fileInput.value = '';
+            }
+        };
+    }
+    
+    if (resetBtn) {
+        resetBtn.onclick = () => adminResetProfileImage();
+    }
+}
+function showAdminTab() {
+    if(document.querySelector('.tab[data-tab="admin"]')) return;
+    const tabs = document.querySelector('.tabs');
+    const adminBtn = document.createElement('button');
+    adminBtn.className = 'tab';
+    adminBtn.setAttribute('data-tab','admin');
+    adminBtn.innerHTML = '👑 Admin';
+    tabs.appendChild(adminBtn);
+    const adminDiv = document.createElement('div');
+    adminDiv.id = 'admin';
+    adminDiv.className = 'tab-content';
+    tabs.insertAdjacentElement('afterend', adminDiv);
+    adminBtn.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+        adminBtn.classList.add('active');
+        adminDiv.classList.add('active');
+        loadAdminPanel();
+    });
+}
 async function loadAdminPanel() {
     const adminDiv = document.getElementById('admin');
     adminDiv.innerHTML = '<div class="loading">Loading admin...</div>';
     const { data: deposits } = await sb.from('pending_deposits').select('*').eq('status','pending');
     const { data: withdrawals } = await sb.from('pending_withdrawals').select('*').eq('status','pending');
     const { data: cons } = await sb.from('health_consultations').select('*').eq('status','pending');
-    let market = getCache('market');
-if(!market) { 
-    const { data } = await sb.from('market').select('*').order('slot_id'); 
-    market = data; setCache('market', market); 
-}
-    let cards = getCache('cards');
-if(!cards) { 
-    const { data } = await sb.from('global_cards').select('*').order('position'); 
-    cards = data; setCache('cards', cards); 
-}
+    const { data: market } = await sb.from('market').select('*').order('slot_id');
+    const { data: cards } = await sb.from('global_cards').select('*').order('position');
     adminDiv.innerHTML = `
         <div class="card"><h3>💰 Pending Deposits</h3>${renderPendingList(deposits,'deposit')}</div>
         <div class="card"><h3>📤 Pending Withdrawals</h3>${renderPendingList(withdrawals,'withdraw')}</div>
@@ -2956,7 +3080,7 @@ if(!cards) {
     <button class="btn btn-sm btn-success" onclick="startNewLotteryRound(2)">🔄 Start New Round Pool 2</button>
     <button class="btn btn-sm btn-success" onclick="startNewLotteryRound(3)">🔄 Start New Round Pool 3</button>
 </div>
-        <div class="card"><h3>ðŸ› ï¸ Edit Market (Name, Emoji, Price, ROI, Image)</h3>${market?.map(m => `
+        <div class="card"><h3>🛠️ Edit Market (Name, Emoji, Price, ROI, Image)</h3>${market?.map(m => `
     <div style="margin-bottom:15px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:8px;">
         <input type="text" id="emoji_${m.slot_id}" value="${m.emoji}" style="width:60px;" placeholder="Emoji"> 
         <input type="text" id="name_${m.slot_id}" value="${m.asset_name}" style="width:120px;" placeholder="Name"> 
@@ -2964,15 +3088,15 @@ if(!cards) {
         <input type="number" id="roi_${m.slot_id}" value="${m.default_roi}" step="0.01" style="width:80px;" placeholder="ROI"> 
         <input type="file" id="image_file_${m.slot_id}" accept="image/*" style="width:150px;">
         <button class="btn-sm" onclick="uploadMarketImage(${m.slot_id})">📤 Upload Image</button>
-${m.image_url ? `<button class="btn-sm btn-danger" onclick="deleteMarketImage(${m.slot_id})">ðŸ—‘ï¸ Delete Image</button>` : ''}
+${m.image_url ? `<button class="btn-sm btn-danger" onclick="deleteMarketImage(${m.slot_id})">🗑️ Delete Image</button>` : ''}
 <button class="btn btn-sm" onclick="updateMarketItemFull(${m.slot_id})">💾 Update</button>
     </div>`).join('')}</div>
 <button class="btn-sm btn-warning" onclick="resetAllROI()" style="margin-top:10px;">🔄 Reset All ROI to Default</button>
         <div class="card"><h3>🃏 Airtime Cards</h3>${cards?.map(c=>`<div>Cost: ${c.card_cost} ETB (${c.hidden_numbers.length} left) 
     <button class="btn btn-sm" onclick="editCard(${c.id}, ${c.card_cost}, '${JSON.stringify(c.hidden_numbers)}')">Edit</button>
-    <button class="btn btn-sm btn-success" onclick="addCardNumbers(${c.id})">âž• Add Numbers</button>
+    <button class="btn btn-sm btn-success" onclick="addCardNumbers(${c.id})">➕ Add Numbers</button>
 </div>`).join('')}<button class="btn btn-sm" onclick="shuffleCards()">Shuffle Order</button></div>
-        <div class="card"><h3>ðŸ‘¥ User Search</h3><input type="text" id="adminSearch" placeholder="User ID or email"><button class="btn btn-sm" onclick="searchUser()">Search</button><div id="userResult"></div></div>
+        <div class="card"><h3>👥 User Search</h3><input type="text" id="adminSearch" placeholder="User ID or email"><button class="btn btn-sm" onclick="searchUser()">Search</button><div id="userResult"></div></div>
     <div class="card">
         <h3>💰 Deposit Settings (Edit Payment Info)</h3>
         <div style="margin-bottom:10px;">
@@ -2995,7 +3119,7 @@ ${m.image_url ? `<button class="btn-sm btn-danger" onclick="deleteMarketImage(${
     </div>
 
 <div class="card">
-    <h3>ðŸ”§ Withdrawal Settings</h3>
+    <h3>🔧 Withdrawal Settings</h3>
     <div style="margin-bottom:10px;">
         <label>Withdrawal Freeze:</label>
         <span id="withdrawFreezeStatus"></span>
@@ -3008,56 +3132,46 @@ ${m.image_url ? `<button class="btn-sm btn-danger" onclick="deleteMarketImage(${
         <label style="margin-left:10px;">Step (ETB):</label>
         <input type="number" id="withdrawStep" value="500" style="width:100px;">
         <button class="btn-sm btn-success" onclick="saveWithdrawalLevels()">Save Levels</button>
-        <p style="font-size:12px; margin-top:5px;">Allowed amounts: minimum, minimum+step, minimum+2*step, â€¦</p>
+        <p style="font-size:12px; margin-top:5px;">Allowed amounts: minimum, minimum+step, minimum+2*step, …</p>
     </div>
 </div>
 
     <div class="card">
-        <h3>ðŸ§¹ Storage Cleanup (Free Up Database Space)</h3>
-        <p>Delete old data â€“ safe, does not affect balances or active investments.</p>
+        <h3>🧹 Storage Cleanup (Free Up Database Space)</h3>
+        <p>Delete old data – safe, does not affect balances or active investments.</p>
         <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;">
-            <button class="btn btn-sm btn-warning" onclick="cleanupUsedTickets()">ðŸ—‘ï¸ Used Tickets (>3d)</button>
-            <button class="btn btn-sm btn-warning" onclick="cleanupOldDraws()">ðŸ—‘ï¸ Draws (>3d)</button>
-            <button class="btn btn-sm btn-warning" onclick="cleanupConsultations()">ðŸ—‘ï¸ Resolved Consultations (>3d)</button>
-            <button class="btn btn-sm btn-warning" onclick="cleanupPendingRequests()">ðŸ—‘ï¸ Approved/Rejected Requests (>7d)</button>
-            <button class="btn btn-sm btn-warning" onclick="cleanupReferrals()">ðŸ—‘ï¸ Completed Referrals (>90d)</button>
-            <button class="btn btn-sm btn-warning" onclick="cleanupExchangeRecords()">ðŸ—‘ï¸ Exchange Records (>3d)</button>
-            <button class="btn btn-sm btn-danger" onclick="cleanupTransactions()">ðŸ—‘ï¸ Transactions (>15d)</button>
-            <button class="btn btn-sm btn-danger" onclick="cleanupSoldAssets()">ðŸ—‘ï¸ Sold Assets (>7d)</button>
+            <button class="btn btn-sm btn-warning" onclick="cleanupUsedTickets()">🗑️ Used Tickets (>3d)</button>
+            <button class="btn btn-sm btn-warning" onclick="cleanupOldDraws()">🗑️ Draws (>3d)</button>
+            <button class="btn btn-sm btn-warning" onclick="cleanupConsultations()">🗑️ Resolved Consultations (>3d)</button>
+            <button class="btn btn-sm btn-warning" onclick="cleanupPendingRequests()">🗑️ Approved/Rejected Requests (>7d)</button>
+            <button class="btn btn-sm btn-warning" onclick="cleanupReferrals()">🗑️ Completed Referrals (>90d)</button>
+            <button class="btn btn-sm btn-warning" onclick="cleanupExchangeRecords()">🗑️ Exchange Records (>3d)</button>
+            <button class="btn btn-sm btn-danger" onclick="cleanupTransactions()">🗑️ Transactions (>15d)</button>
+            <button class="btn btn-sm btn-danger" onclick="cleanupSoldAssets()">🗑️ Sold Assets (>7d)</button>
         </div>
         <div id="cleanupResult" style="margin-top: 10px; color: #fbbf24;"></div>
     </div>
-	<div class="card">
+<div class="card">
     <h3>🖼️ App Profile Picture</h3>
-    <div class="profile-pic-editor">
-        <div class="current-profile-pic">
-            <p>Current App Logo</p>
-            <div style="position: relative; display: inline-block;">
-                <img loading="lazy" id="adminProfilePreview" class="preview-image" style="display: none;" alt="Profile Preview">
-                <div id="profilePlaceholder" class="preview-image placeholder" style="display: flex; align-items: center; justify-content: center; font-size: 80px;">ðŸ¦</div>
-            </div>
+    <div style="text-align: center;">
+        <img id="adminProfilePreview" src="https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app-assets/1780156694418.png" 
+             style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid #fbbf24; margin-bottom: 10px;">
+        <div>
+            <input type="file" id="adminProfileImageInput" accept="image/jpeg,image/png,image/webp" style="display: none;">
+            <button class="btn btn-sm btn-info" id="adminChangeProfileBtn">📷 Change Picture</button>
+            <button class="btn btn-sm btn-danger" id="adminResetProfileBtn">🗑️ Reset to Default</button>
         </div>
-        <div class="pic-upload-area">
-            <input type="file" id="profilePicInput" accept="image/png, image/jpeg, image/webp, image/jpg">
-            <button class="upload-pic-btn" onclick="document.getElementById('profilePicInput').click()">📤 Upload New Image</button>
-            <button class="remove-pic-btn" onclick="removeProfilePicture()">ðŸ—‘ï¸ Remove Image</button>
-            <div id="picUploadStatus" class="pic-upload-status"></div>
-            <p style="font-size: 11px; color: #888; margin-top: 10px;">
-                âš ï¸ Max size: 1MB<br>
-                ✅ Formats: PNG, JPG, WEBP<br>
-                ðŸ’¡ Old image deleted automatically
-            </p>
-        </div>
+        <p style="font-size: 11px; color: #ccc; margin-top: 8px;">Max 1MB (JPG, PNG, WEBP)</p>
     </div>
 </div>
 <div class="card">
         <h3>📊 Platform Statistics</h3>
         <div id="adminStats" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
-            <div>ðŸ‘¥ Total Users: <strong id="statUsers">-</strong></div>
+            <div>👥 Total Users: <strong id="statUsers">-</strong></div>
             <div>💰 Total Balance: <strong id="statBalance">-</strong> ETB</div>
             <div>🎁 Total Bonus: <strong id="statBonus">-</strong> ETB</div>
             <div>🪙 Total Coins: <strong id="statCoins">-</strong></div>
-            <div>ðŸ“ˆ Total Deposited: <strong id="statDeposited">-</strong> ETB</div>
+            <div>📈 Total Deposited: <strong id="statDeposited">-</strong> ETB</div>
             <div>📤 Total Withdrawn: <strong id="statWithdrawn">-</strong> ETB</div>
         </div>
         <button class="btn btn-sm btn-info" onclick="refreshAdminStats()" style="margin-top: 10px;">🔄 Refresh Stats</button>
@@ -3065,18 +3179,10 @@ ${m.image_url ? `<button class="btn-sm btn-danger" onclick="deleteMarketImage(${
 `;
     await refreshAdminStats();
 await loadWithdrawalSettings();
-// Load current profile picture in admin panel
-const currentPic = await loadCurrentProfilePic();
-const adminPreview = document.getElementById('adminProfilePreview');
-const placeholder = document.getElementById('profilePlaceholder');
-if (adminPreview && currentPic) {
-    adminPreview.src = currentPic;
-    adminPreview.style.display = 'block';
-    if (placeholder) placeholder.style.display = 'none';
-} else if (placeholder) {
-    placeholder.style.display = 'flex';
+// Initialize admin profile picture buttons
+    initAdminProfilePicture();
 }
-}
+
 function renderPendingList(items, type) {
     if (!items?.length) return '<div>None</div>';
     return items.map(item => `
@@ -3123,7 +3229,7 @@ async function handleAdminAction(type, action, id, amount, userId) {
         }
         showToast(`${action}d ${type} request`, 'success');
         await loadAdminPanel();
-        await updateUserBalances();
+        await loadAllData();
     } catch (err) {
         showToast(err.message, 'error');
     } finally {
@@ -3145,7 +3251,6 @@ async function respondConsultation(id) {
             })
             .eq('id', id);
         if (error) {
-            console.error('Supabase error:', error);
             showToast('Error: ' + error.message, 'error');
         } else {
             showToast('Response sent successfully!', 'success');
@@ -3153,11 +3258,10 @@ async function respondConsultation(id) {
             loadAdminPanel();
             // If user is viewing clinic, refresh their view too
             if (document.getElementById('clinic').classList.contains('active')) {
-                await loadConsultations();
+                loadAllData();
             }
         }
     } catch (err) {
-        console.error('Unexpected error:', err);
         showToast('An unexpected error occurred', 'error');
     }
 }
@@ -3177,7 +3281,7 @@ async function drawLottery(poolId) {
     if (error) return showToast(error.message, 'error');
     showToast(`Pool ${poolId} winner: ${winner.username} won ${prize} coins!`,'success');
     loadAdminPanel();
-    await updateUserBalances();
+    loadAllData();
 }
 
 async function updateMarketItemFull(slotId) {
@@ -3227,7 +3331,6 @@ async function uploadMarketImage(slotId) {
         .eq('slot_id', slotId)
         .single();
     if (fetchError && fetchError.code !== 'PGRST116') {
-        console.error("Error fetching current image:", fetchError);
     }
 
     // 2. Upload new file first (so we don't lose the old one if upload fails)
@@ -3262,7 +3365,6 @@ async function uploadMarketImage(slotId) {
                 .from('market-images')
                 .remove([oldFileName]);
             if (deleteError) {
-                console.warn("Could not delete old image:", deleteError);
                 // Not a critical error, so we don't show toast
             }
         }
@@ -3293,7 +3395,10 @@ async function deleteMarketImage(slotId) {
         const { error: deleteError } = await sb.storage
             .from('market-images')
             .remove([oldFileName]);
-        if (deleteError) console.warn("Could not delete file:", deleteError);
+        if (deleteError) {
+            // Not a critical error, continue with database update
+            console.warn("Could not delete file from storage:", deleteError);
+        }
     }
     
     // 3. Update database to remove image_url
@@ -3385,7 +3490,11 @@ async function shuffleCards() {
     if(!cards) return;
     const shuffled = [...cards];
     for(let i=shuffled.length-1;i>0;i--) { const j=Math.floor(Math.random()*(i+1)); [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]; }
-    for(let i=0;i<shuffled.length;i++) await sb.from('global_cards').update({ position:i }).eq('id',shuffled[i].id);
+    const updates = shuffled.map((card, index) => ({
+    id: card.id,
+    position: index
+}));
+await sb.from('global_cards').upsert(updates, { onConflict: 'id' });
     showToast('Order shuffled','success');
     loadAdminPanel();
     loadAllData();
@@ -3408,7 +3517,7 @@ async function adjustUser(userId) {
     await sb.from('users').update({ [type]: newVal }).eq('user_id',userId);
     showToast(`Updated ${type} by ${amt}`,'success');
     loadAdminPanel();
-    await updateUserBalances();
+    loadAllData();
 }
 async function startNewLotteryRound(poolId) {
     if (!confirm(`Start a new round for Pool ${poolId}? This will reset the pool and allow new ticket purchases.`)) return;
@@ -3487,203 +3596,6 @@ async function cleanupSoldAssets() {
     else showToast(`Deleted ${data} sold assets`, 'success');
     document.getElementById('cleanupResult').innerText = `✅ Deleted ${data} sold assets`;
 }
-// ========== ADMIN PROFILE PICTURE MANAGER ==========
-const PROFILE_PIC_BUCKET = 'app-assets';
-
-async function loadCurrentProfilePic() {
-    try {
-        const { data, error } = await sb
-            .from('app_settings')
-            .select('value')
-            .eq('key', 'profile_pic_url')
-            .maybeSingle();  // CHANGED: .single() to .maybeSingle()
-        
-        if (error) {
-            console.error('Error loading profile pic:', error);
-            return null;
-        }
-        
-        if (data && data.value) {
-            return data.value;
-        }
-        return null;
-    } catch (err) {
-        console.error(err);
-        return null;
-    }
-}
-async function uploadProfilePicture(file) {
-    if (file.size > 1048576) {
-        showToast('Image must be less than 1MB', 'error');
-        return false;
-    }
-    
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
-    if (!allowedTypes.includes(file.type)) {
-        showToast('Only PNG, JPG, or WEBP images allowed', 'error');
-        return false;
-    }
-    
-    const statusDiv = document.getElementById('picUploadStatus');
-    if (statusDiv) {
-        statusDiv.innerHTML = '⏳ Uploading... Deleting old image...';
-        statusDiv.style.color = '#fbbf24';
-    }
-    
-    try {
-        // Get current image URL
-        const { data: currentData } = await sb
-            .from('app_settings')
-            .select('value')
-            .eq('key', 'profile_pic_url')
-            .maybeSingle();
-        
-        // Delete old file if exists
-        if (currentData && currentData.value) {
-            const oldFileName = currentData.value.split('/').pop();
-            if (oldFileName) {
-                await sb.storage.from(PROFILE_PIC_BUCKET).remove([oldFileName]);
-                console.log('✅ Old profile picture deleted from storage');
-            }
-        }
-        
-        const fileExt = file.name.split('.').pop();
-        const fileName = `profile_${Date.now()}.${fileExt}`;
-        
-        const { error: uploadError } = await sb.storage
-            .from(PROFILE_PIC_BUCKET)
-            .upload(fileName, file, { upsert: true });
-        
-        if (uploadError) throw uploadError;
-        
-        const { data: urlData } = sb.storage.from(PROFILE_PIC_BUCKET).getPublicUrl(fileName);
-        const imageUrl = urlData.publicUrl;
-        
-        // UPSERT instead of INSERT - creates row if doesn't exist
-        const { error: dbError } = await sb
-            .from('app_settings')
-            .upsert({ key: 'profile_pic_url', value: imageUrl }, { onConflict: 'key' });
-        
-        if (dbError) throw dbError;
-        
-        // Update all UI elements
-        const profileImg = document.getElementById('profileImage');
-        if (profileImg) profileImg.src = imageUrl;
-        
-        const logoIcon = document.querySelector('.logo-icon');
-        if (logoIcon) {
-            logoIcon.innerHTML = `<img src="${imageUrl}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">`;
-        }
-        
-        const adminPreview = document.getElementById('adminProfilePreview');
-        const placeholder = document.getElementById('profilePlaceholder');
-        if (adminPreview) {
-            adminPreview.src = imageUrl;
-            adminPreview.style.display = 'block';
-            if (placeholder) placeholder.style.display = 'none';
-        }
-        
-        if (statusDiv) {
-            statusDiv.innerHTML = '✅ Profile picture updated successfully!';
-            statusDiv.style.color = '#10b981';
-        }
-        
-        showToast('Profile picture updated!', 'success');
-        setTimeout(() => { if (statusDiv) statusDiv.innerHTML = ''; }, 3000);
-        return true;
-        
-    } catch (err) {
-        console.error('Upload error:', err);
-        showToast('Upload failed: ' + err.message, 'error');
-        if (statusDiv) {
-            statusDiv.innerHTML = '❌ Upload failed: ' + err.message;
-            statusDiv.style.color = '#ef4444';
-        }
-        return false;
-    }
-}
-
-async function removeProfilePicture() {
-    if (!confirm('âš ï¸ Remove current profile picture? This will restore default emoji logo.')) return;
-    
-    const statusDiv = document.getElementById('picUploadStatus');
-    if (statusDiv) {
-        statusDiv.innerHTML = '⏳ Removing image...';
-        statusDiv.style.color = '#fbbf24';
-    }
-    
-    try {
-        const { data: currentData } = await sb
-            .from('app_settings')
-            .select('value')
-            .eq('key', 'profile_pic_url')
-            .single();
-        
-        if (currentData && currentData.value) {
-            const oldFileName = currentData.value.split('/').pop();
-            if (oldFileName) {
-                await sb.storage.from(PROFILE_PIC_BUCKET).remove([oldFileName]);
-            }
-        }
-        
-        await sb.from('app_settings').upsert({ key: 'profile_pic_url', value: null }, { onConflict: 'key' });
-        
-        const profileImg = document.getElementById('profileImage');
-        if (profileImg) {
-            profileImg.src = 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app-assets/1780156694418.png';
-        }
-        
-        const logoIcon = document.querySelector('.logo-icon');
-        if (logoIcon) logoIcon.innerHTML = 'ðŸ¦';
-        
-        const adminPreview = document.getElementById('adminProfilePreview');
-        const placeholder = document.getElementById('profilePlaceholder');
-        if (adminPreview) {
-            adminPreview.style.display = 'none';
-            if (placeholder) placeholder.style.display = 'flex';
-        }
-        
-        if (statusDiv) {
-            statusDiv.innerHTML = '✅ Profile picture removed. Default restored.';
-            statusDiv.style.color = '#10b981';
-        }
-        
-        showToast('Profile picture removed', 'success');
-        setTimeout(() => { if (statusDiv) statusDiv.innerHTML = ''; }, 3000);
-        
-    } catch (err) {
-        showToast('Remove failed: ' + err.message, 'error');
-    }
-}
-
-function initProfilePicUploader() {
-    const fileInput = document.getElementById('profilePicInput');
-    if (fileInput) {
-        fileInput.addEventListener('change', async (e) => {
-            if (e.target.files && e.target.files[0]) {
-                await uploadProfilePicture(e.target.files[0]);
-                fileInput.value = '';
-            }
-        });
-    }
-}
-
-async function refreshAllProfilePictures() {
-    const imageUrl = await loadCurrentProfilePic();
-    const profileImg = document.getElementById('profileImage');
-    if (profileImg && imageUrl) {
-        profileImg.src = imageUrl;
-    } else if (profileImg && !imageUrl) {
-        profileImg.src = 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app-assets/1780156694418.png';
-    }
-    
-    const logoIcon = document.querySelector('.logo-icon');
-    if (logoIcon && imageUrl) {
-        logoIcon.innerHTML = `<img src="${imageUrl}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">`;
-    } else if (logoIcon && !imageUrl) {
-        logoIcon.innerHTML = 'ðŸ¦';
-    }
-}
 // ========== ADMIN STATISTICS FUNCTION ==========
 async function refreshAdminStats() {
     if (!IS_ADMIN) return;
@@ -3702,7 +3614,6 @@ async function refreshAdminStats() {
         document.getElementById('statDeposited').innerText = (deposited.data || 0).toLocaleString();
         document.getElementById('statWithdrawn').innerText = (withdrawn.data || 0).toLocaleString();
     } catch (err) {
-        console.error(err);
         showToast('Failed to load stats', 'error');
     }
 }
@@ -3716,7 +3627,7 @@ async function loadWithdrawalSettings() {
         const statusSpan = document.getElementById('withdrawFreezeStatus');
         if (statusSpan) {
             const isFrozen = frozen?.value === 'true';
-            statusSpan.innerText = isFrozen ? 'â„ï¸ FROZEN' : '✅ ACTIVE';
+            statusSpan.innerText = isFrozen ? '❄️ FROZEN' : '✅ ACTIVE';
             statusSpan.style.color = isFrozen ? '#ff6666' : '#66ff66';
         }
         const minInput = document.getElementById('withdrawMin');
@@ -3724,7 +3635,6 @@ async function loadWithdrawalSettings() {
         if (minInput) minInput.value = minData?.value || '500';
         if (stepInput) stepInput.value = stepData?.value || '500';
     } catch (err) {
-        console.error(err);
     }
 }
 
@@ -3769,7 +3679,7 @@ async function updateWithdrawHint() {
     const step = stepData?.value || '500';
     const hintDiv = document.getElementById('withdrawHint');
     if (hintDiv) {
-        hintDiv.innerHTML = `â„¹ï¸ Withdrawal amounts must be in increments of ${step} ETB, starting from ${min} ETB (${min}, ${parseInt(min)+parseInt(step)}, ${parseInt(min)+2*parseInt(step)}, â€¦).`;
+        hintDiv.innerHTML = `ℹ️ Withdrawal amounts must be in increments of ${step} ETB, starting from ${min} ETB (${min}, ${parseInt(min)+parseInt(step)}, ${parseInt(min)+2*parseInt(step)}, …).`;
     }
 }
 // ========== PAGINATED INVESTMENTS ==========
@@ -3898,7 +3808,7 @@ async function loadConsultations() {
         document.getElementById('consultations').innerHTML = pageItems.map(c => `
             <div class="consultation-item">
                 <input type="checkbox" class="cons-checkbox" value="${c.id}">
-                <div><strong>ðŸ“… ${c.created_at?.slice(0,10)}</strong> <span class="badge">${c.status}</span></div>
+                <div><strong>📅 ${c.created_at?.slice(0,10)}</strong> <span class="badge">${c.status}</span></div>
                 <div>Issue: ${escapeHTML(c.issue?.slice(0,100))}</div>
                 ${c.admin_response ? `<div style="color:#10b981;">✅ Response: ${escapeHTML(c.admin_response.slice(0,200))}</div>` : '<div style="color:#fbbf24;">⏳ Waiting...</div>'}
             </div>
@@ -4030,116 +3940,41 @@ function toggleSelectAll() {
     const checkboxes = document.querySelectorAll('#transactionList .txn-checkbox');
     checkboxes.forEach(cb => cb.checked = selectAll.checked);
 }
-// ===== TAB HANDLERS FOR NEW STRUCTURE =====
-function setupNewTabs() {
-    // Handle all main tabs
-    document.querySelectorAll('.tabs-grid .tab').forEach(tab => {
-        let debounceTimer;
-tab.addEventListener('click', () => {
-    const id = tab.getAttribute('data-tab');
-    if (!id) return;
-    clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(() => {
-        const target = document.getElementById(id);
-        if (!target) return;
-        document.querySelectorAll('.tabs-grid .tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-        tab.classList.add('active');
-        target.classList.add('active');
-        if(id === 'games') createGameGrid();
-        else if(id === 'profile') updateProfileInfo();
-    }, 300);
-});
-    
-    // Handle Refresh button (bottom left)
-    const refreshBtn = document.getElementById('refreshTabBtn');
-    if (refreshBtn) {
-        refreshBtn.addEventListener('click', () => {
-            if(USER_ID) { 
-                loadAllData(); 
-                showToast('Data refreshed!', 'success'); 
-            } else { 
-                hardRefresh(); 
-            }
-        });
-    }
-    
-    // Handle Admin button (bottom right)
-    const adminBtn = document.getElementById('adminTabBtn');
-    if (adminBtn) {
-        adminBtn.addEventListener('click', () => {
-            if (!IS_ADMIN) {
-                showToast('Admin access only', 'error');
-                return;
-            }
-            
-            // Deactivate all main tabs
-            document.querySelectorAll('.tabs-grid .tab').forEach(t => t.classList.remove('active'));
-            // Hide all tab content
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            
-            // Check if admin div exists, if not create it
-            let adminDiv = document.getElementById('admin');
-            if (!adminDiv) {
-                // Create admin div if it doesn't exist
-                adminDiv = document.createElement('div');
-                adminDiv.id = 'admin';
-                adminDiv.className = 'tab-content';
-                // Insert after tabs-wrapper
-                const tabsWrapper = document.querySelector('.tabs-wrapper');
-                if (tabsWrapper) {
-                    tabsWrapper.insertAdjacentElement('afterend', adminDiv);
-                } else {
-                    document.body.appendChild(adminDiv);
-                }
-            }
-            
-            adminDiv.classList.add('active');
-            loadAdminPanel();
-        });
-    }
-
-function showAdminTab() {
-    const adminBtn = document.getElementById('adminTabBtn');
-    if (adminBtn) {
-        adminBtn.style.display = 'flex';
-    }
-}
 // ==================== INIT ====================
 // ========== DETAILED GUIDE CONTENT ==========
 const guideTexts = {
     en: `
         <div style="line-height:1.6;">
             <h4>💰 Balance</h4>
-            <p>Your real money balance (ETB). Use it to <strong>deposit</strong> (add funds) via Telebirr or Awash Bank (minimum 1500 ETB) and to <strong>withdraw bonus</strong> after completing Quadâ€‘Lock. Deposits are manually approved by admin.</p>
+            <p>Your real money balance (ETB). Use it to <strong>deposit</strong> (add funds) via Telebirr or Awash Bank (minimum 1500 ETB) and to <strong>withdraw bonus</strong> after completing Quad‑Lock. Deposits are manually approved by admin.</p>
             
             <h4>🎁 Bonus</h4>
-            <p>Bonus is a secondary balance that can be <strong>withdrawn</strong> (subject to 10% tax and Quadâ€‘Lock). You get bonus by exchanging coins (1 coin â†’ 1 bonus) or from game wins. Bonus cannot be used for investments or lottery â€“ only withdrawal.</p>
+            <p>Bonus is a secondary balance that can be <strong>withdrawn</strong> (subject to 10% tax and Quad‑Lock). You get bonus by exchanging coins (1 coin → 1 bonus) or from game wins. Bonus cannot be used for investments or lottery – only withdrawal.</p>
             
             <h4>🪙 Coins</h4>
             <p>Coins are the main currency inside the platform. You can get coins by:</p>
             <ul><li>Buying them: 1 ETB = 1 coin (minimum 50 coins).</li>
             <li>Playing the Win Chance Game (50 coins per play, prizes up to 100 coins).</li>
-            <li>Referral rewards: when a friend you referred makes their first deposit, you earn 3% of that deposit in coins (oneâ€‘time).</li></ul>
+            <li>Referral rewards: when a friend you referred makes their first deposit, you earn 3% of that deposit in coins (one‑time).</li></ul>
             <p>Coins are used for: <strong>Market investments</strong>, <strong>Lottery tickets</strong>, <strong>Clinic consultations</strong>, and <strong>exchange to bonus</strong>.</p>
             
             <h4>🛒 Market (Investments)</h4>
             <p>Buy digital assets (e.g., virtual flower, commodities) using coins. Each asset has a <strong>cost</strong> and a <strong>ROI</strong> (return on investment). After 24 hours, you can sell the asset and receive the original cost + profit in coins. You can own one of each asset only. Sold assets are moved to "Sold Assets" history.</p>
             
             <h4>🎮 Win Chance Game</h4>
-            <p>Cost: 50 coins per play. A 4Ã—4 grid of cards is shown. Click any card to reveal your prize. Prizes are random (0, 10, 25, 50, 75, 100 coins). Winning amount is added to your coin balance. Your total plays are counted toward Quadâ€‘Lock (need 10 plays).</p>
+            <p>Cost: 50 coins per play. A 4×4 grid of cards is shown. Click any card to reveal your prize. Prizes are random (0, 10, 25, 50, 75, 100 coins). Winning amount is added to your coin balance. Your total plays are counted toward Quad‑Lock (need 10 plays).</p>
             
             <h4>🎟️ Lottery</h4>
-            <p>Three pools with ticket prices: 50, 100, 200 coins. Prizes: 500, 1000, 2000 coins. Each pool has 15 tickets per round. You can buy any available number. Draws are done by admin â€“ one winner per pool. Winners receive the prize in coins. If you own a ticket and the pool is drawn, your ticket becomes inactive.</p>
+            <p>Three pools with ticket prices: 50, 100, 200 coins. Prizes: 500, 1000, 2000 coins. Each pool has 15 tickets per round. You can buy any available number. Draws are done by admin – one winner per pool. Winners receive the prize in coins. If you own a ticket and the pool is drawn, your ticket becomes inactive.</p>
             <h4>🃏 Airtime Cards</h4>
             <p>Purchase prepaid airtime cards using your <strong>real balance (ETB)</strong>. Each card has a cost (set by admin) and contains hidden numbers. When you buy a card, a random hidden number is revealed and the card becomes sold out. Numbers are unique per card, and you cannot buy the same card twice after it's sold out.</p>
             <h4>🏥 Online Clinic</h4>
             <p>Cost: 50 coins per consultation. Describe your health issue (min 10 characters). The admin will reply within the app. Your consultations (issue, status, admin response) are saved and can be viewed in the "My Consultations" list. You can delete old consultations.</p>
             
-            <h4>ðŸ‘¥ Referral System</h4>
-            <p>Share your unique referral link (copy from Profile tab). When a new user signs up using your link and makes <strong>their first deposit</strong> (any amount, even minimum 1500 ETB), you receive <strong>3% of that deposit amount in coins</strong>. The reward is oneâ€‘time per referred user. The referral is counted for Quadâ€‘Lock (need 3 active referrals who have deposited).</p>
+            <h4>👥 Referral System</h4>
+            <p>Share your unique referral link (copy from Profile tab). When a new user signs up using your link and makes <strong>their first deposit</strong> (any amount, even minimum 1500 ETB), you receive <strong>3% of that deposit amount in coins</strong>. The reward is one‑time per referred user. The referral is counted for Quad‑Lock (need 3 active referrals who have deposited).</p>
             
-            <h4>ðŸ”’ Quadâ€‘Lock (Withdrawal Requirement)</h4>
+            <h4>🔒 Quad‑Lock (Withdrawal Requirement)</h4>
             <p>To withdraw your bonus balance, you must complete all four tasks:</p>
             <ol><li>Make at least one deposit of 1500 ETB or more.</li>
             <li>Play the Win Chance Game at least 10 times.</li>
@@ -4147,29 +3982,28 @@ const guideTexts = {
             <li>Have at least 3 active referrals (friends who registered via your link and made a deposit).</li></ol>
             <p>Your progress is shown on the Dashboard. Once 4/4 is complete, you can request a withdrawal from the bonus balance.</p>
             
-            <h4>ðŸ’¸ Withdrawals</h4>
-            <p>Only <strong>bonus balance</strong> can be withdrawn. Tax: 10% (e.g., request 1000 ETB â†’ 100 ETB tax, net 900 ETB). Withdrawal amounts must follow a <strong>minimum</strong> and <strong>step</strong> (admin configurable, default 500 ETB minimum and step 500 ETB, so allowed amounts: 500, 1000, 1500, etc.). After submitting a request, admin approves or rejects it. If approved, the net amount is deducted from your bonus and paid to you via the bank details you provided.</p>
+            <h4>💸 Withdrawals</h4>
+            <p>Only <strong>bonus balance</strong> can be withdrawn. Tax: 10% (e.g., request 1000 ETB → 100 ETB tax, net 900 ETB). Withdrawal amounts must follow a <strong>minimum</strong> and <strong>step</strong> (admin configurable, default 500 ETB minimum and step 500 ETB, so allowed amounts: 500, 1000, 1500, etc.). After submitting a request, admin approves or rejects it. If approved, the net amount is deducted from your bonus and paid to you via the bank details you provided.</p>
             
-            <h4>🔄 Exchange (Coins â†’ Bonus)</h4>
+            <h4>🔄 Exchange (Coins → Bonus)</h4>
             <p>You can convert coins into bonus at a 1:1 rate. However:</p>
             <ul><li><strong>Daily limit:</strong> Once per day.</li>
             <li><strong>Amount limit:</strong> You may exchange up to 3% of your current coin balance (e.g., if you have 1000 coins, max exchange = 30 coins).</li>
-            <li>You choose the exact amount (â‰¤ maximum). Exchange is recorded and cannot be undone.</li></ul>
+            <li>You choose the exact amount (≤ maximum). Exchange is recorded and cannot be undone.</li></ul>
             <p>This helps you gradually move coins into withdrawable bonus.</p>
             
-            <h4>ðŸ“œ Transaction History</h4>
+            <h4>📜 Transaction History</h4>
             <p>You can filter transactions by: All, Deposits, Withdrawals, Other (exchange, referral rewards, game wins, consultation fees, etc.). You can also delete selected transactions (use checkboxes).</p>
             
-            <h4>âš ï¸ Critical Warning</h4>
-            <p><strong>Password recovery is disabled in this app.</strong> If you forget your password, you will lose access to your account. There is no automated "Forgot Password" email. Keep your password saved securely. For Google Signâ€‘in users, you can still log in with Google, but you cannot recover an email/password account without admin help (admin can manually reset your password).</p>
+            <h4>⚠️ Critical Warning</h4>
+            <p><strong>Password recovery is disabled in this app.</strong> If you forget your password, you will lose access to your account. There is no automated "Forgot Password" email. Keep your password saved securely. For Google Sign‑in users, you can still log in with Google, but you cannot recover an email/password account without admin help (admin can manually reset your password).</p>
             
             <hr>
-            <p style="font-size: 0.9em; color: #fbbf24;">Profit Vault â€“ Complete Investment Platform. Use responsibly.</p>
+            <p style="font-size: 0.9em; color: #fbbf24;">Profit Vault – Complete Investment Platform. Use responsibly.</p>
         </div>
     `,
     am: `
         <div style="line-height:1.6;">
-            <div style="line-height:1.6;">
             <h4>💰 ቀሪ ሂሳብ (Balance)</h4>
             <p>ይህ እውነተኛ የገንዘብ ቀሪ ሂሳብዎ ነው (በብር)። ገንዘብ ለማስገባት (በቴሌብር ወይም በአዋሽ ባንክ ይጠቀሙ፣ ዝቅተኛው 1500 ብር ነው) እና መስፈርቶችን ካሟሉ ገንዘብ ማውጣት ይችላሉ። ያስገቡት ገንዘብ በአስተዳዳሪው መጽደቅ አለበት።</p>
             
@@ -4226,63 +4060,62 @@ const guideTexts = {
             <hr><p style="font-size: 0.9em; color: #fbbf24;">Profit Vault – የተሟላ የኢንቨስትመንት መድረክ። በኃላፊነት ይጠቀሙ።</p>
     </div>
 `,
-
 om: `
     <div style="line-height:1.6;">
         <h4>💰 kuusa (Balance)</h4>
-        <p>kuusa maallaqa keessan kan dhugaati (ETB). Itti <strong>kuusuun kan danda'muu</strong> (telebirr ykn Awash Bank) fi <strong>baasuun garuu</strong> (booda Quadâ€‘Lock xummuruudhaan) kan hin dandaÊ¼amnedha. Kuusni kun jalqaba adminiin mirkaneeffamuu qaba.</p>
+        <p>kuusa maallaqa keessan kan dhugaati (ETB). Itti <strong>kuusuun kan danda'muu</strong> (telebirr ykn Awash Bank) fi <strong>baasuun garuu</strong> (booda Quad‑Lock xummuruudhaan) kan hin dandaʼamnedha. Kuusni kun jalqaba adminiin mirkaneeffamuu qaba.</p>
         
         <h4>🎁 Bonasii</h4>
-        <p>Boonasiin kuusa lammaffaa kan <strong>baafamuu</strong> dandaÊ¼udha (taxa 10% fi Quadâ€‘Lock barbaada). Boonasiin saantima jijjiiruun (1 saantima â†’ 1 bonus) ykn moÊ¼annaa tapharraa argama. Maallaqni boonasiin baafachuuf ykn fudhachuuf qofa oola.</p>
+        <p>Boonasiin kuusa lammaffaa kan <strong>baafamuu</strong> dandaʼudha (taxa 10% fi Quad‑Lock barbaada). Boonasiin saantima jijjiiruun (1 saantima → 1 bonus) ykn moʼannaa tapharraa argama. Maallaqni boonasiin baafachuuf ykn fudhachuuf qofa oola.</p>
         
         <h4>🪙 Saantima (Coins)</h4>
         <p>Saantimni platfoormii kana keessatti maallaqa qooda guddaa qabudha. Saantima kan argachuu kan dandeessan:</p>
         <ul><li>Bituudhaan: 1 ETB = 1 saantima (xiqqaa 50).</li>
         <li>Tapha Win Chance taphachuudhaan (50 saantima taphatti, badhaasni hanga saantima 100tti).</li>
-        <li>Badhaasa wabii: hiriyaan waraabbii keessanitti galmaaÊ¼e yeroo jalqabaaf maallaqa yeroo kuusu, 3% kuusa sanaa saantimatti ni argattu.</li></ul>
+        <li>Badhaasa wabii: hiriyaan waraabbii keessanitti galmaaʼe yeroo jalqabaaf maallaqa yeroo kuusu, 3% kuusa sanaa saantimatti ni argattu.</li></ul>
         <p>Saantimni kan fayyadu: <strong>Investimentiif</strong>, <strong>tikeetti Lootarii bituuf</strong>, <strong>kilinika kessatti dhimma fayyaa ofii gaafachuuf</strong>, fi <strong>gara bonusiitti jijjiirufi</strong>.</p>
         
         <h4>🛒 Gabaa (Market)</h4>
-        <p>Saantima qabdaniin qabeenya dijitaala (fknf, abaaboo) bittu. Qabeenyi tokkoon tokkoon <strong>ROI</strong> (buÊ¼aa) fi <strong>gatii</strong> qaba. sa'aatii 24 booda, qabeenya bittan gurguruu ni dandeessa â€“ gatiin jalqabaa fi buÊ¼aan saantimaaan isiniif deebi'a. Qabeenya tokko yeroo tokko qofa bituu dandeessu.</p>
+        <p>Saantima qabdaniin qabeenya dijitaala (fknf, abaaboo) bittu. Qabeenyi tokkoon tokkoon <strong>ROI</strong> (buʼaa) fi <strong>gatii</strong> qaba. sa'aatii 24 booda, qabeenya bittan gurguruu ni dandeessa – gatiin jalqabaa fi buʼaan saantimaaan isiniif deebi'a. Qabeenya tokko yeroo tokko qofa bituu dandeessu.</p>
         
         <h4>🎮 Tapha Win Chance</h4>
-        <p>Gatiin: saantima 50 taphatti. Kaardiin 4Ã—4 ni mulÊ¼ata. Kaardii kamiyyuu xuquun badhaasa keessan argittu. Badhaasni (0,10,25,50,75,100 saantima) carraadhaan moÊ¼attan sun kuusa saantima keessanitti dabalama. Taphawwan keessan Quadâ€‘Lockf ni lakkaawwamu (tapha 10 barbaada).</p>
+        <p>Gatiin: saantima 50 taphatti. Kaardiin 4×4 ni mulʼata. Kaardii kamiyyuu xuquun badhaasa keessan argittu. Badhaasni (0,10,25,50,75,100 saantima) carraadhaan moʼattan sun kuusa saantima keessanitti dabalama. Taphawwan keessan Quad‑Lockf ni lakkaawwamu (tapha 10 barbaada).</p>
         
         <h4>🎟️ Lootarii (Lottery)</h4>
-        <p>Gatiin tikeettii ganda sadeenii saantima 50, 100, 200 dha. Badhaasni: 500, 1000, 2000 saantima. Poolni hundi tikeetti 15 qaba. Lakkoobsa hinqabamne kamiyyuu bituu ni dandeessu. Carraan adminiin baafama (pool tokkoof moÊ¼ataa tokko). MoÊ¼ataan badhaasa saantimatti argata.</p>
+        <p>Gatiin tikeettii ganda sadeenii saantima 50, 100, 200 dha. Badhaasni: 500, 1000, 2000 saantima. Poolni hundi tikeetti 15 qaba. Lakkoobsa hinqabamne kamiyyuu bituu ni dandeessu. Carraan adminiin baafama (pool tokkoof moʼataa tokko). Moʼataan badhaasa saantimatti argata.</p>
         <h4>🃏 Kaardii mobaayilaa (Airtime Cards)</h4>
-<p>Kaardii Airtime dursee kaffalamuu (prepaid) kuusa dhugaa keessaniin (ETB) bitadhaa. Kaardiin tokkoon tokkoon isaa gatii adminiin murteessu fi lakkoofsawwan dhokataa ni qaba. Yeroo kaardii bittan, lakkoofsi tokko carraadhumaan ni mulÊ¼ata, yeroo kana kaardiicha gutachuu dandeessu. yeroo gurgure booda kaardii biraa yoo ta'e malee isa bittan irra deebiin bituu hin dandeessan.</p>
+<p>Kaardii Airtime dursee kaffalamuu (prepaid) kuusa dhugaa keessaniin (ETB) bitadhaa. Kaardiin tokkoon tokkoon isaa gatii adminiin murteessu fi lakkoofsawwan dhokataa ni qaba. Yeroo kaardii bittan, lakkoofsi tokko carraadhumaan ni mulʼata, yeroo kana kaardiicha gutachuu dandeessu. yeroo gurgure booda kaardii biraa yoo ta'e malee isa bittan irra deebiin bituu hin dandeessan.</p>
         <h4>🏥 Online Clinic</h4>
         <p>Gatiin: saantima 50 yeroo marii tokkoof. Rakkoo fayyaa keessanii ibsuun (yoo xiqqaate qubee 10 nin). Adminiin app keessaatti isiniif deebisa. Mariin keessan (rakkoo, haala, deebiisa admin) jedhamee ni kuufama.</p>
         
-        <h4>ðŸ‘¥ Wabii (Referral)</h4>
-        <p>Lakkoofsa kaardii wabiikeessan qooduun (Profaayla keessaa). Hiriyaan waraabbii keessanitti galmaaÊ¼ee <strong>yeroo jalqabaaf maallaqa yeroo kuusu</strong> (hangam iyyuu), <strong>3% kuusa sanaa saantimatti argattu</strong>. Badhaasi kun yeroo tokko qofa. Wabiin kun Quadâ€‘Lockf ni lakkaawa (wabii 3 barbaada).</p>
+        <h4>👥 Wabii (Referral)</h4>
+        <p>Lakkoofsa kaardii wabiikeessan qooduun (Profaayla keessaa). Hiriyaan waraabbii keessanitti galmaaʼee <strong>yeroo jalqabaaf maallaqa yeroo kuusu</strong> (hangam iyyuu), <strong>3% kuusa sanaa saantimatti argattu</strong>. Badhaasi kun yeroo tokko qofa. Wabiin kun Quad‑Lockf ni lakkaawa (wabii 3 barbaada).</p>
         
-        <h4>ðŸ”’ Quadâ€‘Lock (Gaaffii baasuu)</h4>
+        <h4>🔒 Quad‑Lock (Gaaffii baasuu)</h4>
         <p>Bonasii keessan baasuuf seerota arfan armaan gadii kana guutuu qabdu:</p>
         <ol><li>1500 ETB fi sana ol kuusuu.</li>
         <li>Tapha Win Chance yeroo 10 ol taphachuu.</li>
         <li>Tikeetti lootarii tokko bituu.</li>
-        <li>Wabii 3 qabaachuu (hiriyaan waraabbii keessanitti galmaaÊ¼ee maallaqa kuusuu qaba).</li></ol>
-        <p>Itti aanumsi Dashbaardii irratti mulÊ¼ata. 4/4 yoo xumurtan, bonusii keessan baasuu ni dandeessu.</p>
+        <li>Wabii 3 qabaachuu (hiriyaan waraabbii keessanitti galmaaʼee maallaqa kuusuu qaba).</li></ol>
+        <p>Itti aanumsi Dashbaardii irratti mulʼata. 4/4 yoo xumurtan, bonusii keessan baasuu ni dandeessu.</p>
         
-        <h4>ðŸ’¸ Maallaqa baasuu (Withdrawal)</h4>
-        <p><strong>Bonasiidha malee kuusa dhugaa baasuun hin danda'amu</strong>. Taxii: 10% (fknf. 1000 ETB â†’ tax 100, net 900 ETB). Maallaqa <strong>xiqqaa fi sadarkaa (step)</strong> eeguu qabdu (garuu admiiniin jijjiiruu dandaâ€™a, kan ammaa xiqqaan 500 ETB fi step 500 dha, kanaaf maallaqaawwan baasuun danda'amu 500,1000,1500,â€¦)dha. Odeeffannoo baankii keessan fi hanga baasuu barbaaddan yeroo ergitan adminiin ni mirkaneessa ykn ni kuffisa. Mirkaneesinaan, maallaqni kuusa bonasii keessan irraa hirÊ¼aate gara baankii keessanitti dabarfama.</p>
+        <h4>💸 Maallaqa baasuu (Withdrawal)</h4>
+        <p><strong>Bonasiidha malee kuusa dhugaa baasuun hin danda'amu</strong>. Taxii: 10% (fknf. 1000 ETB → tax 100, net 900 ETB). Maallaqa <strong>xiqqaa fi sadarkaa (step)</strong> eeguu qabdu (garuu admiiniin jijjiiruu danda’a, kan ammaa xiqqaan 500 ETB fi step 500 dha, kanaaf maallaqaawwan baasuun danda'amu 500,1000,1500,…)dha. Odeeffannoo baankii keessan fi hanga baasuu barbaaddan yeroo ergitan adminiin ni mirkaneessa ykn ni kuffisa. Mirkaneesinaan, maallaqni kuusa bonasii keessan irraa hirʼaate gara baankii keessanitti dabarfama.</p>
         
-        <h4>🔄 Saantima jijjiiruu â†’ Bonus</h4>
+        <h4>🔄 Saantima jijjiiruu → Bonus</h4>
         <p>Saantima keessan reeshoo 1:1 taheen bonusitti jijjiiruu dandeessu. Haaluma kanaan:</p>
         <ul><li><strong>Guyyaatti yeroo tokko qofa jijjiiruu dandeessu.</strong></li>
         <li><strong>Daangaan hanga 3% saantima keessaniiti</strong> (fknf. 1000 saantima yoo qabaattan max 30).</li>
         <li>Hanga jijjiirtan ofii keessanii filachuu dandeessu (max caaluu hinqabu).</li></ul>
         
-        <h4>ðŸ“œ Seenaa bittaa (Transaction History)</h4>
-        <p>Seenaa bittaa keessan ilaallachuu dandeessu: Hunduma, Kuusa, Baasa, Kaan (jijjiirra, badhaasa wabii, moÊ¼annaa taphaa, gatii clinic). Seenaa filatamees haquu ni dandeessu (checkboksota fayyadamaa).</p>
+        <h4>📜 Seenaa bittaa (Transaction History)</h4>
+        <p>Seenaa bittaa keessan ilaallachuu dandeessu: Hunduma, Kuusa, Baasa, Kaan (jijjiirra, badhaasa wabii, moʼannaa taphaa, gatii clinic). Seenaa filatamees haquu ni dandeessu (checkboksota fayyadamaa).</p>
         
-        <h4>âš ï¸ Akeekkachiisa barbaachisaa</h4>
+        <h4>⚠️ Akeekkachiisa barbaachisaa</h4>
         <p><strong>Deebifannoon jacha beektuu (password) cufaadha (disabled).</strong> Yoo jacha beektuu keessan irraanfattan, akkaawuntii keessan galuu hin dandeessan. Jacha beektuu keessan iddoo amantaa qabu kaa'un eegaa. Fudhannoo Google fayyadamtanii lufa googiliidhaan lufuu ni dandeessu, garuu akkaawuntii email/password jecha beektuu irraanfattan taanaan adminiidhaan qofaa gargaaramuu dandeessu.</p>
         
         <hr>
-        <p style="font-size: 0.9em; color: #fbbf24;">Profit Vault â€“ Buâ€™uura Investimenti Dhumaa. Ittigaafatamummaadhaan fayyadamaa.</p>
+        <p style="font-size: 0.9em; color: #fbbf24;">Profit Vault – Bu’uura Investimenti Dhumaa. Ittigaafatamummaadhaan fayyadamaa.</p>
     </div>
 `,
 };
@@ -4308,10 +4141,6 @@ function initGuideTab() {
 }
 
 window.addEventListener('load', () => {
-    hideDiamond();
-	setupNewTabs();
-	refreshAllProfilePictures();
-    initProfilePicUploader();
 document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape' && document.getElementById('authModal')?.classList.contains('active')) {
         e.preventDefault();
@@ -4323,7 +4152,6 @@ document.addEventListener('keydown', function(e) {
     const ref = urlParams.get('ref');
     if (ref) {
         localStorage.setItem('profitvault_referral', ref);
-        console.log("✅ Referral ID saved to localStorage:", ref);
     }
     // Attach profile avatar click
     document.getElementById('profileArea').addEventListener('click', function(e) {
@@ -4331,14 +4159,45 @@ document.addEventListener('keydown', function(e) {
         toggleUserMenu();
     });    
     checkSession();
-    sb.auth.onAuthStateChange((event, session) => {
+    loadAppProfileImage();
+    
+    // Initialize admin profile picture controls if admin
+    if (IS_ADMIN) {
+    }
+const fixAvatar = document.getElementById('profileAvatar');
+    const fixMenu = document.getElementById('dropdownMenu');
+    
+    if (fixAvatar && fixMenu) {
+        fixAvatar.onclick = function(e) {
+            e.stopPropagation();
+            fixMenu.classList.toggle('show');
+        };
+        
+        document.addEventListener('click', function(e) {
+            if (!fixAvatar.contains(e.target) && !fixMenu.contains(e.target)) {
+                fixMenu.classList.remove('show');
+            }
+        });
+        console.log('✅ Dropdown fix applied');
+    }
+    // Track session refresh to prevent loops
+let lastSessionRefresh = 0;
+
+sb.auth.onAuthStateChange((event, session) => {
     // Don't trigger if we're already in the process of logging out
     if (isLoggingOut) return;
     
-    if (event === 'SIGNED_OUT' || (event === 'TOKEN_REFRESHED' && !session)) {
+    // Prevent multiple rapid session events
+    const now = Date.now();
+    if (now - lastSessionRefresh < 5000) return;
+    lastSessionRefresh = now;
+    
+    // Only handle SIGNED_OUT, ignore TOKEN_REFRESHED to prevent loops
+    if (event === 'SIGNED_OUT') {
         if (USER_ID) {
-            console.log("Session lost, logging out...");
             isLoggingOut = true;
+            showToast('Session ended. Please log in again.', 'info');
+            showLogoutSpinner();
             logout();
         }
     }
@@ -4362,13 +4221,49 @@ document.addEventListener('keydown', function(e) {
     }
     initHistoryTabs();
     initGuideTab();
+    // Debounced refresh button (prevents spam clicking)
+    const refreshBtn = document.getElementById('refreshBtn');
+    if (refreshBtn) {
+        refreshBtn.onclick = debounce(() => {
+            if (USER_ID) {
+                cache.clear('dashboard_data');
+                cache.clear(`user_${USER_ID}`);
+                loadAllData(true);
+                showToast('Data refreshed!', 'success');
+            } else {
+                hardRefresh();
+            }
+        }, 2000);
+    }
+        // Throttled tab clicks - prevents rapid tab switching
+    document.querySelectorAll('.tab').forEach(tab => {
+        // Skip the refresh button (already handled by debounce)
+        if (tab.id === 'refreshBtn') return;
+        
+        tab.addEventListener('click', throttle((e) => {
+            const id = tab.getAttribute('data-tab');
+            if (!id) return;
+            const target = document.getElementById(id);
+            if (!target) return;
+            
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            tab.classList.add('active');
+            target.classList.add('active');
+            
+            if (id === 'games') {
+                createGameGrid();
+            } else if (id !== 'admin' && id !== 'dashboard') {
+                // Only load data for non-dashboard tabs
+                loadAllData();
+            }
+        }, 1000));
+    });
     window.addEventListener('online', () => { document.getElementById('networkStatus').classList.remove('offline'); showToast('Back online','success'); loadAllData(); });
     window.addEventListener('offline', () => { document.getElementById('networkStatus').classList.add('offline'); showToast('No internet','error'); });
     if(soundEnabled) document.getElementById('toggleKnob').style.left = '27px';
     else document.getElementById('toggleKnob').style.left = '3px';
-    });
 });
-}
 </script>
 </body>
 </html>
