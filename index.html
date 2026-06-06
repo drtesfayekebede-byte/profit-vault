@@ -214,7 +214,7 @@
     }
     .balance-label { font-size: 10px; font-weight: 800; margin-top: 5px; text-transform: uppercase; letter-spacing: 1px; }
 
-    /* ===== NEW LAYOUT STYLES ===== */
+   /* ===== NEW LAYOUT STYLES ===== */
 .balance-wrapper {
     background: rgba(10, 10, 15, 0.6);
     border-radius: 32px;
@@ -223,9 +223,19 @@
     border: 1px solid rgba(251, 191, 36, 0.5);
     box-shadow: 0 0 20px rgba(251, 191, 36, 0.2);
     backdrop-filter: blur(4px);
-    position: sticky;
+    position: fixed;
     top: 0;
     z-index: 10;
+}
+
+/* ===== ONE COMMON BORDER FOR ALL TABS ===== */
+.tabs-wrapper {
+    background: rgba(10, 10, 15, 0.4);
+    border-radius: 28px;
+    padding: 16px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(251, 191, 36, 0.4);
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.05);
 }
 
 .tabs-container {
@@ -1020,21 +1030,22 @@
     </div>
 </div>
 
-<div class="tabs-container">
-    <div class="tabs-grid">
-        <button class="tab active" data-tab="dashboard">📊 Dashboard</button>
-        <button class="tab" data-tab="market">🛒 Market</button>
-        <button class="tab" data-tab="games">🎮 Games</button>
-        <button class="tab" data-tab="cards">🃏 Airtime</button>
-        <button class="tab" data-tab="lottery">🎟️ Lottery</button>
-        <button class="tab" data-tab="clinic">🏥 Clinic</button>
-        <button class="tab" data-tab="profile">👤 Profile</button>
-        <button class="tab" data-tab="contact">📞 Contact</button>
-        <button class="tab" data-tab="guide">📖 Guide</button>
-        <button class="tab refresh-tab" id="refreshBtn">🔄 Refresh</button>
+<div class="tabs-wrapper">
+    <div class="tabs-container">
+        <div class="tabs-grid">
+            <button class="tab active" data-tab="dashboard">📊 Dashboard</button>
+            <button class="tab" data-tab="market">🛒 Market</button>
+            <button class="tab" data-tab="games">🎮 Games</button>
+            <button class="tab" data-tab="cards">🃏 Airtime</button>
+            <button class="tab" data-tab="lottery">🎟️ Lottery</button>
+            <button class="tab" data-tab="clinic">🏥 Clinic</button>
+            <button class="tab" data-tab="profile">👤 Profile</button>
+            <button class="tab" data-tab="contact">📞 Contact</button>
+            <button class="tab" data-tab="guide">📖 Guide</button>
+            <button class="tab refresh-tab" id="refreshBtn">🔄 Refresh</button>
+        </div>
+        <div class="bottom-row" id="bottomRow"></div>
     </div>
-    <div class="bottom-row" id="bottomRow"></div>
-</div>
 </div>
 
 <!-- DASHBOARD -->
@@ -4316,6 +4327,7 @@ document.addEventListener('keydown', function(e) {
     });    
     checkSession();
     loadAppProfileImage();
+    initAudio();
     
     // Initialize admin profile picture controls if admin
     if (IS_ADMIN) {
