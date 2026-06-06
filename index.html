@@ -31,16 +31,38 @@
     }
 
     /* ===== BASE – DEEP BLACK BACKGROUND (replaces old body) ===== */
-        body {
-        background: #000000;
-        min-height: 100vh;
-        padding: 16px;
-        padding-top: 120px;  /* Add this - adjust value as needed */
-        padding-bottom: 100px;
-        color: #e2e8f0;
-        position: relative;
-        overflow-x: hidden;
-    }
+body {
+    background: #000000;
+    min-height: 100vh;
+    padding: 16px;
+    padding-top: 140px;
+    padding-bottom: 100px;
+    color: #e2e8f0;
+    position: relative;
+    overflow-x: hidden;
+}
+
+.balance-wrapper {
+    background: rgba(10, 10, 15, 0.6);
+    border-radius: 32px;
+    padding: 20px 16px;
+    border: 1px solid rgba(251, 191, 36, 0.5);
+    box-shadow: 0 0 20px rgba(251, 191, 36, 0.2);
+    backdrop-filter: blur(4px);
+    position: fixed;
+    top: 0;
+    z-index: 10;
+}
+
+.tabs-wrapper {
+    background: rgba(10, 10, 15, 0.4);
+    border-radius: 28px;
+    padding: 16px;
+    margin-top: 100px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(251, 191, 36, 0.4);
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.05);
+}
 /* ===== COMMON BACKGROUND FOR ALL 11 TABS ===== */
 .background-wrapper {
     position: fixed;
@@ -220,7 +242,6 @@
     background: rgba(10, 10, 15, 0.6);
     border-radius: 32px;
     padding: 20px 16px;
-    margin-bottom: 24px;
     border: 1px solid rgba(251, 191, 36, 0.5);
     box-shadow: 0 0 20px rgba(251, 191, 36, 0.2);
     backdrop-filter: blur(4px);
@@ -229,12 +250,11 @@
     z-index: 10;
 }
 
-/* ===== ONE COMMON BORDER FOR ALL TABS ===== */
 .tabs-wrapper {
     background: rgba(10, 10, 15, 0.4);
     border-radius: 28px;
     padding: 16px;
-    margin-top: 100px;  /* ← ADD THIS LINE */
+    margin-top: 100px;
     margin-bottom: 20px;
     border: 1px solid rgba(251, 191, 36, 0.4);
     box-shadow: 0 0 15px rgba(0, 255, 255, 0.05);
