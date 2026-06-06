@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="preconnect" href="https://ogtlaffkybpesaxastvx.supabase.co">
+    <link rel="dns-prefetch" href="https://ogtlaffkybpesaxastvx.supabase.co">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
     <title>Profit Vault - Complete Investment Platform | Premium</title>
@@ -73,12 +75,12 @@
     visibility: visible;
 }
 .diamond {
-    width: 90px;
-    height: 90px;
+    width: 100px;
+    height: 100px;
     background: linear-gradient(135deg, #ff0000, #0000ff, #00ff00, #ffd700);
     background-size: 400% 400%;
-    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
-    animation: diamondSpin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite, gradientShift 3s ease infinite;
+    border-radius: 50%;
+    animation: diamondSpin 1.2s linear infinite, gradientShift 3s ease infinite;
     margin-bottom: 20px;
     position: relative;
     box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
@@ -89,35 +91,35 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 42px;
+    font-size: 48px;
     animation: sparkle 0.8s ease-in-out infinite alternate;
 }
 .orb {
     position: absolute;
-    width: 12px;
-    height: 12px;
+    width: 14px;
+    height: 14px;
     border-radius: 50%;
     animation: orbit 1.5s linear infinite;
 }
 .orb1 {
-    top: -20px;
+    top: -25px;
     left: 50%;
     transform: translateX(-50%);
 }
 .orb2 {
-    bottom: -20px;
+    bottom: -25px;
     left: 50%;
     transform: translateX(-50%);
     animation-delay: 0.5s;
 }
 .orb3 {
-    left: -20px;
+    left: -25px;
     top: 50%;
     transform: translateY(-50%);
     animation-delay: 0.25s;
 }
 .orb4 {
-    right: -20px;
+    right: -25px;
     top: 50%;
     transform: translateY(-50%);
     animation-delay: 0.75s;
@@ -132,9 +134,8 @@
     text-transform: uppercase;
 }
 @keyframes diamondSpin {
-    0% { transform: rotate(0deg) scale(1); }
-    50% { transform: rotate(180deg) scale(1.1); }
-    100% { transform: rotate(360deg) scale(1); }
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 @keyframes gradientShift {
     0% { background-position: 0% 0%; }
@@ -155,10 +156,6 @@
     0% { opacity: 0.5; text-shadow: none; }
     100% { opacity: 1; text-shadow: 0 0 10px gold, 0 0 15px orange; }
 }
-    @keyframes borderPulse {
-        0%,100% { border-color: rgba(251, 191, 36, 0.3); }
-        50% { border-color: rgba(251, 191, 36, 0.8); }
-    }
 
     /* ===== BASE – DEEP BLACK BACKGROUND (replaces old body) ===== */
     body {
@@ -173,6 +170,7 @@
     color: #e2e8f0;
     position: relative;
     overflow-x: hidden;
+    scroll-padding-top: 100px;
 }
     /* ===== ENSURE CONTENT STAYS ABOVE BACKGROUND ===== */
     .balance-container, .tabs, .card, .modal, .game-grid, .market-grid, .toast, .network-status {
@@ -339,6 +337,9 @@
     border: 1px solid rgba(251, 191, 36, 0.5);
     box-shadow: 0 0 20px rgba(251, 191, 36, 0.2), 0 0 40px rgba(0, 255, 255, 0.1);
     backdrop-filter: blur(4px);
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }
 
 .balance-container {
@@ -377,13 +378,12 @@
     border-top: 1px solid rgba(251, 191, 36, 0.2);
 }
 
-/* Individual tab buttons - NO BORDER */
+/* Individual tab buttons - EACH WITH UNIQUE COLOR */
 .tab {
-    background: rgba(10, 10, 15, 0.8);
     border: none;
     padding: 12px 8px;
     border-radius: 40px;
-    color: #e2e8f0;
+    color: white;
     font-size: 13px;
     font-weight: bold;
     cursor: pointer;
@@ -393,26 +393,126 @@
 }
 
 .tab:hover {
-    background: rgba(251, 191, 36, 0.2);
-    color: #fbbf24;
     transform: translateY(-2px);
+    filter: brightness(1.1);
 }
 
 .tab.active {
-    background: linear-gradient(135deg, #fbbf24, #d97706);
-    color: #1a1a2e;
-    box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    filter: brightness(1.05);
 }
 
-/* Bottom tabs (Refresh and Admin) */
+/* Dashboard Tab - Gold */
+.tab[data-tab="dashboard"] {
+    background: linear-gradient(135deg, #ffd700, #ff8c00);
+}
+.tab[data-tab="dashboard"].active {
+    background: linear-gradient(135deg, #ffea00, #ffa500);
+    box-shadow: 0 0 15px gold;
+}
+
+/* Market Tab - Emerald Green */
+.tab[data-tab="market"] {
+    background: linear-gradient(135deg, #059669, #10b981);
+}
+.tab[data-tab="market"].active {
+    background: linear-gradient(135deg, #10b981, #34d399);
+    box-shadow: 0 0 15px #10b981;
+}
+
+/* Games Tab - Purple */
+.tab[data-tab="games"] {
+    background: linear-gradient(135deg, #7c3aed, #8b5cf6);
+}
+.tab[data-tab="games"].active {
+    background: linear-gradient(135deg, #8b5cf6, #a78bfa);
+    box-shadow: 0 0 15px #8b5cf6;
+}
+
+/* Airtime Tab - Cyan */
+.tab[data-tab="cards"] {
+    background: linear-gradient(135deg, #0891b2, #06b6d4);
+}
+.tab[data-tab="cards"].active {
+    background: linear-gradient(135deg, #06b6d4, #22d3ee);
+    box-shadow: 0 0 15px #06b6d4;
+}
+
+/* Lottery Tab - Pink */
+.tab[data-tab="lottery"] {
+    background: linear-gradient(135deg, #db2777, #ec4899);
+}
+.tab[data-tab="lottery"].active {
+    background: linear-gradient(135deg, #ec4899, #f472b6);
+    box-shadow: 0 0 15px #ec4899;
+}
+
+/* Clinic Tab - Teal */
+.tab[data-tab="clinic"] {
+    background: linear-gradient(135deg, #0d9488, #14b8a6);
+}
+.tab[data-tab="clinic"].active {
+    background: linear-gradient(135deg, #14b8a6, #2dd4bf);
+    box-shadow: 0 0 15px #14b8a6;
+}
+
+/* Profile Tab - Indigo */
+.tab[data-tab="profile"] {
+    background: linear-gradient(135deg, #4338ca, #4f46e5);
+}
+.tab[data-tab="profile"].active {
+    background: linear-gradient(135deg, #4f46e5, #6366f1);
+    box-shadow: 0 0 15px #4f46e5;
+}
+
+/* Contact Tab - Orange */
+.tab[data-tab="contact"] {
+    background: linear-gradient(135deg, #ea580c, #f97316);
+}
+.tab[data-tab="contact"].active {
+    background: linear-gradient(135deg, #f97316, #fb923c);
+    box-shadow: 0 0 15px #f97316;
+}
+
+/* Guide Tab - Slate */
+.tab[data-tab="guide"] {
+    background: linear-gradient(135deg, #475569, #64748b);
+}
+.tab[data-tab="guide"].active {
+    background: linear-gradient(135deg, #64748b, #94a3b8);
+    box-shadow: 0 0 15px #64748b;
+}
+
+/* Refresh Tab - Blue (stays as you like it) */
+.tab.refresh {
+    background: linear-gradient(135deg, #2563eb, #3b82f6);
+}
+.tab.refresh:hover {
+    background: linear-gradient(135deg, #3b82f6, #60a5fa);
+}
+.tab.refresh.active {
+    background: linear-gradient(135deg, #3b82f6, #60a5fa);
+    box-shadow: 0 0 15px #3b82f6;
+}
+
+/* Bottom tabs (Admin only) */
+.tabs-bottom {
+    display: flex;
+    justify-content: center;
+    margin-top: 12px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(251, 191, 36, 0.2);
+}
+
 .tab-bottom {
-    flex: 1;
-    background: rgba(10, 10, 15, 0.9);
+    flex: 0 1 auto;
+    min-width: 120px;
+    background: linear-gradient(135deg, #8b0000, #dc143c);
     border: none;
-    padding: 12px 8px;
+    padding: 12px 24px;
     border-radius: 40px;
-    color: #e2e8f0;
-    font-size: 13px;
+    color: white;
+    font-size: 14px;
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s;
@@ -420,28 +520,8 @@
 }
 
 .tab-bottom:hover {
-    background: rgba(251, 191, 36, 0.2);
-    color: #fbbf24;
-}
-
-.tab-bottom.admin {
-    background: linear-gradient(135deg, #8b0000, #dc143c);
-    color: white;
-}
-
-.tab-bottom.admin:hover {
     transform: scale(1.02);
     box-shadow: 0 0 15px rgba(220, 20, 60, 0.5);
-}
-
-.tab-bottom.refresh {
-    background: linear-gradient(135deg, #3b82f6, #2563eb);
-    color: white;
-}
-
-.tab-bottom.refresh:hover {
-    transform: scale(1.02);
-    box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
 }
 
 /* Responsive */
@@ -1055,7 +1135,7 @@
         </div>
         <div class="profile-area" id="profileArea">
             <div class="profile-avatar" id="profileAvatar">
-    <img id="profileImage" src="https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app-assets/1780156694418.png" alt="Profit Vault" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+    <img loading="lazy" id="profileImage" src="https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app-assets/1780156694418.png" alt="Profit Vault" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
 </div>
             <div class="dropdown-menu" id="dropdownMenu">
                 <div id="dropdownItems"></div>
@@ -1083,22 +1163,21 @@
         </div>
     </div>
 </div>
-<div class="tabs-wrapper">
-    <div class="tabs-grid">
-        <button class="tab active" data-tab="dashboard">📊 Dashboard</button>
-        <button class="tab" data-tab="market">🛒 Market</button>
-        <button class="tab" data-tab="games">🎮 Games</button>
-        <button class="tab" data-tab="cards">🃏 Airtime</button>
-        <button class="tab" data-tab="lottery">🎟️ Lottery</button>
-        <button class="tab" data-tab="clinic">🏥 Clinic</button>
-        <button class="tab" data-tab="profile">👤 Profile</button>
-        <button class="tab" data-tab="contact">📞 Contact</button>
-        <button class="tab" data-tab="guide">📖 Guide</button>
-    </div>
-    <div class="tabs-bottom">
-        <button class="tab-bottom refresh" id="refreshTabBtn">🔄 Refresh</button>
-        <button class="tab-bottom admin" id="adminTabBtn">👑 Admin</button>
-    </div>
+<div class="tabs-grid">
+    <button class="tab active" data-tab="dashboard">📊 Dashboard</button>
+    <button class="tab" data-tab="market">🛒 Market</button>
+    <button class="tab" data-tab="games">🎮 Games</button>
+    <button class="tab" data-tab="cards">🃏 Airtime</button>
+    <button class="tab" data-tab="lottery">🎟️ Lottery</button>
+    <button class="tab" data-tab="clinic">🏥 Clinic</button>
+    <button class="tab" data-tab="profile">👤 Profile</button>
+    <button class="tab" data-tab="contact">📞 Contact</button>
+    <button class="tab" data-tab="guide">📖 Guide</button>
+    <button class="tab refresh" id="refreshTabBtn">🔄 Refresh</button>
+</div>
+<div class="tabs-bottom">
+    <button class="tab-bottom admin" id="adminTabBtn">👑 Admin</button>
+</div>
 </div>
 
 <!-- DASHBOARD -->
@@ -1294,6 +1373,17 @@ async function saveDepositSettings() {
 const SUPABASE_URL = 'https://ogtlaffkybpesaxastvx.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ndGxhZmZreWJwZXNheGFzdHZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTA4NTQsImV4cCI6MjA5NTM4Njg1NH0.toDw1_DsAjHjUuCg0hvRdEGyjA7mW2DJNlSWoVBT1qY';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+let realtimeChannel = null;
+function startRealtime(){
+    if(realtimeChannel) return;
+    realtimeChannel = sb.channel(`user-${USER_ID}`).on('postgres_changes',{event:'UPDATE',schema:'public',table:'users',filter:`user_id=eq.${USER_ID}`},(payload)=>{
+        document.getElementById('balance').innerText = (payload.new.balance||0).toLocaleString();
+        document.getElementById('bonus').innerText = (payload.new.bonus_balance||0).toLocaleString();
+        document.getElementById('coins').innerText = (payload.new.coin_balance||0).toLocaleString();
+        if(currentUser) Object.assign(currentUser, payload.new);
+    }).subscribe();
+}
+function stopRealtime(){ if(realtimeChannel){ sb.removeChannel(realtimeChannel); realtimeChannel = null; } }
 let USER_ID = null, IS_ADMIN = false, selectedPaymentMethod = "telebirr", soundEnabled = localStorage.getItem('soundEnabled') !== 'false';
 let isLoggingOut = false;
 let isProcessing = {
@@ -1323,6 +1413,201 @@ let totalLeaderboardPages = 1;
 const LEADERBOARD_PER_PAGE = 5;
 
 // ==================== UTILITIES ====================
+const cache = { market: null, cards: null, marketTime: 0, cardsTime: 0 };
+function getCache(key, ttl=60000) { 
+    const item = cache[key+'Time']; 
+    return (cache[key] && Date.now()-item < ttl) ? cache[key] : null; 
+}
+function setCache(key, data) { cache[key] = data; cache[key+'Time'] = Date.now(); }
+function clearCache(key) { if(key){ cache[key]=null; cache[key+'Time']=0; } else { Object.keys(cache).forEach(k=>cache[k]=null); } }
+// ===== TARGETED UPDATE FUNCTIONS (FAST & EFFICIENT) =====
+
+// Update ONLY user balances (coins, bonus, real balance)
+async function updateUserBalances() {
+    try {
+        const { data, error } = await sb
+            .from('users')
+            .select('balance, bonus_balance, coin_balance, win_chance_plays, total_deposited, total_withdrawn, active_referrals, username, joined_date')
+            .eq('user_id', USER_ID)
+            .single();
+        
+        if (error) throw error;
+        
+        if (data) {
+            document.getElementById('balance').innerText = (data.balance || 0).toLocaleString();
+            document.getElementById('bonus').innerText = (data.bonus_balance || 0).toLocaleString();
+            document.getElementById('coins').innerText = (data.coin_balance || 0).toLocaleString();
+            
+            // Update currentUser object
+            if (currentUser) {
+                Object.assign(currentUser, data);
+            } else {
+                currentUser = data;
+            }
+        }
+        return data;
+    } catch (err) {
+        console.error("updateUserBalances error:", err);
+        return null;
+    }
+}
+
+// Update ONLY user's active investments
+async function updateInvestments() {
+    const { data } = await sb
+        .from('user_assets')
+        .select('*')
+        .eq('user_id', USER_ID)
+        .eq('sold', false)
+        .order('purchase_time', { ascending: false });
+    
+    if (data && data.length) {
+        allInvestments = data;
+        totalInvestmentsPages = Math.ceil(allInvestments.length / 5);
+        if (investmentsPage > totalInvestmentsPages) investmentsPage = Math.max(1, totalInvestmentsPages);
+        const start = (investmentsPage - 1) * 5;
+        const pageItems = allInvestments.slice(start, start + 5);
+        document.getElementById('investments').innerHTML = pageItems.map(asset => {
+            const purchase = new Date(asset.purchase_time);
+            const maturity = new Date(purchase.getTime() + 24 * 3600000);
+            const ready = new Date() >= maturity;
+            const hoursLeft = Math.ceil((maturity - new Date()) / 3600000);
+            const payout = Math.round(asset.purchase_price * asset.roi_at_purchase);
+            return `<div class="investment-item">
+                        <span>${asset.emoji} ${asset.asset_name}</span>
+                        <span>Invested: ${asset.purchase_price} 🪙</span>
+                        <span>${ready ? `Sell for: ${payout} 🪙` : `Payout (est.): ${payout} 🪙`}</span>
+                        ${ready ? `<button class="btn-sm" onclick="sellAsset(${asset.id}, this)">💵 Sell</button>` : `<span class="badge">⏳ ${hoursLeft}h left</span>`}
+                    </div>`;
+        }).join('');
+        document.getElementById('investmentsPagination').innerHTML = `
+            <button class="btn-sm" onclick="changeInvestmentsPage(-1)">◀ Previous</button>
+            <span>${investmentsPage} / ${totalInvestmentsPages || 1}</span>
+            <button class="btn-sm" onclick="changeInvestmentsPage(1)">Next ▶</button>
+        `;
+    } else {
+        document.getElementById('investments').innerHTML = '<div class="loading">No active investments</div>';
+        document.getElementById('investmentsPagination').innerHTML = '';
+    }
+}
+
+// Update ONLY sold assets list
+async function updateSoldAssets() {
+    const { data } = await sb
+        .from('user_assets')
+        .select('*')
+        .eq('user_id', USER_ID)
+        .eq('sold', true)
+        .order('purchase_time', { ascending: false });
+    
+    if (data && data.length) {
+        allSoldAssets = data;
+        totalSoldAssetsPages = Math.ceil(allSoldAssets.length / 5);
+        if (soldAssetsPage > totalSoldAssetsPages) soldAssetsPage = Math.max(1, totalSoldAssetsPages);
+        const start = (soldAssetsPage - 1) * 5;
+        const pageItems = allSoldAssets.slice(start, start + 5);
+        document.getElementById('soldAssetsList').innerHTML = pageItems.map(asset => `
+            <div class="transaction-item">
+                <input type="checkbox" class="sold-checkbox" value="${asset.id}">
+                <span>${asset.emoji} ${asset.asset_name}</span>
+                <span>Sold for ${Math.round(asset.purchase_price * asset.roi_at_purchase)} 🪙</span>
+                <span>${new Date(asset.purchase_time).toLocaleDateString()}</span>
+            </div>
+        `).join('');
+        document.getElementById('soldAssetsPagination').innerHTML = `
+            <button class="btn-sm" onclick="changeSoldAssetsPage(-1)">◀ Previous</button>
+            <span>${soldAssetsPage} / ${totalSoldAssetsPages || 1}</span>
+            <button class="btn-sm" onclick="changeSoldAssetsPage(1)">Next ▶</button>
+            ${soldAssetsPage === 1 ? `<label style="margin-left:15px;"><input type="checkbox" id="selectAllSoldCheckbox" onchange="toggleSelectAllSold()"> Select All</label>` : ''}
+        `;
+        attachSoldCheckboxEvents();
+    } else {
+        document.getElementById('soldAssetsList').innerHTML = '<div class="loading">No sold assets</div>';
+        document.getElementById('soldAssetsPagination').innerHTML = '';
+    }
+}
+
+// Update ONLY lottery tickets owned by user
+async function updateMyTickets() {
+    const { data } = await sb
+        .from('lottery_tickets')
+        .select('*')
+        .eq('user_id', USER_ID)
+        .eq('status', 'active');
+    
+    document.getElementById('myTickets').innerHTML = data?.length ? data.map(t => `
+        <div class="ticket-item">
+            <div>🎫 ${escapeHTML(t.serial_number)}</div>
+            <div><span class="badge">Active</span></div>
+        </div>
+    `).join('') : '<div class="loading">No tickets</div>';
+}
+
+// Update ONLY Quad-Lock progress
+async function updateQuadLock() {
+    const { count: lotteryCount } = await sb
+        .from('lottery_tickets')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', USER_ID)
+        .eq('status', 'active');
+    
+    const depositDone = (currentUser.total_deposited || 0) >= 1500;
+    const gameDone = (currentUser.win_chance_plays || 0) >= 10;
+    const lotteryDone = (lotteryCount || 0) >= 1;
+    const referralDone = (currentUser.active_referrals || 0) >= 3;
+    const completed = [depositDone, gameDone, lotteryDone, referralDone].filter(Boolean).length;
+    const percent = (completed / 4) * 100;
+    
+    document.getElementById('quadlock').innerHTML = `
+        <div class="quad-item ${depositDone ? 'unlocked' : 'locked'}"><div>💰 Deposit 1500 ETB</div><div>${(currentUser.total_deposited || 0)}/1500</div></div>
+        <div class="quad-item ${gameDone ? 'unlocked' : 'locked'}"><div>🎮 Play 10 Games</div><div>${currentUser.win_chance_plays || 0}/10</div></div>
+        <div class="quad-item ${lotteryDone ? 'unlocked' : 'locked'}"><div>🎟️ Buy 1 Ticket</div><div>${lotteryCount || 0}/1</div></div>
+        <div class="quad-item ${referralDone ? 'unlocked' : 'locked'}"><div>👥 3 Referrals</div><div>${currentUser.active_referrals || 0}/3</div></div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${percent}%"></div></div>
+        <div class="progress-text">${completed}/4 Complete (${Math.round(percent)}%)</div>`;
+}
+
+// Update ONLY exchange info display
+async function updateExchangeInfo() {
+    const today = new Date().toISOString().slice(0, 10);
+    const { data: exchanged } = await sb
+        .from('daily_exchange')
+        .select('id')
+        .eq('user_id', USER_ID)
+        .eq('exchange_date', today)
+        .maybeSingle();
+    
+    const alreadyExchanged = exchanged !== null;
+    const maxEx = Math.floor((currentUser.coin_balance || 0) * 0.03);
+    
+    if (alreadyExchanged) {
+        document.getElementById('exchangeInfo').innerHTML = `
+            <div>⚠️ You have already exchanged today.</div>
+            <div>📊 Daily limit: 3% of coins (${maxEx} max)</div>
+            <div>⏳ Please try again tomorrow.</div>
+        `;
+        document.getElementById('exchangeInfoModal').innerHTML = `
+            <div>You have already exchanged today.</div>
+            <div>Come back tomorrow to exchange again.</div>
+        `;
+    } else {
+        document.getElementById('exchangeInfo').innerHTML = `
+            <div>📊 Daily limit: 3% of your coins (up to ${maxEx} coins)</div>
+            <div>✅ You can exchange today.</div>
+        `;
+        document.getElementById('exchangeInfoModal').innerHTML = `
+            <div>You can exchange up to ${maxEx} coins right now.</div>
+            <div>⚠️ Only one exchange per day allowed.</div>
+        `;
+        const exchangeInput = document.getElementById('exchangeAmount');
+        if (exchangeInput) exchangeInput.placeholder = `Amount (max ${maxEx})`;
+    }
+}
+
+// Update ONLY profile info display
+async function updateProfileInfo() {
+    document.getElementById('profileInfo').innerHTML = `<div class="profile-item">👤 ${escapeHTML(currentUser.username) || 'User'}</div><div>🆔 ${USER_ID.slice(0, 8)}...</div><div>📅 Joined: ${escapeHTML(currentUser.joined_date) || 'N/A'}</div><div>💰 Deposited: ${(currentUser.total_deposited || 0).toLocaleString()} ETB</div><div>📤 Withdrawn: ${(currentUser.total_withdrawn || 0).toLocaleString()} ETB</div><div>👥 Referrals: ${currentUser.active_referrals || 0}</div><div>🎮 Games: ${currentUser.win_chance_plays || 0}</div>`;
+}
 function updateUserMenu() {
     const items = document.getElementById('dropdownItems');
     if (USER_ID) {
@@ -1477,6 +1762,7 @@ async function checkSession() {
             }
             
             USER_ID = session.user.id;
+            startRealtime();
             localStorage.setItem('profitvault_user_id', USER_ID);
             showDiamond('LOADING DASHBOARD...');
             const pendingRef = localStorage.getItem('profitvault_referral');
@@ -1772,6 +2058,8 @@ async function signInWithGoogle() {
 }
 async function logout() {
     showDiamond('LOGGING OUT...');
+    stopRealtime();
+    clearCache();
     isLoggingOut = true;
     showToast('Logging out...', 'info');
     
@@ -1905,7 +2193,11 @@ if (alreadyExchanged) {
     if (exchangeInput) exchangeInput.placeholder = `Amount (max ${maxEx})`;
 }
     // Market & Investments
-const { data: market } = await sb.from('market').select('*').order('slot_id');
+let market = getCache('market');
+if(!market) { 
+    const { data } = await sb.from('market').select('*').order('slot_id'); 
+    market = data; setCache('market', market); 
+}
 const { data: assets } = await sb.from('user_assets').select('*').eq('user_id', USER_ID).eq('sold', false);
 const ownedSlots = assets?.map(a => a.slot_id) || [];
 
@@ -1914,7 +2206,7 @@ if (market) {
         const owned = ownedSlots.includes(item.slot_id);
         const mediaContent = item.image_url 
             ? `<div class="market-image-container">
-                   <img src="${item.image_url}" class="market-image" alt="${escapeHTML(item.asset_name)}">
+                   <img loading="lazy" src="${item.image_url}" class="market-image" alt="${escapeHTML(item.asset_name)}">
                    ${owned ? '<div class="market-owned-badge">✅ Owned</div>' : ''}
                </div>`
             : `<div class="market-image-container">
@@ -2006,7 +2298,11 @@ if (txs) {
     // Profile Info
     document.getElementById('profileInfo').innerHTML = `<div class="profile-item">👤 ${escapeHTML(currentUser.username) || 'User'}</div><div>🆔 ${USER_ID.slice(0,8)}...</div><div>📅 Joined: ${escapeHTML(currentUser.joined_date) || 'N/A'}</div><div>💰 Deposited: ${(currentUser.total_deposited||0).toLocaleString()} ETB</div><div>📤 Withdrawn: ${(currentUser.total_withdrawn||0).toLocaleString()} ETB</div><div>👥 Referrals: ${currentUser.active_referrals||0}</div><div>🎮 Games: ${currentUser.win_chance_plays||0}</div>`;
     // Airtime cards – sort available first, then sold out, then by position
-const { data: cards } = await sb.from('global_cards').select('*').order('position');
+let cards = getCache('cards');
+if(!cards) { 
+    const { data } = await sb.from('global_cards').select('*').order('position'); 
+    cards = data; setCache('cards', cards); 
+}
 if (cards) {
     const sortedCards = [...cards].sort((a, b) => {
         const aAvailable = (a.hidden_numbers?.length > 0) ? 0 : 1;
@@ -2086,7 +2382,7 @@ async function clearSelectedHistory() {
         showToast('Error deleting: ' + error.message, 'error');
     } else {
         showToast(`${idsToDelete.length} transaction(s) deleted`, 'success');
-        await loadAllData();
+        await updateRecentTransactions();
     }
 }
 
@@ -2193,7 +2489,6 @@ async function deleteSelectedLeaderboardUsers() {
         leaderboardPage = 1;
         await loadLeaderboard();
         if (typeof refreshAdminStats === 'function') refreshAdminStats();
-        if (typeof loadAllData === 'function') loadAllData();
     }
 }
 
@@ -2227,7 +2522,10 @@ async function buyCoins() {
         playSound('coin');
         closeModal('buyCoinsModal');
         document.getElementById('buyCoinsAmount').value = '';
-        await loadAllData();
+        
+        // Only update balances (1 call instead of 25)
+        await updateUserBalances();
+        
     } catch (err) {
         showToast(err.message, 'error');
     } finally {
@@ -2277,7 +2575,11 @@ async function exchangeCoins() {
         playSound('coin');
         closeModal('exchangeModal');
         document.getElementById('exchangeAmount').value = '';
-        await loadAllData();
+        
+        // Only update balances and exchange info (2 calls instead of 25)
+        await updateUserBalances();
+        await updateExchangeInfo();
+        
     } catch (err) {
         showToast(err.message || 'Exchange failed', 'error');
     } finally {
@@ -2364,7 +2666,7 @@ async function submitWithdraw() {
         document.getElementById('withdrawAmount').value = '';
         document.getElementById('withdrawAccountHolder').value = '';
         document.getElementById('withdrawBankAccount').value = '';
-        await loadAllData();
+        await updateUserBalances();
     } catch (err) {
         showToast(err.message, 'error');
     } finally {
@@ -2374,7 +2676,6 @@ async function submitWithdraw() {
 async function buyAsset(slotId) {
     if (isProcessing.buyAsset) return;
     
-    // Check if session is still valid BEFORE buying
     const { data: { session }, error: sessionError } = await sb.auth.getSession();
     if (sessionError || !session) {
         showToast('Your session has expired. Please log in again.', 'error');
@@ -2388,7 +2689,11 @@ async function buyAsset(slotId) {
         if (error) throw error;
         showToast('Invested!', 'success');
         playSound('coin');
-        await loadAllData();
+        
+        // Only update balances and investments (2 calls instead of 25)
+        await updateUserBalances();
+        await updateInvestments();
+        
     } catch (err) {
         if (err.message.includes('not authenticated') || err.message.includes('JWT')) {
             showToast('Session expired. Please refresh the page.', 'error');
@@ -2405,7 +2710,6 @@ async function sellAsset(assetId, buttonElement = null) {
         console.log("Sell already in progress, ignoring double click");
         return;
     }
-    // If button element is provided, disable it and show processing text
     const originalText = buttonElement ? buttonElement.innerText : '';
     if (buttonElement) {
         buttonElement.disabled = true;
@@ -2417,7 +2721,12 @@ async function sellAsset(assetId, buttonElement = null) {
         if (error) throw error;
         showToast('Sold!', 'success');
         playSound('coin');
-        await loadAllData();
+        
+        // Only update balances, investments, and sold assets (3 calls instead of 25)
+        await updateUserBalances();
+        await updateInvestments();
+        await updateSoldAssets();
+        
     } catch (err) {
         showToast(err.message, 'error');
     } finally {
@@ -2444,22 +2753,32 @@ async function playGame(pos) {
     try {
         const { data: win, error } = await sb.rpc('play_game_secure');
         if (error) throw error;
+        
         const resultDiv = document.getElementById('gameResult');
         resultDiv.className = `game-result ${win > 0 ? 'win' : 'lose'}`;
         resultDiv.innerHTML = win > 0 ? `🎉 You won ${win} coins! 🎉` : `💨 Better luck next time!`;
-        if (win > 0) { playSound('win'); confetti(); } else playSound('lose');
+        
+        if (win > 0) { 
+            playSound('win'); 
+            confetti(); 
+        } else { 
+            playSound('lose'); 
+        }
         showToast(win > 0 ? `Won ${win} coins!` : 'No win', win > 0 ? 'success' : 'error');
         
+        // Update balances only (1 call instead of 25)
+        await updateUserBalances();
+        
+        // Update Quad-Lock if games played might have reached 10
+        if (currentUser && (currentUser.win_chance_plays + (win > 0 ? 1 : 1)) >= 10) {
+            await updateQuadLock();
+        }
+        
         const cells = document.querySelectorAll('.game-card');
-        // Prize pool for visual effect
         const prizePool = [100, 75, 75, 50, 50, 50, 25, 25, 25, 25, 10, 10, 10, 10, 10, 0];
-        // Create an array for the 16 card values: the clicked card gets the actual win, others get random values from prizePool
         let displayValues = new Array(16);
-        // Set the clicked card to the actual win amount
         displayValues[pos] = win;
-        // Fill the rest with random values from prizePool (excluding win if needed, but not required)
         let otherIndices = [...Array(16).keys()].filter(i => i !== pos);
-        // Shuffle the prizePool for randomness
         let shuffledPool = [...prizePool];
         for (let i = shuffledPool.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -2469,17 +2788,14 @@ async function playGame(pos) {
             displayValues[otherIndices[i]] = shuffledPool[i % shuffledPool.length];
         }
         
-        // Reveal all cards
         cells.forEach((cell, idx) => {
             cell.classList.add('revealed');
             cell.setAttribute('data-prize', displayValues[idx]);
             cell.innerHTML = displayValues[idx];
         });
         
-        // Reset the game grid after a short delay (800ms for faster restart)
         setTimeout(() => { createGameGrid(); isProcessing.game = false; }, 1500);
-        // Refresh data in the background (balances, etc.) – does NOT block the reset
-        await loadAllData();
+        
     } catch (err) {
         showToast(err.message || 'Game failed', 'error');
         gameActive = true;
@@ -2531,7 +2847,11 @@ async function buyLotteryTicket(poolId, number, round) {
         showToast(`✅ Ticket #${number} purchased!`, 'success');
         playSound('coin');
         document.querySelector('.modal.active')?.remove();
-        await loadAllData();
+        
+        // Only update balances, my tickets, and Quad-Lock (3 calls instead of 25)
+        await updateUserBalances();
+        await updateMyTickets();
+        await updateQuadLock();
     }
 }
 async function startConsultation() {
@@ -2542,7 +2862,10 @@ async function startConsultation() {
         if (error) throw error;
         showToast('Consultation request sent!','success');
         document.getElementById('healthIssue').value = '';
-        await loadAllData();
+        
+        // Only update consultations list (1 call instead of 25)
+        await loadConsultations();
+        
     } catch (err) {
         showToast(err.message, 'error');
     }
@@ -2551,18 +2874,16 @@ async function buyAirtimeCard(cardId, cost) {
     if (isProcessing.buyAirtime) return;
     isProcessing.buyAirtime = true;
     
-    // Show loading toast immediately
     showToast('Processing purchase...', 'info');
     
     try {
         const { data: revealed, error } = await sb.rpc('buy_airtime_card_secure', { p_card_id: cardId });
         if (error) throw error;
         
-        // Hide loading toast (by showing a success toast)
         showToast(`Airtime purchased!`, 'success');
         playSound('coin');
         
-        // Create modal with revealed number (already fast)
+        // Create modal with revealed number
         const modal = document.createElement('div');
         modal.className = 'modal active';
         modal.innerHTML = `
@@ -2576,7 +2897,6 @@ async function buyAirtimeCard(cardId, cost) {
         `;
         document.body.appendChild(modal);
         
-        // Auto-close after 20 seconds
         let seconds = 20;
         const timerSpan = modal.querySelector('#countdownTimer');
         const interval = setInterval(() => {
@@ -2586,7 +2906,9 @@ async function buyAirtimeCard(cardId, cost) {
         }, 1000);
         modal.querySelector('.close').onclick = () => { clearInterval(interval); modal.remove(); };
         
-        await loadAllData();
+        // Only update user balances (1 call instead of 25)
+        await updateUserBalances();
+        
     } catch (err) {
         showToast(err.message, 'error');
     }
@@ -2599,8 +2921,16 @@ async function loadAdminPanel() {
     const { data: deposits } = await sb.from('pending_deposits').select('*').eq('status','pending');
     const { data: withdrawals } = await sb.from('pending_withdrawals').select('*').eq('status','pending');
     const { data: cons } = await sb.from('health_consultations').select('*').eq('status','pending');
-    const { data: market } = await sb.from('market').select('*').order('slot_id');
-    const { data: cards } = await sb.from('global_cards').select('*').order('position');
+    let market = getCache('market');
+if(!market) { 
+    const { data } = await sb.from('market').select('*').order('slot_id'); 
+    market = data; setCache('market', market); 
+}
+    let cards = getCache('cards');
+if(!cards) { 
+    const { data } = await sb.from('global_cards').select('*').order('position'); 
+    cards = data; setCache('cards', cards); 
+}
     adminDiv.innerHTML = `
         <div class="card"><h3>💰 Pending Deposits</h3>${renderPendingList(deposits,'deposit')}</div>
         <div class="card"><h3>📤 Pending Withdrawals</h3>${renderPendingList(withdrawals,'withdraw')}</div>
@@ -2691,7 +3021,7 @@ ${m.image_url ? `<button class="btn-sm btn-danger" onclick="deleteMarketImage(${
         <div class="current-profile-pic">
             <p>Current App Logo</p>
             <div style="position: relative; display: inline-block;">
-                <img id="adminProfilePreview" class="preview-image" style="display: none;" alt="Profile Preview">
+                <img loading="lazy" id="adminProfilePreview" class="preview-image" style="display: none;" alt="Profile Preview">
                 <div id="profilePlaceholder" class="preview-image placeholder" style="display: flex; align-items: center; justify-content: center; font-size: 80px;">🏦</div>
             </div>
         </div>
@@ -2781,7 +3111,7 @@ async function handleAdminAction(type, action, id, amount, userId) {
         }
         showToast(`${action}d ${type} request`, 'success');
         await loadAdminPanel();
-        await loadAllData();
+        await updateUserBalances();
     } catch (err) {
         showToast(err.message, 'error');
     } finally {
@@ -2811,7 +3141,7 @@ async function respondConsultation(id) {
             loadAdminPanel();
             // If user is viewing clinic, refresh their view too
             if (document.getElementById('clinic').classList.contains('active')) {
-                loadAllData();
+                await loadConsultations();
             }
         }
     } catch (err) {
@@ -2835,7 +3165,7 @@ async function drawLottery(poolId) {
     if (error) return showToast(error.message, 'error');
     showToast(`Pool ${poolId} winner: ${winner.username} won ${prize} coins!`,'success');
     loadAdminPanel();
-    loadAllData();
+    await updateUserBalances();
 }
 
 async function updateMarketItemFull(slotId) {
@@ -3066,7 +3396,7 @@ async function adjustUser(userId) {
     await sb.from('users').update({ [type]: newVal }).eq('user_id',userId);
     showToast(`Updated ${type} by ${amt}`,'success');
     loadAdminPanel();
-    loadAllData();
+    await updateUserBalances();
 }
 async function startNewLotteryRound(poolId) {
     if (!confirm(`Start a new round for Pool ${poolId}? This will reset the pool and allow new ticket purchases.`)) return;
@@ -3189,12 +3519,14 @@ async function uploadProfilePicture(file) {
     }
     
     try {
+        // Get current image URL
         const { data: currentData } = await sb
             .from('app_settings')
             .select('value')
             .eq('key', 'profile_pic_url')
-            .single();
+            .maybeSingle();
         
+        // Delete old file if exists
         if (currentData && currentData.value) {
             const oldFileName = currentData.value.split('/').pop();
             if (oldFileName) {
@@ -3215,12 +3547,14 @@ async function uploadProfilePicture(file) {
         const { data: urlData } = sb.storage.from(PROFILE_PIC_BUCKET).getPublicUrl(fileName);
         const imageUrl = urlData.publicUrl;
         
+        // UPSERT instead of INSERT - creates row if doesn't exist
         const { error: dbError } = await sb
             .from('app_settings')
             .upsert({ key: 'profile_pic_url', value: imageUrl }, { onConflict: 'key' });
         
         if (dbError) throw dbError;
         
+        // Update all UI elements
         const profileImg = document.getElementById('profileImage');
         if (profileImg) profileImg.src = imageUrl;
         
@@ -3688,21 +4022,22 @@ function toggleSelectAll() {
 function setupNewTabs() {
     // Handle all main tabs
     document.querySelectorAll('.tabs-grid .tab').forEach(tab => {
-        tab.addEventListener('click', () => {
-            const id = tab.getAttribute('data-tab');
-            if (!id) return;
-            const target = document.getElementById(id);
-            if (!target) return;
-            
-            document.querySelectorAll('.tabs-grid .tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            tab.classList.add('active');
-            target.classList.add('active');
-            
-            if(id === 'games') createGameGrid();
-            else if(id !== 'admin') loadAllData();
-        });
-    });
+        let debounceTimer;
+tab.addEventListener('click', () => {
+    const id = tab.getAttribute('data-tab');
+    if (!id) return;
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+        const target = document.getElementById(id);
+        if (!target) return;
+        document.querySelectorAll('.tabs-grid .tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        tab.classList.add('active');
+        target.classList.add('active');
+        if(id === 'games') createGameGrid();
+        else if(id === 'profile') updateProfileInfo();
+    }, 300);
+});
     
     // Handle Refresh button (bottom left)
     const refreshBtn = document.getElementById('refreshTabBtn');
