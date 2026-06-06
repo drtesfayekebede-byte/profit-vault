@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="preconnect" href="https://ogtlaffkybpesaxastvx.supabase.co">
+    <link rel="dns-prefetch" href="https://ogtlaffkybpesaxastvx.supabase.co">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Profit Vault - Complete Investment Platform | Premium</title>
@@ -212,34 +214,84 @@
     }
     .balance-label { font-size: 10px; font-weight: 800; margin-top: 5px; text-transform: uppercase; letter-spacing: 1px; }
 
-    /* TABS */
-    .tabs {
-        display: flex;
-        gap: 8px;
-        margin-bottom: 20px;
-        overflow-x: auto;
-        flex-wrap: wrap;
-        justify-content: center;
-        scrollbar-width: thin;
-    }
-    .tab {
-    background: #0a0a0f;
-    border: 1px solid rgba(56, 189, 248, 0.3);
-    padding: 10px 18px;
-    border-radius: 40px;
+    /* ===== NEW LAYOUT STYLES ===== */
+.balance-wrapper {
+    background: rgba(10, 10, 15, 0.6);
+    border-radius: 32px;
+    padding: 20px 16px;
+    margin-bottom: 24px;
+    border: 1px solid rgba(251, 191, 36, 0.5);
+    box-shadow: 0 0 20px rgba(251, 191, 36, 0.2);
+    backdrop-filter: blur(4px);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.tabs-container {
+    margin-bottom: 20px;
+}
+
+.tabs-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.tab {
+    background: rgba(10, 10, 15, 0.8);
+    border: none;
+    padding: 12px 8px;
+    border-radius: 12px;
     color: white;
     font-size: 13px;
     font-weight: bold;
     cursor: pointer;
-    white-space: nowrap;
+    text-align: center;
     transition: all 0.3s;
 }
-    .tab.active {
-        background: linear-gradient(135deg, #fbbf24, #d97706);
-        color: #1a1a2e;
-        box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4);
-        border-color: transparent;
-    }
+
+.tab.active {
+    background: linear-gradient(135deg, #fbbf24, #d97706);
+    color: #1a1a2e;
+    box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4);
+}
+
+.tab[data-tab="dashboard"] { background: linear-gradient(135deg, #ffd700, #ff8c00); }
+.tab[data-tab="market"] { background: linear-gradient(135deg, #059669, #10b981); }
+.tab[data-tab="games"] { background: linear-gradient(135deg, #7c3aed, #8b5cf6); }
+.tab[data-tab="cards"] { background: linear-gradient(135deg, #0891b2, #06b6d4); }
+.tab[data-tab="lottery"] { background: linear-gradient(135deg, #db2777, #ec4899); }
+.tab[data-tab="clinic"] { background: linear-gradient(135deg, #0d9488, #14b8a6); }
+.tab[data-tab="profile"] { background: linear-gradient(135deg, #4338ca, #4f46e5); }
+.tab[data-tab="contact"] { background: linear-gradient(135deg, #ea580c, #f97316); }
+.tab[data-tab="guide"] { background: linear-gradient(135deg, #475569, #64748b); }
+.tab.refresh-tab { background: linear-gradient(135deg, #2563eb, #3b82f6); }
+.tab.admin-tab { background: linear-gradient(135deg, #8b0000, #dc143c); }
+
+.tab:hover { filter: brightness(1.1); transform: translateY(-2px); }
+
+.bottom-row {
+    margin-top: 10px;
+}
+
+.tab-content {
+    background: rgba(10, 10, 15, 0.7);
+    backdrop-filter: blur(2px);
+    border: 2px solid rgba(251, 191, 36, 0.4);
+    border-radius: 28px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.tab-content .card {
+    background: transparent !important;
+    backdrop-filter: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 12px 0 !important;
+}
 
     /* CARDS */
    .card {
@@ -911,7 +963,7 @@
             <div class="profile-avatar" id="profileAvatar" role="button" tabindex="0" 
      onclick="toggleUserMenu()" 
      onkeydown="if(event.key==='Enter'||event.key===' ') toggleUserMenu()">
-    <img id="profileImage" src="https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app-assets/1780156694418.png" alt="Profit Vault" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+    <img loading="lazy" id="profileImage" src="https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app-assets/1780156694418.png" alt="Profit Vault" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
 </div>
             <div class="dropdown-menu" id="dropdownMenu">
                 <div id="dropdownItems"></div>
@@ -920,31 +972,27 @@
     </div>
 </div>
 <div id="appContent" style="display: none;">
-<div class="balance-container">
-    <div class="balance-card primary" role="button" tabindex="0" 
-     onclick="showModal('depositModal')" 
-     onkeydown="if(event.key==='Enter'||event.key===' ') showModal('depositModal')">
-        <div class="balance-emoji">💰</div>
-        <div class="balance-value" id="balance">0</div>
-        <div class="balance-label">Balance (ETB)</div>
-    </div>
-    <div class="balance-card bonus" role="button" tabindex="0" 
-     onclick="showModal('exchangeModal')" 
-     onkeydown="if(event.key==='Enter'||event.key===' ') showModal('exchangeModal')">
-        <div class="balance-emoji">🎁</div>
-        <div class="balance-value" id="bonus">0</div>
-        <div class="balance-label">Bonus (ETB)</div>
-    </div>
-    <div class="balance-card coins" role="button" tabindex="0" 
-     onclick="showModal('buyCoinsModal')" 
-     onkeydown="if(event.key==='Enter'||event.key===' ') showModal('buyCoinsModal')">
-        <div class="balance-emoji">🪙</div>
-        <div class="balance-value" id="coins">0</div>
-        <div class="balance-label">Coins</div>
+<div class="balance-wrapper">
+    <div class="balance-container">
+        <div class="balance-card primary" onclick="showModal('depositModal')">
+            <div class="balance-emoji">💰</div>
+            <div class="balance-value" id="balance">0</div>
+            <div class="balance-label">Balance (ETB)</div>
+        </div>
+        <div class="balance-card bonus" onclick="showModal('exchangeModal')">
+            <div class="balance-emoji">🎁</div>
+            <div class="balance-value" id="bonus">0</div>
+            <div class="balance-label">Bonus (ETB)</div>
+        </div>
+        <div class="balance-card coins" onclick="showModal('buyCoinsModal')">
+            <div class="balance-emoji">🪙</div>
+            <div class="balance-value" id="coins">0</div>
+            <div class="balance-label">Coins</div>
+        </div>
     </div>
 </div>
+
 <div class="tabs-container">
-    <!-- 3x3 Grid of Tabs -->
     <div class="tabs-grid">
         <button class="tab active" data-tab="dashboard">📊 Dashboard</button>
         <button class="tab" data-tab="market">🛒 Market</button>
@@ -955,12 +1003,10 @@
         <button class="tab" data-tab="profile">👤 Profile</button>
         <button class="tab" data-tab="contact">📞 Contact</button>
         <button class="tab" data-tab="guide">📖 Guide</button>
-    </div>
-    
-    <!-- Bottom Row -->
-    <div class="bottom-row" id="bottomRow">
         <button class="tab refresh-tab" id="refreshBtn">🔄 Refresh</button>
     </div>
+    <div class="bottom-row" id="bottomRow"></div>
+</div>
 </div>
 
 <!-- DASHBOARD -->
@@ -1221,6 +1267,17 @@ async function saveDepositSettings() {
 const SUPABASE_URL = 'https://ogtlaffkybpesaxastvx.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ndGxhZmZreWJwZXNheGFzdHZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTA4NTQsImV4cCI6MjA5NTM4Njg1NH0.toDw1_DsAjHjUuCg0hvRdEGyjA7mW2DJNlSWoVBT1qY';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+let realtimeChannel = null;
+function startRealtime(){
+    if(realtimeChannel) return;
+    realtimeChannel = sb.channel(`user-${USER_ID}`).on('postgres_changes',{event:'UPDATE',schema:'public',table:'users',filter:`user_id=eq.${USER_ID}`},(payload)=>{
+        document.getElementById('balance').innerText = (payload.new.balance||0).toLocaleString();
+        document.getElementById('bonus').innerText = (payload.new.bonus_balance||0).toLocaleString();
+        document.getElementById('coins').innerText = (payload.new.coin_balance||0).toLocaleString();
+        if(currentUser) Object.assign(currentUser, payload.new);
+    }).subscribe();
+}
+function stopRealtime(){ if(realtimeChannel){ sb.removeChannel(realtimeChannel); realtimeChannel = null; } }
 let USER_ID = null, IS_ADMIN = false, selectedPaymentMethod = "telebirr", soundEnabled = localStorage.getItem('soundEnabled') !== 'false';
 let isLoggingOut = false;
 let isProcessing = {
@@ -1250,6 +1307,40 @@ let totalLeaderboardPages = 1;
 const LEADERBOARD_PER_PAGE = 5;
 
 // ==================== UTILITIES ====================
+// ===== CACHE SYSTEM =====
+const cache = { market: null, cards: null, marketTime: 0, cardsTime: 0 };
+function getCache(key, ttl=60000) { const item = cache[key+'Time']; return (cache[key] && Date.now()-item < ttl) ? cache[key] : null; }
+function setCache(key, data) { cache[key] = data; cache[key+'Time'] = Date.now(); }
+function clearCache(key) { if(key){ cache[key]=null; cache[key+'Time']=0; } else { Object.keys(cache).forEach(k=>cache[k]=null); } }
+
+// ===== TARGETED UPDATE FUNCTIONS =====
+async function updateUserBalances() {
+    const { data } = await sb.from('users').select('balance, bonus_balance, coin_balance').eq('user_id', USER_ID).single();
+    if (data) {
+        document.getElementById('balance').innerText = (data.balance || 0).toLocaleString();
+        document.getElementById('bonus').innerText = (data.bonus_balance || 0).toLocaleString();
+        document.getElementById('coins').innerText = (data.coin_balance || 0).toLocaleString();
+        if (currentUser) Object.assign(currentUser, data);
+    }
+}
+async function updateQuadLock() {
+    const { count: lotteryCount } = await sb.from('lottery_tickets').select('*', { count: 'exact', head: true }).eq('user_id', USER_ID).eq('status', 'active');
+    const depositDone = (currentUser.total_deposited || 0) >= 1500;
+    const gameDone = (currentUser.win_chance_plays || 0) >= 10;
+    const lotteryDone = (lotteryCount || 0) >= 1;
+    const referralDone = (currentUser.active_referrals || 0) >= 3;
+    const completed = [depositDone, gameDone, lotteryDone, referralDone].filter(Boolean).length;
+    const percent = (completed/4)*100;
+    document.getElementById('quadlock').innerHTML = `<div class="quad-item ${depositDone?'unlocked':'locked'}"><div>💰 Deposit 1500 ETB</div><div>${(currentUser.total_deposited||0)}/1500</div></div><div class="quad-item ${gameDone?'unlocked':'locked'}"><div>🎮 Play 10 Games</div><div>${currentUser.win_chance_plays||0}/10</div></div><div class="quad-item ${lotteryDone?'unlocked':'locked'}"><div>🎟️ Buy 1 Ticket</div><div>${lotteryCount||0}/1</div></div><div class="quad-item ${referralDone?'unlocked':'locked'}"><div>👥 3 Referrals</div><div>${currentUser.active_referrals||0}/3</div></div><div class="progress-bar"><div class="progress-fill" style="width:${percent}%"></div></div><div class="progress-text">${completed}/4 Complete (${Math.round(percent)}%)</div>`;
+}
+async function updateMyTickets() {
+    const { data } = await sb.from('lottery_tickets').select('*').eq('user_id', USER_ID).eq('status', 'active');
+    document.getElementById('myTickets').innerHTML = data?.length ? data.map(t => `<div class="ticket-item"><div>🎫 ${escapeHTML(t.serial_number)}</div><div><span class="badge">Active</span></div></div>`).join('') : '<div class="loading">No tickets</div>';
+}
+async function updateRecentTransactions() {
+    const { data } = await sb.from('transactions').select('*').eq('user_id', USER_ID).order('timestamp', { ascending: false }).limit(10);
+    if (data) { allTransactions = data; applyTransactionFilter(); }
+}
 function updateUserMenu() {
     const items = document.getElementById('dropdownItems');
     if (USER_ID) {
@@ -1262,46 +1353,30 @@ function updateUserMenu() {
 
 function setupAdminBottomRow() {
     const bottomRow = document.getElementById('bottomRow');
-    const refreshBtn = document.getElementById('refreshBtn');
-    
     if (!bottomRow) return;
-    
     if (IS_ADMIN) {
-        // Change to 2 columns
-        bottomRow.classList.add('two-columns');
-        
-        // Check if admin tab already exists
-        if (!document.querySelector('.admin-tab')) {
-            // Create admin tab button
-            const adminBtn = document.createElement('button');
-            adminBtn.className = 'tab admin-tab';
-            adminBtn.setAttribute('data-tab', 'admin');
-            adminBtn.innerHTML = '👑 Admin';
-            bottomRow.appendChild(adminBtn);
-            
-            // Create admin content div if not exists
-            if (!document.getElementById('admin')) {
-                const adminDiv = document.createElement('div');
-                adminDiv.id = 'admin';
-                adminDiv.className = 'tab-content';
-                const tabsContainer = document.querySelector('.tabs-container');
-                tabsContainer.insertAdjacentElement('afterend', adminDiv);
-            }
-            
-            // Add click event to admin tab
-            adminBtn.addEventListener('click', () => {
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                adminBtn.classList.add('active');
-                document.getElementById('admin').classList.add('active');
-                loadAdminPanel();
-            });
+        bottomRow.innerHTML = '';
+        const adminBtn = document.createElement('button');
+        adminBtn.className = 'tab admin-tab';
+        adminBtn.setAttribute('data-tab', 'admin');
+        adminBtn.innerHTML = '👑 Admin';
+        bottomRow.appendChild(adminBtn);
+        if (!document.getElementById('admin')) {
+            const adminDiv = document.createElement('div');
+            adminDiv.id = 'admin';
+            adminDiv.className = 'tab-content';
+            const tabsContainer = document.querySelector('.tabs-container');
+            if (tabsContainer) tabsContainer.insertAdjacentElement('afterend', adminDiv);
         }
+        adminBtn.onclick = () => {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            adminBtn.classList.add('active');
+            document.getElementById('admin').classList.add('active');
+            loadAdminPanel();
+        };
     } else {
-        // Regular user - single column, no admin tab
-        bottomRow.classList.remove('two-columns');
-        const adminTab = document.querySelector('.admin-tab');
-        if (adminTab) adminTab.remove();
+        bottomRow.innerHTML = '';
     }
 }
 function toggleUserMenu() {
@@ -1502,6 +1577,7 @@ async function checkSession() {
             }
             
             USER_ID = session.user.id;
+            startRealtime();
             startSessionHeartbeat();
             localStorage.setItem('profitvault_user_id', USER_ID);
             document.getElementById('loadingOverlay').style.display = 'flex';
@@ -1868,6 +1944,8 @@ async function logout() {
     IS_ADMIN = false;
     currentUser = null;
 showLogoutSpinner();
+    stopRealtime();
+    clearCache();
 isLoggingOut = true;
     // Show feedback
     showToast('Logging out...', 'info');
@@ -2029,7 +2107,7 @@ async function loadMarketAndInvestments() {
         document.getElementById('marketGrid').innerHTML = market.map(item => {
             const owned = ownedSlots.includes(item.slot_id);
             const mediaContent = item.image_url 
-                ? `<div class="market-image-container"><img src="${item.image_url}" class="market-image" alt="${escapeHTML(item.asset_name)}">${owned ? '<div class="market-owned-badge">✅ Owned</div>' : ''}</div>`
+                ? `<div class="market-image-container"><img loading="lazy" src="${item.image_url}" class="market-image" alt="${escapeHTML(item.asset_name)}">${owned ? '<div class="market-owned-badge">✅ Owned</div>' : ''}</div>`
                 : `<div class="market-image-container"><div class="market-emoji">${item.emoji}</div>${owned ? '<div class="market-owned-badge">✅ Owned</div>' : ''}</div>`;
             return `
                 <div class="market-item ${owned ? 'owned' : ''}" onclick="${!owned ? `buyAsset(${item.slot_id})` : ''}">
@@ -2195,7 +2273,7 @@ async function clearSelectedHistory() {
         showToast('Error deleting: ' + error.message, 'error');
     } else {
         showToast(`${idsToDelete.length} transaction(s) deleted`, 'success');
-        await loadAllData();
+        await updateRecentTransactions();
     }
 }
 
@@ -2509,7 +2587,7 @@ async function submitWithdraw() {
         document.getElementById('withdrawAmount').value = '';
         document.getElementById('withdrawAccountHolder').value = '';
         document.getElementById('withdrawBankAccount').value = '';
-        await loadAllData();
+        await updateUserBalances();
     } catch (err) {
         showToast(err.message, 'error');
     } finally {
@@ -2684,7 +2762,8 @@ async function playGame(pos) {
         });
         
         setTimeout(() => { createGameGrid(); isProcessing.game = false; }, 1500);
-        await loadAllData();
+        await updateUserBalances();
+if(currentUser && (currentUser.win_chance_plays + 1) >= 10) await updateQuadLock();
         
     } catch (err) {
         // ROLLBACK on error
@@ -2752,7 +2831,9 @@ async function buyLotteryTicket(poolId, number, round) {
         showToast(`✅ Ticket #${number} purchased!`, 'success');
         playSound('coin');
         document.querySelector('.modal.active')?.remove();
-        await loadAllData();
+        await updateUserBalances();
+        await updateMyTickets();
+        await updateQuadLock();
     }
 }
 // New function with disable protection to prevent double clicks
@@ -3065,8 +3146,16 @@ async function loadAdminPanel() {
     const { data: deposits } = await sb.from('pending_deposits').select('*').eq('status','pending');
     const { data: withdrawals } = await sb.from('pending_withdrawals').select('*').eq('status','pending');
     const { data: cons } = await sb.from('health_consultations').select('*').eq('status','pending');
-    const { data: market } = await sb.from('market').select('*').order('slot_id');
-    const { data: cards } = await sb.from('global_cards').select('*').order('position');
+    let market = getCache('market');
+if(!market) { 
+    const { data } = await sb.from('market').select('*').order('slot_id'); 
+    market = data; setCache('market', market); 
+}
+    let cards = getCache('cards');
+if(!cards) { 
+    const { data } = await sb.from('global_cards').select('*').order('position'); 
+    cards = data; setCache('cards', cards); 
+}
     adminDiv.innerHTML = `
         <div class="card"><h3>💰 Pending Deposits</h3>${renderPendingList(deposits,'deposit')}</div>
         <div class="card"><h3>📤 Pending Withdrawals</h3>${renderPendingList(withdrawals,'withdraw')}</div>
