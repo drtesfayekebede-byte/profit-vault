@@ -1421,7 +1421,19 @@ function getCache(key, ttl=60000) {
 function setCache(key, data) { cache[key] = data; cache[key+'Time'] = Date.now(); }
 function clearCache(key) { if(key){ cache[key]=null; cache[key+'Time']=0; } else { Object.keys(cache).forEach(k=>cache[k]=null); } }
 // ===== TARGETED UPDATE FUNCTIONS (FAST & EFFICIENT) =====
-
+async function updateRecentTransactions() {
+    const { data } = await sb
+        .from('transactions')
+        .select('*')
+        .eq('user_id', USER_ID)
+        .order('timestamp', { ascending: false })
+        .limit(10);
+    
+    if (data) {
+        allTransactions = data;
+        applyTransactionFilter();
+    }
+}
 // Update ONLY user balances (coins, bonus, real balance)
 async function updateUserBalances() {
     try {
