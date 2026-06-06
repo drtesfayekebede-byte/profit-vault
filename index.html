@@ -4347,7 +4347,7 @@ document.addEventListener('keydown', function(e) {
             showToast("Password must be at least 6 characters", 'error');
         }
     }
-        initHistoryTabs();
+    initHistoryTabs();
     initGuideTab();
     window.addEventListener('online', () => { document.getElementById('networkStatus').classList.remove('offline'); showToast('Back online','success'); loadAllData(); });
     window.addEventListener('offline', () => { document.getElementById('networkStatus').classList.add('offline'); showToast('No internet','error'); });
