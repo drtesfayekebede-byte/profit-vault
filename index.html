@@ -925,6 +925,34 @@
 .game-grid .game-card {
     /* Keep existing styles */
 }
+.toggle-switch {
+        position: relative;
+        display: inline-block;
+        cursor: pointer;
+    }
+
+    .toggle-switch .toggle-knob {
+        position: absolute;
+        transition: left 0.2s ease;
+    }
+
+    /* Sound toggle specific */
+    .sound-toggle {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 15px;
+    }
+
+    #toggleKnob {
+        width: 20px;
+        height: 20px;
+        background: white;
+        border-radius: 50%;
+        position: absolute;
+        top: 2px;
+        transition: left 0.2s ease;
+    }
 </style>
 </head>
 <body>
@@ -1308,11 +1336,21 @@ const LEADERBOARD_PER_PAGE = 5;
 
 // ==================== UTILITIES ====================
 // ===== CACHE SYSTEM =====
-const cache = { market: null, cards: null, marketTime: 0, cardsTime: 0 };
-function getCache(key, ttl=60000) { const item = cache[key+'Time']; return (cache[key] && Date.now()-item < ttl) ? cache[key] : null; }
-function setCache(key, data) { cache[key] = data; cache[key+'Time'] = Date.now(); }
-function clearCache(key) { if(key){ cache[key]=null; cache[key+'Time']=0; } else { Object.keys(cache).forEach(k=>cache[k]=null); } }
+function getCache(key, ttl=60000) { 
+    const item = cache.data[key]; 
+    if (item && Date.now() < item.expiry) {
+        return item.value;
+    }
+    return null;
+}
 
+function setCache(key, data, ttl=60000) { 
+    cache.set(key, data, ttl);
+}
+
+function clearCache(key) { 
+    cache.clear(key);
+}
 // ===== TARGETED UPDATE FUNCTIONS =====
 async function updateUserBalances() {
     const { data } = await sb.from('users').select('balance, bonus_balance, coin_balance').eq('user_id', USER_ID).single();
@@ -1407,14 +1445,31 @@ function showToast(msg, type='success') {
     else if(type==='error') playSound('error');
 }
 function showModal(id) {
-    document.getElementById(id).classList.add('active');
-    if (id === 'depositModal') refreshDepositModalInfo();
-    if (id === 'withdrawModal') updateWithdrawHint();   // <-- added line
-    playSound('click');
+    // Prevent multiple modals
+    const existingModals = document.querySelectorAll('.modal.active');
+    if (existingModals.length > 0) {
+        // Close existing modals first
+        existingModals.forEach(modal => {
+            modal.classList.remove('active');
+        });
+    }
+    
+    const modal = document.getElementById(id);
+    if (modal) {
+        modal.classList.add('active');
+        if (id === 'depositModal') refreshDepositModalInfo();
+        if (id === 'withdrawModal') updateWithdrawHint();
+        playSound('click');
+    }
 }
 function closeModal(id) {
     const modal = document.getElementById(id);
-    if (modal) modal.classList.remove('active');
+    if (modal) {
+        modal.classList.remove('active');
+        // Remove any backdrop overlays if they exist
+        const backdrops = document.querySelectorAll('.modal-backdrop');
+        backdrops.forEach(backdrop => backdrop.remove());
+    }
 }
 let audioContext = null;
 
@@ -1452,18 +1507,23 @@ async function playSound(name) {
     } catch(e) {}
 }
 
-// Add this to resume audio on first user click
+// FIXED Audio initialization
 function initAudio() {
-    document.body.addEventListener('click', async () => {
+    // Create audio context if it doesn't exist
+    if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    
+    // Resume on any user interaction
+    const resumeAudio = async () => {
         if (audioContext && audioContext.state === 'suspended') {
             await audioContext.resume();
         }
-    }, { once: true });
+    };
+    
+    document.body.addEventListener('click', resumeAudio, { once: true });
+    document.body.addEventListener('touchstart', resumeAudio, { once: true });
 }
-
-// Call this in window.addEventListener('load', ...)
-initAudio();
-
 function selectPaymentMethod(method) {
     selectedPaymentMethod = method;
     document.getElementById('telebirrInfo').style.display = method==='telebirr' ? 'block' : 'none';
@@ -2200,9 +2260,15 @@ async function loadTransactions() {
         document.getElementById('transactionList').innerHTML = '<div class="loading">No transactions</div>';
     }
 }
-async function loadAllData() {
+async function loadAllData(forceRefresh = false) {
     if (!USER_ID) return;
-    await loadUser();
+    
+    // Clear cache if force refresh
+    if (forceRefresh) {
+        clearCache();
+    }
+    
+    await loadUser(forceRefresh);
     await loadReferralEarnings();
     await loadLeaderboard();
     await loadQuadLockAndExchange();
@@ -2213,6 +2279,7 @@ async function loadAllData() {
     await loadTransactions();
     await loadProfileAndCards();
 }
+
 async function loadReferralEarnings() {
     if (!USER_ID) return;
     const { data, error } = await sb
