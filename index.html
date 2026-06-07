@@ -1793,6 +1793,11 @@ async function checkSession() {
             startRealtime();
             startSessionHeartbeat();
             localStorage.setItem('profitvault_user_id', USER_ID);
+            
+            // Clear cache on login to ensure fresh data
+            clearCache();
+            sessionStorage.clear();
+            
             document.getElementById('loadingOverlay').style.display = 'flex';
             const pendingRef = localStorage.getItem('profitvault_referral');
 if (pendingRef) {
@@ -1983,7 +1988,7 @@ async function login() {
     const modal = document.getElementById('authModal');
     if (modal) modal.remove();
     
-    // Show spinner ONCE - it will stay visible until done
+    // Show spinner
     document.getElementById('loadingOverlay').style.display = 'flex';
     showToast('Logging in...', 'info');
     
@@ -1993,6 +1998,11 @@ async function login() {
         showToast('Email and password required', 'error');
         return;
     }
+    
+    // Clear ALL storage before login
+    localStorage.clear();
+    sessionStorage.clear();
+    clearCache();
     
     // Perform login
     const { error } = await sb.auth.signInWithPassword({ 
@@ -2007,18 +2017,12 @@ async function login() {
         return;
     }
     
-    showToast('Login successful!', 'success');
+    showToast('Login successful! Refreshing...', 'success');
     
-    // Load all user data WITHOUT page reload (prevents spinner glitch)
-    await loadUser();
-    await loadAllData();
-    
-    // Hide spinner only once when everything is done
-    document.getElementById('loadingOverlay').style.display = 'none';
-    document.getElementById('appContent').style.display = 'block';
-    updateUserMenu();
-    
-    // IMPORTANT: DO NOT use window.location.reload() here!
+    // Force hard reload after 1 second
+    setTimeout(() => {
+        window.location.href = window.location.pathname;
+    }, 1000);
 }
 async function register() {
     const email = document.getElementById('authEmail').value.trim();
@@ -2074,10 +2078,14 @@ async function register() {
     }
 
     localStorage.removeItem('profitvault_referral');
-    showToast('Registration successful! You are now logged in.', 'success');
+    showToast('Registration successful! Redirecting...', 'success');
     const modal = document.getElementById('authModal');
     if (modal) modal.remove();
-    window.location.reload();
+    
+    // Force hard reload after 1 second
+    setTimeout(() => {
+        window.location.href = window.location.pathname;
+    }, 1000);
 }
 async function signInWithGoogle() {
     try {
@@ -2152,26 +2160,28 @@ function hideLogoutSpinner() {
     }
 }
 async function logout() {
-// Clear local data first
+    // Show spinner
+    showLogoutSpinner();
+    showToast('Logging out...', 'info');
+    
+    // Clear local data
     USER_ID = null;
     IS_ADMIN = false;
     currentUser = null;
-showLogoutSpinner();
+    isLoggingOut = true;
+    
+    // Stop realtime and clear cache
     stopRealtime();
     clearCache();
-isLoggingOut = true;
-    // Show feedback
-    showToast('Logging out...', 'info');
     
-    // 1. Sign out from Supabase (invalidates session on server)
+    // Sign out from Supabase
     await sb.auth.signOut();
     
-    // 2. Wipe all browser storage
+    // Clear all browser storage
     localStorage.clear();
     sessionStorage.clear();
-    updateUserMenu();
     
-    // 3. Delete all IndexedDB databases (including Supabase's)
+    // Delete IndexedDB databases
     if (window.indexedDB && window.indexedDB.databases) {
         try {
             const dbs = await indexedDB.databases();
@@ -2180,42 +2190,12 @@ isLoggingOut = true;
             });
         } catch(e) { console.warn("IndexedDB clear error", e); }
     }
-    // Fallback: delete known Supabase DBs
-    ['supabase', 'supabase-auth', '_supabase', 'supabase-auth-token'].forEach(dbName => {
-        try { indexedDB.deleteDatabase(dbName); } catch(e) {}
-    });
     
-    // 4. Clear all global variables
-    USER_ID = null;
-    IS_ADMIN = false;
-    currentUser = null;
-    allTransactions = [];
+    // Stop session heartbeat
     stopSessionHeartbeat();
     
-    // 5. Reset UI to initial state (clear all dynamic content)
-    document.getElementById('balance').innerText = '0';
-    document.getElementById('bonus').innerText = '0';
-    document.getElementById('coins').innerText = '0';
-    document.getElementById('quadlock').innerHTML = 'Loading...';
-    document.getElementById('marketGrid').innerHTML = 'Loading...';
-    document.getElementById('investments').innerHTML = '';
-    document.getElementById('lotteryPools').innerHTML = 'Loading...';
-    document.getElementById('myTickets').innerHTML = 'Loading...';
-    document.getElementById('recentDraws').innerHTML = 'Loading...';
-    document.getElementById('consultations').innerHTML = 'Loading...';
-    document.getElementById('transactionList').innerHTML = '';
-    document.getElementById('leaderboard').innerHTML = 'Loading...';
-    document.getElementById('profileInfo').innerHTML = '';
-    document.getElementById('cardsGrid').innerHTML = 'Loading...';
-    
-    // 6. Remove admin tab if it exists
-    const adminTab = document.querySelector('.tab[data-tab="admin"]');
-    if (adminTab) adminTab.remove();
-    const adminDiv = document.getElementById('admin');
-    if (adminDiv) adminDiv.remove();
-    
-    // 7. Reload the page to reset everything completely
-    window.location.reload();
+    // Force hard reload to login page
+    window.location.href = window.location.pathname;
 }
 async function hardRefresh() {
     showToast('Refreshing app...', 'info');
@@ -4547,14 +4527,7 @@ sb.auth.onAuthStateChange((event, session) => {
     const refreshBtn = document.getElementById('refreshBtn');
     if (refreshBtn) {
         refreshBtn.onclick = debounce(() => {
-            if (USER_ID) {
-                cache.clear('dashboard_data');
-                cache.clear(`user_${USER_ID}`);
-                loadAllData(true);
-                showToast('Data refreshed!', 'success');
-            } else {
-                hardRefresh();
-            }
+            window.location.reload();
         }, 2000);
     }
         // Throttled tab clicks - prevents rapid tab switching
