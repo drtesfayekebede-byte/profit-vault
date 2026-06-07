@@ -36,6 +36,7 @@ body {
     min-height: 100vh;
     margin: 0;
     padding: 0;
+    padding-top: 120px;
     color: #e2e8f0;
     overflow-x: hidden;
 }
@@ -1451,6 +1452,39 @@ function startRealtime(){
     }).subscribe();
 }
 function stopRealtime(){ if(realtimeChannel){ sb.removeChannel(realtimeChannel); realtimeChannel = null; } }
+// ==================== TAB VISIBILITY HANDLER (Stop Realtime When Inactive) ====================
+let isTabActive = true;
+
+function initTabVisibilityHandler() {
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            // Tab is hidden/background - STOP realtime to save API calls
+            isTabActive = false;
+            if (realtimeChannel) {
+                console.log("📴 Tab hidden - stopping realtime updates");
+                sb.removeChannel(realtimeChannel);
+                realtimeChannel = null;
+            }
+        } else {
+            // Tab is active again - RESTART realtime and refresh data
+            isTabActive = true;
+            console.log("📱 Tab active - restarting realtime updates");
+            if (USER_ID) {
+                startRealtime();
+                // Refresh data to catch up on missed updates
+                loadAllData();
+            }
+        }
+    });
+}
+
+// Also pause realtime when page is unloading (saves resources)
+window.addEventListener('beforeunload', () => {
+    if (realtimeChannel) {
+        sb.removeChannel(realtimeChannel);
+        realtimeChannel = null;
+    }
+});
 let USER_ID = null, IS_ADMIN = false, selectedPaymentMethod = "telebirr", soundEnabled = localStorage.getItem('soundEnabled') !== 'false';
 let isLoggingOut = false;
 let isProcessing = {
@@ -2247,6 +2281,34 @@ async function loadUser(forceRefresh = false) {
     cache.set(`user_${USER_ID}`, data, 30000);
     return data;
 }
+// ==================== BATCH API CALLS (Performance Optimization) ====================
+async function batchLoadDashboardData() {
+    if (!USER_ID) return null;
+    
+    try {
+        // Run ALL these queries in PARALLEL (much faster than one by one)
+        const [userResult, lotteryCountResult, exchangeResult, referralsResult, marketResult, assetsResult] = await Promise.all([
+            sb.from('users').select('*').eq('user_id', USER_ID).single(),
+            sb.from('lottery_tickets').select('*', { count: 'exact', head: true }).eq('user_id', USER_ID).eq('status', 'active'),
+            sb.from('daily_exchange').select('id').eq('user_id', USER_ID).eq('exchange_date', new Date().toISOString().slice(0, 10)).maybeSingle(),
+            sb.from('referrals').select('reward_amount').eq('referrer_id', USER_ID).eq('status', 'completed'),
+            sb.from('market').select('*').order('slot_id'),
+            sb.from('user_assets').select('*').eq('user_id', USER_ID).eq('sold', false)
+        ]);
+        
+        return {
+            user: userResult.data,
+            lotteryCount: lotteryCountResult.count || 0,
+            alreadyExchanged: exchangeResult.data !== null,
+            referralEarnings: referralsResult.data || [],
+            market: marketResult.data || [],
+            assets: assetsResult.data || []
+        };
+    } catch (err) {
+        console.error("Batch load failed:", err);
+        return null;
+    }
+}
 // NEW FUNCTION 1: Load Quad Lock and Exchange Info
 async function loadQuadLockAndExchange() {
     const { count: lotteryCount } = await sb.from('lottery_tickets')
@@ -2401,16 +2463,79 @@ async function loadAllData(forceRefresh = false) {
         clearCache();
     }
     
-    await loadUser(forceRefresh);
-    await loadReferralEarnings();
+    // Use BATCH loading for faster performance
+    const batchData = await batchLoadDashboardData();
+    
+    if (batchData && batchData.user) {
+        // Update current user
+        currentUser = batchData.user;
+        updateBalanceDisplay();
+        cache.set(`user_${USER_ID}`, batchData.user, 30000);
+        
+        // Update Quad Lock with batch data
+        const depositDone = (batchData.user.total_deposited || 0) >= 1500;
+        const gameDone = (batchData.user.win_chance_plays || 0) >= 10;
+        const lotteryDone = (batchData.lotteryCount || 0) >= 1;
+        const referralDone = (batchData.user.active_referrals || 0) >= 3;
+        const completed = [depositDone, gameDone, lotteryDone, referralDone].filter(Boolean).length;
+        const percent = (completed / 4) * 100;
+        
+        document.getElementById('quadlock').innerHTML = `
+            <div class="quad-item ${depositDone ? 'unlocked' : 'locked'}"><div>💰 Deposit 1500 ETB</div><div>${(batchData.user.total_deposited || 0)}/1500</div></div>
+            <div class="quad-item ${gameDone ? 'unlocked' : 'locked'}"><div>🎮 Play 10 Games</div><div>${batchData.user.win_chance_plays || 0}/10</div></div>
+            <div class="quad-item ${lotteryDone ? 'unlocked' : 'locked'}"><div>🎟️ Buy 1 Ticket</div><div>${batchData.lotteryCount || 0}/1</div></div>
+            <div class="quad-item ${referralDone ? 'unlocked' : 'locked'}"><div>👥 3 Referrals</div><div>${batchData.user.active_referrals || 0}/3</div></div>
+            <div class="progress-bar"><div class="progress-fill" style="width:${percent}%"></div></div>
+            <div class="progress-text">${completed}/4 Complete (${Math.round(percent)}%)</div>`;
+        
+        // Update Exchange Info
+        const maxEx = Math.floor((batchData.user.coin_balance || 0) * 0.03);
+        if (batchData.alreadyExchanged) {
+            document.getElementById('exchangeInfo').innerHTML = `<div>⚠️ You have already exchanged today.</div><div>📊 Daily limit: 3% of coins (${maxEx} max)</div><div>⏳ Please try again tomorrow.</div>`;
+            document.getElementById('exchangeInfoModal').innerHTML = `<div>You have already exchanged today.</div><div>Come back tomorrow to exchange again.</div>`;
+        } else {
+            document.getElementById('exchangeInfo').innerHTML = `<div>📊 Daily limit: 3% of your coins (up to ${maxEx} coins)</div><div>✅ You can exchange today.</div>`;
+            document.getElementById('exchangeInfoModal').innerHTML = `<div>You can exchange up to ${maxEx} coins right now.</div><div>⚠️ Only one exchange per day allowed.</div>`;
+            const exchangeInput = document.getElementById('exchangeAmount');
+            if (exchangeInput) exchangeInput.placeholder = `Amount (max ${maxEx})`;
+        }
+        
+        // Update Market Grid using batch data
+        const ownedSlots = batchData.assets?.map(a => a.slot_id) || [];
+        if (batchData.market) {
+            document.getElementById('marketGrid').innerHTML = batchData.market.map(item => {
+                const owned = ownedSlots.includes(item.slot_id);
+                const mediaContent = item.image_url 
+                    ? `<div class="market-image-container"><img loading="lazy" src="${item.image_url}" class="market-image" alt="${escapeHTML(item.asset_name)}">${owned ? '<div class="market-owned-badge">✅ Owned</div>' : ''}</div>`
+                    : `<div class="market-image-container"><div class="market-emoji">${item.emoji}</div>${owned ? '<div class="market-owned-badge">✅ Owned</div>' : ''}</div>`;
+                return `
+                    <div class="market-item ${owned ? 'owned' : ''}" onclick="${!owned ? `buyAsset(${item.slot_id})` : ''}">
+                        ${mediaContent}
+                        <div class="market-info">
+                            <div class="market-name">${escapeHTML(item.asset_name)}</div>
+                            <div class="market-price">${item.cost} 🪙</div>
+                            <div class="market-roi">ROI ${Math.round(((item.default_roi || 1.25) - 1) * 100)}%</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // Update Referral Earnings
+        const totalReferralEarnings = (batchData.referralEarnings || []).reduce((sum, r) => sum + (r.reward_amount || 0), 0);
+        const referralEl = document.getElementById('referralEarnings');
+        if (referralEl) referralEl.innerText = `💰 Referral earnings: ${totalReferralEarnings.toLocaleString()} ETB`;
+    }
+    
+    // Load remaining data that can't be batched
     await loadLeaderboard();
-    await loadQuadLockAndExchange();
-    await loadMarketAndInvestments();
     await loadLotteryPools();
     await loadDraws();
     await loadConsultations();
     await loadTransactions();
     await loadProfileAndCards();
+    await loadInvestments();
+    await loadSoldAssets();
 }
 
 async function loadReferralEarnings() {
@@ -4462,6 +4587,7 @@ document.addEventListener('keydown', function(e) {
     checkSession();
     loadAppProfileImage();
     initAudio();
+    initTabVisibilityHandler();
     
     // Initialize admin profile picture controls if admin
     if (IS_ADMIN) {
