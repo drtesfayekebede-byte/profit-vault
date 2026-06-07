@@ -1038,11 +1038,13 @@ body {
         top: 2px;
         transition: left 0.2s ease;
     }
-    /* ===== MOBILE FIXES ===== */
+
+    /* ===== TRANSACTION HISTORY - COLORFUL & BOLD ===== */
     @media (max-width: 600px) {
         .transaction-item {
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 10px;
+            padding: 12px;
         }
         
         .transaction-item > div {
@@ -1056,15 +1058,42 @@ body {
             flex: none !important;
         }
         
+        .transaction-item div:nth-child(2) {
+            font-weight: bold !important;
+            font-size: 15px !important;
+            color: #fbbf24 !important;
+        }
+        
         .transaction-item div:nth-child(3) {
+            font-weight: 800 !important;
+            font-size: 20px !important;
             text-align: left !important;
         }
         
-        .transaction-item {
-            font-size: 12px;
-            padding: 10px;
+        .transaction-item div:nth-child(3)[style*="#10b981"] {
+            color: #10b981 !important;
+        }
+        
+        .transaction-item div:nth-child(3)[style*="#ef4444"] {
+            color: #ef4444 !important;
+        }
+        
+        .transaction-item div:nth-child(4) {
+            font-size: 12px !important;
+            color: #94a3b8 !important;
+        }
+        
+        .transaction-item div:nth-child(5) {
+            font-weight: bold !important;
+            font-size: 12px !important;
+            display: inline-block !important;
+            width: auto !important;
+            padding: 4px 12px !important;
+            border-radius: 20px !important;
+            background: rgba(0,0,0,0.3) !important;
         }
     }
+
 </style>
 </head>
 <body>
