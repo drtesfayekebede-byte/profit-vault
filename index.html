@@ -31,39 +31,107 @@
     }
 
     /* ===== BASE – DEEP BLACK BACKGROUND (replaces old body) ===== */
-    body {
-        background: #000000;
-        min-height: 100vh;
-        padding-top: 180px;   
-        padding-left: 16px;
-        padding-right: 16px;
-        padding-bottom: 100px;
-        color: #e2e8f0;
-        overflow-x: hidden;
-        margin: 0;
-    }
-
-.balance-wrapper {
-    background: rgba(10, 10, 15, 0.6);
-    border-radius: 32px;
-    padding: 20px 16px;
-    border: 1px solid rgba(251, 191, 36, 0.5);
-    box-shadow: 0 0 20px rgba(251, 191, 36, 0.2);
-    backdrop-filter: blur(4px);
-    position: fixed;
-    top: 0;
-    z-index: 10;
+body {
+    background: #000000;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    color: #e2e8f0;
+    overflow-x: hidden;
 }
 
-tabs-wrapper {
-        background: rgba(10, 10, 15, 0.4);
-        border-radius: 28px;
-        padding: 16px;
-        margin-top: 0; 
-        margin-bottom: 20px;
-        border: 1px solid rgba(251, 191, 36, 0.4);
-        box-shadow: 0 0 15px rgba(0, 255, 255, 0.05);
+/* Fixed Header - Top */
+.fixed-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 12px 16px;
+    z-index: 1000;
+    border-bottom: 1px solid rgba(251, 191, 36, 0.3);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Fixed Balance Cards - Below Header */
+.fixed-balance {
+    position: fixed;
+    top: 80px;
+    left: 0;
+    right: 0;
+    background: transparent;
+    padding: 0 16px;
+    z-index: 999;
+}
+
+.fixed-balance .balance-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 0;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Make balance cards full width on all screen sizes */
+.balance-card {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* For larger screens, add max-width and center */
+@media (min-width: 768px) {
+    .fixed-balance {
+        padding: 0 24px;
     }
+    
+    .fixed-balance .balance-container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+}
+
+@media (min-width: 1200px) {
+    .fixed-balance {
+        padding: 0 32px;
+    }
+}
+
+/* Push scrollable content below both fixed elements */
+.content-wrapper {
+    margin-top: 220px;
+    padding: 0 16px;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+}
+
+/* Fix typo: added missing dot before tabs-wrapper */
+.tabs-wrapper {
+    background: rgba(10, 10, 15, 0.4);
+    border-radius: 28px;
+    padding: 16px;
+    margin-top: 0;
+    margin-bottom: 20px;
+    border: 1px solid rgba(251, 191, 36, 0.4);
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.05);
+}
+
+/* Responsive padding for larger screens */
+@media (min-width: 768px) {
+    .content-wrapper {
+        padding: 0 24px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .content-wrapper {
+        padding: 0 32px;
+    }
+}
 /* ===== COMMON BACKGROUND FOR ALL 11 TABS ===== */
 .background-wrapper {
     position: fixed;
@@ -239,27 +307,6 @@ tabs-wrapper {
     .balance-label { font-size: 10px; font-weight: 800; margin-top: 5px; text-transform: uppercase; letter-spacing: 1px; }
 
    /* ===== NEW LAYOUT STYLES ===== */
-.balance-wrapper {
-    background: rgba(10, 10, 15, 0.6);
-    border-radius: 32px;
-    padding: 20px 16px;
-    border: 1px solid rgba(251, 191, 36, 0.5);
-    box-shadow: 0 0 20px rgba(251, 191, 36, 0.2);
-    backdrop-filter: blur(4px);
-    position: fixed;
-    top: 0;
-    z-index: 10;
-}
-
-.tabs-wrapper {
-    background: rgba(10, 10, 15, 0.4);
-    border-radius: 28px;
-    padding: 16px;
-    margin-top: 100px;
-    margin-bottom: 20px;
-    border: 1px solid rgba(251, 191, 36, 0.4);
-    box-shadow: 0 0 15px rgba(0, 255, 255, 0.05);
-}
 
 .tabs-container {
     margin-bottom: 20px;
@@ -1011,7 +1058,8 @@ tabs-wrapper {
 </div>
 
 <div id="networkStatus" class="network-status"></div>
-<div class="header">
+<!-- Fixed Header - Logo and Profile (TOP) -->
+<div class="fixed-header">
     <div class="header-content">
         <div class="app-logo">
             <span class="logo-icon">🏦</span>
@@ -1022,10 +1070,10 @@ tabs-wrapper {
         </div>
         <div class="profile-area" id="profileArea">
             <div class="profile-avatar" id="profileAvatar" role="button" tabindex="0" 
-     onclick="toggleUserMenu()" 
-     onkeydown="if(event.key==='Enter'||event.key===' ') toggleUserMenu()">
-    <img loading="lazy" id="profileImage" src="https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app-assets/1780156694418.png" alt="Profit Vault" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
-</div>
+                onclick="toggleUserMenu()" 
+                onkeydown="if(event.key==='Enter'||event.key===' ') toggleUserMenu()">
+                <img loading="lazy" id="profileImage" src="https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app-assets/1780156694418.png" alt="Profit Vault" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+            </div>
             <div class="dropdown-menu" id="dropdownMenu">
                 <div id="dropdownItems"></div>
             </div>
@@ -1033,7 +1081,8 @@ tabs-wrapper {
     </div>
 </div>
 <div id="appContent" style="display: none;">
-<div class="balance-wrapper">
+<!-- Fixed Balance Cards - Below Header (SECOND) -->
+<div class="fixed-balance">
     <div class="balance-container">
         <div class="balance-card primary" onclick="showModal('depositModal')">
             <div class="balance-emoji">💰</div>
@@ -1053,6 +1102,7 @@ tabs-wrapper {
     </div>
 </div>
 
+<div class="content-wrapper">
 <div class="tabs-wrapper">
     <div class="tabs-container">
         <div class="tabs-grid">
@@ -1061,8 +1111,7 @@ tabs-wrapper {
             <button class="tab" data-tab="games">🎮 Games</button>
             <button class="tab" data-tab="cards">🃏 Airtime</button>
             <button class="tab" data-tab="lottery">🎟️ Lottery</button>
-            <button class="tab" data-tab="clinic">🏥 Clinic</button>
-            <button class="tab" data-tab="profile">👤 Profile</button>
+            <button class="tab" data-tab="clinic">🏥 Clinic</button>       
             <button class="tab" data-tab="contact">📞 Contact</button>
             <button class="tab" data-tab="guide">📖 Guide</button>
             <button class="tab refresh-tab" id="refreshBtn">🔄 Refresh</button>
@@ -1183,6 +1232,7 @@ tabs-wrapper {
 </div>
         <div id="guideContent"></div>
     </div>
+</div>
 </div>
 <!-- MODALS -->
 <div id="depositModal" class="modal"><div class="modal-content"><span class="close" onclick="closeModal('depositModal')">&times;</span><h3>💰 Deposit Money</h3><div class="payment-methods" style="display:flex; gap:10px; margin-bottom:15px;"><div class="payment-method" data-payment="telebirr" onclick="selectPaymentMethod('telebirr')" style="flex:1; background:rgba(255,255,255,0.1); border-radius:16px; padding:10px; text-align:center; cursor:pointer;">📱 Telebirr</div><div class="payment-method" data-payment="awash" onclick="selectPaymentMethod('awash')" style="flex:1; background:rgba(255,255,255,0.1); border-radius:16px; padding:10px; text-align:center; cursor:pointer;">🏦 Awash</div></div><div id="telebirrInfo" class="telebirr-info" style="background:rgba(0,0,0,0.4); border-radius:16px; padding:12px; margin:10px 0; text-align:center;">📱 Send to Telebirr: <strong id="telebirrNumber">0935983470</strong><br>Name: <span id="telebirrName">Tesfaye</span></div><div id="awashInfo" class="bank-info" style="display:none; background:rgba(0,0,0,0.4); border-radius:16px; padding:12px; margin:10px 0; text-align:center;">🏦 <span id="bankName">Awash Bank</span>: <strong id="bankAccount">013201372354300</strong><br>Name: <span id="bankHolder">Tesfaye</span></div><input type="number" id="depositAmount" placeholder="Amount (Min 1500 ETB)"><input type="text" id="accountHolder" placeholder="Account Holder Name"><input type="text" id="transactionId" placeholder="Transaction ID"><textarea id="depositNote" rows="2" placeholder="Note (optional)"></textarea><button class="btn btn-success" onclick="submitDeposit()">Submit Deposit Request</button><p style="font-size:11px; margin-top:12px;">Admin will verify and approve.</p></div></div>
@@ -1459,8 +1509,16 @@ function toggleUserMenu() {
 }
 function goToProfile() {
     document.getElementById('dropdownMenu').classList.remove('show');
-    const profileTab = document.querySelector('.tab[data-tab="profile"]');
-    if (profileTab) profileTab.click();
+    
+    // Remove active class from all tabs and tab-content
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    
+    // Show profile tab content directly
+    const profileContent = document.getElementById('profile');
+    if (profileContent) {
+        profileContent.classList.add('active');
+    }
 }
 // Close dropdown when clicking outside
 document.addEventListener('click', function(e) {
@@ -3223,16 +3281,28 @@ function initAdminProfilePicture() {
 }
 function showAdminTab() {
     if(document.querySelector('.tab[data-tab="admin"]')) return;
-    const tabs = document.querySelector('.tabs');
+    const tabsWrapper = document.querySelector('.tabs-wrapper');
+    if (!tabsWrapper) return;
+    
     const adminBtn = document.createElement('button');
-    adminBtn.className = 'tab';
+    adminBtn.className = 'tab admin-tab';
     adminBtn.setAttribute('data-tab','admin');
     adminBtn.innerHTML = '👑 Admin';
-    tabs.appendChild(adminBtn);
+    
+    const tabsGrid = document.querySelector('.tabs-grid');
+    if (tabsGrid) {
+        tabsGrid.appendChild(adminBtn);
+    }
+    
     const adminDiv = document.createElement('div');
     adminDiv.id = 'admin';
     adminDiv.className = 'tab-content';
-    tabs.insertAdjacentElement('afterend', adminDiv);
+    
+    const tabsContainer = document.querySelector('.tabs-container');
+    if (tabsContainer) {
+        tabsContainer.insertAdjacentElement('afterend', adminDiv);
+    }
+    
     adminBtn.addEventListener('click', () => {
         document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
         document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
