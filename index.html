@@ -1038,6 +1038,33 @@ body {
         top: 2px;
         transition: left 0.2s ease;
     }
+    /* ===== MOBILE FIXES ===== */
+    @media (max-width: 600px) {
+        .transaction-item {
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .transaction-item > div {
+            flex: auto !important;
+            width: 100%;
+            text-align: left !important;
+        }
+        
+        .transaction-item div:first-child {
+            width: auto !important;
+            flex: none !important;
+        }
+        
+        .transaction-item div:nth-child(3) {
+            text-align: left !important;
+        }
+        
+        .transaction-item {
+            font-size: 12px;
+            padding: 10px;
+        }
+    }
 </style>
 </head>
 <body>
@@ -1233,7 +1260,7 @@ body {
         <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
     <button id="guideEngBtn" class="btn-sm" style="background: #3b82f6;">🇬🇧 English</button>
     <button id="guideAmhBtn" class="btn-sm" style="background: #10b981;">🇪🇹 አማርኛ</button>
-    <button id="guideOroBtn" class="btn-sm" style="background: #f59e0b;">🇪🇹 Oromiffa</button>
+    <button id="guideOroBtn" class="btn-sm" style="background: #f59e0b;">🇪🇹 Oromic</button>
 </div>
         <div id="guideContent"></div>
     </div>
