@@ -4125,7 +4125,7 @@ async function showAdminUserDetails(userId) {
             return hoursSincePurchase >= 24;
         });
         
-        detailDiv.innerHTML = `
+        contentDiv.innerHTML = `
             <div style="position: sticky; top: 0; background: #1a1a2e; padding: 10px 0; border-bottom: 1px solid #fbbf24; margin-bottom: 15px;">
                 <button class="btn-sm btn-danger" style="float: right;" onclick="closeAdminUserDetails()">✖ Close</button>
                 <h3 style="color: #fbbf24;">📊 User Details: ${escapeHTML(user.username) || 'User'}</h3>
@@ -4272,7 +4272,7 @@ async function showAdminUserDetails(userId) {
         `;
         
     } catch (err) {
-        detailDiv.innerHTML = `<div class="loading" style="color: #ef4444;">Error loading details: ${err.message}</div>`;
+        contentDiv.innerHTML = `<div class="loading" style="color: #ef4444;">Error loading details: ${err.message}</div>`;
     }
 }
 
