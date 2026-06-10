@@ -1376,7 +1376,6 @@ body {
     <div class="card">
         <h3>📜 Transaction History</h3>
         <div class="sub-tabs" style="display:flex; gap:10px; margin-bottom:12px; flex-wrap:wrap;">
-            <button class="btn-sm active" data-hist="all">All</button>
             <button class="btn-sm" data-hist="deposit">Deposits</button>
             <button class="btn-sm" data-hist="withdraw">Withdrawals</button>
             <button class="btn-sm" data-hist="other">Other</button>
@@ -1390,14 +1389,6 @@ body {
             <button class="btn-sm" id="nextPageBtn" onclick="changePage(1)">Next ▶</button>
         </div>
     </div>
-    <div class="card">
-    <h3>🏆 Leaderboard
-        <button class="btn-sm btn-info" onclick="refreshLeaderboard()" style="float:right; margin-left:8px;">🔄 Refresh</button>
-        <button class="btn-sm btn-danger" onclick="deleteSelectedLeaderboardUsers()" style="float:right;">🗑️ Delete Selected</button>
-    </h3>
-    <div id="leaderboard"></div>
-    <div id="leaderboardPagination" style="display: flex; justify-content: center; gap: 10px; margin-top: 10px;"></div>
-</div>
 </div>
 
 <!-- CONTACT -->
@@ -2172,7 +2163,7 @@ async function login() {
     clearCache();
     
     // Perform login
-    const { error } = await sb.auth.signInWithPassword({ 
+    const { data: signInData, error } = await sb.auth.signInWithPassword({ 
         email, 
         password,
         options: { expiresIn: 60 * 60 * 24 * 7 }
@@ -2181,6 +2172,20 @@ async function login() {
     if (error) {
         document.getElementById('loadingOverlay').style.display = 'none';
         showToast(error.message, 'error');
+        return;
+    }
+    
+    // CHECK IF USER IS BANNED
+    const { data: userData, error: userError } = await sb
+        .from('users')
+        .select('is_banned')
+        .eq('user_id', signInData.user.id)
+        .single();
+    
+    if (userData?.is_banned === true) {
+        await sb.auth.signOut();
+        document.getElementById('loadingOverlay').style.display = 'none';
+        showToast('⚠️ Your account has been banned. Please contact support.', 'error');
         return;
     }
     
@@ -3655,7 +3660,14 @@ ${m.image_url ? `<button class="btn-sm btn-danger" onclick="deleteMarketImage(${
     <button class="btn btn-sm" onclick="editCard(${c.id}, ${c.card_cost}, '${JSON.stringify(c.hidden_numbers)}')">Edit</button>
     <button class="btn btn-sm btn-success" onclick="addCardNumbers(${c.id})">➕ Add Numbers</button>
 </div>`).join('')}<button class="btn btn-sm" onclick="shuffleCards()">Shuffle Order</button></div>
-        <div class="card"><h3>👥 User Search</h3><input type="text" id="adminSearch" placeholder="User ID or email"><button class="btn btn-sm" onclick="searchUser()">Search</button><div id="userResult"></div></div>
+                <div class="card">
+            <h3>👥 USER MANAGEMENT (Click any user to manage)</h3>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;">
+                <button class="btn btn-sm btn-success" onclick="loadAllUsersForAdmin()">📋 Show All Users</button>
+            </div>
+            <div id="adminUsersList" style="max-height: 400px; overflow-y: auto;"></div>
+            <div id="adminUserDetails" style="display: none; margin-top: 20px;"></div>
+        </div>
     <div class="card">
         <h3>💰 Deposit Settings (Edit Payment Info)</h3>
         <div style="margin-bottom:10px;">
@@ -4058,25 +4070,454 @@ await sb.from('global_cards').upsert(updates, { onConflict: 'id' });
     loadAdminPanel();
     loadAllData();
 }
-async function searchUser() {
-    const q = document.getElementById('adminSearch').value.trim();
-    if(!q) return;
-    const { data } = await sb.from('users').select('user_id,username,balance,bonus_balance,coin_balance').or(`user_id.eq.${q},username.ilike.%${q}%`);
-    const resultDiv = document.getElementById('userResult');
-    if(!data?.length) { resultDiv.innerHTML = '<div>User not found</div>'; return; }
-    resultDiv.innerHTML = data.map(u => `<div><strong>${escapeHTML(u.username)}</strong> (${u.user_id.slice(0,8)}): Balance ${u.balance} ETB, Bonus ${u.bonus_balance}, Coins ${u.coin_balance}<input type="number" id="adj_${u.user_id}" placeholder="Amount"><select id="adj_type_${u.user_id}"><option>balance</option><option>bonus_balance</option><option>coin_balance</option></select><button class="btn btn-sm" onclick="adjustUser('${u.user_id}')">Adjust</button></div>`).join('');
+
+// ==================== ENHANCED ADMIN USER MANAGEMENT ====================
+
+let adminCurrentPage = 1;
+let adminTotalUsers = 0;
+let adminSelectedUserId = null;
+const ADMIN_USERS_PER_PAGE = 10;
+
+// Load all users with pagination
+async function loadAllUsersForAdmin() {
+    adminCurrentPage = 1;
+    await fetchAdminUsers();
 }
-async function adjustUser(userId) {
-    const amt = parseInt(document.getElementById(`adj_${userId}`).value);
-    if(isNaN(amt)) return;
-    const type = document.getElementById(`adj_type_${userId}`).value;
-    const { data: user } = await sb.from('users').select(type).eq('user_id',userId).single();
-    const newVal = (user[type]||0) + amt;
-    if(newVal < 0) return showToast('Cannot go negative','error');
-    await sb.from('users').update({ [type]: newVal }).eq('user_id',userId);
-    showToast(`Updated ${type} by ${amt}`,'success');
-    loadAdminPanel();
-    loadAllData();
+
+async function fetchAdminUsers() {
+    const container = document.getElementById('adminUsersList');
+    container.innerHTML = '<div class="loading">Loading users...</div>';
+    
+    try {
+        // Get total count
+        const { count, error: countError } = await sb
+            .from('users')
+            .select('*', { count: 'exact', head: true });
+        
+        if (countError) throw countError;
+        
+        adminTotalUsers = count;
+        const totalPages = Math.ceil(adminTotalUsers / ADMIN_USERS_PER_PAGE);
+        
+        const start = (adminCurrentPage - 1) * ADMIN_USERS_PER_PAGE;
+        const end = start + ADMIN_USERS_PER_PAGE - 1;
+        
+        const { data: users, error } = await sb
+            .from('users')
+            .select('*')
+            .order('total_deposited', { ascending: false })
+            .range(start, end);
+        
+        if (error) throw error;
+        
+        if (!users || users.length === 0) {
+            container.innerHTML = '<div class="loading">No users found</div>';
+            return;
+        }
+        
+        container.innerHTML = `
+            <div style="margin-bottom: 10px; text-align: center; color: #fbbf24;">
+                Showing ${start + 1} - ${Math.min(start + ADMIN_USERS_PER_PAGE, adminTotalUsers)} of ${adminTotalUsers} users
+            </div>
+            ${users.map((user, idx) => `
+                <div class="admin-user-row" style="background: ${user.is_banned ? 'rgba(239, 68, 68, 0.2)' : 'rgba(0,0,0,0.3)'}; border-radius: 16px; padding: 12px; margin-bottom: 10px; cursor: pointer; transition: 0.2s; border-left: 4px solid ${user.is_banned ? '#ef4444' : '#10b981'};" 
+                     onclick="showAdminUserDetails('${user.user_id}')">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                        <div style="flex: 2;">
+                            <div>
+                                <strong style="color: #fbbf24;">${start + idx + 1}. @${escapeHTML(user.username) || 'User'}</strong>
+                                ${user.is_banned ? '<span class="badge" style="background: #ef4444; margin-left: 8px;">🔨 BANNED</span>' : ''}
+                            </div>
+                            <div style="font-size: 11px; color: #888; margin-top: 4px;">ID: ${user.user_id.slice(0, 12)}...</div>
+                        </div>
+                        <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                            <span>💰 ${(user.balance || 0).toLocaleString()}</span>
+                            <span>🎁 ${(user.bonus_balance || 0).toLocaleString()}</span>
+                            <span>🪙 ${(user.coin_balance || 0).toLocaleString()}</span>
+                            <span>📈 ${(user.total_deposited || 0).toLocaleString()}</span>
+                        </div>
+                        <div>
+                            ${!user.is_banned ? 
+                                `<button class="btn-sm btn-danger" onclick="event.stopPropagation(); toggleBanUser('${user.user_id}', true)">🔨 Ban User</button>` : 
+                                `<button class="btn-sm btn-success" onclick="event.stopPropagation(); toggleBanUser('${user.user_id}', false)">🔓 Unban User</button>`
+                            }
+                        </div>
+                    </div>
+                </div>
+            `).join('')}
+            <div style="display: flex; justify-content: center; gap: 15px; margin-top: 15px;">
+                <button class="btn-sm" onclick="adminChangePage(-1)" ${adminCurrentPage === 1 ? 'disabled' : ''}>◀ Previous</button>
+                <span>Page ${adminCurrentPage} of ${totalPages || 1}</span>
+                <button class="btn-sm" onclick="adminChangePage(1)" ${adminCurrentPage === totalPages ? 'disabled' : ''}>Next ▶</button>
+            </div>
+        `;
+        
+    } catch (err) {
+        container.innerHTML = `<div class="loading" style="color: #ef4444;">Error: ${err.message}</div>`;
+    }
+}
+
+function adminChangePage(delta) {
+    const newPage = adminCurrentPage + delta;
+    const totalPages = Math.ceil(adminTotalUsers / ADMIN_USERS_PER_PAGE);
+    if (newPage >= 1 && newPage <= totalPages) {
+        adminCurrentPage = newPage;
+        fetchAdminUsers();
+    }
+}
+
+// Show detailed user information
+async function showAdminUserDetails(userId) {
+    adminSelectedUserId = userId;
+    const detailDiv = document.getElementById('adminUserDetails');
+    detailDiv.innerHTML = '<div class="loading">Loading user details...</div>';
+    detailDiv.style.display = 'block';
+    
+    try {
+        // Fetch all user data in parallel
+        const [userResult, assetsResult, soldAssetsResult, referralsResult, transactionsResult, lotteryTicketsResult, consultationsResult] = await Promise.all([
+            sb.from('users').select('*').eq('user_id', userId).single(),
+            sb.from('user_assets').select('*').eq('user_id', userId).eq('sold', false),
+            sb.from('user_assets').select('*').eq('user_id', userId).eq('sold', true).order('purchase_time', { ascending: false }).limit(20),
+            sb.from('referrals').select('*').eq('referrer_id', userId),
+            sb.from('transactions').select('*').eq('user_id', userId).order('timestamp', { ascending: false }).limit(30),
+            sb.from('lottery_tickets').select('*').eq('user_id', userId).eq('status', 'active'),
+            sb.from('health_consultations').select('*').eq('user_id', userId).order('created_at', { ascending: false }).limit(10)
+        ]);
+        
+        const user = userResult.data;
+        const assets = assetsResult.data || [];
+        const soldAssets = soldAssetsResult.data || [];
+        const referrals = referralsResult.data || [];
+        const transactions = transactionsResult.data || [];
+        const lotteryTickets = lotteryTicketsResult.data || [];
+        const consultations = consultationsResult.data || [];
+        
+        // Calculate referral earnings
+        const totalReferralEarnings = referrals.reduce((sum, r) => sum + (r.reward_amount || 0), 0);
+        const activeReferrals = referrals.filter(r => r.status === 'completed').length;
+        
+        // Find assets ready to sell (older than 24 hours)
+        const now = new Date();
+        const readyToSell = assets.filter(asset => {
+            const purchaseTime = new Date(asset.purchase_time);
+            const hoursSincePurchase = (now - purchaseTime) / (1000 * 60 * 60);
+            return hoursSincePurchase >= 24;
+        });
+        
+        detailDiv.innerHTML = `
+            <div style="position: sticky; top: 0; background: #1a1a2e; padding: 10px 0; border-bottom: 1px solid #fbbf24; margin-bottom: 15px;">
+                <button class="btn-sm btn-danger" style="float: right;" onclick="closeAdminUserDetails()">✖ Close</button>
+                <h3 style="color: #fbbf24;">📊 User Details: ${escapeHTML(user.username) || 'User'}</h3>
+                <div style="font-size: 11px; color: #888;">ID: ${userId}</div>
+                ${user.is_banned ? '<div><span class="badge" style="background: #ef4444;">🔨 BANNED USER</span></div>' : ''}
+            </div>
+            
+            <!-- User Balance Summary -->
+            <div class="card" style="margin-bottom: 15px;">
+                <h3>💰 Balance Summary</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 15px; text-align: center;">
+                    <div><div style="font-size: 11px; color: #888;">Balance</div><div style="font-size: 24px; font-weight: bold; color: #10b981;">${(user.balance || 0).toLocaleString()} ETB</div></div>
+                    <div><div style="font-size: 11px; color: #888;">Bonus</div><div style="font-size: 24px; font-weight: bold; color: #fbbf24;">${(user.bonus_balance || 0).toLocaleString()} ETB</div></div>
+                    <div><div style="font-size: 11px; color: #888;">Coins</div><div style="font-size: 24px; font-weight: bold; color: #00bfff;">${(user.coin_balance || 0).toLocaleString()}</div></div>
+                    <div><div style="font-size: 11px; color: #888;">Deposited</div><div style="font-size: 18px; font-weight: bold;">${(user.total_deposited || 0).toLocaleString()} ETB</div></div>
+                    <div><div style="font-size: 11px; color: #888;">Withdrawn</div><div style="font-size: 18px; font-weight: bold;">${(user.total_withdrawn || 0).toLocaleString()} ETB</div></div>
+                    <div><div style="font-size: 11px; color: #888;">Games Played</div><div style="font-size: 18px; font-weight: bold;">${user.win_chance_plays || 0}</div></div>
+                </div>
+            </div>
+            
+            <!-- Referral Information -->
+            <div class="card" style="margin-bottom: 15px;">
+                <h3>👥 Referral Information</h3>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; text-align: center;">
+                    <div><div style="font-size: 11px; color: #888;">Total Referrals</div><div style="font-size: 20px; font-weight: bold;">${referrals.length}</div></div>
+                    <div><div style="font-size: 11px; color: #888;">Active Referrals</div><div style="font-size: 20px; font-weight: bold; color: #10b981;">${activeReferrals}</div></div>
+                    <div><div style="font-size: 11px; color: #888;">Earnings</div><div style="font-size: 20px; font-weight: bold; color: #fbbf24;">${totalReferralEarnings.toLocaleString()} ETB</div></div>
+                </div>
+                ${referrals.length > 0 ? `
+                    <details style="margin-top: 10px;">
+                        <summary style="cursor: pointer; color: #fbbf24;">📋 View Referral List (${referrals.length})</summary>
+                        <div style="margin-top: 10px; max-height: 200px; overflow-y: auto;">
+                            ${referrals.map(ref => `
+                                <div style="background: rgba(0,0,0,0.3); padding: 8px; margin-bottom: 5px; border-radius: 8px; font-size: 12px;">
+                                    <strong>Referred User:</strong> ${ref.referred_user_id?.slice(0, 12)}...<br>
+                                    <strong>Status:</strong> <span style="color: ${ref.status === 'completed' ? '#10b981' : '#f59e0b'}">${ref.status}</span><br>
+                                    <strong>Reward:</strong> ${(ref.reward_amount || 0).toLocaleString()} ETB
+                                </div>
+                            `).join('')}
+                        </div>
+                    </details>
+                ` : '<div style="margin-top: 10px; color: #888;">No referrals yet</div>'}
+            </div>
+            
+            <!-- Assets Owned -->
+            <div class="card" style="margin-bottom: 15px;">
+                <h3>🏪 Assets Owned (${assets.length}) ${readyToSell.length > 0 ? `<span class="badge" style="background: #ef4444;">⚠️ ${readyToSell.length} Ready to Sell!</span>` : ''}</h3>
+                ${assets.length > 0 ? `
+                    <div style="max-height: 300px; overflow-y: auto;">
+                        ${assets.map(asset => {
+                            const purchaseTime = new Date(asset.purchase_time);
+                            const now = new Date();
+                            const hoursSincePurchase = (now - purchaseTime) / (1000 * 60 * 60);
+                            const isReady = hoursSincePurchase >= 24;
+                            const hoursLeft = Math.max(0, Math.ceil(24 - hoursSincePurchase));
+                            const payout = Math.round(asset.purchase_price * asset.roi_at_purchase);
+                            return `
+                                <div style="background: rgba(0,0,0,0.3); padding: 10px; margin-bottom: 8px; border-radius: 12px; border-left: 4px solid ${isReady ? '#ef4444' : '#fbbf24'};">
+                                    <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+                                        <div><strong>${asset.emoji} ${asset.asset_name}</strong></div>
+                                        <div>💰 Invested: ${asset.purchase_price} 🪙</div>
+                                        <div>📈 Payout: ${payout} 🪙</div>
+                                        ${isReady ? 
+                                            `<div><span class="badge" style="background: #ef4444;">✅ READY TO SELL</span> 
+                                             <button class="btn-sm btn-success" onclick="adminSellAssetForUser('${asset.id}', '${userId}')">💵 Sell Now</button>
+                                             <button class="btn-sm btn-info" onclick="adminNotifyUserToSell('${userId}', ['${asset.asset_name}'])">🔔 Notify</button></div>` : 
+                                            `<div><span class="badge">⏳ ${hoursLeft}h left</span></div>`
+                                        }
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                ` : '<div style="color: #888;">No active assets</div>'}
+            </div>
+            
+            <!-- Admin Quick Actions -->
+            <div class="card" style="margin-bottom: 15px;">
+                <h3>⚡ Admin Actions</h3>
+                <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px;">
+                    <button class="btn-sm btn-warning" onclick="adminAddToUser('${userId}', 'balance')">💰 Add Balance</button>
+                    <button class="btn-sm btn-warning" onclick="adminAddToUser('${userId}', 'bonus_balance')">🎁 Add Bonus</button>
+                    <button class="btn-sm btn-warning" onclick="adminAddToUser('${userId}', 'coin_balance')">🪙 Add Coins</button>
+                    ${readyToSell.length > 0 ? `<button class="btn-sm btn-info" onclick="adminNotifyAllReadyAssets('${userId}', ${JSON.stringify(readyToSell.map(a => a.asset_name))})">📢 Notify All Ready Assets</button>` : ''}
+                    <button class="btn-sm btn-info" onclick="refreshAdminUserData('${userId}')">🔄 Refresh Data</button>
+                </div>
+                <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                    <input type="number" id="adminCustomAmount" placeholder="Amount" style="width: 120px; padding: 8px; border-radius: 8px;">
+                    <select id="adminCustomType" style="padding: 8px; border-radius: 8px;">
+                        <option value="balance">Balance (ETB)</option>
+                        <option value="bonus_balance">Bonus (ETB)</option>
+                        <option value="coin_balance">Coins</option>
+                    </select>
+                    <button class="btn-sm" onclick="adminCustomAdjust('${userId}')">Apply Adjustment</button>
+                </div>
+            </div>
+            
+            <!-- Recent Transactions -->
+            <div class="card" style="margin-bottom: 15px;">
+                <h3>📜 Recent Transactions (Last 30)</h3>
+                ${transactions.length > 0 ? `
+                    <div style="max-height: 300px; overflow-y: auto;">
+                        ${transactions.map(tx => `
+                            <div style="background: rgba(0,0,0,0.2); padding: 6px; margin-bottom: 4px; border-radius: 6px; font-size: 11px; display: flex; justify-content: space-between; flex-wrap: wrap;">
+                                <span>${tx.transaction_type}</span>
+                                <span style="color: ${tx.amount > 0 ? '#10b981' : '#ef4444'}">${tx.amount > 0 ? '+' : ''}${tx.amount.toLocaleString()}</span>
+                                <span>${tx.timestamp?.slice(0, 16)}</span>
+                                <span>${tx.status}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                ` : '<div style="color: #888;">No transactions</div>'}
+            </div>
+            
+            <!-- Lottery Tickets -->
+            <div class="card" style="margin-bottom: 15px;">
+                <h3>🎟️ Active Lottery Tickets (${lotteryTickets.length})</h3>
+                ${lotteryTickets.length > 0 ? `
+                    <div style="max-height: 150px; overflow-y: auto;">
+                        ${lotteryTickets.map(ticket => `
+                            <div style="background: rgba(0,0,0,0.2); padding: 8px; margin-bottom: 5px; border-radius: 8px;">
+                                Pool #${ticket.pool_id} - Ticket #${ticket.ticket_number} (Round ${ticket.round})
+                            </div>
+                        `).join('')}
+                    </div>
+                ` : '<div style="color: #888;">No active lottery tickets</div>'}
+            </div>
+            
+            <!-- Health Consultations -->
+            <div class="card">
+                <h3>🏥 Health Consultations (${consultations.length})</h3>
+                ${consultations.length > 0 ? `
+                    <div style="max-height: 200px; overflow-y: auto;">
+                        ${consultations.map(cons => `
+                            <div style="background: rgba(0,0,0,0.2); padding: 8px; margin-bottom: 5px; border-radius: 8px; font-size: 12px;">
+                                <div><strong>Issue:</strong> ${cons.issue?.slice(0, 100)}...</div>
+                                <div><strong>Status:</strong> <span style="color: ${cons.status === 'responded' ? '#10b981' : '#f59e0b'}">${cons.status}</span></div>
+                                ${cons.admin_response ? `<div><strong>Response:</strong> ${cons.admin_response?.slice(0, 100)}</div>` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                ` : '<div style="color: #888;">No consultations</div>'}
+            </div>
+        `;
+        
+    } catch (err) {
+        detailDiv.innerHTML = `<div class="loading" style="color: #ef4444;">Error loading details: ${err.message}</div>`;
+    }
+}
+
+function closeAdminUserDetails() {
+    adminSelectedUserId = null;
+    const detailDiv = document.getElementById('adminUserDetails');
+    detailDiv.style.display = 'none';
+    detailDiv.innerHTML = '';
+}
+
+// Admin actions for user management
+async function adminAddToUser(userId, field) {
+    const amount = prompt(`Enter amount to add to ${field}:`, '100');
+    if (!amount) return;
+    
+    const numAmount = parseInt(amount);
+    if (isNaN(numAmount)) {
+        showToast('Invalid amount', 'error');
+        return;
+    }
+    
+    try {
+        const { data: current } = await sb.from('users').select(field).eq('user_id', userId).single();
+        const newValue = (current[field] || 0) + numAmount;
+        
+        const { error } = await sb.from('users').update({ [field]: newValue }).eq('user_id', userId);
+        if (error) throw error;
+        
+        showToast(`Added ${numAmount} to ${field}`, 'success');
+        
+        if (adminSelectedUserId === userId) {
+            await showAdminUserDetails(userId);
+        }
+        await fetchAdminUsers(); // Refresh the users list
+        
+    } catch (err) {
+        showToast('Error: ' + err.message, 'error');
+    }
+}
+
+async function adminCustomAdjust(userId) {
+    const amount = parseInt(document.getElementById('adminCustomAmount').value);
+    const field = document.getElementById('adminCustomType').value;
+    
+    if (isNaN(amount)) {
+        showToast('Enter a valid amount', 'error');
+        return;
+    }
+    
+    try {
+        const { data: current } = await sb.from('users').select(field).eq('user_id', userId).single();
+        const newValue = (current[field] || 0) + amount;
+        
+        if (newValue < 0) {
+            showToast('Cannot go negative', 'error');
+            return;
+        }
+        
+        const { error } = await sb.from('users').update({ [field]: newValue }).eq('user_id', userId);
+        if (error) throw error;
+        
+        showToast(`Adjusted ${field} by ${amount > 0 ? '+' : ''}${amount}`, 'success');
+        document.getElementById('adminCustomAmount').value = '';
+        
+        if (adminSelectedUserId === userId) {
+            await showAdminUserDetails(userId);
+        }
+        await fetchAdminUsers();
+        
+    } catch (err) {
+        showToast('Error: ' + err.message, 'error');
+    }
+}
+
+async function adminSellAssetForUser(assetId, userId) {
+    if (!confirm('Sell this asset for the user? They will receive the payout in coins.')) return;
+    
+    try {
+        const { data: asset } = await sb.from('user_assets').select('purchase_price, roi_at_purchase, asset_name').eq('id', assetId).single();
+        const payout = Math.round(asset.purchase_price * asset.roi_at_purchase);
+        
+        // Update asset as sold
+        const { error: updateError } = await sb.from('user_assets').update({ sold: true }).eq('id', assetId);
+        if (updateError) throw updateError;
+        
+        // Add coins to user
+        const { data: user } = await sb.from('users').select('coin_balance').eq('user_id', userId).single();
+        const { error: coinError } = await sb.from('users').update({ coin_balance: (user.coin_balance || 0) + payout }).eq('user_id', userId);
+        if (coinError) throw coinError;
+        
+        // Record transaction
+        await sb.from('transactions').insert({
+            user_id: userId,
+            transaction_type: 'Admin Sold Asset',
+            amount: payout,
+            status: 'completed',
+            timestamp: new Date().toISOString()
+        });
+        
+        showToast(`Asset sold! User received ${payout} coins.`, 'success');
+        
+        if (adminSelectedUserId === userId) {
+            await showAdminUserDetails(userId);
+        }
+        await fetchAdminUsers();
+        
+    } catch (err) {
+        showToast('Error: ' + err.message, 'error');
+    }
+}
+
+async function adminNotifyUserToSell(userId, assetNames) {
+    if (!assetNames || assetNames.length === 0) {
+        showToast('No assets ready to sell', 'info');
+        return;
+    }
+    
+    const assetList = assetNames.join(', ');
+    const message = `📢 Your assets (${assetList}) are ready to sell! Log in to Profit Vault and sell them for coins.`;
+    
+    try {
+        // Create notification (you can store in a notifications table)
+        console.log(`Notification to ${userId}: ${message}`);
+        showToast(`Notification sent to user about ${assetNames.length} asset(s) ready to sell`, 'success');
+        
+    } catch (err) {
+        showToast('Error: ' + err.message, 'error');
+    }
+}
+
+async function adminNotifyAllReadyAssets(userId, assetNames) {
+    await adminNotifyUserToSell(userId, assetNames);
+}
+
+async function refreshAdminUserData(userId) {
+    showToast('Refreshing user data...', 'info');
+    if (adminSelectedUserId === userId) {
+        await showAdminUserDetails(userId);
+    }
+    await fetchAdminUsers();
+    showToast('User data refreshed!', 'success');
+}
+
+// Ban/Unban User Function
+async function toggleBanUser(userId, isBanning) {
+    const action = isBanning ? 'ban' : 'unban';
+    if (!confirm(`Are you sure you want to ${action} this user? ${isBanning ? 'They will not be able to log in or perform any actions.' : 'They will regain full access.'}`)) return;
+    
+    try {
+        const { error } = await sb.from('users').update({ is_banned: isBanning }).eq('user_id', userId);
+        if (error) throw error;
+        
+        showToast(`User ${isBanning ? 'banned' : 'unbanned'} successfully!`, 'success');
+        
+        // Refresh the users list
+        await fetchAdminUsers();
+        
+        // If the detailed view is open for this user, refresh it
+        if (adminSelectedUserId === userId) {
+            await showAdminUserDetails(userId);
+        }
+        
+    } catch (err) {
+        showToast('Error: ' + err.message, 'error');
+    }
 }
 async function startNewLotteryRound(poolId) {
     if (!confirm(`Start a new round for Pool ${poolId}? This will reset the pool and allow new ticket purchases.`)) return;
