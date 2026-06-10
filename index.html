@@ -1632,10 +1632,6 @@ let allInvestments = [], investmentsPage = 1, totalInvestmentsPages = 1;
 let currentPage = 1;
 let totalPages = 1;
 let allTransactions = [];
-let leaderboardData = [];
-let leaderboardPage = 1;
-let totalLeaderboardPages = 1;
-const LEADERBOARD_PER_PAGE = 5;
 
 // ==================== UTILITIES ====================
 // ===== CACHE SYSTEM =====
@@ -2666,7 +2662,6 @@ async function loadAllData(forceRefresh = false) {
     }
     
     // Load remaining data that can't be batched
-    await loadLeaderboard();
     await loadLotteryPools();
     await loadDraws();
     await loadConsultations();
@@ -2752,112 +2747,7 @@ function initHistoryTabs() {
         };
     });
 }
-async function loadLeaderboard() {
-    try {
-        // Count all users (or only those with deposits – uncomment the .gt line if desired)
-        const { count, error: countError } = await sb
-    .from('users')
-    .select('*', { count: 'exact', head: true });
-if (countError) throw countError;
 
-totalLeaderboardPages = Math.ceil(count / LEADERBOARD_PER_PAGE);
-        if (leaderboardPage > totalLeaderboardPages) leaderboardPage = Math.max(1, totalLeaderboardPages);
-
-        const start = (leaderboardPage - 1) * LEADERBOARD_PER_PAGE;
-        const end = start + LEADERBOARD_PER_PAGE - 1;
-
-        const { data: users, error } = await sb
-            .from('users')
-            .select('user_id, username, total_deposited')
-            .order('total_deposited', { ascending: false })
-            .range(start, end);
-        if (error) throw error;
-
-        leaderboardData = users || [];
-
-        const container = document.getElementById('leaderboard');
-        if (leaderboardData.length) {
-            container.innerHTML = leaderboardData.map((u, idx) => `
-                <div class="transaction-item" data-user-id="${u.user_id}">
-                    <input type="checkbox" class="leaderboard-checkbox" value="${u.user_id}" style="margin-right:12px;">
-                    <div style="flex:2;">${start + idx + 1}. @${escapeHTML(u.username) || 'User'}</div>
-                    <div style="flex:1; text-align:right;">${(u.total_deposited || 0).toLocaleString()} ETB</div>
-                </div>
-            `).join('');
-        } else {
-            container.innerHTML = '<div class="loading">No users found</div>';
-        }
-
-        const paginationDiv = document.getElementById('leaderboardPagination');
-        if (paginationDiv) {
-            paginationDiv.innerHTML = `
-                <button class="btn-sm" onclick="changeLeaderboardPage(-1)" ${leaderboardPage === 1 ? 'disabled' : ''}>◀ Previous</button>
-                <span>Page ${leaderboardPage} of ${totalLeaderboardPages || 1}</span>
-                <button class="btn-sm" onclick="changeLeaderboardPage(1)" ${leaderboardPage === totalLeaderboardPages ? 'disabled' : ''}>Next ▶</button>
-                ${leaderboardPage === 1 ? `<label style="margin-left:15px;"><input type="checkbox" id="selectAllLeaderboardCheckbox" onchange="toggleSelectAllLeaderboard()"> Select All</label>` : ''}
-            `;
-        }
-
-        attachLeaderboardCheckboxEvents();
-    } catch (err) {
-        document.getElementById('leaderboard').innerHTML = '<div class="loading">Failed to load leaderboard</div>';
-    }
-}
-function attachLeaderboardCheckboxEvents() {
-    const selectAll = document.getElementById('selectAllLeaderboardCheckbox');
-    if (selectAll) selectAll.checked = false;
-    document.querySelectorAll('#leaderboard .leaderboard-checkbox').forEach(cb => {
-        cb.removeEventListener('change', updateLeaderboardSelectAll);
-        cb.addEventListener('change', updateLeaderboardSelectAll);
-    });
-}
-
-function updateLeaderboardSelectAll() {
-    const selectAll = document.getElementById('selectAllLeaderboardCheckbox');
-    if (!selectAll) return;
-    const checkboxes = document.querySelectorAll('#leaderboard .leaderboard-checkbox');
-    selectAll.checked = checkboxes.length > 0 && Array.from(checkboxes).every(cb => cb.checked);
-}
-
-function toggleSelectAllLeaderboard() {
-    const selectAll = document.getElementById('selectAllLeaderboardCheckbox');
-    const checkboxes = document.querySelectorAll('#leaderboard .leaderboard-checkbox');
-    checkboxes.forEach(cb => cb.checked = selectAll.checked);
-}
-
-async function deleteSelectedLeaderboardUsers() {
-    const selected = Array.from(document.querySelectorAll('#leaderboard .leaderboard-checkbox:checked')).map(cb => cb.value);
-    if (selected.length === 0) {
-        showToast('No users selected', 'info');
-        return;
-    }
-    if (!confirm(`⚠️ Permanently delete ${selected.length} user(s) and all their data? This cannot be undone.`)) return;
-    
-    const { error } = await sb.from('users').delete().in('user_id', selected);
-    if (error) {
-        showToast('Error deleting users: ' + error.message, 'error');
-    } else {
-        showToast(`${selected.length} user(s) deleted`, 'success');
-        leaderboardPage = 1;
-        await loadLeaderboard();
-        if (typeof refreshAdminStats === 'function') refreshAdminStats();
-        if (typeof loadAllData === 'function') loadAllData();
-    }
-}
-
-function changeLeaderboardPage(delta) {
-    const newPage = leaderboardPage + delta;
-    if (newPage >= 1 && newPage <= totalLeaderboardPages) {
-        leaderboardPage = newPage;
-        loadLeaderboard();
-    }
-}
-
-async function refreshLeaderboard() {
-    leaderboardPage = 1;
-    await loadLeaderboard();
-    showToast('Leaderboard refreshed', 'success');
-}
 // ==================== FINANCIAL ACTIONS ====================
 async function buyCoins() {
     if (isProcessing.buyCoins) return;
