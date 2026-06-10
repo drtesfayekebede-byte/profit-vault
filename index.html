@@ -386,12 +386,11 @@ body {
     box-shadow: 0 8px 25px rgba(0,0,0,0.3) !important;
 }
 
-/* ===== KEEP GAMES, AIRTIME, CONTACT, GUIDE, PROFILE AS SINGLE BORDER ===== */
+/* ===== KEEP GAMES, AIRTIME, CONTACT, GUIDE AS SINGLE BORDER ===== */
 #games.tab-content .card,
 #cards.tab-content .card,
 #contact.tab-content .card,
-#guide.tab-content .card,
-#profile.tab-content .card {
+#guide.tab-content .card {
     background: transparent !important;
     border: none !important;
     padding: 0 !important;
@@ -1093,19 +1092,18 @@ body {
             background: rgba(0,0,0,0.3) !important;
         }
     }
-/* ===== RESTORE BORDERS FOR GAMES, AIRTIME, CONTACT, GUIDE, PROFILE ===== */
-    #games.tab-content,
-    #cards.tab-content,
-    #contact.tab-content,
-    #guide.tab-content,
-    #profile.tab-content {
-        background: rgba(10, 10, 15, 0.7) !important;
-        backdrop-filter: blur(2px) !important;
-        border: 2px solid rgba(251, 191, 36, 0.4) !important;
-        border-radius: 28px !important;
-        padding: 20px !important;
-        margin-bottom: 20px !important;
-    }
+/* ===== RESTORE BORDERS FOR GAMES, AIRTIME, CONTACT, GUIDE ===== */
+#games.tab-content,
+#cards.tab-content,
+#contact.tab-content,
+#guide.tab-content {
+    background: rgba(10, 10, 15, 0.7) !important;
+    backdrop-filter: blur(2px) !important;
+    border: 2px solid rgba(251, 191, 36, 0.4) !important;
+    border-radius: 28px !important;
+    padding: 20px !important;
+    margin-bottom: 20px !important;
+}
 
     #games.tab-content .card,
     #cards.tab-content .card,
@@ -1206,7 +1204,30 @@ body {
     border-color: #00ffff !important;
     box-shadow: 0 0 20px rgba(0, 255, 255, 0.5) !important;
 }
+/* ===== PROFILE TAB - SEPARATE BORDERS FOR EACH CARD ===== */
+#profile.tab-content {
+    background: transparent !important;
+    backdrop-filter: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    margin-bottom: 20px !important;
+}
 
+#profile.tab-content .card {
+    background: rgba(10, 10, 15, 0.85) !important;
+    backdrop-filter: blur(2px) !important;
+    border: 2px solid rgba(251, 191, 36, 0.6) !important;
+    border-radius: 28px !important;
+    padding: 18px !important;
+    margin-bottom: 18px !important;
+    box-shadow: 0 0 12px rgba(251, 191, 36, 0.25), 0 8px 20px rgba(0,0,0,0.2) !important;
+}
+
+#profile.tab-content .card:hover {
+    border-color: #fbbf24 !important;
+    box-shadow: 0 0 22px rgba(251, 191, 36, 0.5), 0 8px 25px rgba(0,0,0,0.3) !important;
+}
 </style>
 </head>
 <body>
