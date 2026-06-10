@@ -1228,6 +1228,30 @@ body {
     border-color: #fbbf24 !important;
     box-shadow: 0 0 22px rgba(251, 191, 36, 0.5), 0 8px 25px rgba(0,0,0,0.3) !important;
 }
+/* ===== REMOVE OUTER BORDER FROM ADMIN TAB ===== */
+#admin.tab-content {
+    background: transparent !important;
+    backdrop-filter: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+}
+
+/* Keep individual card borders in Admin tab */
+#admin.tab-content .card {
+    background: rgba(10, 10, 15, 0.85) !important;
+    backdrop-filter: blur(2px) !important;
+    border: 2px solid rgba(251, 191, 36, 0.6) !important;
+    border-radius: 28px !important;
+    padding: 18px !important;
+    margin-bottom: 18px !important;
+    box-shadow: 0 0 12px rgba(251, 191, 36, 0.25), 0 8px 20px rgba(0,0,0,0.2) !important;
+}
+
+#admin.tab-content .card:hover {
+    border-color: #fbbf24 !important;
+    box-shadow: 0 0 22px rgba(251, 191, 36, 0.5), 0 8px 25px rgba(0,0,0,0.3) !important;
+}
 </style>
 </head>
 <body>
@@ -3556,7 +3580,12 @@ ${m.image_url ? `<button class="btn-sm btn-danger" onclick="deleteMarketImage(${
                 <button class="btn btn-sm btn-success" onclick="loadAllUsersForAdmin()">📋 Show All Users</button>
             </div>
             <div id="adminUsersList" style="max-height: 400px; overflow-y: auto;"></div>
-            <div id="adminUserDetails" style="display: none; margin-top: 20px;"></div>
+            <div id="adminUserModal" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 600px; max-height: 80vh; overflow-y: auto;">
+        <span class="close" onclick="closeAdminUserModal()">&times;</span>
+        <div id="adminUserModalContent"></div>
+    </div>
+</div>
         </div>
     <div class="card">
         <h3>💰 Deposit Settings (Edit Payment Info)</h3>
@@ -4059,9 +4088,10 @@ function adminChangePage(delta) {
 // Show detailed user information
 async function showAdminUserDetails(userId) {
     adminSelectedUserId = userId;
-    const detailDiv = document.getElementById('adminUserDetails');
-    detailDiv.innerHTML = '<div class="loading">Loading user details...</div>';
-    detailDiv.style.display = 'block';
+    const modal = document.getElementById('adminUserModal');
+    const contentDiv = document.getElementById('adminUserModalContent');
+    contentDiv.innerHTML = '<div class="loading">Loading user details...</div>';
+    modal.style.display = 'flex';
     
     try {
         // Fetch all user data in parallel
@@ -4246,13 +4276,17 @@ async function showAdminUserDetails(userId) {
     }
 }
 
-function closeAdminUserDetails() {
+function closeAdminUserModal() {
+    const modal = document.getElementById('adminUserModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
     adminSelectedUserId = null;
-    const detailDiv = document.getElementById('adminUserDetails');
-    detailDiv.style.display = 'none';
-    detailDiv.innerHTML = '';
 }
 
+function closeAdminUserDetails() {
+    closeAdminUserModal();
+}
 // Admin actions for user management
 async function adminAddToUser(userId, field) {
     const amount = prompt(`Enter amount to add to ${field}:`, '100');
