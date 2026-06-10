@@ -369,15 +369,35 @@ body {
     padding: 20px;
     margin-bottom: 20px;
 }
-
+/* ===== EACH CARD GETS ITS OWN BORDER ===== */
 .tab-content .card {
-    background: transparent !important;
-    backdrop-filter: none !important;
-    border: none !important;
-    box-shadow: none !important;
-    padding: 12px 0 !important;
+    background: rgba(10, 10, 15, 0.85) !important;
+    backdrop-filter: blur(2px) !important;
+    border: 1px solid rgba(251, 191, 36, 0.2) !important;
+    border-radius: 28px !important;
+    padding: 18px !important;
+    margin-bottom: 18px !important;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2) !important;
+    transition: all 0.3s !important;
 }
 
+.tab-content .card:hover {
+    border-color: rgba(251, 191, 36, 0.5) !important;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3) !important;
+}
+
+/* ===== KEEP GAMES, AIRTIME, CONTACT, GUIDE, PROFILE AS SINGLE BORDER ===== */
+#games.tab-content .card,
+#cards.tab-content .card,
+#contact.tab-content .card,
+#guide.tab-content .card,
+#profile.tab-content .card {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    margin-bottom: 0 !important;
+    box-shadow: none !important;
+}
     /* CARDS */
    .card {
     background: rgba(10, 10, 15, 0.85);
@@ -985,16 +1005,6 @@ body {
 .tab-content:hover {
     border-color: rgba(251, 191, 36, 0.8);
     box-shadow: 0 8px 25px rgba(251, 191, 36, 0.2);
-}
-
-/* Make cards inside transparent so only ONE border shows */
-.tab-content .card {
-    background: transparent !important;
-    backdrop-filter: none !important;
-    border: none !important;
-    box-shadow: none !important;
-    padding: 12px 0 !important;
-    margin-bottom: 0 !important;
 }
 
 /* But keep the card headers visible */
