@@ -3207,10 +3207,15 @@ async function buyAsset(slotId) {
     }
 }
 async function sellAsset(assetId, buttonElement = null) {
-    if (isProcessing.sellAsset) return;
+    // Prevent concurrent sells
+    if (isProcessing.sellAsset) {
+        showToast('Sale already in progress...', 'info');
+        return;
+    }
     
-    // Disable button immediately
+    // Disable button immediately to prevent double-click
     const originalText = buttonElement ? buttonElement.innerText : '';
+    const originalDisabled = buttonElement ? buttonElement.disabled : false;
     if (buttonElement) {
         buttonElement.disabled = true;
         buttonElement.innerText = '⏳ Selling...';
@@ -3218,43 +3223,99 @@ async function sellAsset(assetId, buttonElement = null) {
     
     isProcessing.sellAsset = true;
     
-    // Get asset details for optimistic update
-    const { data: asset } = await sb.from('user_assets').select('purchase_price, roi_at_purchase, asset_name').eq('id', assetId).single();
-    const payout = Math.round((asset?.purchase_price || 0) * (asset?.roi_at_purchase || 1));
-    const oldCoins = currentUser?.coin_balance || 0;
-    
-    // OPTIMISTIC UPDATE - Add coins immediately
-    if (currentUser && payout) {
-        currentUser.coin_balance = oldCoins + payout;
-        updateBalanceDisplay();
-        showToast(`Selling ${asset?.asset_name || 'asset'}...`, 'info');
-    }
-    
     try {
+        // ✅ EXTRA PROTECTION: Check if asset is already sold in database
+        const { data: checkAsset, error: checkError } = await sb
+            .from('user_assets')
+            .select('sold, asset_name, purchase_price, roi_at_purchase')
+            .eq('id', assetId)
+            .single();
+        
+        if (checkError) {
+            throw new Error('Could not verify asset status');
+        }
+        
+        // If already sold, show error and exit
+        if (checkAsset?.sold === true) {
+            showToast('This asset has already been sold!', 'error');
+            if (buttonElement) {
+                buttonElement.disabled = true;
+                buttonElement.innerText = '✅ Sold';
+            }
+            return;
+        }
+        
+        // Calculate payout for optimistic update
+        const payout = Math.round((checkAsset?.purchase_price || 0) * (checkAsset?.roi_at_purchase || 1));
+        const oldCoins = currentUser?.coin_balance || 0;
+        
+        // OPTIMISTIC UPDATE - Add coins immediately
+        if (currentUser && payout) {
+            currentUser.coin_balance = oldCoins + payout;
+            updateBalanceDisplay();
+            showToast(`Selling ${checkAsset?.asset_name || 'asset'}...`, 'info');
+        }
+        
+        // Call the secure RPC function to sell
         const { error } = await sb.rpc('sell_market_asset_secure', { p_asset_id: assetId });
         if (error) throw error;
         
         showToast('Sold successfully!', 'success');
         playSound('coin');
         
-        // Clear cache
+        // Clear cache to force fresh data
         cache.clear(`user_${USER_ID}`);
         cache.clear('dashboard_data');
-        await loadMarketAndInvestments();
+        
+        // Remove the sold asset card from UI immediately
+        const soldCard = document.getElementById(`investment-card-${assetId}`);
+        if (soldCard) {
+            soldCard.style.opacity = '0.5';
+            soldCard.style.pointerEvents = 'none';
+            setTimeout(() => {
+                soldCard.remove();
+                const remainingCards = document.querySelectorAll('.investment-card');
+                if (remainingCards.length === 0) {
+                    loadInvestments(); // Show empty state
+                } else {
+                    // Re-run load to update pagination counts
+                    loadInvestments();
+                }
+            }, 300);
+        } else {
+            await loadMarketAndInvestments();
+        }
         
     } catch (err) {
-        // ROLLBACK on error
-        if (currentUser) {
-            currentUser.coin_balance = oldCoins;
+        // ROLLBACK on error - revert the optimistic update
+        if (currentUser && checkAsset) {
+            const payout = Math.round((checkAsset?.purchase_price || 0) * (checkAsset?.roi_at_purchase || 1));
+            currentUser.coin_balance = (currentUser.coin_balance || 0) - payout;
             updateBalanceDisplay();
         }
-        showToast(err.message, 'error');
-    } finally {
-        isProcessing.sellAsset = false;
+        
+        // Handle specific error messages
+        if (err.message.includes('already sold') || err.message.includes('already been sold')) {
+            showToast('This asset has already been sold!', 'error');
+            if (buttonElement) {
+                buttonElement.disabled = true;
+                buttonElement.innerText = '✅ Sold';
+            }
+            await loadMarketAndInvestments();
+        } else if (err.message.includes('not authenticated') || err.message.includes('JWT')) {
+            showToast('Session expired. Please refresh the page.', 'error');
+            logout();
+        } else {
+            showToast(err.message || 'Sale failed', 'error');
+        }
+        
+        // Re-enable button on error
         if (buttonElement) {
-            buttonElement.disabled = false;
+            buttonElement.disabled = originalDisabled;
             buttonElement.innerText = originalText;
         }
+    } finally {
+        isProcessing.sellAsset = false;
     }
 }
 // ==================== GAME ====================
