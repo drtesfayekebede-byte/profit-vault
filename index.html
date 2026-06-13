@@ -166,37 +166,42 @@ body {
     z-index: 100;
 }
 
-    /* ===== ALL YOUR ORIGINAL STYLES BELOW (unchanged) ===== */
-/* Header with logo and profile */
+/* ===== HEADER - ALWAYS SAME ROW ===== */
 .header-content {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap;
-    gap: 15px;
+    flex-wrap: nowrap;
+    gap: 10px;
     margin-bottom: 10px;
 }
+
 .app-logo {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 8px;
+    flex-shrink: 1;
+    min-width: 0;
 }
-.logo-icon {
-    font-size: 40px;
-}
+
 .app-logo h1 {
-    font-size: 24px;
-    background: linear-gradient(135deg, #FFD700, #FFA500, #FF6347);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    margin: 0;
+    font-size: 18px;
+    white-space: nowrap;
 }
+
+.logo-icon {
+    font-size: 28px;
+    flex-shrink: 0;
+}
+
 .app-logo p {
-    font-size: 12px;
-    color: #ccc;
-    margin: 0;
+    display: none;
 }
+
+.profile-area {
+    flex-shrink: 0;
+}
+
 .profile-avatar {
     width: 48px;
     height: 48px;
@@ -215,15 +220,12 @@ body {
     height: 100%;
     object-fit: cover;
 }
+
 .profile-avatar:hover {
     transform: scale(1.05);
     box-shadow: 0 0 10px rgba(59,130,246,0.5);
 }
-.profile-area {
-    position: relative;
-    cursor: pointer;
-    z-index: 100000;
-}
+
 .dropdown-menu {
     display: none;
     position: absolute;
@@ -236,6 +238,7 @@ body {
     min-width: 160px;
     overflow: hidden;
 }
+
 .dropdown-menu div {
     color: white;
     padding: 12px 16px;
@@ -243,19 +246,49 @@ body {
     cursor: pointer;
     transition: 0.2s;
 }
+
 .dropdown-menu div:hover {
     background: #334155;
 }
+
 .show {
     display: block;
 }
+
 .dropdown-menu.show {
     display: block !important;
 }
+
 @media (max-width: 600px) {
-    .app-logo h1 { font-size: 18px; }
-    .logo-icon { font-size: 28px; }
-    .profile-avatar { width: 40px; height: 40px; font-size: 18px; }
+    .app-logo h1 { font-size: 16px; }
+    .logo-icon { font-size: 24px; }
+    .profile-avatar { width: 40px; height: 40px; }
+}
+
+@media (max-width: 400px) {
+    .app-logo h1 {
+        font-size: 14px;
+    }
+    .logo-icon {
+        font-size: 22px;
+    }
+    .profile-avatar {
+        width: 36px;
+        height: 36px;
+    }
+}
+
+@media (min-width: 600px) {
+    .app-logo p {
+        display: block;
+        font-size: 10px;
+    }
+    .app-logo h1 {
+        font-size: 22px;
+    }
+    .logo-icon {
+        font-size: 32px;
+    }
 }
     /* CARDS & CONTAINERS */
     .header h1 {
