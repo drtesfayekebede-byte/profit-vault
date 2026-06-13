@@ -1859,6 +1859,61 @@ async function saveDepositSettings() {
 const SUPABASE_URL = 'https://ogtlaffkybpesaxastvx.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ndGxhZmZreWJwZXNheGFzdHZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTA4NTQsImV4cCI6MjA5NTM4Njg1NH0.toDw1_DsAjHjUuCg0hvRdEGyjA7mW2DJNlSWoVBT1qY';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// ==================== HIDE CONSOLE ERRORS IN PRODUCTION ====================
+const isProduction = window.location.hostname !== 'localhost' && 
+                     !window.location.hostname.includes('127.0.0.1');
+
+if (isProduction) {
+    const originalConsoleError = console.error;
+    const originalConsoleWarn = console.warn;
+    
+    console.error = function(...args) {
+        const message = args.join(' ');
+        const hiddenErrors = [
+            'ERR_NAME_NOT_RESOLVED',
+            'ERR_NETWORK_CHANGED', 
+            'ERR_INTERNET_DISCONNECTED',
+            'WebSocket connection failed',
+            'NETWORK_ERROR',
+            'Failed to fetch'
+        ];
+        const shouldHide = hiddenErrors.some(err => message.includes(err));
+        if (!shouldHide) {
+            originalConsoleError.apply(console, args);
+        }
+    };
+    
+    console.warn = function(...args) {
+        const message = args.join(' ');
+        if (!message.includes('WebSocket') && !message.includes('realtime')) {
+            originalConsoleWarn.apply(console, args);
+        }
+    };
+    
+    console.log = function() {};
+}
+
+window.addEventListener('error', function(e) {
+    if (isProduction && e.message && (
+        e.message.includes('NetworkError') ||
+        e.message.includes('Failed to fetch') ||
+        e.message.includes('ERR_NAME_NOT_RESOLVED')
+    )) {
+        e.preventDefault();
+        return false;
+    }
+});
+
+window.addEventListener('unhandledrejection', function(e) {
+    if (isProduction) {
+        const message = e.reason?.message || '';
+        if (message.includes('network') || message.includes('fetch') || message.includes('ERR_')) {
+            e.preventDefault();
+            return false;
+        }
+    }
+});
+
 let realtimeChannel = null;
 function startRealtime(){
     if(realtimeChannel) return;
@@ -1876,20 +1931,17 @@ let isTabActive = true;
 function initTabVisibilityHandler() {
     document.addEventListener('visibilitychange', () => {
         if (document.hidden) {
-            // Tab is hidden/background - STOP realtime to save API calls
             isTabActive = false;
             if (realtimeChannel) {
-                console.log("📴 Tab hidden - stopping realtime updates");
+                if (!isProduction) console.log("📴 Tab hidden - stopping realtime updates");
                 sb.removeChannel(realtimeChannel);
                 realtimeChannel = null;
             }
         } else {
-            // Tab is active again - RESTART realtime and refresh data
             isTabActive = true;
-            console.log("📱 Tab active - restarting realtime updates");
+            if (!isProduction) console.log("📱 Tab active - restarting realtime updates");
             if (USER_ID) {
                 startRealtime();
-                // Refresh data to catch up on missed updates
                 loadAllData();
             }
         }
@@ -2221,18 +2273,51 @@ function startSessionHeartbeat() {
     if (heartbeatInterval) clearInterval(heartbeatInterval);
     
     heartbeatInterval = setInterval(async () => {
-        if (USER_ID && !isLoggingOut) {
+        if (USER_ID && !isLoggingOut && document.hasFocus()) {
             try {
-                await sb.auth.getSession();
+                const { data: { session } } = await sb.auth.getSession();
+                if (!session && USER_ID) {
+                    showToast('Your session has expired. Please log in again.', 'info');
+                    logout();
+                }
             } catch (e) {}
         }
-    }, 10 * 60 * 1000);
+    }, 15 * 60 * 1000);
 }
 
 function stopSessionHeartbeat() {
     if (heartbeatInterval) {
         clearInterval(heartbeatInterval);
         heartbeatInterval = null;
+    }
+}
+function startSessionWarning() {
+    if (sessionWarningInterval) clearInterval(sessionWarningInterval);
+    
+    sessionWarningInterval = setInterval(async () => {
+        if (USER_ID && !isLoggingOut && document.hasFocus()) {
+            try {
+                const { data: { session } } = await sb.auth.getSession();
+                if (session && session.expires_at) {
+                    const expiresAt = new Date(session.expires_at * 1000);
+                    const now = new Date();
+                    const minutesLeft = (expiresAt - now) / 1000 / 60;
+                    
+                    if (minutesLeft <= 10 && minutesLeft > 9) {
+                        showToast('⚠️ Your session will expire in 10 minutes.', 'info');
+                    } else if (minutesLeft <= 1 && minutesLeft > 0) {
+                        showToast('⚠️ Session expiring soon. Please refresh the page.', 'warning');
+                    }
+                }
+            } catch (e) {}
+        }
+    }, 60 * 1000);
+}
+
+function stopSessionWarning() {
+    if (sessionWarningInterval) {
+        clearInterval(sessionWarningInterval);
+        sessionWarningInterval = null;
     }
 }
 async function checkSession() {
@@ -2275,6 +2360,7 @@ async function checkSession() {
             USER_ID = session.user.id;
             startRealtime();
             startSessionHeartbeat();
+            startSessionWarning();
             localStorage.setItem('profitvault_user_id', USER_ID);
             
             // Clear cache on login to ensure fresh data
@@ -2690,6 +2776,7 @@ async function logout() {
     
     // Stop session heartbeat
     stopSessionHeartbeat();
+    stopSessionWarning();
     
     // Force hard reload to login page
     window.location.href = window.location.pathname;
@@ -2849,16 +2936,38 @@ async function loadLotteryPools() {
             .select('current_round, is_active').eq('pool_id', pid).single();
         const currentRound = roundInfo?.current_round || 1;
         const isActive = roundInfo?.is_active !== false;
-        const { count: sold } = await sb.from('lottery_tickets')
-            .select('*', { count: 'exact', head: true })
-            .eq('pool_id', pid).eq('round', currentRound).eq('status', 'active');
-        const { data: taken } = await sb.from('lottery_tickets')
-            .select('ticket_number').eq('pool_id', pid).eq('round', currentRound).eq('status', 'active');
+        
+        // USE THE NEW SECURE FUNCTION to get sold count (bypasses RLS)
+        const { data: soldCount } = await sb.rpc('get_pool_ticket_count', {
+            p_pool_id: pid,
+            p_round: currentRound
+        });
+        
+        // USE THE NEW SECURE FUNCTION to get taken numbers (bypasses RLS)
+        const { data: takenNumbers } = await sb.rpc('get_pool_taken_numbers', {
+            p_pool_id: pid,
+            p_round: currentRound
+        });
+        
         const price = [50, 100, 200][pid - 1];
         const reward = [500, 1000, 2000][pid - 1];
-        const full = (sold || 0) >= 15;
-        pools.push({ id: pid, round: currentRound, isActive, price, reward, sold: sold || 0, total: 15, taken: taken?.map(t => t.ticket_number) || [], full });
+        const sold = soldCount || 0;
+        const full = sold >= 15;
+        const taken = takenNumbers || [];
+        
+        pools.push({ 
+            id: pid, 
+            round: currentRound, 
+            isActive, 
+            price, 
+            reward, 
+            sold: sold, 
+            total: 15, 
+            taken: taken, 
+            full 
+        });
     }
+    
     document.getElementById('lotteryPools').innerHTML = pools.map(p => `
         <div class="lottery-pool">
             <div><strong>🎰 Pool #${p.id} (Round ${p.round})</strong> <span class="badge">Prize: ${p.reward} 🪙</span></div>
@@ -5656,7 +5765,7 @@ const fixAvatar = document.getElementById('profileAvatar');
                 fixMenu.classList.remove('show');
             }
         });
-        console.log('✅ Dropdown fix applied');
+        if (!isProduction) console.log('✅ Dropdown fix applied');
     }
     // Track session refresh to prevent loops
 let lastSessionRefresh = 0;
