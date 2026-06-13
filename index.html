@@ -2268,6 +2268,7 @@ function confetti() {
 // ==================== AUTHENTICATION (EMAIL ONLY) ====================
 // Session heartbeat - keeps session alive
 let heartbeatInterval = null;
+let sessionWarningInterval = null;
 
 function startSessionHeartbeat() {
     if (heartbeatInterval) clearInterval(heartbeatInterval);
