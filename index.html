@@ -1562,7 +1562,7 @@ body {
             <div class="balance-value" id="balance">0</div>
             <div class="balance-label">Balance (ETB)</div>
         </div>
-        <div class="balance-card bonus" onclick="showModal('exchangeModal')">
+        <div class="balance-card bonus" onclick="showExchangeModal()">
             <div class="balance-emoji">🎁</div>
             <div class="balance-value" id="bonus">0</div>
             <div class="balance-label">Bonus (ETB)</div>
@@ -1701,7 +1701,22 @@ body {
 <!-- MODALS -->
 <div id="depositModal" class="modal"><div class="modal-content"><span class="close" onclick="closeModal('depositModal')">&times;</span><h3>💰 Deposit Money</h3><div class="payment-methods" style="display:flex; gap:10px; margin-bottom:15px;"><div class="payment-method" data-payment="telebirr" onclick="selectPaymentMethod('telebirr')" style="flex:1; background:rgba(255,255,255,0.1); border-radius:16px; padding:10px; text-align:center; cursor:pointer;">📱 Telebirr</div><div class="payment-method" data-payment="awash" onclick="selectPaymentMethod('awash')" style="flex:1; background:rgba(255,255,255,0.1); border-radius:16px; padding:10px; text-align:center; cursor:pointer;">🏦 Awash</div></div><div id="telebirrInfo" class="telebirr-info" style="background:rgba(0,0,0,0.4); border-radius:16px; padding:12px; margin:10px 0; text-align:center;">📱 Send to Telebirr: <strong id="telebirrNumber">0935983470</strong><br>Name: <span id="telebirrName">Tesfaye</span></div><div id="awashInfo" class="bank-info" style="display:none; background:rgba(0,0,0,0.4); border-radius:16px; padding:12px; margin:10px 0; text-align:center;">🏦 <span id="bankName">Awash Bank</span>: <strong id="bankAccount">013201372354300</strong><br>Name: <span id="bankHolder">Tesfaye</span></div><input type="number" id="depositAmount" placeholder="Amount (Min 1500 ETB)"><input type="text" id="accountHolder" placeholder="Account Holder Name"><input type="text" id="transactionId" placeholder="Transaction ID"><textarea id="depositNote" rows="2" placeholder="Note (optional)"></textarea><button class="btn btn-success" onclick="submitDeposit()">Submit Deposit Request</button><p style="font-size:11px; margin-top:12px;">Admin will verify and approve.</p></div></div>
 <div id="buyCoinsModal" class="modal"><div class="modal-content"><span class="close" onclick="closeModal('buyCoinsModal')">&times;</span><h3>💱 Buy Coins</h3><p>1 ETB = 1 Coin</p><input type="number" id="buyCoinsAmount" placeholder="Amount (Min 50)"><button class="btn" onclick="buyCoins()">Buy Coins</button></div></div>
-<div id="exchangeModal" class="modal"><div class="modal-content"><span class="close" onclick="closeModal('exchangeModal')">&times;</span><h3>🔄 Exchange Coins → Bonus</h3><p>📊 Daily limit: 3% of your coins (once per day)</p><p>💱 1 Coin = 1 Bonus</p><div id="exchangeInfoModal"></div><input type="number" id="exchangeAmount" placeholder="Amount to exchange (max)" style="margin: 10px 0; width: 100%; padding: 8px; border-radius: 12px;"><button class="btn btn-warning" onclick="exchangeCoins()">Exchange Now</button></div></div>
+<div id="exchangeModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('exchangeModal')">&times;</span>
+        <h3>🔄 Exchange Coins → Bonus</h3>
+        <p>💱 1 Coin = 1 Bonus</p>
+        <p>📊 Once per day only</p>
+        <div id="exchangeInfoModal"></div>
+        <div id="exchangeStats" style="background: rgba(0,0,0,0.3); border-radius: 16px; padding: 12px; margin: 10px 0;">
+            <div>💰 Total Deposits: <strong id="modalTotalDeposited">0</strong> ETB</div>
+            <div>🪙 Current Coins: <strong id="modalCurrentCoins">0</strong></div>
+            <div>✨ Exchangeable Coins: <strong id="modalExchangeable">0</strong></div>
+        </div>
+        <input type="number" id="exchangeAmount" placeholder="Amount to exchange (1 to max)" style="margin: 10px 0; width: 100%; padding: 8px; border-radius: 12px;">
+        <button class="btn btn-warning" onclick="exchangeCoins()">Exchange Now</button>
+    </div>
+</div>
 <div id="withdrawModal" class="modal"><div class="modal-content"><span class="close" onclick="closeModal('withdrawModal')">&times;</span><h3>📤 Withdraw Bonus</h3><p>⚠️ Tax: 10%</p><p>🔒 Requires Quad-Lock 4/4</p><input type="number" id="withdrawAmount" placeholder="Amount">
 <div id="withdrawHint" style="font-size:12px; color:#fbbf24; margin:5px 0;"></div><input type="text" id="withdrawAccountHolder" placeholder="Account Holder"><input type="text" id="withdrawBankAccount" placeholder="Bank Account Number"><select id="withdrawBankName"><option>Telebirr</option><option>Awash Bank</option><option>CBE</option><option>Dashen Bank</option></select><button class="btn btn-danger" onclick="submitWithdraw()">Request Withdrawal</button></div></div>
 <div id="toast" class="toast"></div>
@@ -2067,6 +2082,24 @@ function closeModal(id) {
         const backdrops = document.querySelectorAll('.modal-backdrop');
         backdrops.forEach(backdrop => backdrop.remove());
     }
+}
+function showExchangeModal() {
+    // Update modal with current stats
+    if (currentUser) {
+        const exchangeable = Math.max(0, (currentUser.coin_balance || 0) - (currentUser.total_deposited || 0));
+        
+        const modalTotalDeposited = document.getElementById('modalTotalDeposited');
+        const modalCurrentCoins = document.getElementById('modalCurrentCoins');
+        const modalExchangeable = document.getElementById('modalExchangeable');
+        const exchangeInput = document.getElementById('exchangeAmount');
+        
+        if (modalTotalDeposited) modalTotalDeposited.innerText = (currentUser.total_deposited || 0).toLocaleString();
+        if (modalCurrentCoins) modalCurrentCoins.innerText = (currentUser.coin_balance || 0).toLocaleString();
+        if (modalExchangeable) modalExchangeable.innerText = exchangeable.toLocaleString();
+        if (exchangeInput) exchangeInput.placeholder = `Amount (1 to ${exchangeable})`;
+    }
+    
+    showModal('exchangeModal');
 }
 let audioContext = null;
 
@@ -2758,16 +2791,14 @@ async function loadQuadLockAndExchange() {
     const { data: exchanged } = await sb.from('daily_exchange')
         .select('id').eq('user_id', USER_ID).eq('exchange_date', today).maybeSingle();
     const alreadyExchanged = exchanged !== null;
-    const maxEx = Math.floor((currentUser.coin_balance || 0) * 0.03);
+    const exchangeable = Math.max(0, (currentUser.coin_balance || 0) - (currentUser.total_deposited || 0));
     
     if (alreadyExchanged) {
-        document.getElementById('exchangeInfo').innerHTML = `<div>⚠️ You have already exchanged today.</div><div>📊 Daily limit: 3% of coins (${maxEx} max)</div><div>⏳ Please try again tomorrow.</div>`;
-        document.getElementById('exchangeInfoModal').innerHTML = `<div>You have already exchanged today.</div><div>Come back tomorrow to exchange again.</div>`;
-    } else {
-        document.getElementById('exchangeInfo').innerHTML = `<div>📊 Daily limit: 3% of your coins (up to ${maxEx} coins)</div><div>✅ You can exchange today.</div>`;
-        document.getElementById('exchangeInfoModal').innerHTML = `<div>You can exchange up to ${maxEx} coins right now.</div><div>⚠️ Only one exchange per day allowed.</div>`;
-        const exchangeInput = document.getElementById('exchangeAmount');
-        if (exchangeInput) exchangeInput.placeholder = `Amount (max ${maxEx})`;
+    document.getElementById('exchangeInfo').innerHTML = `<div>⚠️ You have already exchanged today.</div><div>📊 Exchangeable coins: ${exchangeable}</div><div>⏳ Please try again tomorrow.</div>`;
+    document.getElementById('exchangeInfoModal').innerHTML = `<div>You have already exchanged today.</div><div>Come back tomorrow to exchange again.</div>`;
+} else {
+    document.getElementById('exchangeInfo').innerHTML = `<div>📊 You can exchange up to ${exchangeable} coins (coins above your total deposits of ${(currentUser.total_deposited || 0).toLocaleString()} ETB)</div><div>✅ 1 coin = 1 bonus | Once per day</div>`;
+    document.getElementById('exchangeInfoModal').innerHTML = `<div>You can exchange up to ${exchangeable} coins right now.</div><div>⚠️ Only one exchange per day allowed.</div><div>💰 Total Deposits: ${(currentUser.total_deposited || 0).toLocaleString()} ETB</div>`;
     }
 }
 
@@ -2911,18 +2942,6 @@ async function loadAllData(forceRefresh = false) {
             <div class="quad-item ${referralDone ? 'unlocked' : 'locked'}"><div>👥 3 Referrals</div><div>${batchData.user.active_referrals || 0}/3</div></div>
             <div class="progress-bar"><div class="progress-fill" style="width:${percent}%"></div></div>
             <div class="progress-text">${completed}/4 Complete (${Math.round(percent)}%)</div>`;
-        
-        // Update Exchange Info
-        const maxEx = Math.floor((batchData.user.coin_balance || 0) * 0.03);
-        if (batchData.alreadyExchanged) {
-            document.getElementById('exchangeInfo').innerHTML = `<div>⚠️ You have already exchanged today.</div><div>📊 Daily limit: 3% of coins (${maxEx} max)</div><div>⏳ Please try again tomorrow.</div>`;
-            document.getElementById('exchangeInfoModal').innerHTML = `<div>You have already exchanged today.</div><div>Come back tomorrow to exchange again.</div>`;
-        } else {
-            document.getElementById('exchangeInfo').innerHTML = `<div>📊 Daily limit: 3% of your coins (up to ${maxEx} coins)</div><div>✅ You can exchange today.</div>`;
-            document.getElementById('exchangeInfoModal').innerHTML = `<div>You can exchange up to ${maxEx} coins right now.</div><div>⚠️ Only one exchange per day allowed.</div>`;
-            const exchangeInput = document.getElementById('exchangeAmount');
-            if (exchangeInput) exchangeInput.placeholder = `Amount (max ${maxEx})`;
-        }
         
         // Update Market Grid using batch data
         const ownedSlots = batchData.assets?.map(a => a.slot_id) || [];
@@ -3086,29 +3105,45 @@ async function buyCoins() {
     }
 }
 async function exchangeCoins() {
-    if (isProcessing.exchangeCoins) return;
+    if (isProcessing.exchangeCoins) {
+        showToast('Please wait, processing...', 'info');
+        return;
+    }
     
     const today = new Date().toISOString().slice(0, 10);
+    
+    // Check if already exchanged today
     const { data: existing } = await sb.from('daily_exchange')
         .select('id').eq('user_id', USER_ID).eq('exchange_date', today).maybeSingle();
+    
     if (existing) {
         showToast('You have already exchanged today. Please try again tomorrow.', 'error');
         return;
     }
     
-    const maxAllowed = Math.floor((currentUser?.coin_balance || 0) * 0.03);
-    if (maxAllowed <= 0) {
-        showToast('No coins available to exchange (minimum 34 coins needed).', 'error');
+    // Check if user has ever deposited
+    if (!currentUser.total_deposited || currentUser.total_deposited <= 0) {
+        showToast('You must make a deposit before you can exchange coins.', 'error');
+        return;
+    }
+    
+    // Calculate max exchangeable = current coins - total deposited
+    const maxExchangeable = (currentUser.coin_balance || 0) - (currentUser.total_deposited || 0);
+    
+    if (maxExchangeable <= 0) {
+        showToast('No exchangeable coins available. You need coins above your total deposits.', 'error');
         return;
     }
     
     let amount = parseInt(document.getElementById('exchangeAmount').value);
+    
     if (isNaN(amount) || amount <= 0) {
         showToast('Please enter a valid amount', 'error');
         return;
     }
-    if (amount > maxAllowed) {
-        showToast(`You can only exchange up to ${maxAllowed} coins today (3% of your coins).`, 'error');
+    
+    if (amount > maxExchangeable) {
+        showToast(`You can only exchange up to ${maxExchangeable} coins (coins above your ${currentUser.total_deposited} ETB deposits).`, 'error');
         return;
     }
     
@@ -3117,26 +3152,34 @@ async function exchangeCoins() {
     // Optimistic update
     const oldCoins = currentUser.coin_balance;
     const oldBonus = currentUser.bonus_balance;
+    
     if (currentUser) {
         currentUser.coin_balance -= amount;
         currentUser.bonus_balance += amount;
         updateBalanceDisplay();
+        showToast(`Exchanging ${amount} coins...`, 'info');
     }
     
     try {
-        const { error } = await sb.rpc('exchange_coins_to_bonus_secure', { 
+        const { data, error } = await sb.rpc('exchange_coins_to_bonus_secure', { 
             p_amount: amount,
             p_date: today 
         });
+        
         if (error) throw error;
+        
+        if (data && data.success === false) {
+            throw new Error(data.error || 'Exchange failed');
+        }
         
         showToast(`Exchanged ${amount} coins to bonus!`, 'success');
         playSound('coin');
         closeModal('exchangeModal');
         document.getElementById('exchangeAmount').value = '';
         
+        // Clear cache to refresh data
         cache.clear(`user_${USER_ID}`);
-        cache.clear('dashboard_data');
+        await loadAllData();
         
     } catch (err) {
         // Rollback on error
