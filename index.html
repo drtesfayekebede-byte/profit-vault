@@ -123,12 +123,11 @@ body {
 .tabs-wrapper {
     background: rgba(10, 10, 15, 0.4);
     border-radius: 28px;
-    padding: 16px 16px 16px 16px;  /* Keep equal padding */
+    padding: 20px 16px;  /* 20px top/bottom, 16px left/right */
     margin-bottom: 20px;
     border: 2px solid rgba(251, 191, 36, 0.6);
     box-shadow: 0 0 15px rgba(251, 191, 36, 0.3), 0 0 8px rgba(0, 255, 255, 0.15);
     backdrop-filter: blur(4px);
-    /* Remove overflow: hidden - it was cutting off the top */
 }
 /* Responsive padding for larger screens */
 @media (min-width: 768px) {
@@ -1597,7 +1596,7 @@ body {
 
 <!-- DASHBOARD -->
 <div id="dashboard" class="tab-content active">
-    <div class="card"><h3>⚡ Quick Actions</h3><button class="btn btn-success" onclick="showModal('depositModal')">💰 Deposit</button><div class="row"><button class="btn" onclick="showModal('buyCoinsModal')">💱 Buy Coins</button><button class="btn btn-warning" onclick="showModal('exchangeModal')">🔄 Exchange to Bonus</button></div><button class="btn btn-danger" onclick="showModal('withdrawModal')">📤 Withdraw Bonus</button></div>
+    <div class="card"><h3>⚡ Quick Actions</h3><button class="btn btn-success" onclick="showModal('depositModal')">💰 Deposit</button><div class="row"><button class="btn" onclick="showModal('buyCoinsModal')">💱 Buy Coins</button><button class="btn btn-warning" onclick="showExchangeModal()">🔄 Exchange to Bonus</button></div><button class="btn btn-danger" onclick="showModal('withdrawModal')">📤 Withdraw Bonus</button></div>
     <div class="card"><h3>🔒 QUAD-LOCK PROGRESS</h3><div id="quadlock">Loading...</div></div>
     <div class="card"><h3>📈 Exchange Info</h3><div id="exchangeInfo"></div></div>
 </div>
@@ -2101,7 +2100,7 @@ function showExchangeModal() {
         if (exchangeInput) exchangeInput.placeholder = `Amount (1 to ${exchangeable})`;
     }
     
-    showModal('exchangeModal');
+    showExchangeModal();
 }
 let audioContext = null;
 
