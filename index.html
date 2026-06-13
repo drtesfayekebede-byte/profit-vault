@@ -186,7 +186,24 @@ body {
 
 .app-logo h1 {
     font-size: 18px;
-    white-space: nowrap;
+    white-space: normal;
+    line-height: 1.2;
+    font-family: 'Times New Roman', Times, serif;
+    font-weight: 900;
+    font-style: italic;
+    background: linear-gradient(135deg, #FFD700, #FFA500, #FF6347, #FFD700);
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 
+        1px 1px 0 #8B0000,
+        2px 2px 0 #8B0000,
+        3px 3px 0 #8B0000,
+        4px 4px 0 #8B0000,
+        5px 5px 0 #8B0000,
+        0 0 15px rgba(255, 215, 0, 0.5);
+    animation: text3D 3s ease-in-out infinite, gradientShift 4s ease infinite;
 }
 
 .logo-icon {
@@ -260,7 +277,7 @@ body {
 }
 
 @media (max-width: 600px) {
-    .app-logo h1 { font-size: 16px; }
+    .app-logo h1 { font-size: 14px; text-shadow: 1px 1px 0 #8B0000, 2px 2px 0 #8B0000, 3px 3px 0 #8B0000; }
     .logo-icon { font-size: 24px; }
     .profile-avatar { width: 40px; height: 40px; }
 }
@@ -284,10 +301,16 @@ body {
         font-size: 10px;
     }
     .app-logo h1 {
-        font-size: 22px;
+        font-size: 28px;
+        text-shadow: 
+            2px 2px 0 #8B0000,
+            4px 4px 0 #8B0000,
+            6px 6px 0 #8B0000,
+            8px 8px 0 #8B0000,
+            10px 10px 0 #8B0000;
     }
     .logo-icon {
-        font-size: 32px;
+        font-size: 40px;
     }
 }
     /* CARDS & CONTAINERS */
@@ -337,6 +360,17 @@ body {
     @keyframes rubyShine { 0%,100%{background-position:0% 0%;} 50%{background-position:100% 100%;} }
     @keyframes emeraldShine { 0%,100%{background-position:0% 0%;} 50%{background-position:100% 100%;} }
     @keyframes topazShine { 0%,100%{background-position:0% 0%;} 50%{background-position:100% 100%;} }
+@keyframes text3D {
+    0% { text-shadow: 1px 1px 0 #8B0000, 2px 2px 0 #8B0000, 3px 3px 0 #8B0000, 4px 4px 0 #8B0000, 5px 5px 0 #8B0000; }
+    50% { text-shadow: 1px 1px 0 #FF4500, 2px 2px 0 #FF4500, 3px 3px 0 #FF4500, 4px 4px 0 #FF4500, 5px 5px 0 #FF4500; }
+    100% { text-shadow: 1px 1px 0 #8B0000, 2px 2px 0 #8B0000, 3px 3px 0 #8B0000, 4px 4px 0 #8B0000, 5px 5px 0 #8B0000; }
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
     .balance-emoji { font-size: 34px; margin-bottom: 8px; }
     .balance-value {
         font-size: 28px;
