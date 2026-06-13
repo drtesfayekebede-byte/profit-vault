@@ -125,9 +125,10 @@ body {
     border-radius: 28px;
     padding: 16px;
     margin-bottom: 20px;
-    border: 2px solid rgba(251, 191, 36, 0.6);
-    box-shadow: 0 0 20px rgba(251, 191, 36, 0.3), 0 0 10px rgba(0, 255, 255, 0.2);
+    border: 3px solid rgba(251, 191, 36, 0.7);
+    box-shadow: 0 0 25px rgba(251, 191, 36, 0.4), 0 0 15px rgba(0, 255, 255, 0.25);
     backdrop-filter: blur(4px);
+    animation: borderGlow 3s ease-in-out infinite;
 }
 
 /* Responsive padding for larger screens */
@@ -364,6 +365,21 @@ body {
 
 .bottom-row {
     margin-top: 10px;
+    width: 100%;
+}
+
+.bottom-row .admin-tab {
+    width: 100%;
+    display: block;
+    text-align: center;
+    background: linear-gradient(135deg, #8b0000, #dc143c);
+    padding: 14px 8px;
+    border-radius: 12px;
+}
+
+.bottom-row .admin-tab:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 15px rgba(220, 20, 60, 0.5);
 }
 
 .tab-content {
@@ -1909,16 +1925,18 @@ function setupAdminBottomRow() {
         adminBtn.className = 'tab admin-tab';
         adminBtn.setAttribute('data-tab', 'admin');
         adminBtn.innerHTML = '👑 Admin';
+        adminBtn.style.width = '100%';
+        adminBtn.style.display = 'block';
+        adminBtn.style.textAlign = 'center';
         bottomRow.appendChild(adminBtn);
         bottomRow.style.display = 'block';
+        bottomRow.style.width = '100%';
         
-        // Check if admin div already exists
         let adminDiv = document.getElementById('admin');
         if (!adminDiv) {
             adminDiv = document.createElement('div');
             adminDiv.id = 'admin';
             adminDiv.className = 'tab-content';
-            // IMPORTANT: Insert AFTER tabs-wrapper (NOT inside it)
             tabsWrapper.insertAdjacentElement('afterend', adminDiv);
         }
         
@@ -1932,7 +1950,6 @@ function setupAdminBottomRow() {
     } else {
         bottomRow.innerHTML = '';
         bottomRow.style.display = 'none';
-        // Remove admin div if exists
         const adminDiv = document.getElementById('admin');
         if (adminDiv) adminDiv.remove();
     }
