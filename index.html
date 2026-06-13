@@ -2100,7 +2100,12 @@ function showExchangeModal() {
         if (exchangeInput) exchangeInput.placeholder = `Amount (1 to ${exchangeable})`;
     }
     
-    showExchangeModal();
+    // Open the modal - DO NOT call showExchangeModal again!
+    const modal = document.getElementById('exchangeModal');
+    if (modal) {
+        modal.classList.add('active');
+        playSound('click');
+    }
 }
 let audioContext = null;
 
