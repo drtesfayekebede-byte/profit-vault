@@ -5454,9 +5454,12 @@ const guideTexts = {
             <h4>🔄 Exchange (Coins → Bonus)</h4>
             <p>You can convert coins into bonus at a 1:1 rate. However:</p>
             <ul><li><strong>Daily limit:</strong> Once per day.</li>
-            <li><strong>Amount limit:</strong> You may exchange up to 3% of your current coin balance (e.g., if you have 1000 coins, max exchange = 30 coins).</li>
-            <li>You choose the exact amount (≤ maximum). Exchange is recorded and cannot be undone.</li></ul>
-            <p>This helps you gradually move coins into withdrawable bonus.</p>
+            <li><strong>Amount limit:</strong> You can only exchange coins that are ABOVE your total deposits (your profit).</li>
+            <li><strong>Example:</strong> If you deposited 1500 ETB and currently have 2000 coins, you can exchange up to 500 coins.</li>
+            <li><strong>Formula:</strong> Exchangeable = Current Coins - Total Deposits</li>
+            <li>You choose the exact amount (1 up to your exchangeable limit). Exchange is recorded and cannot be undone.</li>
+            <li>If your coins are less than your total deposits, you cannot exchange until you earn more profit.</li></ul>
+            <p>This ensures you only exchange your profits, not your original deposit amount.</p>
             
             <h4>📜 Transaction History</h4>
             <p>You can filter transactions by: All, Deposits, Withdrawals, Other (exchange, referral rewards, game wins, consultation fees, etc.). You can also delete selected transactions (use checkboxes).</p>
@@ -5511,11 +5514,14 @@ const guideTexts = {
             <p><strong>ቦነስ ብቻ</strong> ማውጣት ይቻላል። ታክስ፦ 10% (ለምሳሌ 1000 ብር ብትጠይቁ 100 ብር ታክስ፣ የተጣራ 900 ብር)። መጠኖች <strong>ዝቅተኛ እና እርምጃ (step)</strong> መከተል አለባቸው (ነባሪ 500 ብር እና እርምጃ 500፤ ስለዚህ የሚፈቀዱ መጠኖች 500፣1000፣1500… ናቸው)። ጥያቄ ካቀረቡ በኋላ አስተዳዳሪው ያጸድቃል ወይም ውድቅ ያደርጋል። ሲያጸድቅ የተጣራ መጠን ከቦነስዎ ይቀንስ እና በባንክ ዝርዝርዎ ይከፈልዎታል።</p>
             
             <h4>🔄 ሳንቲም ወደ ቦነስ መለወጥ (Exchange)</h4>
-            <p>ሳንቲሞችዎን በ1:1 ወደ ቦነስ መቀየር ይችላሉ። ግን ወሰኖች፦</p>
+            <p>ሳንቲሞችዎን በ1:1 ወደ ቦነስ መቀየር ይችላሉ። ወሰኖች፦</p>
             <ul><li><strong>በቀን አንድ ጊዜ ብቻ።</strong></li>
-            <li><strong>ከፍተኛ መጠን፦</strong> በአሁኑ ሳንቲም ቀሪ ሂሳብዎ 3% ድረስ ብቻ (ለምሳሌ 1000 ሳንቲም ካለዎት ከፍተኛው 30 ሳንቲም)።</li>
-            <li>እርስዎ የሚፈልጉትን ትክክለኛ መጠን መምረጥ ይችላሉ (ከከፍተኛው በታች)።</li></ul>
-            <p>ይህ ሳንቲሞችን ወደ ሊወጣ በሚችል ቦነስ ቀስ በቀስ እንዲቀይሩ ያግዛል።</p>
+            <li><strong>የሚለወጠው መጠን፦</strong> ከአጠቃላይ ተቀማጭ ገንዘብዎ በላይ ያለውን ትርፍ ብቻ መለወጥ ይችላሉ።</li>
+            <li><strong>ምሳሌ፦</strong> 1500 ብር አስገብተው በአሁኑ ጊዜ 2000 ሳንቲም ካለዎት፣ እስከ 500 ሳንቲም መለወጥ ይችላሉ።</li>
+            <li><strong>ቀመር፦</strong> ሊለወጥ የሚችለው = የአሁኑ ሳንቲም - አጠቃላይ ተቀማጭ</li>
+            <li>የሚፈልጉትን ትክክለኛ መጠን መምረጥ ይችላሉ (ከሚፈቀደው ገደብ በታች)።</li>
+            <li>ሳንቲሞችዎ ከተቀማጭ ገንዘብዎ በታች ከሆነ፣ ትርፍ እስኪያገኙ ድረስ መለወጥ አይችሉም።</li></ul>
+            <p>ይህ ትርፍዎን ብቻ እንዲለውጡ ያረጋግጣል፣ ያስገቡት ገንዘብ ሳይነካ ይቀራል።</p>
             
             <h4>📜 የግብይት ታሪክ (Transaction History)</h4>
             <p>ግብይቶችን በሚከተሉት መሰረት ማጣራት ይችላሉ፦ ሁሉም፣ ተቀማጭጥ፣ መውጫ፣ ሌላ (ምንዛሪ መለዋወጥ፣ የሪፌራል ሽልማት፣ የጨዋታ ክፍያዎች፣ የክሊኒክ ክፍያዎች)። እንዲሁም የተመረጡ ግብይቶችን መሰረዝ ይችላሉ (አመልካች ሳጥኖችን ይጠቀሙ)።</p>
@@ -5571,8 +5577,12 @@ om: `
         <h4>🔄 Saantima jijjiiruu → Bonus</h4>
         <p>Saantima keessan reeshoo 1:1 taheen bonusitti jijjiiruu dandeessu. Haaluma kanaan:</p>
         <ul><li><strong>Guyyaatti yeroo tokko qofa jijjiiruu dandeessu.</strong></li>
-        <li><strong>Daangaan hanga 3% saantima keessaniiti</strong> (fknf. 1000 saantima yoo qabaattan max 30).</li>
-        <li>Hanga jijjiirtan ofii keessanii filachuu dandeessu (max caaluu hinqabu).</li></ul>
+        <li><strong>Daangaan jijjiiruu:</strong> Saantima kuusaa keessan guutuu irraa bu'aa (profit) isinitti hafe qofa jijjiiruu dandeessu.</li>
+        <li><strong>Fakkeenya:</strong> Yoo 1500 ETB kuufatanii amma saantima 2000 qabaattan, saantima 500 gidduu jijjiiruu dandeessu.</li>
+        <li><strong>Gilgaala:</strong> Saantima jijjiiruu dandeessan = Saantima ammaa - Kuufama guutuu</li>
+        <li>Hanga jijjiirtan ofii keessanii filachuu dandeessu (1 hanga daangaa keessanitti).</li>
+        <li>Yoo saantimni keessan kuufama keessan irraa xiqqaa ta'e, hanga bu'aa argattan jijjiiruu hin dandeessan.</li></ul>
+        <p>Kun bu'aa keessan qofa jijjiiruu akka dandeessan mirkaneessa, kuufama keessan sun akkaataa isaa turuu.</p>
         
         <h4>📜 Seenaa bittaa (Transaction History)</h4>
         <p>Seenaa bittaa keessan ilaallachuu dandeessu: Hunduma, Kuusa, Baasa, Kaan (jijjiirra, badhaasa wabii, moʼannaa taphaa, gatii clinic). Seenaa filatamees haquu ni dandeessu (checkboksota fayyadamaa).</p>
