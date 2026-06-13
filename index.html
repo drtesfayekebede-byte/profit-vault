@@ -123,12 +123,12 @@ body {
 .tabs-wrapper {
     background: rgba(10, 10, 15, 0.4);
     border-radius: 28px;
-    padding: 16px;
+    padding: 16px 16px 16px 16px;  /* Keep equal padding */
     margin-bottom: 20px;
     border: 2px solid rgba(251, 191, 36, 0.6);
     box-shadow: 0 0 15px rgba(251, 191, 36, 0.3), 0 0 8px rgba(0, 255, 255, 0.15);
     backdrop-filter: blur(4px);
-    overflow: hidden;  /* ← ADD THIS ONE LINE */
+    /* Remove overflow: hidden - it was cutting off the top */
 }
 /* Responsive padding for larger screens */
 @media (min-width: 768px) {
@@ -784,7 +784,7 @@ body {
 }
 /* ===== TABS GRID LAYOUT ===== */
 .tabs-container {
-    margin-bottom: 20px;
+    margin-bottom: 0;
 }
 
 .tabs-grid {
@@ -819,7 +819,7 @@ body {
     display: grid;
     grid-template-columns: 2fr;
     gap: 10px;
-    margin-top: 8px;   
+    margin-top: 5px;   
     margin-bottom: 0; 
 }
 
