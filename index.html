@@ -124,10 +124,11 @@ body {
     background: rgba(10, 10, 15, 0.4);
     border-radius: 28px;
     padding: 16px;
-    margin-bottom: 16px;
+    margin-bottom: 20px;
     border: 2px solid rgba(251, 191, 36, 0.6);
     box-shadow: 0 0 15px rgba(251, 191, 36, 0.3), 0 0 8px rgba(0, 255, 255, 0.15);
     backdrop-filter: blur(4px);
+    overflow: hidden;  /* ← ADD THIS ONE LINE */
 }
 /* Responsive padding for larger screens */
 @media (min-width: 768px) {
@@ -378,7 +379,7 @@ body {
    /* ===== NEW LAYOUT STYLES ===== */
 
 .tabs-container {
-    margin-bottom: 16px;
+    margin-bottom: 0;
 }
 
 .tabs-grid {
@@ -816,9 +817,10 @@ body {
 
 .bottom-row {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: 2fr;
     gap: 10px;
-    margin-top: 5px;
+    margin-top: 8px;   
+    margin-bottom: 0; 
 }
 
 .bottom-row.two-columns {
