@@ -43,6 +43,7 @@ body {
     padding: 0;
     color: #e2e8f0;
     overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
 }
 
 /* Fixed Header - Top */
@@ -1507,6 +1508,43 @@ body {
         font-size: 18px;
     }
 }
+/* ===== ADMIN BATCH LOADING STYLES ===== */
+.admin-batch {
+    display: none;
+}
+
+.admin-batch.active {
+    display: block;
+}
+
+.load-more-container {
+    text-align: center;
+    margin-top: 20px;
+    padding: 15px;
+}
+
+.load-more-btn {
+    background: linear-gradient(135deg, #fbbf24, #d97706);
+    border: none;
+    padding: 12px 30px;
+    border-radius: 40px;
+    color: #1a1a2e;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.load-more-btn:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 15px rgba(251, 191, 36, 0.5);
+}
+
+.load-more-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
 </style>
 </head>
 <body>
@@ -1915,16 +1953,51 @@ window.addEventListener('unhandledrejection', function(e) {
 });
 
 let realtimeChannel = null;
-function startRealtime(){
-    if(realtimeChannel) return;
-    realtimeChannel = sb.channel(`user-${USER_ID}`).on('postgres_changes',{event:'UPDATE',schema:'public',table:'users',filter:`user_id=eq.${USER_ID}`},(payload)=>{
-        document.getElementById('balance').innerText = (payload.new.balance||0).toLocaleString();
-        document.getElementById('bonus').innerText = (payload.new.bonus_balance||0).toLocaleString();
-        document.getElementById('coins').innerText = (payload.new.coin_balance||0).toLocaleString();
-        if(currentUser) Object.assign(currentUser, payload.new);
+function startRealtime() {
+    if (realtimeChannel) return;
+    
+    // Channel for user balance updates
+    realtimeChannel = sb.channel(`user-${USER_ID}`).on('postgres_changes', {
+        event: 'UPDATE',
+        schema: 'public',
+        table: 'users',
+        filter: `user_id=eq.${USER_ID}`
+    }, (payload) => {
+        document.getElementById('balance').innerText = (payload.new.balance || 0).toLocaleString();
+        document.getElementById('bonus').innerText = (payload.new.bonus_balance || 0).toLocaleString();
+        document.getElementById('coins').innerText = (payload.new.coin_balance || 0).toLocaleString();
+        if (currentUser) Object.assign(currentUser, payload.new);
+    }).subscribe();
+    
+    // ADD THIS - Channel for user_assets changes (to detect when admin sells asset for user)
+    if (window.assetsChannel) {
+        sb.removeChannel(window.assetsChannel);
+    }
+    
+    window.assetsChannel = sb.channel(`assets-${USER_ID}`).on('postgres_changes', {
+        event: 'UPDATE',
+        schema: 'public',
+        table: 'user_assets',
+        filter: `user_id=eq.${USER_ID}`
+    }, (payload) => {
+        // If an asset was marked as sold, refresh investments
+        if (payload.new.sold === true && payload.old.sold === false) {
+            loadInvestments();
+            loadMarketAndInvestments();
+        }
     }).subscribe();
 }
-function stopRealtime(){ if(realtimeChannel){ sb.removeChannel(realtimeChannel); realtimeChannel = null; } }
+function stopRealtime() {
+    if (realtimeChannel) {
+        sb.removeChannel(realtimeChannel);
+        realtimeChannel = null;
+    }
+    // Also remove the assets channel
+    if (window.assetsChannel) {
+        sb.removeChannel(window.assetsChannel);
+        window.assetsChannel = null;
+    }
+}
 // ==================== TAB VISIBILITY HANDLER (Stop Realtime When Inactive) ====================
 let isTabActive = true;
 
@@ -3457,6 +3530,23 @@ async function sellAsset(assetId, buttonElement = null) {
         return;
     }
     
+    // ADD THIS CHECK - Verify asset is not already sold before proceeding
+    const { data: quickCheck } = await sb.from('user_assets')
+        .select('sold')
+        .eq('id', assetId)
+        .single();
+    
+    if (quickCheck?.sold === true) {
+        showToast('This asset has already been sold!', 'error');
+        if (buttonElement) {
+            buttonElement.disabled = true;
+            buttonElement.innerText = '✅ Sold';
+        }
+        // Refresh the investments list to remove it
+        await loadInvestments();
+        return;
+    }
+    
     // Disable button immediately to prevent double-click
     const originalText = buttonElement ? buttonElement.innerText : '';
     const originalDisabled = buttonElement ? buttonElement.disabled : false;
@@ -3486,6 +3576,7 @@ async function sellAsset(assetId, buttonElement = null) {
                 buttonElement.disabled = true;
                 buttonElement.innerText = '✅ Sold';
             }
+            await loadInvestments();
             return;
         }
         
@@ -4017,63 +4108,260 @@ function showAdminTab() {
 }
 async function loadAdminPanel() {
     const adminDiv = document.getElementById('admin');
-    adminDiv.innerHTML = '<div class="loading">Loading admin...</div>';
-    const { data: deposits } = await sb.from('pending_deposits').select('*').eq('status','pending');
-    const { data: withdrawals } = await sb.from('pending_withdrawals').select('*').eq('status','pending');
-    const { data: cons } = await sb.from('health_consultations').select('*').eq('status','pending');
-    let market = getCache('market');
-if(!market) { 
-    const { data } = await sb.from('market').select('*').order('slot_id'); 
-    market = data; setCache('market', market); 
-}
-    let cards = getCache('cards');
-if(!cards) { 
-    const { data } = await sb.from('global_cards').select('*').order('position'); 
-    cards = data; setCache('cards', cards); 
-}
+    
+    // Show loading indicator
+    adminDiv.innerHTML = '<div class="loading">Loading admin panel...</div>';
+    
+    // First, load only the essential data (Batch 1)
+    const [deposits, withdrawals, cons] = await Promise.all([
+        sb.from('pending_deposits').select('*').eq('status', 'pending'),
+        sb.from('pending_withdrawals').select('*').eq('status', 'pending'),
+        sb.from('health_consultations').select('*').eq('status', 'pending')
+    ]);
+    
+    // Create the admin panel structure with batches
     adminDiv.innerHTML = `
-        <div class="card"><h3>💰 Pending Deposits</h3>${renderPendingList(deposits,'deposit')}</div>
-        <div class="card"><h3>📤 Pending Withdrawals</h3>${renderPendingList(withdrawals,'withdraw')}</div>
-        <div class="card"><h3>🏥 Pending Consultations</h3>${cons?.map(c=>`<div><strong>${c.username}</strong>: ${c.issue?.slice(0,100)}<br><textarea id="resp_${c.id}" rows="2" style="width:100%"></textarea><button class="btn btn-sm" onclick="respondConsultation(${c.id})">Reply</button></div>`).join('')||'<div>None</div>'}</div>
-        <div class="card"><h3>🎰 Lottery Draws</h3>
-    <button class="btn btn-sm" onclick="drawLottery(1)">Draw Pool 1</button>
-    <button class="btn btn-sm" onclick="drawLottery(2)">Draw Pool 2</button>
-    <button class="btn btn-sm" onclick="drawLottery(3)">Draw Pool 3</button>
-    <hr>
-    <button class="btn btn-sm btn-success" onclick="startNewLotteryRound(1)">🔄 Start New Round Pool 1</button>
-    <button class="btn btn-sm btn-success" onclick="startNewLotteryRound(2)">🔄 Start New Round Pool 2</button>
-    <button class="btn btn-sm btn-success" onclick="startNewLotteryRound(3)">🔄 Start New Round Pool 3</button>
-</div>
-        <div class="card"><h3>🛠️ Edit Market (Name, Emoji, Price, ROI, Image)</h3>${market?.map(m => `
-    <div style="margin-bottom:15px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:8px;">
-        <input type="text" id="emoji_${m.slot_id}" value="${m.emoji}" style="width:60px;" placeholder="Emoji"> 
-        <input type="text" id="name_${m.slot_id}" value="${m.asset_name}" style="width:120px;" placeholder="Name"> 
-        <input type="number" id="price_${m.slot_id}" value="${m.cost}" style="width:80px;" placeholder="Cost"> 
-        <input type="number" id="roi_${m.slot_id}" value="${m.default_roi}" step="0.01" style="width:80px;" placeholder="ROI"> 
-        <input type="file" id="image_file_${m.slot_id}" accept="image/*" style="width:150px;">
-        <button class="btn-sm" onclick="uploadMarketImage(${m.slot_id})">📤 Upload Image</button>
-${m.image_url ? `<button class="btn-sm btn-danger" onclick="deleteMarketImage(${m.slot_id})">🗑️ Delete Image</button>` : ''}
-<button class="btn btn-sm" onclick="updateMarketItemFull(${m.slot_id})">💾 Update</button>
-    </div>`).join('')}</div>
-<button class="btn-sm btn-warning" onclick="resetAllROI()" style="margin-top:10px;">🔄 Reset All ROI to Default</button>
-        <div class="card"><h3>🃏 Airtime Cards</h3>${cards?.map(c=>`<div>Cost: ${c.card_cost} ETB (${c.hidden_numbers.length} left) 
-    <button class="btn btn-sm" onclick="editCard(${c.id}, ${c.card_cost}, '${JSON.stringify(c.hidden_numbers)}')">Edit</button>
-    <button class="btn btn-sm btn-success" onclick="addCardNumbers(${c.id})">➕ Add Numbers</button>
-</div>`).join('')}<button class="btn btn-sm" onclick="shuffleCards()">Shuffle Order</button></div>
-                <div class="card">
-            <h3>👥 USER MANAGEMENT (Click any user to manage)</h3>
-            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;">
-                <button class="btn btn-sm btn-success" onclick="loadAllUsersForAdmin()">📋 Show All Users</button>
+        <div id="adminBatches">
+            <!-- BATCH 1: Pending Requests -->
+            <div class="admin-batch active" data-batch="1">
+                <div class="card"><h3>💰 Pending Deposits</h3>${renderPendingList(deposits.data, 'deposit')}</div>
+                <div class="card"><h3>📤 Pending Withdrawals</h3>${renderPendingList(withdrawals.data, 'withdraw')}</div>
+                <div class="card"><h3>🏥 Pending Consultations</h3>${renderConsultationsList(cons.data)}</div>
             </div>
-            <div id="adminUsersList" style="max-height: 400px; overflow-y: auto;"></div>
-            <div id="adminUserModal" class="modal" style="display: none;">
-    <div class="modal-content" style="max-width: 600px; max-height: 80vh; overflow-y: auto;">
-        <span class="close" onclick="closeAdminUserModal()">&times;</span>
-        <div id="adminUserModalContent"></div>
-    </div>
-</div>
+            
+            <!-- BATCH 2: Lottery Draws (will load on demand) -->
+            <div class="admin-batch" data-batch="2">
+                <div class="card" id="lotteryDrawsCard">
+                    <h3>🎰 Lottery Draws</h3>
+                    <div class="loading">Click Load More to load lottery draws...</div>
+                </div>
+            </div>
+            
+            <!-- BATCH 3: Market Edit (will load on demand) -->
+            <div class="admin-batch" data-batch="3">
+                <div class="card" id="marketEditCard">
+                    <h3>🛠️ Edit Market (Name, Emoji, Price, ROI, Image)</h3>
+                    <div class="loading">Click Load More to load market settings...</div>
+                </div>
+            </div>
+            
+            <!-- BATCH 4: Airtime Cards + User Management -->
+            <div class="admin-batch" data-batch="4">
+                <div class="card" id="airtimeCardsCard">
+                    <h3>🃏 Airtime Cards</h3>
+                    <div class="loading">Click Load More to load airtime cards...</div>
+                </div>
+                <div class="card" id="userManagementCard">
+                    <h3>👥 USER MANAGEMENT (Click any user to manage)</h3>
+                    <div class="loading">Click Load More to load user management...</div>
+                </div>
+            </div>
+            
+            <!-- BATCH 5: Deposit + Withdrawal Settings -->
+            <div class="admin-batch" data-batch="5">
+                <div class="card" id="depositSettingsCard">
+                    <h3>💰 Deposit Settings (Edit Payment Info)</h3>
+                    <div class="loading">Click Load More to load deposit settings...</div>
+                </div>
+                <div class="card" id="withdrawalSettingsCard">
+                    <h3>🔧 Withdrawal Settings</h3>
+                    <div class="loading">Click Load More to load withdrawal settings...</div>
+                </div>
+            </div>
+            
+            <!-- BATCH 6: Storage Cleanup -->
+            <div class="admin-batch" data-batch="6">
+                <div class="card" id="storageCleanupCard">
+                    <h3>🧹 Storage Cleanup (Free Up Database Space)</h3>
+                    <div class="loading">Click Load More to load storage cleanup...</div>
+                </div>
+            </div>
+            
+            <!-- BATCH 7: App Profile Picture -->
+            <div class="admin-batch" data-batch="7">
+                <div class="card" id="profilePictureCard">
+                    <h3>🖼️ App Profile Picture</h3>
+                    <div class="loading">Click Load More to load profile picture settings...</div>
+                </div>
+            </div>
+            
+            <!-- BATCH 8: Platform Statistics -->
+            <div class="admin-batch" data-batch="8">
+                <div class="card" id="statsCard">
+                    <h3>📊 Platform Statistics</h3>
+                    <div class="loading">Click Load More to load statistics...</div>
+                </div>
+            </div>
         </div>
-    <div class="card">
+        
+        <div class="load-more-container" id="loadMoreContainer">
+            <button class="load-more-btn" onclick="loadNextAdminBatch()">📥 Load More Sections</button>
+        </div>
+    `;
+    
+    // Store current batch
+    window.currentAdminBatch = 1;
+    window.totalAdminBatches = 8;
+    
+    // Load first batch data that we already have
+    // (deposits, withdrawals, consultations already loaded)
+    
+    // Load deposit settings (needed for batch 5 early)
+    await loadDepositSettings();
+}
+
+// Helper function for consultations list
+function renderConsultationsList(cons) {
+    if (!cons?.length) return '<div>None</div>';
+    return cons.map(c => `
+        <div style="margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px;">
+            <strong>${escapeHTML(c.username)}</strong><br>
+            Issue: ${escapeHTML(c.issue?.slice(0, 100))}...<br>
+            <textarea id="resp_${c.id}" rows="2" style="width:100%; margin-top: 8px;" placeholder="Write response..."></textarea>
+            <button class="btn btn-sm btn-success" onclick="respondConsultation(${c.id})" style="margin-top: 5px;">Send Reply</button>
+        </div>
+    `).join('');
+}
+
+// Load next batch on demand
+async function loadNextAdminBatch() {
+    const nextBatch = window.currentAdminBatch + 1;
+    
+    if (nextBatch > window.totalAdminBatches) {
+        document.getElementById('loadMoreContainer').style.display = 'none';
+        return;
+    }
+    
+    // Show loading in the batch container
+    const batchDiv = document.querySelector(`.admin-batch[data-batch="${nextBatch}"]`);
+    if (batchDiv) {
+        batchDiv.classList.add('active');
+    }
+    
+    // Load data based on which batch is being loaded
+    switch(nextBatch) {
+        case 2: // Lottery Draws
+            await loadLotteryDrawsBatch();
+            break;
+        case 3: // Market Edit
+            await loadMarketEditBatch();
+            break;
+        case 4: // Airtime Cards + User Management
+            await loadAirtimeAndUsersBatch();
+            break;
+        case 5: // Deposit + Withdrawal Settings
+            await loadSettingsBatch();
+            break;
+        case 6: // Storage Cleanup
+            await loadStorageCleanupBatch();
+            break;
+        case 7: // App Profile Picture
+            await loadProfilePictureBatch();
+            break;
+        case 8: // Platform Statistics
+            await loadStatisticsBatch();
+            break;
+    }
+    
+    window.currentAdminBatch = nextBatch;
+    
+    // Hide load more button if this was the last batch
+    if (nextBatch === window.totalAdminBatches) {
+        document.getElementById('loadMoreContainer').style.display = 'none';
+    }
+}
+
+// BATCH 2: Lottery Draws
+async function loadLotteryDrawsBatch() {
+    const container = document.getElementById('lotteryDrawsCard');
+    container.innerHTML = `
+        <h3>🎰 Lottery Draws</h3>
+        <button class="btn btn-sm" onclick="drawLottery(1)">Draw Pool 1</button>
+        <button class="btn btn-sm" onclick="drawLottery(2)">Draw Pool 2</button>
+        <button class="btn btn-sm" onclick="drawLottery(3)">Draw Pool 3</button>
+        <hr>
+        <button class="btn btn-sm btn-success" onclick="startNewLotteryRound(1)">🔄 Start New Round Pool 1</button>
+        <button class="btn btn-sm btn-success" onclick="startNewLotteryRound(2)">🔄 Start New Round Pool 2</button>
+        <button class="btn btn-sm btn-success" onclick="startNewLotteryRound(3)">🔄 Start New Round Pool 3</button>
+    `;
+}
+
+// BATCH 3: Market Edit
+async function loadMarketEditBatch() {
+    const container = document.getElementById('marketEditCard');
+    container.innerHTML = '<h3>🛠️ Edit Market (Name, Emoji, Price, ROI, Image)</h3><div class="loading">Loading market data...</div>';
+    
+    let market = getCache('market');
+    if (!market) {
+        const { data } = await sb.from('market').select('*').order('slot_id');
+        market = data;
+        setCache('market', market);
+    }
+    
+    container.innerHTML = `
+        <h3>🛠️ Edit Market (Name, Emoji, Price, ROI, Image)</h3>
+        ${market?.map(m => `
+            <div style="margin-bottom:15px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:8px;">
+                <input type="text" id="emoji_${m.slot_id}" value="${m.emoji}" style="width:60px;" placeholder="Emoji"> 
+                <input type="text" id="name_${m.slot_id}" value="${m.asset_name}" style="width:120px;" placeholder="Name"> 
+                <input type="number" id="price_${m.slot_id}" value="${m.cost}" style="width:80px;" placeholder="Cost"> 
+                <input type="number" id="roi_${m.slot_id}" value="${m.default_roi}" step="0.01" style="width:80px;" placeholder="ROI"> 
+                <input type="file" id="image_file_${m.slot_id}" accept="image/*" style="width:150px;">
+                <button class="btn-sm" onclick="uploadMarketImage(${m.slot_id})">📤 Upload Image</button>
+                ${m.image_url ? `<button class="btn-sm btn-danger" onclick="deleteMarketImage(${m.slot_id})">🗑️ Delete Image</button>` : ''}
+                <button class="btn btn-sm" onclick="updateMarketItemFull(${m.slot_id})">💾 Update</button>
+            </div>
+        `).join('')}
+        <button class="btn-sm btn-warning" onclick="resetAllROI()" style="margin-top:10px;">🔄 Reset All ROI to Default</button>
+    `;
+}
+
+// BATCH 4: Airtime Cards + User Management
+async function loadAirtimeAndUsersBatch() {
+    // Load Airtime Cards
+    const airtimeContainer = document.getElementById('airtimeCardsCard');
+    airtimeContainer.innerHTML = '<h3>🃏 Airtime Cards</h3><div class="loading">Loading airtime cards...</div>';
+    
+    let cards = getCache('cards');
+    if (!cards) {
+        const { data } = await sb.from('global_cards').select('*').order('position');
+        cards = data;
+        setCache('cards', cards);
+    }
+    
+    airtimeContainer.innerHTML = `
+        <h3>🃏 Airtime Cards</h3>
+        ${cards?.map(c => `
+            <div>Cost: ${c.card_cost} ETB (${c.hidden_numbers.length} left) 
+                <button class="btn btn-sm" onclick="editCard(${c.id}, ${c.card_cost}, '${JSON.stringify(c.hidden_numbers)}')">Edit</button>
+                <button class="btn btn-sm btn-success" onclick="addCardNumbers(${c.id})">➕ Add Numbers</button>
+            </div>
+        `).join('')}
+        <button class="btn btn-sm" onclick="shuffleCards()">Shuffle Order</button>
+    `;
+    
+    // Load User Management
+    const userContainer = document.getElementById('userManagementCard');
+    userContainer.innerHTML = `
+        <h3>👥 USER MANAGEMENT (Click any user to manage)</h3>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;">
+            <button class="btn btn-sm btn-success" onclick="loadAllUsersForAdmin()">📋 Show All Users</button>
+        </div>
+        <div id="adminUsersList" style="max-height: 400px; overflow-y: auto;"></div>
+        <div id="adminUserModal" class="modal" style="display: none;">
+            <div class="modal-content" style="max-width: 600px; max-height: 80vh; overflow-y: auto;">
+                <span class="close" onclick="closeAdminUserModal()">&times;</span>
+                <div id="adminUserModalContent"></div>
+            </div>
+        </div>
+    `;
+}
+
+// BATCH 5: Deposit + Withdrawal Settings
+async function loadSettingsBatch() {
+    // Deposit Settings
+    const depositContainer = document.getElementById('depositSettingsCard');
+    depositContainer.innerHTML = `
         <h3>💰 Deposit Settings (Edit Payment Info)</h3>
         <div style="margin-bottom:10px;">
             <label>Telebirr Number:</label>
@@ -4092,27 +4380,33 @@ ${m.image_url ? `<button class="btn-sm btn-danger" onclick="deleteMarketImage(${
             <input type="text" id="admin_holder" value="${depositSettings.account_holder}" style="width:100%; padding:8px; margin-top:5px;">
         </div>
         <button class="btn btn-sm btn-success" onclick="saveDepositSettings()">💾 Save Deposit Settings</button>
-    </div>
+    `;
+    
+    // Withdrawal Settings
+    const withdrawalContainer = document.getElementById('withdrawalSettingsCard');
+    withdrawalContainer.innerHTML = `
+        <h3>🔧 Withdrawal Settings</h3>
+        <div style="margin-bottom:10px;">
+            <label>Withdrawal Freeze:</label>
+            <span id="withdrawFreezeStatus"></span>
+            <button class="btn-sm btn-warning" onclick="toggleWithdrawalFreeze()">Toggle Freeze</button>
+        </div>
+        <div style="margin-bottom:10px;">
+            <label>Minimum Withdrawal (ETB):</label>
+            <input type="number" id="withdrawMin" value="500" style="width:100px;">
+            <label style="margin-left:10px;">Step (ETB):</label>
+            <input type="number" id="withdrawStep" value="500" style="width:100px;">
+            <button class="btn-sm btn-success" onclick="saveWithdrawalLevels()">Save Levels</button>
+        </div>
+    `;
+    
+    await loadWithdrawalSettings();
+}
 
-<div class="card">
-    <h3>🔧 Withdrawal Settings</h3>
-    <div style="margin-bottom:10px;">
-        <label>Withdrawal Freeze:</label>
-        <span id="withdrawFreezeStatus"></span>
-        <button class="btn-sm btn-warning" onclick="toggleWithdrawalFreeze()">Toggle Freeze</button>
-        <p style="font-size:12px; margin-top:5px;">When frozen, users see: "Today is holiday/weekend. Please try again tomorrow."</p>
-    </div>
-    <div style="margin-bottom:10px;">
-        <label>Minimum Withdrawal (ETB):</label>
-        <input type="number" id="withdrawMin" value="500" style="width:100px;">
-        <label style="margin-left:10px;">Step (ETB):</label>
-        <input type="number" id="withdrawStep" value="500" style="width:100px;">
-        <button class="btn-sm btn-success" onclick="saveWithdrawalLevels()">Save Levels</button>
-        <p style="font-size:12px; margin-top:5px;">Allowed amounts: minimum, minimum+step, minimum+2*step, …</p>
-    </div>
-</div>
-
-    <div class="card">
+// BATCH 6: Storage Cleanup
+async function loadStorageCleanupBatch() {
+    const container = document.getElementById('storageCleanupCard');
+    container.innerHTML = `
         <h3>🧹 Storage Cleanup (Free Up Database Space)</h3>
         <p>Delete old data – safe, does not affect balances or active investments.</p>
         <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;">
@@ -4126,21 +4420,32 @@ ${m.image_url ? `<button class="btn-sm btn-danger" onclick="deleteMarketImage(${
             <button class="btn btn-sm btn-danger" onclick="cleanupSoldAssets()">🗑️ Sold Assets (>7d)</button>
         </div>
         <div id="cleanupResult" style="margin-top: 10px; color: #fbbf24;"></div>
-    </div>
-<div class="card">
-    <h3>🖼️ App Profile Picture</h3>
-    <div style="text-align: center;">
-        <img id="adminProfilePreview" src="https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app-assets/1780156694418.png" 
-             style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid #fbbf24; margin-bottom: 10px;">
-        <div>
-            <input type="file" id="adminProfileImageInput" accept="image/jpeg,image/png,image/webp" style="display: none;">
-            <button class="btn btn-sm btn-info" id="adminChangeProfileBtn">📷 Change Picture</button>
-            <button class="btn btn-sm btn-danger" id="adminResetProfileBtn">🗑️ Reset to Default</button>
+    `;
+}
+
+// BATCH 7: App Profile Picture
+async function loadProfilePictureBatch() {
+    const container = document.getElementById('profilePictureCard');
+    container.innerHTML = `
+        <h3>🖼️ App Profile Picture</h3>
+        <div style="text-align: center;">
+            <img id="adminProfilePreview" src="https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app-assets/1780156694418.png" 
+                 style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid #fbbf24; margin-bottom: 10px;">
+            <div>
+                <input type="file" id="adminProfileImageInput" accept="image/jpeg,image/png,image/webp" style="display: none;">
+                <button class="btn btn-sm btn-info" id="adminChangeProfileBtn">📷 Change Picture</button>
+                <button class="btn btn-sm btn-danger" id="adminResetProfileBtn">🗑️ Reset to Default</button>
+            </div>
+            <p style="font-size: 11px; color: #ccc; margin-top: 8px;">Max 1MB (JPG, PNG, WEBP)</p>
         </div>
-        <p style="font-size: 11px; color: #ccc; margin-top: 8px;">Max 1MB (JPG, PNG, WEBP)</p>
-    </div>
-</div>
-<div class="card">
+    `;
+    initAdminProfilePicture();
+}
+
+// BATCH 8: Platform Statistics
+async function loadStatisticsBatch() {
+    const container = document.getElementById('statsCard');
+    container.innerHTML = `
         <h3>📊 Platform Statistics</h3>
         <div id="adminStats" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
             <div>👥 Total Users: <strong id="statUsers">-</strong></div>
@@ -4151,12 +4456,8 @@ ${m.image_url ? `<button class="btn-sm btn-danger" onclick="deleteMarketImage(${
             <div>📤 Total Withdrawn: <strong id="statWithdrawn">-</strong> ETB</div>
         </div>
         <button class="btn btn-sm btn-info" onclick="refreshAdminStats()" style="margin-top: 10px;">🔄 Refresh Stats</button>
-    </div>
-`;
+    `;
     await refreshAdminStats();
-await loadWithdrawalSettings();
-// Initialize admin profile picture buttons
-    initAdminProfilePicture();
 }
 
 function renderPendingList(items, type) {
@@ -4864,6 +5165,11 @@ async function adminSellAssetForUser(assetId, userId) {
         
         showToast(`Asset sold! User received ${payout} coins.`, 'success');
         
+        // CRITICAL FIX: Clear user's cache so they see updated investments
+        cache.clear(`user_${userId}`);
+        cache.clear('dashboard_data');
+        
+        // If admin is viewing this user's details, refresh the view
         if (adminSelectedUserId === userId) {
             await showAdminUserDetails(userId);
         }
@@ -4873,7 +5179,6 @@ async function adminSellAssetForUser(assetId, userId) {
         showToast('Error: ' + err.message, 'error');
     }
 }
-
 async function adminNotifyUserToSell(userId, assetNames) {
     if (!assetNames || assetNames.length === 0) {
         showToast('No assets ready to sell', 'info');
