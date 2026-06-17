@@ -34,6 +34,10 @@
         50% { border-color: rgba(251, 191, 36, 0.9); box-shadow: 0 0 25px rgba(251, 191, 36, 0.5), 0 0 15px rgba(0, 255, 255, 0.3); }
         100% { border-color: rgba(251, 191, 36, 0.4); box-shadow: 0 0 10px rgba(251, 191, 36, 0.2); }
     }
+@keyframes textGlowPulse {
+    0%, 100% { text-shadow: 2px 2px 0 #FF4500, 4px 4px 0 #8B0000, 0 0 10px rgba(255, 215, 0, 0.5); }
+    50% { text-shadow: 2px 2px 0 #FFD700, 4px 4px 0 #FF8C00, 0 0 20px rgba(255, 215, 0, 0.8); }
+}
 
 /* ===== BASE – DEEP BLACK BACKGROUND (replaces old body) ===== */
 html, body {
@@ -55,23 +59,7 @@ body {
 /* Fixed Balance Cards - Below Header */
 .fixed-balance {
     position: fixed;
-    top: 80px;
-    left: 0;
-    right: 0;
-    background: rgba(10, 10, 15, 0.6);
-    backdrop-filter: blur(4px);
-    border-radius: 32px;
-    padding: 20px 16px;
-    margin: 0 16px;
-    border: 1px solid rgba(251, 191, 36, 0.5);
-    box-shadow: 0 0 20px rgba(251, 191, 36, 0.2);
-    z-index: 998;
-}
-
-/* Fixed Balance Cards - Below Header */
-.fixed-balance {
-    position: fixed;
-    top: 80px;
+    top: 65px;
     left: 0;
     right: 0;
     background: rgba(10, 10, 15, 0.6);
@@ -82,6 +70,7 @@ body {
     border: 1px solid rgba(251, 191, 36, 0.5);
     box-shadow: 0 0 20px rgba(251, 191, 36, 0.2);
     z-index: 999;
+    border-top: 3px solid #fbbf24;
 }
 
 .fixed-balance .balance-container {
@@ -120,7 +109,7 @@ body {
 
 /* Push scrollable content below both fixed elements */
 .content-wrapper {
-    margin-top: 280px;  
+    margin-top: 130px;  
     padding: 0 16px;
     max-width: 1200px;
     margin-left: auto;
@@ -183,6 +172,20 @@ body {
     flex-wrap: nowrap;
     gap: 10px;
     margin-bottom: 10px;
+}
+/* ===== FIXED HEADER - STAYS AT TOP ===== */
+.fixed-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.98);
+    backdrop-filter: blur(12px);
+    padding: 12px 16px 14px 16px;
+    z-index: 9999;
+    border-bottom: 3px solid #fbbf24;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 2px 15px rgba(251, 191, 36, 0.3);
+    min-height: 60px;
 }
 
 .app-logo {
@@ -1675,7 +1678,7 @@ body {
         </div>
         
         <!-- Right side: Bell + Profile in a row -->
-        <div class="profile-area" id="profileArea" style="display: flex; align-items: center; gap: 12px;">
+        <div class="profile-area" id="profileArea" style="display: flex; align-items: center; gap: 20px;">
 <!-- NOTIFICATION BELL - Updated with event passing -->
 <div class="notification-bell-wrapper" id="notificationBellWrapper" style="display: none; position: relative; margin-right: 12px; cursor: pointer;" onclick="toggleNotificationDropdown(event)">
     <span class="bell-icon" style="font-size: 28px; line-height: 1;">🔔</span>
