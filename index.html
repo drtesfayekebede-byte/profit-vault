@@ -1669,28 +1669,28 @@ body {
         
         <!-- Right side: Bell + Profile in a row -->
         <div class="profile-area" id="profileArea" style="display: flex; align-items: center; gap: 12px;">
-            <!-- NOTIFICATION BELL -->
-            <div class="notification-bell-wrapper" id="notificationBellWrapper" style="display: none; cursor: pointer;" onclick="toggleNotificationDropdown()">
-                <span class="bell-icon" style="font-size: 28px; line-height: 1;">🔔</span>
-                <span id="notificationBadge" class="notification-badge" style="display: none; position: absolute; top: -5px; right: -8px; background: #ef4444; color: white; font-size: 11px; font-weight: bold; min-width: 18px; height: 18px; border-radius: 50%; text-align: center; line-height: 18px; padding: 0 4px; border: 2px solid #000; box-shadow: 0 0 5px rgba(239, 68, 68, 0.5);">0</span>
-            </div>
+<!-- NOTIFICATION BELL - Updated with position relative -->
+<div class="notification-bell-wrapper" id="notificationBellWrapper" style="display: none; position: relative; margin-right: 12px; cursor: pointer;" onclick="toggleNotificationDropdown()">
+    <span class="bell-icon" style="font-size: 28px; line-height: 1;">🔔</span>
+    <span id="notificationBadge" class="notification-badge" style="display: none; position: absolute; top: -5px; right: -8px; background: #ef4444; color: white; font-size: 11px; font-weight: bold; min-width: 18px; height: 18px; border-radius: 50%; text-align: center; line-height: 18px; padding: 0 4px; border: 2px solid #000; box-shadow: 0 0 5px rgba(239, 68, 68, 0.5);">0</span>
+    
+    <!-- Notification Dropdown - Now inside the bell wrapper -->
+    <div class="notification-dropdown" id="notificationDropdown" style="display: none; position: absolute; right: -10px; top: 40px; background: #1e293b; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); z-index: 100001; min-width: 350px; max-width: 400px; max-height: 400px; overflow: hidden; border: 1px solid rgba(251, 191, 36, 0.3);">
+        <div style="padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-weight: bold; color: #fbbf24;">🔔 Notifications</span>
+            <span id="notificationCount" style="font-size: 12px; color: #94a3b8;"></span>
+        </div>
+        <div id="notificationList" style="max-height: 320px; overflow-y: auto; padding: 0;">
+            <div style="padding: 20px; text-align: center; color: #94a3b8;">Loading notifications...</div>
+        </div>
+    </div>
+</div>
             
             <!-- PROFILE AVATAR -->
             <div class="profile-avatar" id="profileAvatar" role="button" tabindex="0" 
                 onclick="toggleUserMenu()" 
                 onkeydown="if(event.key==='Enter'||event.key===' ') toggleUserMenu()">
                 <img loading="lazy" id="profileImage" src="https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app-assets/1780156694418.png" alt="Profit Vault" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
-            </div>
-            
-            <!-- Notification Dropdown -->
-            <div class="notification-dropdown" id="notificationDropdown" style="display: none; position: absolute; right: 0; top: 55px; background: #1e293b; border-radius: 12px; box-shadow: 0 8px 16px rgba(0,0,0,0.5); z-index: 100001; min-width: 350px; max-width: 400px; max-height: 400px; overflow: hidden; border: 1px solid rgba(251, 191, 36, 0.3);">
-                <div style="padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center;">
-                    <span style="font-weight: bold; color: #fbbf24;">🔔 Notifications</span>
-                    <span id="notificationCount" style="font-size: 12px; color: #94a3b8;"></span>
-                </div>
-                <div id="notificationList" style="max-height: 320px; overflow-y: auto; padding: 0;">
-                    <div style="padding: 20px; text-align: center; color: #94a3b8;">Loading notifications...</div>
-                </div>
             </div>
             
             <!-- User Dropdown Menu -->
@@ -2316,14 +2316,18 @@ function updateBadge() {
     
     if (!badge) return;
     
+    // FORCE SHOW THE BELL when user is logged in
+    if (USER_ID && bellWrapper) {
+        bellWrapper.style.display = 'flex';
+    }
+    
     if (unreadCount > 0) {
         badge.style.display = 'block';
         badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
         badge.classList.add('has-notifications');
-        if (bellWrapper) bellWrapper.style.display = 'flex';
     } else {
         badge.style.display = 'none';
-        if (bellWrapper) bellWrapper.style.display = 'flex';
+        badge.classList.remove('has-notifications');
     }
 }
 
@@ -4939,7 +4943,7 @@ async function handleAdminAction(type, action, id, amount, userId) {
 
 // ==================== ADMIN NOTIFICATION FUNCTIONS ====================
 
-// Send broadcast to all active users
+// Send broadcast to all active users (INCLUDING ADMIN)
 async function adminSendBroadcast(event) {
     if (event) event.preventDefault();
     
@@ -4967,12 +4971,11 @@ async function adminSendBroadcast(event) {
             return;
         }
         
-        // Get all active users except admin
+        // Get ALL active users (including admin)
         const { data: users, error: usersError } = await sb
             .from('users')
             .select('user_id')
-            .eq('is_banned', false)
-            .neq('user_id', user.id);
+            .eq('is_banned', false);
         
         if (usersError) throw usersError;
         
@@ -4981,7 +4984,7 @@ async function adminSendBroadcast(event) {
             return;
         }
         
-        // Insert notifications for all users
+        // Insert notifications for ALL users
         const notifications = users.map(u => ({
             user_id: u.user_id,
             type: 'broadcast',
@@ -5003,6 +5006,12 @@ async function adminSendBroadcast(event) {
         // Clear form
         document.getElementById('adminBroadcastTitle').value = '';
         document.getElementById('adminBroadcastMessage').value = '';
+        
+        // Refresh admin's own notifications
+        fetchUnreadCount();
+        if (document.getElementById('notificationDropdown').style.display === 'block') {
+            loadNotifications();
+        }
         
     } catch (error) {
         console.error('Error sending broadcast:', error);
