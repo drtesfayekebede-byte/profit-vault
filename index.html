@@ -1630,6 +1630,72 @@ body {
     cursor: not-allowed;
     transform: none;
 }
+/* ===== FIXED NOTIFICATION DROPDOWN FOR MOBILE ===== */
+.notification-bell-wrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+.notification-dropdown {
+    position: absolute;
+    right: -10px;
+    top: 40px;
+    z-index: 100001;
+    min-width: 350px;
+    max-width: 400px;
+    max-height: 400px;
+    overflow: hidden;
+    background: #1e293b;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+/* Mobile responsive fix */
+@media (max-width: 600px) {
+    .notification-dropdown {
+        position: fixed;
+        right: 10px;
+        top: 70px;
+        left: 10px;
+        width: auto;
+        min-width: unset;
+        max-width: unset;
+        max-height: 60vh;
+        border-radius: 16px;
+    }
+    
+    .notification-bell-wrapper {
+        position: relative;
+    }
+    
+    .bell-icon {
+        font-size: 24px !important;
+    }
+}
+
+@media (max-width: 400px) {
+    .notification-dropdown {
+        top: 65px;
+        right: 8px;
+        left: 8px;
+        max-height: 50vh;
+    }
+}
+
+/* Ensure notification list scrolls on mobile */
+#notificationList {
+    max-height: 320px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 600px) {
+    #notificationList {
+        max-height: 40vh;
+    }
+}
 </style>
 </head>
 <body>
@@ -1669,12 +1735,12 @@ body {
         
         <!-- Right side: Bell + Profile in a row -->
         <div class="profile-area" id="profileArea" style="display: flex; align-items: center; gap: 12px;">
-<!-- NOTIFICATION BELL - Updated with position relative -->
-<div class="notification-bell-wrapper" id="notificationBellWrapper" style="display: none; position: relative; margin-right: 12px; cursor: pointer;" onclick="toggleNotificationDropdown()">
+<!-- NOTIFICATION BELL - Updated with event passing -->
+<div class="notification-bell-wrapper" id="notificationBellWrapper" style="display: none; position: relative; margin-right: 12px; cursor: pointer;" onclick="toggleNotificationDropdown(event)">
     <span class="bell-icon" style="font-size: 28px; line-height: 1;">🔔</span>
     <span id="notificationBadge" class="notification-badge" style="display: none; position: absolute; top: -5px; right: -8px; background: #ef4444; color: white; font-size: 11px; font-weight: bold; min-width: 18px; height: 18px; border-radius: 50%; text-align: center; line-height: 18px; padding: 0 4px; border: 2px solid #000; box-shadow: 0 0 5px rgba(239, 68, 68, 0.5);">0</span>
     
-    <!-- Notification Dropdown - Now inside the bell wrapper -->
+    <!-- Notification Dropdown -->
     <div class="notification-dropdown" id="notificationDropdown" style="display: none; position: absolute; right: -10px; top: 40px; background: #1e293b; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); z-index: 100001; min-width: 350px; max-width: 400px; max-height: 400px; overflow: hidden; border: 1px solid rgba(251, 191, 36, 0.3);">
         <div style="padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center;">
             <span style="font-weight: bold; color: #fbbf24;">🔔 Notifications</span>
@@ -2262,8 +2328,20 @@ function setupAdminBottomRow() {
         if (adminDiv) adminDiv.remove();
     }
 }
-function toggleUserMenu() {
+function toggleUserMenu(event) {
+    // Stop event from affecting notification dropdown
+    if (event) {
+        event.stopPropagation();
+    }
+    
     const menu = document.getElementById('dropdownMenu');
+    const notificationDropdown = document.getElementById('notificationDropdown');
+    
+    // Close notification dropdown if open
+    if (notificationDropdown) {
+        notificationDropdown.style.display = 'none';
+    }
+    
     if (menu) {
         menu.classList.toggle('show');
     }
@@ -2281,11 +2359,20 @@ function goToProfile() {
         profileContent.classList.add('active');
     }
 }
-// Close dropdown when clicking outside
+// Close dropdown when clicking outside - UPDATED to exclude bell
 document.addEventListener('click', function(e) {
     const area = document.getElementById('profileArea');
+    const bellWrapper = document.getElementById('notificationBellWrapper');
+    const dropdown = document.getElementById('notificationDropdown');
+    
+    // Close profile dropdown if clicking outside
     if (area && !area.contains(e.target)) {
         document.getElementById('dropdownMenu').classList.remove('show');
+    }
+    
+    // Close notification dropdown if clicking outside bell
+    if (bellWrapper && dropdown && !bellWrapper.contains(e.target) && !dropdown.contains(e.target)) {
+        dropdown.style.display = 'none';
     }
 });
 
@@ -2316,7 +2403,7 @@ function updateBadge() {
     
     if (!badge) return;
     
-    // FORCE SHOW THE BELL when user is logged in
+    // Show bell when user is logged in
     if (USER_ID && bellWrapper) {
         bellWrapper.style.display = 'flex';
     }
@@ -2332,12 +2419,21 @@ function updateBadge() {
 }
 
 // Toggle notification dropdown
-async function toggleNotificationDropdown() {
+async function toggleNotificationDropdown(event) {
+    // Stop event from reaching profile area
+    if (event) {
+        event.stopPropagation();
+    }
+    
     const dropdown = document.getElementById('notificationDropdown');
     const menu = document.getElementById('dropdownMenu');
     
     // Close profile dropdown if open
-    if (menu) menu.classList.remove('show');
+    if (menu) {
+        menu.classList.remove('show');
+    }
+    
+    if (!dropdown) return;
     
     if (dropdown.style.display === 'block') {
         dropdown.style.display = 'none';
