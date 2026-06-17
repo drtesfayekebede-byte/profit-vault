@@ -1630,7 +1630,7 @@ body {
     cursor: not-allowed;
     transform: none;
 }
-/* ===== FIXED NOTIFICATION DROPDOWN FOR MOBILE ===== */
+/* ===== NOTIFICATION DROPDOWN ===== */
 .notification-bell-wrapper {
     position: relative;
     display: inline-flex;
@@ -1641,7 +1641,7 @@ body {
     position: absolute;
     right: -10px;
     top: 45px;
-    z-index: 100001;
+    z-index: 999999;
     min-width: 350px;
     max-width: 400px;
     max-height: 400px;
@@ -1652,25 +1652,24 @@ body {
     border: 1px solid rgba(251, 191, 36, 0.3);
 }
 
-/* Mobile responsive - Keep dropdown attached to bell, not fixed */
 @media (max-width: 600px) {
     .notification-dropdown {
-        position: absolute;
-        right: -20px;
-        left: auto;
-        top: 45px;
-        width: 320px;
-        min-width: 280px;
-        max-width: 90vw;
-        max-height: 50vh;
-        border-radius: 14px;
+        position: fixed;
+        right: 10px;
+        left: 10px;
+        top: 75px;
+        width: auto;
+        min-width: unset;
+        max-width: unset;
+        max-height: 55vh;
+        border-radius: 16px;
+        z-index: 999999;
     }
     
     .bell-icon {
         font-size: 24px !important;
     }
     
-    /* Fix for very small screens */
     .notification-item {
         padding: 10px 14px !important;
         font-size: 13px !important;
@@ -1687,12 +1686,11 @@ body {
 
 @media (max-width: 400px) {
     .notification-dropdown {
-        right: -10px;
-        width: 280px;
-        min-width: 250px;
-        max-width: 92vw;
-        max-height: 45vh;
-        border-radius: 12px;
+        top: 70px;
+        right: 8px;
+        left: 8px;
+        max-height: 50vh;
+        border-radius: 14px;
     }
     
     .notification-item {
@@ -1701,7 +1699,6 @@ body {
     }
 }
 
-/* Ensure notification list scrolls */
 #notificationList {
     max-height: 320px;
     overflow-y: auto;
@@ -1710,7 +1707,7 @@ body {
 
 @media (max-width: 600px) {
     #notificationList {
-        max-height: 35vh;
+        max-height: 40vh;
     }
 }
 </style>
