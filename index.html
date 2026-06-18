@@ -2038,8 +2038,10 @@ function toggleSound() {
     soundEnabled = !soundEnabled;
     localStorage.setItem('soundEnabled', soundEnabled);
     const knob = document.getElementById('toggleKnob');
-    if(soundEnabled) knob.style.left = '27px';
-    else knob.style.left = '3px';
+    if (knob) {
+        if(soundEnabled) knob.style.left = '27px';
+        else knob.style.left = '3px';
+    }
     playSound('click');
 }
 function contactAdmin(method) {
@@ -2820,26 +2822,30 @@ async function loadAllData(forceRefresh = false) {
         updateBalanceDisplay();
         cache.set(`user_${USER_ID}`, batchData.user, 30000);
         
-        // Update Quad Lock with batch data
-        const depositDone = (batchData.user.total_deposited || 0) >= 1500;
-        const gameDone = (batchData.user.win_chance_plays || 0) >= 10;
-        const lotteryDone = (batchData.lotteryCount || 0) >= 1;
-        const referralDone = (batchData.user.active_referrals || 0) >= 3;
-        const completed = [depositDone, gameDone, lotteryDone, referralDone].filter(Boolean).length;
-        const percent = (completed / 4) * 100;
+        // Update Quad Lock - ONLY if element exists
+        const quadlockEl = document.getElementById('quadlock');
+        if (quadlockEl) {
+            const depositDone = (batchData.user.total_deposited || 0) >= 1500;
+            const gameDone = (batchData.user.win_chance_plays || 0) >= 10;
+            const lotteryDone = (batchData.lotteryCount || 0) >= 1;
+            const referralDone = (batchData.user.active_referrals || 0) >= 3;
+            const completed = [depositDone, gameDone, lotteryDone, referralDone].filter(Boolean).length;
+            const percent = (completed / 4) * 100;
+            
+            quadlockEl.innerHTML = `
+                <div class="quad-item ${depositDone ? 'unlocked' : 'locked'}"><div>💰 Deposit 1500 ETB</div><div>${(batchData.user.total_deposited || 0)}/1500</div></div>
+                <div class="quad-item ${gameDone ? 'unlocked' : 'locked'}"><div>🎮 Play 10 Games</div><div>${batchData.user.win_chance_plays || 0}/10</div></div>
+                <div class="quad-item ${lotteryDone ? 'unlocked' : 'locked'}"><div>🎟️ Buy 1 Ticket</div><div>${batchData.lotteryCount || 0}/1</div></div>
+                <div class="quad-item ${referralDone ? 'unlocked' : 'locked'}"><div>👥 3 Referrals</div><div>${batchData.user.active_referrals || 0}/3</div></div>
+                <div class="progress-bar"><div class="progress-fill" style="width:${percent}%"></div></div>
+                <div class="progress-text">${completed}/4 Complete (${Math.round(percent)}%)</div>`;
+        }
         
-        document.getElementById('quadlock').innerHTML = `
-            <div class="quad-item ${depositDone ? 'unlocked' : 'locked'}"><div>💰 Deposit 1500 ETB</div><div>${(batchData.user.total_deposited || 0)}/1500</div></div>
-            <div class="quad-item ${gameDone ? 'unlocked' : 'locked'}"><div>🎮 Play 10 Games</div><div>${batchData.user.win_chance_plays || 0}/10</div></div>
-            <div class="quad-item ${lotteryDone ? 'unlocked' : 'locked'}"><div>🎟️ Buy 1 Ticket</div><div>${batchData.lotteryCount || 0}/1</div></div>
-            <div class="quad-item ${referralDone ? 'unlocked' : 'locked'}"><div>👥 3 Referrals</div><div>${batchData.user.active_referrals || 0}/3</div></div>
-            <div class="progress-bar"><div class="progress-fill" style="width:${percent}%"></div></div>
-            <div class="progress-text">${completed}/4 Complete (${Math.round(percent)}%)</div>`;
-        
-        // Update Market Grid using batch data
+        // Update Market Grid - ONLY if element exists
+        const marketGridEl = document.getElementById('marketGrid');
         const ownedSlots = batchData.assets?.map(a => a.slot_id) || [];
-        if (batchData.market) {
-            document.getElementById('marketGrid').innerHTML = batchData.market.map(item => {
+        if (marketGridEl && batchData.market) {
+            marketGridEl.innerHTML = batchData.market.map(item => {
                 const owned = ownedSlots.includes(item.slot_id);
                 const mediaContent = item.image_url 
                     ? `<div class="market-image-container"><img loading="lazy" src="${item.image_url}" class="market-image" alt="${escapeHTML(item.asset_name)}">${owned ? '<div class="market-owned-badge">✅ Owned</div>' : ''}</div>`
@@ -2857,13 +2863,15 @@ async function loadAllData(forceRefresh = false) {
             }).join('');
         }
         
-        // Update Referral Earnings
-        const totalReferralEarnings = (batchData.referralEarnings || []).reduce((sum, r) => sum + (r.reward_amount || 0), 0);
+        // Update Referral Earnings - ONLY if element exists
         const referralEl = document.getElementById('referralEarnings');
-        if (referralEl) referralEl.innerText = `💰 Referral earnings: ${totalReferralEarnings.toLocaleString()} ETB`;
+        if (referralEl) {
+            const totalReferralEarnings = (batchData.referralEarnings || []).reduce((sum, r) => sum + (r.reward_amount || 0), 0);
+            referralEl.innerText = `💰 Referral earnings: ${totalReferralEarnings.toLocaleString()} ETB`;
+        }
     }
     
-    // Load remaining data that can't be batched
+    // Load remaining data - these functions should have their own null checks
     await loadLotteryPools();
     await loadDraws();
     await loadConsultations();
@@ -2872,7 +2880,6 @@ async function loadAllData(forceRefresh = false) {
     await loadInvestments();
     await loadSoldAssets();
 }
-
 async function loadReferralEarnings() {
     if (!USER_ID) return;
     const { data, error } = await sb
@@ -6685,8 +6692,11 @@ document.querySelectorAll('.tab').forEach(tab => {
 });
     window.addEventListener('online', () => { document.getElementById('networkStatus').classList.remove('offline'); showToast('Back online','success'); loadAllData(); });
     window.addEventListener('offline', () => { document.getElementById('networkStatus').classList.add('offline'); showToast('No internet','error'); });
-    if(soundEnabled) document.getElementById('toggleKnob').style.left = '27px';
-    else document.getElementById('toggleKnob').style.left = '3px';
+const toggleKnob = document.getElementById('toggleKnob');
+if (toggleKnob) {
+    if(soundEnabled) toggleKnob.style.left = '27px';
+    else toggleKnob.style.left = '3px';
+}
 });
 </script>
 </body>
