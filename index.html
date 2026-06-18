@@ -6107,7 +6107,12 @@ om: `
 };
 
 function showGuide(lang) {
-    document.getElementById('guideContent').innerHTML = guideTexts[lang];
+    const guideContent = document.getElementById('guideContent');
+    if (!guideContent) {
+        console.warn('guideContent element not found');
+        return;
+    }
+    guideContent.innerHTML = guideTexts[lang];
     const engBtn = document.getElementById('guideEngBtn');
     const amhBtn = document.getElementById('guideAmhBtn');
     const oroBtn = document.getElementById('guideOroBtn');
@@ -6643,8 +6648,7 @@ sb.auth.onAuthStateChange((event, session) => {
             showToast("Password must be at least 6 characters", 'error');
         }
     }
-    initHistoryTabs();
-    initGuideTab();
+    
     // Debounced refresh button (prevents spam clicking)
     const refreshBtn = document.getElementById('refreshBtn');
     if (refreshBtn) {
