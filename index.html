@@ -2334,6 +2334,7 @@ async function checkSession() {
             await loadAllData();
             document.getElementById('loadingOverlay').style.display = 'none';
             document.getElementById('appContent').style.display = 'block';
+            renderAppGrid();  // ← ADD THIS LINE
             if (IS_ADMIN) showAdminTab();
             
             const authModal = document.getElementById('authModal');
@@ -2982,6 +2983,7 @@ async function loadAllData(forceRefresh = false) {
         // Update current user
         currentUser = batchData.user;
         updateBalanceDisplay();
+        updateHeaderBalances();
         cache.set(`user_${USER_ID}`, batchData.user, 30000);
         
         // Update Quad Lock - ONLY if element exists
@@ -3033,7 +3035,7 @@ async function loadAllData(forceRefresh = false) {
         }
     }
     
-    // Load remaining data - these functions should have their own null checks
+    // Load remaining data that can't be batched
     await loadLotteryPools();
     await loadDraws();
     await loadConsultations();
@@ -3041,6 +3043,9 @@ async function loadAllData(forceRefresh = false) {
     await loadProfileAndCards();
     await loadInvestments();
     await loadSoldAssets();
+    
+    // Update header balances after all data is loaded
+    updateHeaderBalances();
 }
 async function loadReferralEarnings() {
     if (!USER_ID) return;
@@ -6365,7 +6370,62 @@ const APP_ITEMS = [
     { id: 'wallet', emoji: '💰', name: 'Wallet' },
     { id: 'admin', emoji: '👑', name: 'Admin' }
 ];
+// ===== FOOTER TABS =====
+const FOOTER_TABS = [
+    { id: 'home', emoji: '🏠', label: 'Home' },
+    { id: 'dashboard', emoji: '📊', label: 'Dash' },
+    { id: 'market', emoji: '🛒', label: 'Market' },
+    { id: 'games', emoji: '🎮', label: 'Games' },
+    { id: 'airtime', emoji: '🃏', label: 'Airtime' },
+    { id: 'lottery', emoji: '🎟️', label: 'Lottery' },
+    { id: 'clinic', emoji: '🏥', label: 'Clinic' },
+    { id: 'guide', emoji: '📖', label: 'Guide' },
+    { id: 'wallet', emoji: '💰', label: 'Wallet' },
+    { id: 'admin', emoji: '👑', label: 'Admin' }
+];
 
+function renderFooterTabs() {
+    const container = document.getElementById('footerTabs');
+    if (!container) return;
+    
+    container.innerHTML = FOOTER_TABS.map(tab => `
+        <button class="app-footer-tab ${tab.id === 'home' ? 'active' : ''}" 
+                data-tab="${tab.id}" 
+                onclick="footerTabClick('${tab.id}')">
+            <span class="tab-emoji">${tab.emoji}</span>
+            <span class="tab-label">${tab.label}</span>
+            <span class="tab-badge" id="badge-${tab.id}"></span>
+        </button>
+    `).join('');
+}
+
+function footerTabClick(tabId) {
+    // Update active tab
+    document.querySelectorAll('.app-footer-tab').forEach(tab => {
+        tab.classList.remove('active');
+        if (tab.dataset.tab === tabId) {
+            tab.classList.add('active');
+        }
+    });
+    
+    if (tabId === 'home') {
+        // Show home screen, hide content
+        document.getElementById('appHomeScreen').classList.remove('hidden');
+        document.getElementById('tabContentWrapper').classList.remove('active');
+        document.getElementById('backButton').classList.remove('visible');
+        showAllBalancesInHeader(false);
+        renderAppGrid();  // Step 6: Render grid when returning home
+        return;
+    }
+    
+    // Hide home screen, show content
+    document.getElementById('appHomeScreen').classList.add('hidden');
+    document.getElementById('tabContentWrapper').classList.add('active');
+    document.getElementById('backButton').classList.add('visible');
+    
+    // Open the app
+    openApp(tabId);
+}
 function getTransactionEmoji(type) {
     const emojis = {
         'Deposit': '💰',
@@ -6387,7 +6447,7 @@ function renderAppGrid() {
     if (!grid) return;
     
     grid.innerHTML = APP_ITEMS.map(item => `
-        <div class="app-card" onclick="openApp('${item.id}')">
+        <div class="app-card" data-app="${item.id}" onclick="openApp('${item.id}')">
             <span class="app-emoji">${item.emoji}</span>
             <span class="app-name">${item.name}</span>
         </div>
@@ -6409,49 +6469,34 @@ function openApp(appId) {
             loadWalletContent();
             break;
         case 'dashboard':
+            loadDashboardContent();
+            break;
         case 'market':
+            loadMarketContent();
+            break;
         case 'games':
+            loadGamesContent();
+            break;
         case 'airtime':
+            loadAirtimeContent();
+            break;
         case 'lottery':
+            loadLotteryContent();
+            break;
         case 'clinic':
+            loadClinicContent();
+            break;
         case 'profile':
+            loadProfileContent();
+            break;
         case 'contact':
+            loadContactContent();
+            break;
         case 'guide':
+            loadGuideContent();
+            break;
         case 'admin':
-            // Clone the hidden content
-            const contentEl = document.getElementById(appId);
-            if (contentEl) {
-                container.innerHTML = contentEl.innerHTML;
-                // Re-initialize any necessary functions
-                if (appId === 'games') {
-                    setTimeout(createGameGrid, 100);
-                } else if (appId === 'dashboard') {
-                    loadAllData();
-                } else if (appId === 'market') {
-                    loadMarketAndInvestments();
-                } else if (appId === 'airtime') {
-                    loadProfileAndCards();
-                } else if (appId === 'lottery') {
-                    loadLotteryPools();
-                    loadDraws();
-                } else if (appId === 'clinic') {
-                    loadConsultations();
-                } else if (appId === 'guide') {
-                    initGuideTab();
-                } else if (appId === 'admin') {
-                    if (IS_ADMIN) {
-                        loadAdminPanel();
-                    } else {
-                        showToast('Admin access required', 'error');
-                        goToHome();
-                    }
-                } else if (appId === 'profile') {
-                    loadProfileAndCards();
-                    loadTransactions();
-                }
-            } else {
-                container.innerHTML = '<div class="loading">Content not found</div>';
-            }
+            loadAdminContent();
             break;
         default:
             showToast('Coming soon!', 'info');
@@ -6698,6 +6743,30 @@ function loadGuideContent() {
     initGuideTab();
 }
 
+function loadProfileContent() {
+    const container = document.getElementById('tabContentContainer');
+    showAllBalancesInHeader(false);
+    const profileContent = document.getElementById('profile');
+    if (profileContent) {
+        container.innerHTML = profileContent.outerHTML;
+    } else {
+        container.innerHTML = '<div class="loading">Loading profile...</div>';
+    }
+    loadProfileAndCards();
+    loadTransactions();
+}
+
+function loadContactContent() {
+    const container = document.getElementById('tabContentContainer');
+    showAllBalancesInHeader(false);
+    const contactContent = document.getElementById('contact');
+    if (contactContent) {
+        container.innerHTML = contactContent.outerHTML;
+    } else {
+        container.innerHTML = '<div class="loading">Loading contact...</div>';
+    }
+}
+
 function loadAdminContent() {
     if (!IS_ADMIN) {
         showToast('Admin access required', 'error');
@@ -6781,6 +6850,9 @@ document.addEventListener('keydown', function(e) {
     // ===== NEW CODE - ADD THIS SECTION =====
     // Render app grid
     renderAppGrid();
+
+// Render footer tabs 
+    renderFooterTabs();
     
     // Hide tab content wrapper initially
     document.getElementById('tabContentWrapper').classList.remove('active');
