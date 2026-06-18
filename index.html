@@ -2704,6 +2704,13 @@ async function loadMarketAndInvestments() {
 
 // NEW FUNCTION 3: Load Lottery Pools
 async function loadLotteryPools() {
+    // Check if elements exist before proceeding
+    const lotteryPoolsEl = document.getElementById('lotteryPools');
+    const myTicketsEl = document.getElementById('myTickets');
+    
+    // If neither element exists, skip this function
+    if (!lotteryPoolsEl && !myTicketsEl) return;
+    
     const pools = [];
     for (let pid of [1, 2, 3]) {
         const { data: roundInfo } = await sb.from('lottery_pool_rounds')
@@ -2742,58 +2749,76 @@ async function loadLotteryPools() {
         });
     }
     
-    document.getElementById('lotteryPools').innerHTML = pools.map(p => `
-        <div class="lottery-pool">
-            <div><strong>🎰 Pool #${p.id} (Round ${p.round})</strong> <span class="badge">Prize: ${p.reward} 🪙</span></div>
-            <div>💰 Ticket: ${p.price} 🪙</div>
-            <div class="progress-bar"><div class="progress-fill" style="width:${(p.sold / p.total) * 100}%"></div></div>
-            <div>${p.sold}/${p.total} sold</div>
-            ${!p.full && p.isActive ? `<button class="btn btn-sm" onclick="showLotteryNumbers(${p.id}, ${p.price}, ${JSON.stringify(p.taken)}, ${p.round})">Buy Ticket</button>` : (p.isActive ? '<div>✅ Pool Full</div>' : '<div>⏳ Waiting for admin to start new round</div>')}
-        </div>
-    `).join('');
+    // Only update if element exists
+    if (lotteryPoolsEl) {
+        lotteryPoolsEl.innerHTML = pools.map(p => `
+            <div class="lottery-pool">
+                <div><strong>🎰 Pool #${p.id} (Round ${p.round})</strong> <span class="badge">Prize: ${p.reward} 🪙</span></div>
+                <div>💰 Ticket: ${p.price} 🪙</div>
+                <div class="progress-bar"><div class="progress-fill" style="width:${(p.sold / p.total) * 100}%"></div></div>
+                <div>${p.sold}/${p.total} sold</div>
+                ${!p.full && p.isActive ? `<button class="btn btn-sm" onclick="showLotteryNumbers(${p.id}, ${p.price}, ${JSON.stringify(p.taken)}, ${p.round})">Buy Ticket</button>` : (p.isActive ? '<div>✅ Pool Full</div>' : '<div>⏳ Waiting for admin to start new round</div>')}
+            </div>
+        `).join('');
+    }
     
-    const { data: myTickets } = await sb.from('lottery_tickets').select('*').eq('user_id', USER_ID).eq('status', 'active');
-    document.getElementById('myTickets').innerHTML = myTickets?.length ? myTickets.map(t => `<div class="ticket-item"><div>🎫 ${escapeHTML(t.serial_number)}</div><div><span class="badge">Active</span></div></div>`).join('') : '<div class="loading">No tickets</div>';
-}
-
-// NEW FUNCTION 4: Load Profile and Airtime Cards
-async function loadProfileAndCards() {
-    document.getElementById('profileInfo').innerHTML = `
-        <div class="profile-item">👤 ${escapeHTML(currentUser.username) || 'User'}</div>
-        <div>🆔 ${USER_ID.slice(0, 8)}...</div>
-        <div>📅 Joined: ${escapeHTML(currentUser.joined_date) || 'N/A'}</div>
-        <div>💰 Deposited: ${(currentUser.total_deposited || 0).toLocaleString()} ETB</div>
-        <div>📤 Withdrawn: ${(currentUser.total_withdrawn || 0).toLocaleString()} ETB</div>
-        <div>👥 Referrals: ${currentUser.active_referrals || 0}</div>
-        <div>🎮 Games: ${currentUser.win_chance_plays || 0}</div>`;
-    
-    const { data: cards } = await sb.from('global_cards').select('*').order('position');
-    if (cards) {
-        const sortedCards = [...cards].sort((a, b) => {
-            const aAvailable = (a.hidden_numbers?.length > 0) ? 0 : 1;
-            const bAvailable = (b.hidden_numbers?.length > 0) ? 0 : 1;
-            if (aAvailable !== bAvailable) return aAvailable - bAvailable;
-            return a.position - b.position;
-        });
-    document.getElementById('cardsGrid').innerHTML = sortedCards.map(card => {
-    const isSoldOut = card.hidden_numbers?.length === 0;
-    return `
-        <div class="market-item ${isSoldOut ? 'sold-out' : ''}" 
-             onclick="${!isSoldOut ? `buyAirtimeCard(${card.id}, ${card.card_cost})` : ''}"
-             style="${isSoldOut ? 'opacity: 0.6; cursor: not-allowed;' : ''}">
-            <div class="market-emoji">🎫</div>
-            <div class="market-name">Airtime - ${card.card_cost} ETB</div>
-            <div class="market-price">Cost: ${card.card_cost} ETB</div>
-            <div>${isSoldOut ? '❌ Sold Out' : '✅ Available'}</div>
-            ${isSoldOut ? '<div style="color: #ef4444; font-size: 12px; margin-top: 4px;">⛔ Not available</div>' : ''}
-        </div>
-    `;
-}).join('');
-    } else {
-        document.getElementById('cardsGrid').innerHTML = '<div class="loading">No cards</div>';
+    // Only update if element exists
+    if (myTicketsEl) {
+        const { data: myTickets } = await sb.from('lottery_tickets').select('*').eq('user_id', USER_ID).eq('status', 'active');
+        myTicketsEl.innerHTML = myTickets?.length ? myTickets.map(t => `<div class="ticket-item"><div>🎫 ${escapeHTML(t.serial_number)}</div><div><span class="badge">Active</span></div></div>`).join('') : '<div class="loading">No tickets</div>';
     }
 }
 
+// NEW FUNCTION 4: Load Profile and Airtime Cards
+// NEW FUNCTION 4: Load Profile and Airtime Cards
+async function loadProfileAndCards() {
+    const profileInfoEl = document.getElementById('profileInfo');
+    const cardsGridEl = document.getElementById('cardsGrid');
+    
+    // If neither element exists, skip
+    if (!profileInfoEl && !cardsGridEl) return;
+    
+    // Only update profileInfo if element exists
+    if (profileInfoEl && currentUser) {
+        profileInfoEl.innerHTML = `
+            <div class="profile-item">👤 ${escapeHTML(currentUser.username) || 'User'}</div>
+            <div>🆔 ${USER_ID.slice(0, 8)}...</div>
+            <div>📅 Joined: ${escapeHTML(currentUser.joined_date) || 'N/A'}</div>
+            <div>💰 Deposited: ${(currentUser.total_deposited || 0).toLocaleString()} ETB</div>
+            <div>📤 Withdrawn: ${(currentUser.total_withdrawn || 0).toLocaleString()} ETB</div>
+            <div>👥 Referrals: ${currentUser.active_referrals || 0}</div>
+            <div>🎮 Games: ${currentUser.win_chance_plays || 0}</div>`;
+    }
+    
+    // Only update cardsGrid if element exists
+    if (cardsGridEl) {
+        const { data: cards } = await sb.from('global_cards').select('*').order('position');
+        if (cards) {
+            const sortedCards = [...cards].sort((a, b) => {
+                const aAvailable = (a.hidden_numbers?.length > 0) ? 0 : 1;
+                const bAvailable = (b.hidden_numbers?.length > 0) ? 0 : 1;
+                if (aAvailable !== bAvailable) return aAvailable - bAvailable;
+                return a.position - b.position;
+            });
+            cardsGridEl.innerHTML = sortedCards.map(card => {
+                const isSoldOut = card.hidden_numbers?.length === 0;
+                return `
+                    <div class="market-item ${isSoldOut ? 'sold-out' : ''}" 
+                         onclick="${!isSoldOut ? `buyAirtimeCard(${card.id}, ${card.card_cost})` : ''}"
+                         style="${isSoldOut ? 'opacity: 0.6; cursor: not-allowed;' : ''}">
+                        <div class="market-emoji">🎫</div>
+                        <div class="market-name">Airtime - ${card.card_cost} ETB</div>
+                        <div class="market-price">Cost: ${card.card_cost} ETB</div>
+                        <div>${isSoldOut ? '❌ Sold Out' : '✅ Available'}</div>
+                        ${isSoldOut ? '<div style="color: #ef4444; font-size: 12px; margin-top: 4px;">⛔ Not available</div>' : ''}
+                    </div>
+                `;
+            }).join('');
+        } else {
+            cardsGridEl.innerHTML = '<div class="loading">No cards</div>';
+        }
+    }
+}
 // NEW FUNCTION 5: Load Transactions (extract from existing)
 async function loadTransactions() {
     const { data: txs } = await sb.from('transactions')
@@ -5714,6 +5739,12 @@ function changeInvestmentsPage(delta) {
 }
 // ========== LOTTERY DRAWS ==========
 async function loadDraws() {
+    const recentDrawsEl = document.getElementById('recentDraws');
+    const drawsPaginationEl = document.getElementById('drawsPagination');
+    
+    // If neither element exists, skip
+    if (!recentDrawsEl && !drawsPaginationEl) return;
+    
     const { data } = await sb.from('lottery_draws').select('*').order('draw_time', { ascending: false });
     if (data && data.length) {
         allDraws = data;
@@ -5721,25 +5752,31 @@ async function loadDraws() {
         if (drawsPage > totalDrawsPages) drawsPage = Math.max(1, totalDrawsPages);
         const start = (drawsPage - 1) * 5;
         const pageItems = allDraws.slice(start, start + 5);
-        document.getElementById('recentDraws').innerHTML = pageItems.map(d => `
-            <div class="transaction-item">
-                <input type="checkbox" class="draw-checkbox" value="${d.id}">
-                <span>🎰 Pool #${d.pool_id}</span>
-                <span>Winner: ${d.winner_serial}</span>
-                <span class="badge">${d.prize_amount} 🪙</span>
-                <span>${new Date(d.draw_time).toLocaleString()}</span>
-            </div>
-        `).join('');
-        document.getElementById('drawsPagination').innerHTML = `
-            <button class="btn-sm" onclick="changeDrawsPage(-1)">◀ Previous</button>
-            <span>${drawsPage} / ${totalDrawsPages || 1}</span>
-            <button class="btn-sm" onclick="changeDrawsPage(1)">Next ▶</button>
-            ${drawsPage === 1 ? `<label style="margin-left:15px;"><input type="checkbox" id="selectAllDrawsCheckbox" onchange="toggleSelectAllDraws()"> Select All</label>` : ''}
-        `;
+        
+        if (recentDrawsEl) {
+            recentDrawsEl.innerHTML = pageItems.map(d => `
+                <div class="transaction-item">
+                    <input type="checkbox" class="draw-checkbox" value="${d.id}">
+                    <span>🎰 Pool #${d.pool_id}</span>
+                    <span>Winner: ${d.winner_serial}</span>
+                    <span class="badge">${d.prize_amount} 🪙</span>
+                    <span>${new Date(d.draw_time).toLocaleString()}</span>
+                </div>
+            `).join('');
+        }
+        
+        if (drawsPaginationEl) {
+            drawsPaginationEl.innerHTML = `
+                <button class="btn-sm" onclick="changeDrawsPage(-1)">◀ Previous</button>
+                <span>${drawsPage} / ${totalDrawsPages || 1}</span>
+                <button class="btn-sm" onclick="changeDrawsPage(1)">Next ▶</button>
+                ${drawsPage === 1 ? `<label style="margin-left:15px;"><input type="checkbox" id="selectAllDrawsCheckbox" onchange="toggleSelectAllDraws()"> Select All</label>` : ''}
+            `;
+        }
         attachDrawsCheckboxEvents();
     } else {
-        document.getElementById('recentDraws').innerHTML = '<div class="loading">No draws</div>';
-        document.getElementById('drawsPagination').innerHTML = '';
+        if (recentDrawsEl) recentDrawsEl.innerHTML = '<div class="loading">No draws</div>';
+        if (drawsPaginationEl) drawsPaginationEl.innerHTML = '';
     }
 }
 function changeDrawsPage(delta) {
@@ -5781,6 +5818,12 @@ async function deleteSelectedDraws() {
 
 // ========== CLINIC CONSULTATIONS ==========
 async function loadConsultations() {
+    const consultationsEl = document.getElementById('consultations');
+    const consPaginationEl = document.getElementById('consPagination');
+    
+    // If neither element exists, skip
+    if (!consultationsEl && !consPaginationEl) return;
+    
     const { data } = await sb.from('health_consultations')
         .select('*')
         .eq('user_id', USER_ID)
@@ -5791,24 +5834,30 @@ async function loadConsultations() {
         if (consPage > totalConsPages) consPage = Math.max(1, totalConsPages);
         const start = (consPage - 1) * 5;
         const pageItems = allCons.slice(start, start + 5);
-        document.getElementById('consultations').innerHTML = pageItems.map(c => `
-            <div class="consultation-item">
-                <input type="checkbox" class="cons-checkbox" value="${c.id}">
-                <div><strong>📅 ${c.created_at?.slice(0,10)}</strong> <span class="badge">${c.status}</span></div>
-                <div>Issue: ${escapeHTML(c.issue?.slice(0,100))}</div>
-                ${c.admin_response ? `<div style="color:#10b981;">✅ Response: ${escapeHTML(c.admin_response.slice(0,200))}</div>` : '<div style="color:#fbbf24;">⏳ Waiting...</div>'}
-            </div>
-        `).join('');
-        document.getElementById('consPagination').innerHTML = `
-            <button class="btn-sm" onclick="changeConsPage(-1)">◀ Previous</button>
-            <span>${consPage} / ${totalConsPages || 1}</span>
-            <button class="btn-sm" onclick="changeConsPage(1)">Next ▶</button>
-            ${consPage === 1 ? `<label style="margin-left:15px;"><input type="checkbox" id="selectAllConsCheckbox" onchange="toggleSelectAllCons()"> Select All</label>` : ''}
-        `;
+        
+        if (consultationsEl) {
+            consultationsEl.innerHTML = pageItems.map(c => `
+                <div class="consultation-item">
+                    <input type="checkbox" class="cons-checkbox" value="${c.id}">
+                    <div><strong>📅 ${c.created_at?.slice(0,10)}</strong> <span class="badge">${c.status}</span></div>
+                    <div>Issue: ${escapeHTML(c.issue?.slice(0,100))}</div>
+                    ${c.admin_response ? `<div style="color:#10b981;">✅ Response: ${escapeHTML(c.admin_response.slice(0,200))}</div>` : '<div style="color:#fbbf24;">⏳ Waiting...</div>'}
+                </div>
+            `).join('');
+        }
+        
+        if (consPaginationEl) {
+            consPaginationEl.innerHTML = `
+                <button class="btn-sm" onclick="changeConsPage(-1)">◀ Previous</button>
+                <span>${consPage} / ${totalConsPages || 1}</span>
+                <button class="btn-sm" onclick="changeConsPage(1)">Next ▶</button>
+                ${consPage === 1 ? `<label style="margin-left:15px;"><input type="checkbox" id="selectAllConsCheckbox" onchange="toggleSelectAllCons()"> Select All</label>` : ''}
+            `;
+        }
         attachConsCheckboxEvents();
     } else {
-        document.getElementById('consultations').innerHTML = '<div class="loading">No consultations</div>';
-        document.getElementById('consPagination').innerHTML = '';
+        if (consultationsEl) consultationsEl.innerHTML = '<div class="loading">No consultations</div>';
+        if (consPaginationEl) consPaginationEl.innerHTML = '';
     }
 }
 function changeConsPage(delta) {
