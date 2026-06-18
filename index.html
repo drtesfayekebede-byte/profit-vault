@@ -6218,7 +6218,7 @@ function goToHome() {
 
 // ===== HEADER BALANCE FUNCTIONS =====
 function updateHeaderBalances() {
-    if (!currentUser) return;
+    if (!currentUser) return;  
     
     const balanceEl = document.getElementById('headerBalance');
     const bonusEl = document.getElementById('headerBonus');
@@ -6535,9 +6535,9 @@ document.addEventListener('keydown', function(e) {
     
     // Show home screen
     document.getElementById('appHomeScreen').style.display = 'flex';
-    
-    // Initialize header balances
-    updateHeaderBalances();
+    // Initialize header balances (will update when user loads)
+    // Don't call updateHeaderBalances() here yet - currentUser is null
+    // It will be called after login in loadUser()
     
     // Initialize admin profile picture controls if admin
     if (IS_ADMIN) {
