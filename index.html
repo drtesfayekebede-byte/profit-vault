@@ -2146,7 +2146,7 @@ async function checkSession() {
         if (sessionError) throw sessionError;
         
         if (session?.user) {
-            // User is logged in and confirmed
+            // User is logged in
             const userExists = await ensureUserExists(session.user);
             if (!userExists) {
                 showToast("Account setup failed. Please try again.", "error");
@@ -2157,23 +2157,9 @@ async function checkSession() {
                 return;
             }
             
-            // Fetch user row
-            const { data: userRow, error: fetchError } = await sb.from('users')
-                .select('user_id')
-                .eq('user_id', session.user.id)
-                .maybeSingle();
-            
-            if (fetchError) throw fetchError;
-            
-            if (!userRow) {
-                await sb.auth.signOut();
-                localStorage.clear();
-                sessionStorage.clear();
-                showAuthModal();
-                return;
-            }
-            
             USER_ID = session.user.id;
+            
+            // Start services
             startRealtime();
             startSessionHeartbeat();
             startSessionWarning();
@@ -2181,29 +2167,30 @@ async function checkSession() {
             cleanOldNotifications();
             localStorage.setItem('profitvault_user_id', USER_ID);
             
-            // Clear cache on login to ensure fresh data
             clearCache();
             sessionStorage.clear();
             
             document.getElementById('loadingOverlay').style.display = 'flex';
+            
             const pendingRef = localStorage.getItem('profitvault_referral');
-if (pendingRef) {
-    const { data: existingUser, error: refFetchError } = await sb
-        .from('users')
-        .select('referred_by')
-        .eq('user_id', USER_ID)
-        .single();
-    if (!refFetchError && !existingUser?.referred_by) {
-        const { error: updateError } = await sb
-            .from('users')
-            .update({ referred_by: pendingRef })
-            .eq('user_id', USER_ID);
-        if (!updateError) {
-            localStorage.removeItem('profitvault_referral');
-            await loadUser();
-        }
-    }
-}
+            if (pendingRef) {
+                const { data: existingUser, error: refFetchError } = await sb
+                    .from('users')
+                    .select('referred_by')
+                    .eq('user_id', USER_ID)
+                    .single();
+                if (!refFetchError && !existingUser?.referred_by) {
+                    const { error: updateError } = await sb
+                        .from('users')
+                        .update({ referred_by: pendingRef })
+                        .eq('user_id', USER_ID);
+                    if (!updateError) {
+                        localStorage.removeItem('profitvault_referral');
+                        await loadUser();
+                    }
+                }
+            }
+            
             const { data: userData, error: userError } = await sb.from('users')
                 .select('is_admin')
                 .eq('user_id', USER_ID)
@@ -2212,7 +2199,7 @@ if (pendingRef) {
             if (userError) throw userError;
             
             IS_ADMIN = userData?.is_admin === true;
-                updateUserMenu();
+            updateUserMenu();
             await loadDepositSettings();
             await loadAllData();
             document.getElementById('loadingOverlay').style.display = 'none';
@@ -2223,34 +2210,11 @@ if (pendingRef) {
             if (authModal) authModal.remove();
             
         } else {
-            // No session – check if we just registered (to avoid immediate modal)
-            // We can check a flag or just show modal after a delay
-            const justRegistered = sessionStorage.getItem('just_registered');
-            if (justRegistered) {
-                // User just registered, don't show modal immediately, but clear flag after a few seconds
-                sessionStorage.removeItem('just_registered');
-                showToast('Please confirm your email address to log in.', 'info');
-                // Keep modal hidden for now? Or show it with a message.
-                // Let's show the modal but with a note.
-                showAuthModal();
-                // Add a note inside modal
-                setTimeout(() => {
-                    const authForm = document.getElementById('authForm');
-                    if (authForm) {
-                        const note = document.createElement('p');
-                        note.style.color = '#fbbf24';
-                        note.style.marginTop = '10px';
-                        note.innerHTML = '📧 If you just registered, please check your email for confirmation link.';
-                        authForm.parentNode.insertBefore(note, authForm.nextSibling);
-                    }
-                }, 100);
-            } else {
-                showAuthModal();
-            }
+            // No session - show auth modal
+            showAuthModal();
         }
     } catch (err) {
         console.error("checkSession error:", err);
-        showToast("Authentication error: " + err.message, "error");
         document.getElementById('loadingOverlay').style.display = 'none';
         showAuthModal();
     }
@@ -2371,59 +2335,75 @@ async function login() {
     const email = document.getElementById('authEmail').value.trim();
     const password = document.getElementById('authPassword').value;
     
-    // Close modal immediately
-    const modal = document.getElementById('authModal');
-    if (modal) modal.remove();
-    
-    // Show spinner
-    document.getElementById('loadingOverlay').style.display = 'flex';
-    showToast('Logging in...', 'info');
-    
-    // Validate inputs
     if (!email || !password) {
-        document.getElementById('loadingOverlay').style.display = 'none';
         showToast('Email and password required', 'error');
         return;
     }
     
-    // Clear ALL storage before login
-    localStorage.clear();
-    sessionStorage.clear();
-    clearCache();
-    
-    // Perform login
-    const { data: signInData, error } = await sb.auth.signInWithPassword({ 
-        email, 
-        password,
-        options: { expiresIn: 60 * 60 * 24 * 7 }
-    });
-    
-    if (error) {
-        document.getElementById('loadingOverlay').style.display = 'none';
-        showToast(error.message, 'error');
-        return;
+    // Disable login button to prevent double click
+    const loginBtn = document.querySelector('#authForm .btn-success');
+    if (loginBtn) {
+        loginBtn.disabled = true;
+        loginBtn.textContent = 'Logging in...';
     }
     
-    // CHECK IF USER IS BANNED
-    const { data: userData, error: userError } = await sb
-        .from('users')
-        .select('is_banned')
-        .eq('user_id', signInData.user.id)
-        .single();
+    document.getElementById('loadingOverlay').style.display = 'flex';
+    showToast('Logging in...', 'info');
     
-    if (userData?.is_banned === true) {
-        await sb.auth.signOut();
+    try {
+        const { data: signInData, error } = await sb.auth.signInWithPassword({ 
+            email, 
+            password,
+            options: { expiresIn: 60 * 60 * 24 * 7 }
+        });
+        
+        if (error) {
+            document.getElementById('loadingOverlay').style.display = 'none';
+            showToast(error.message, 'error');
+            if (loginBtn) {
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'Sign In';
+            }
+            return;
+        }
+        
+        // Check if user is banned
+        const { data: userData } = await sb
+            .from('users')
+            .select('is_banned')
+            .eq('user_id', signInData.user.id)
+            .single();
+        
+        if (userData?.is_banned === true) {
+            await sb.auth.signOut();
+            document.getElementById('loadingOverlay').style.display = 'none';
+            showToast('⚠️ Your account has been banned. Please contact support.', 'error');
+            if (loginBtn) {
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'Sign In';
+            }
+            return;
+        }
+        
+        // Close modal
+        const modal = document.getElementById('authModal');
+        if (modal) modal.remove();
+        
+        showToast('Login successful!', 'success');
+        
+        // Reload page after 1 second
+        setTimeout(() => {
+            window.location.reload();
+        }, 1000);
+        
+    } catch (err) {
         document.getElementById('loadingOverlay').style.display = 'none';
-        showToast('⚠️ Your account has been banned. Please contact support.', 'error');
-        return;
+        showToast(err.message || 'Login failed', 'error');
+        if (loginBtn) {
+            loginBtn.disabled = false;
+            loginBtn.textContent = 'Sign In';
+        }
     }
-    
-    showToast('Login successful! Refreshing...', 'success');
-    
-    // Force hard reload after 1 second
-    setTimeout(() => {
-        window.location.href = window.location.pathname;
-    }, 1000);
 }
 async function register() {
     const email = document.getElementById('authEmail').value.trim();
@@ -6578,27 +6558,73 @@ const fixAvatar = document.getElementById('profileAvatar');
         });
         if (!isProduction) console.log('✅ Dropdown fix applied');
     }
-    // Track session refresh to prevent loops
+// Track session refresh to prevent loops
 let lastSessionRefresh = 0;
+let isProcessingAuth = false;
 
 sb.auth.onAuthStateChange((event, session) => {
-    // Don't trigger if we're already in the process of logging out
-    if (isLoggingOut) return;
+    // Prevent multiple simultaneous auth events
+    if (isProcessingAuth) return;
+    isProcessingAuth = true;
     
-    // Prevent multiple rapid session events
+    // Don't trigger if logging out
+    if (isLoggingOut) {
+        isProcessingAuth = false;
+        return;
+    }
+    
+    // Prevent rapid events
     const now = Date.now();
-    if (now - lastSessionRefresh < 5000) return;
+    if (now - lastSessionRefresh < 3000) {
+        isProcessingAuth = false;
+        return;
+    }
     lastSessionRefresh = now;
     
-    // Only handle SIGNED_OUT, ignore TOKEN_REFRESHED to prevent loops
+    // Handle SIGNED_IN - just refresh page
+    if (event === 'SIGNED_IN') {
+        setTimeout(() => {
+            window.location.reload();
+        }, 500);
+        isProcessingAuth = false;
+        return;
+    }
+    
+    // Handle SIGNED_OUT - clear data and reload
     if (event === 'SIGNED_OUT') {
         if (USER_ID) {
             isLoggingOut = true;
-            showToast('Session ended. Please log in again.', 'info');
-            showLogoutSpinner();
-            logout();
+            USER_ID = null;
+            IS_ADMIN = false;
+            currentUser = null;
+            stopRealtime();
+            clearCache();
+            localStorage.clear();
+            sessionStorage.clear();
+            setTimeout(() => {
+                window.location.reload();
+            }, 500);
         }
+        isProcessingAuth = false;
+        return;
     }
+    
+    // Handle TOKEN_REFRESHED - do nothing
+    if (event === 'TOKEN_REFRESHED') {
+        isProcessingAuth = false;
+        return;
+    }
+    
+    // Handle USER_UPDATED - update user data
+    if (event === 'USER_UPDATED') {
+        if (USER_ID && currentUser) {
+            loadUser(true);
+        }
+        isProcessingAuth = false;
+        return;
+    }
+    
+    isProcessingAuth = false;
 });
     // Handle password reset redirect
     const hashParams = new URLSearchParams(window.location.hash.substring(1));
