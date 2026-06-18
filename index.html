@@ -2678,6 +2678,10 @@ async function loadQuadLockAndExchange() {
 
 // NEW FUNCTION 2: Load Market and Investments
 async function loadMarketAndInvestments() {
+    const marketGridEl = document.getElementById('marketGrid');
+    // If marketGrid doesn't exist, skip
+    if (!marketGridEl) return;
+    
     const [marketResult, assetsResult] = await Promise.all([
         sb.from('market').select('*').order('slot_id'),
         sb.from('user_assets').select('*').eq('user_id', USER_ID).eq('sold', false)
@@ -2688,7 +2692,7 @@ async function loadMarketAndInvestments() {
     const ownedSlots = assets?.map(a => a.slot_id) || [];
     
     if (market) {
-        document.getElementById('marketGrid').innerHTML = market.map(item => {
+        marketGridEl.innerHTML = market.map(item => {
             const owned = ownedSlots.includes(item.slot_id);
             const mediaContent = item.image_url 
                 ? `<div class="market-image-container"><img loading="lazy" src="${item.image_url}" class="market-image" alt="${escapeHTML(item.asset_name)}">${owned ? '<div class="market-owned-badge">✅ Owned</div>' : ''}</div>`
@@ -5673,6 +5677,12 @@ function stopInvestmentTimer() {
 async function loadInvestments() {
     if (!USER_ID) return;
     
+    const investmentsEl = document.getElementById('investments');
+    const investmentsPaginationEl = document.getElementById('investmentsPagination');
+    
+    // If investments element doesn't exist, skip
+    if (!investmentsEl) return;
+    
     const { data } = await sb.from('user_assets')
         .select('*')
         .eq('user_id', USER_ID)
@@ -5687,7 +5697,7 @@ async function loadInvestments() {
         const start = (investmentsPage - 1) * 5;
         const pageItems = allInvestments.slice(start, start + 5);
         
-        document.getElementById('investments').innerHTML = `
+        investmentsEl.innerHTML = `
             <div class="investments-grid" id="investmentsGrid">
                 ${pageItems.map(asset => {
                     const remainingMs = getRemainingTime(asset.purchase_time);
@@ -5734,15 +5744,17 @@ async function loadInvestments() {
             </div>
         `;
         
-        document.getElementById('investmentsPagination').innerHTML = `
-            <button class="btn-sm" onclick="changeInvestmentsPage(-1)">◀ Previous</button>
-            <span>${investmentsPage} / ${totalInvestmentsPages || 1}</span>
-            <button class="btn-sm" onclick="changeInvestmentsPage(1)">Next ▶</button>
-        `;
+        if (investmentsPaginationEl) {
+            investmentsPaginationEl.innerHTML = `
+                <button class="btn-sm" onclick="changeInvestmentsPage(-1)">◀ Previous</button>
+                <span>${investmentsPage} / ${totalInvestmentsPages || 1}</span>
+                <button class="btn-sm" onclick="changeInvestmentsPage(1)">Next ▶</button>
+            `;
+        }
         
         if (!investmentUpdateInterval) startInvestmentTimer();
     } else {
-        document.getElementById('investments').innerHTML = `
+        investmentsEl.innerHTML = `
             <div class="loading" style="text-align: center; padding: 40px;">
                 <div class="asset-emoji">📦</div>
                 <p>No active investments</p>
@@ -5750,7 +5762,7 @@ async function loadInvestments() {
                 <button class="btn btn-sm" onclick="document.querySelector('[data-tab=\\'market\\']').click()">🛒 Go to Market</button>
             </div>
         `;
-        document.getElementById('investmentsPagination').innerHTML = '';
+        if (investmentsPaginationEl) investmentsPaginationEl.innerHTML = '';
         stopInvestmentTimer();
     }
 }
@@ -5923,6 +5935,12 @@ async function deleteSelectedConsultations() {
 
 // ========== SOLD ASSETS ==========
 async function loadSoldAssets() {
+    const soldAssetsListEl = document.getElementById('soldAssetsList');
+    const soldAssetsPaginationEl = document.getElementById('soldAssetsPagination');
+    
+    // If soldAssetsList doesn't exist, skip
+    if (!soldAssetsListEl) return;
+    
     const { data } = await sb.from('user_assets')
         .select('*')
         .eq('user_id', USER_ID)
@@ -5934,7 +5952,8 @@ async function loadSoldAssets() {
         if (soldAssetsPage > totalSoldAssetsPages) soldAssetsPage = Math.max(1, totalSoldAssetsPages);
         const start = (soldAssetsPage - 1) * 5;
         const pageItems = allSoldAssets.slice(start, start + 5);
-        document.getElementById('soldAssetsList').innerHTML = pageItems.map(asset => `
+        
+        soldAssetsListEl.innerHTML = pageItems.map(asset => `
             <div class="transaction-item">
                 <input type="checkbox" class="sold-checkbox" value="${asset.id}">
                 <span>${asset.emoji} ${asset.asset_name}</span>
@@ -5942,16 +5961,19 @@ async function loadSoldAssets() {
                 <span>${new Date(asset.purchase_time).toLocaleDateString()}</span>
             </div>
         `).join('');
-        document.getElementById('soldAssetsPagination').innerHTML = `
-            <button class="btn-sm" onclick="changeSoldAssetsPage(-1)">◀ Previous</button>
-            <span>${soldAssetsPage} / ${totalSoldAssetsPages || 1}</span>
-            <button class="btn-sm" onclick="changeSoldAssetsPage(1)">Next ▶</button>
-            ${soldAssetsPage === 1 ? `<label style="margin-left:15px;"><input type="checkbox" id="selectAllSoldCheckbox" onchange="toggleSelectAllSold()"> Select All</label>` : ''}
-        `;
+        
+        if (soldAssetsPaginationEl) {
+            soldAssetsPaginationEl.innerHTML = `
+                <button class="btn-sm" onclick="changeSoldAssetsPage(-1)">◀ Previous</button>
+                <span>${soldAssetsPage} / ${totalSoldAssetsPages || 1}</span>
+                <button class="btn-sm" onclick="changeSoldAssetsPage(1)">Next ▶</button>
+                ${soldAssetsPage === 1 ? `<label style="margin-left:15px;"><input type="checkbox" id="selectAllSoldCheckbox" onchange="toggleSelectAllSold()"> Select All</label>` : ''}
+            `;
+        }
         attachSoldCheckboxEvents();
     } else {
-        document.getElementById('soldAssetsList').innerHTML = '<div class="loading">No sold assets</div>';
-        document.getElementById('soldAssetsPagination').innerHTML = '';
+        soldAssetsListEl.innerHTML = '<div class="loading">No sold assets</div>';
+        if (soldAssetsPaginationEl) soldAssetsPaginationEl.innerHTML = '';
     }
 }
 function changeSoldAssetsPage(delta) {
