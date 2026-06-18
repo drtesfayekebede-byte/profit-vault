@@ -1604,8 +1604,15 @@ async function updateMyTickets() {
     document.getElementById('myTickets').innerHTML = data?.length ? data.map(t => `<div class="ticket-item"><div>🎫 ${escapeHTML(t.serial_number)}</div><div><span class="badge">Active</span></div></div>`).join('') : '<div class="loading">No tickets</div>';
 }
 async function updateRecentTransactions() {
+    const transactionListEl = document.getElementById('transactionList');
+    // If transactionList doesn't exist, skip
+    if (!transactionListEl) return;
+    
     const { data } = await sb.from('transactions').select('*').eq('user_id', USER_ID).order('timestamp', { ascending: false }).limit(10);
-    if (data) { allTransactions = data; applyTransactionFilter(); }
+    if (data) { 
+        allTransactions = data; 
+        applyTransactionFilter(); 
+    }
 }
 function updateUserMenu() {
     const items = document.getElementById('dropdownItems');
@@ -2820,14 +2827,19 @@ async function loadProfileAndCards() {
     }
 }
 // NEW FUNCTION 5: Load Transactions (extract from existing)
+// NEW FUNCTION 5: Load Transactions (extract from existing)
 async function loadTransactions() {
+    const transactionListEl = document.getElementById('transactionList');
+    // If transactionList doesn't exist, skip
+    if (!transactionListEl) return;
+    
     const { data: txs } = await sb.from('transactions')
         .select('*').eq('user_id', USER_ID).order('timestamp', { ascending: false });
     if (txs) {
         allTransactions = txs;
         applyTransactionFilter();
     } else {
-        document.getElementById('transactionList').innerHTML = '<div class="loading">No transactions</div>';
+        transactionListEl.innerHTML = '<div class="loading">No transactions</div>';
     }
 }
 async function loadAllData(forceRefresh = false) {
@@ -2919,6 +2931,14 @@ async function loadReferralEarnings() {
     }
 }
 function applyTransactionFilter() {
+    const transactionListEl = document.getElementById('transactionList');
+    const pageInfoEl = document.getElementById('pageInfo');
+    const prevPageBtn = document.getElementById('prevPageBtn');
+    const nextPageBtn = document.getElementById('nextPageBtn');
+    
+    // If transactionList doesn't exist, skip
+    if (!transactionListEl) return;
+    
     let filtered = allTransactions;
     if (currentHistoryType === 'deposit') {
         filtered = allTransactions.filter(t => t.transaction_type === 'Deposit');
@@ -2927,12 +2947,13 @@ function applyTransactionFilter() {
     } else if (currentHistoryType === 'other') {
         filtered = allTransactions.filter(t => !t.transaction_type.includes('Deposit') && !t.transaction_type.includes('Withdrawal'));
     }
-    // 'all' remains all transactions
+    
     totalPages = Math.ceil(filtered.length / 5);
     if (currentPage > totalPages) currentPage = Math.max(1, totalPages);
     const start = (currentPage - 1) * 5;
     const pageItems = filtered.slice(start, start + 5);
-    document.getElementById('transactionList').innerHTML = pageItems.map(t => `
+    
+    transactionListEl.innerHTML = pageItems.map(t => `
         <div class="transaction-item" data-id="${t.id}">
             <input type="checkbox" class="txn-checkbox" value="${t.id}" style="margin-right:8px;">
             <div style="flex:2;">${t.transaction_type}</div>
@@ -2941,7 +2962,10 @@ function applyTransactionFilter() {
             <div style="flex:1; text-align:right;">${t.status}</div>
         </div>
     `).join('');
-    document.getElementById('pageInfo').innerText = `Page ${currentPage} of ${totalPages || 1}`;
+    
+    if (pageInfoEl) pageInfoEl.innerText = `Page ${currentPage} of ${totalPages || 1}`;
+    if (prevPageBtn) prevPageBtn.disabled = currentPage <= 1;
+    if (nextPageBtn) nextPageBtn.disabled = currentPage >= totalPages;
 }
 
 function changePage(delta) {
