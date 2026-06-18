@@ -1216,6 +1216,127 @@ html, body {
         <!-- Content loaded by JavaScript -->
     </div>
 </div>
+<!-- ===== HIDDEN TAB CONTENT (Cloned when needed) ===== -->
+<div style="display: none;">
+    <!-- Dashboard Content -->
+    <div id="dashboard">
+        <div class="card"><h3>⚡ Quick Actions</h3><button class="btn btn-success" onclick="showModal('depositModal')">💰 Deposit</button><div class="row"><button class="btn" onclick="showModal('buyCoinsModal')">💱 Buy Coins</button><button class="btn btn-warning" onclick="showExchangeModal()">🔄 Exchange to Bonus</button></div><button class="btn btn-danger" onclick="showModal('withdrawModal')">📤 Withdraw Bonus</button></div>
+        <div class="card"><h3>🔒 QUAD-LOCK PROGRESS</h3><div id="quadlock">Loading...</div></div>
+        <div class="card"><h3>📈 Exchange Info</h3><div id="exchangeInfo"></div></div>
+    </div>
+
+    <!-- Market Content -->
+    <div id="market">
+        <div class="card"><h3>🛒 Investment Market</h3><div id="marketGrid" class="market-grid">Loading...</div></div>
+        <div class="card"><h3>🎒 My Investments</h3><div id="investments"></div><div id="investmentsPagination" class="pagination-controls"></div></div>
+        <div class="card">
+            <h3>📦 Sold Assets <button class="btn-sm btn-danger" style="float:right;" onclick="deleteSelectedSoldAssets()">🗑️ Delete Selected</button></h3>
+            <div id="soldAssetsList"></div>
+            <div id="soldAssetsPagination" class="pagination-controls"></div>
+        </div>
+    </div>
+
+    <!-- Games Content -->
+    <div id="games">
+        <div class="card">
+            <h3>🎁 Win Chance Game (50 Coins)</h3>
+            <div id="gameResult"></div>
+            <div id="gameGrid" class="game-grid"></div>
+            <div class="game-cost" style="margin-top:12px; text-align:center;">🪙 Cost: <strong>50 Coins</strong></div>
+        </div>
+    </div>
+
+    <!-- Airtime Cards Content -->
+    <div id="cards">
+        <div class="card"><h3>🃏 Airtime Cards</h3><div id="cardsGrid" style="display:flex; flex-direction:column; gap:12px;"></div></div>
+    </div>
+
+    <!-- Lottery Content -->
+    <div id="lottery">
+        <div class="card"><h3>🎟️ Lottery Pools</h3><div id="lotteryPools"></div></div>
+        <div class="card"><h3>🎫 My Tickets</h3><div id="myTickets"></div></div>
+        <div class="card">
+            <h3>🏆 Recent Draws <button class="btn-sm btn-danger" style="float:right;" onclick="deleteSelectedDraws()">🗑️ Delete Selected</button></h3>
+            <div id="recentDraws"></div>
+            <div id="drawsPagination" class="pagination-controls"></div>
+        </div>
+    </div>
+
+    <!-- Clinic Content -->
+    <div id="clinic">
+        <div class="card"><h3>🏥 Online Clinic (50 Coins)</h3><textarea id="healthIssue" rows="6" placeholder="Describe your health issue..." style="width: 100%; box-sizing: border-box; font-size: 16px;"></textarea><button class="btn btn-info" onclick="startConsultation()">Start Consultation</button></div>
+        <div class="card">
+            <h3>📋 My Consultations <button class="btn-sm btn-danger" style="float:right;" onclick="deleteSelectedConsultations()">🗑️ Delete Selected</button></h3>
+            <div id="consultations"></div>
+            <div id="consPagination" class="pagination-controls"></div>
+        </div>
+    </div>
+
+    <!-- Profile Content -->
+    <div id="profile">
+        <div class="card">
+            <h3>👤 Profile</h3>
+            <div id="profileInfo"></div>
+            <div id="referralEarnings" style="margin-top: 10px; color: #fbbf24;">💰 Referral earnings: 0 ETB</div>
+            <button class="btn" onclick="copyReferral()">📤 Copy Referral Link</button>
+            <div class="sound-toggle" style="margin-top:15px; display:flex; justify-content:space-between;">
+                <span>🔊 Sound Effects</span>
+                <div id="soundToggle" class="toggle-switch" style="width:50px; height:24px; background:#4b5563; border-radius:12px; cursor:pointer; position:relative;" onclick="toggleSound()">
+                    <div id="toggleKnob" style="width:20px; height:20px; background:white; border-radius:50%; position:absolute; top:2px; left:3px; transition:0.2s;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <h3>📜 Transaction History</h3>
+            <div class="sub-tabs" style="display:flex; gap:10px; margin-bottom:12px; flex-wrap:wrap;">
+                <button class="btn-sm" data-hist="deposit">Deposits</button>
+                <button class="btn-sm" data-hist="withdraw">Withdrawals</button>
+                <button class="btn-sm" data-hist="other">Other</button>
+                <label style="margin-left:15px;"><input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll()"> Select All</label>
+                <button class="btn-sm btn-danger" onclick="clearSelectedHistory()">🗑️ Clear Selected</button>
+            </div>
+            <div id="transactionList"></div>
+            <div id="paginationControls" style="display:flex; justify-content:center; gap:10px; margin-top:15px;">
+                <button class="btn-sm" id="prevPageBtn" onclick="changePage(-1)">◀ Previous</button>
+                <span id="pageInfo">Page 1</span>
+                <button class="btn-sm" id="nextPageBtn" onclick="changePage(1)">Next ▶</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Content -->
+    <div id="contact">
+        <div class="card">
+            <h3>📞 Contact Admin</h3>
+            <div class="contact-methods">
+                <div class="contact-method" role="button" tabindex="0" onclick="contactAdmin('telegram')" onkeydown="if(event.key==='Enter'||event.key===' ') contactAdmin('telegram')">
+                    <div>📱 Telegram Admin</div>
+                    <div>@profitvaultinvestment</div>
+                    <button class="btn btn-sm">Message</button>
+                </div>
+            </div>
+            <a href="https://t.me/pureprofitmaking" target="_blank" rel="noopener noreferrer" class="btn btn-info" style="text-decoration:none; display:block; margin-top:10px;">📢 Join our Channel @pureprofitmaking</a>
+        </div>
+    </div>
+
+    <!-- Guide Content -->
+    <div id="guide">
+        <div class="card">
+            <h3>📖 መመሪያ / Guide</h3>
+            <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+                <button id="guideEngBtn" class="btn-sm" style="background: #3b82f6;">🇬🇧 English</button>
+                <button id="guideAmhBtn" class="btn-sm" style="background: #10b981;">🇪🇹 አማርኛ</button>
+                <button id="guideOroBtn" class="btn-sm" style="background: #f59e0b;">🇪🇹 Oromic</button>
+            </div>
+            <div id="guideContent"></div>
+        </div>
+    </div>
+
+    <!-- Admin Content -->
+    <div id="admin">
+        <div class="loading">Loading admin panel...</div>
+    </div>
+</div>
 
 <!-- ===== MODALS ===== -->
 <div id="depositModal" class="modal"><div class="modal-content"><span class="close" onclick="closeModal('depositModal')">&times;</span><h3>💰 Deposit Money</h3><div class="payment-methods" style="display:flex; gap:10px; margin-bottom:15px;"><div class="payment-method" data-payment="telebirr" onclick="selectPaymentMethod('telebirr')" style="flex:1; background:rgba(255,255,255,0.1); border-radius:16px; padding:10px; text-align:center; cursor:pointer;">📱 Telebirr</div><div class="payment-method" data-payment="awash" onclick="selectPaymentMethod('awash')" style="flex:1; background:rgba(255,255,255,0.1); border-radius:16px; padding:10px; text-align:center; cursor:pointer;">🏦 Awash</div></div><div id="telebirrInfo" class="telebirr-info" style="background:rgba(0,0,0,0.4); border-radius:16px; padding:12px; margin:10px 0; text-align:center;">📱 Send to Telebirr: <strong id="telebirrNumber">0935983470</strong><br>Name: <span id="telebirrName">Tesfaye</span></div><div id="awashInfo" class="bank-info" style="display:none; background:rgba(0,0,0,0.4); border-radius:16px; padding:12px; margin:10px 0; text-align:center;">🏦 <span id="bankName">Awash Bank</span>: <strong id="bankAccount">013201372354300</strong><br>Name: <span id="bankHolder">Tesfaye</span></div><input type="number" id="depositAmount" placeholder="Amount (Min 1500 ETB)"><input type="text" id="accountHolder" placeholder="Account Holder Name"><input type="text" id="transactionId" placeholder="Transaction ID"><textarea id="depositNote" rows="2" placeholder="Note (optional)"></textarea><button class="btn btn-success" onclick="submitDeposit()">Submit Deposit Request</button><p style="font-size:11px; margin-top:12px;">Admin will verify and approve.</p></div></div>
@@ -6279,40 +6400,63 @@ function openApp(appId) {
     document.getElementById('tabContentWrapper').classList.add('active');
     document.getElementById('backButton').classList.add('visible');
     
+    // Get the container
+    const container = document.getElementById('tabContentContainer');
+    
     // Load the appropriate content
     switch(appId) {
         case 'wallet':
             loadWalletContent();
             break;
         case 'dashboard':
-            loadDashboardContent();
-            break;
         case 'market':
-            loadMarketContent();
-            break;
         case 'games':
-            loadGamesContent();
-            break;
         case 'airtime':
-            loadAirtimeContent();
-            break;
         case 'lottery':
-            loadLotteryContent();
-            break;
         case 'clinic':
-            loadClinicContent();
-            break;
+        case 'profile':
+        case 'contact':
         case 'guide':
-            loadGuideContent();
-            break;
         case 'admin':
-            loadAdminContent();
+            // Clone the hidden content
+            const contentEl = document.getElementById(appId);
+            if (contentEl) {
+                container.innerHTML = contentEl.innerHTML;
+                // Re-initialize any necessary functions
+                if (appId === 'games') {
+                    setTimeout(createGameGrid, 100);
+                } else if (appId === 'dashboard') {
+                    loadAllData();
+                } else if (appId === 'market') {
+                    loadMarketAndInvestments();
+                } else if (appId === 'airtime') {
+                    loadProfileAndCards();
+                } else if (appId === 'lottery') {
+                    loadLotteryPools();
+                    loadDraws();
+                } else if (appId === 'clinic') {
+                    loadConsultations();
+                } else if (appId === 'guide') {
+                    initGuideTab();
+                } else if (appId === 'admin') {
+                    if (IS_ADMIN) {
+                        loadAdminPanel();
+                    } else {
+                        showToast('Admin access required', 'error');
+                        goToHome();
+                    }
+                } else if (appId === 'profile') {
+                    loadProfileAndCards();
+                    loadTransactions();
+                }
+            } else {
+                container.innerHTML = '<div class="loading">Content not found</div>';
+            }
             break;
         default:
             showToast('Coming soon!', 'info');
     }
 }
-
 function goToHome() {
     document.getElementById('appHomeScreen').style.display = 'flex';
     document.getElementById('tabContentWrapper').classList.remove('active');
@@ -6349,6 +6493,8 @@ function showAllBalancesInHeader(show) {
 // ===== WALLET CONTENT =====
 async function loadWalletContent() {
     const container = document.getElementById('tabContentContainer');
+    // Clear previous content first
+    container.innerHTML = '';
     
     // Show all balances in header
     showAllBalancesInHeader(true);
