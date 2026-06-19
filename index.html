@@ -132,10 +132,12 @@
     0%, 100% { box-shadow: 0 0 15px rgba(239, 68, 68, 0.2); }
     50% { box-shadow: 0 0 30px rgba(239, 68, 68, 0.5); }
 }
-@keyframes backgroundPulse {
-    0% { opacity: 0.8; }
-    50% { opacity: 1; }
-    100% { opacity: 0.8; }
+
+/* ===== COMMON APP CARD GLOW BORDER ===== */
+@keyframes appCardGlow {
+    0% { border-color: rgba(251, 191, 36, 0.3); box-shadow: 0 0 15px rgba(251, 191, 36, 0.1); }
+    50% { border-color: rgba(251, 191, 36, 0.8); box-shadow: 0 0 35px rgba(251, 191, 36, 0.3), 0 0 60px rgba(251, 191, 36, 0.1); }
+    100% { border-color: rgba(251, 191, 36, 0.3); box-shadow: 0 0 15px rgba(251, 191, 36, 0.1); }
 }
 
 /* ===== WALLET BALANCE CARD GLOW ANIMATIONS ===== */
@@ -162,6 +164,11 @@
 @keyframes rgbRotate {
     0% { filter: hue-rotate(0deg); }
     100% { filter: hue-rotate(360deg); }
+}
+@keyframes backgroundPulse {
+    0% { opacity: 0.8; }
+    50% { opacity: 1; }
+    100% { opacity: 0.8; }
 }
 
 /* ===== BASE ===== */
@@ -221,9 +228,25 @@ html, body {
     z-index: 100;
     background: rgba(10, 10, 15, 0.88);
     backdrop-filter: blur(15px);
-    border-bottom: 3px solid rgba(251, 191, 36, 0.3);
-    box-shadow: 0 0 30px rgba(251, 191, 36, 0.15), inset 0 0 30px rgba(251, 191, 36, 0.05);
+    border-bottom: 3px solid transparent;
+    background-image: linear-gradient(rgba(10, 10, 15, 0.88), rgba(10, 10, 15, 0.88)),
+        linear-gradient(90deg, transparent, #fbbf24, #d97706, #fbbf24, transparent);
+    background-origin: padding-box, border-box;
+    background-clip: padding-box, border-box;
+    box-shadow: 0 0 40px rgba(251, 191, 36, 0.1), inset 0 0 30px rgba(251, 191, 36, 0.05);
     padding: 0 32px;
+}
+
+.header::before {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #fbbf24, #d97706, #fbbf24, transparent);
+    background-size: 200% 100%;
+    animation: shimmerGold 3s linear infinite;
 }
 
 .header-content {
@@ -459,12 +482,13 @@ html, body {
     align-content: stretch;
 }
 
+/* ===== APP CARDS WITH COMMON GLOWING BORDER ===== */
 .app-card {
     background: rgba(10, 10, 15, 0.4) !important;
     backdrop-filter: blur(5px) !important;
-    border: 2px solid rgba(251, 191, 36, 0.12) !important;
+    border: 2px solid rgba(251, 191, 36, 0.3) !important;
     border-radius: 16px !important;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3) !important;
+    box-shadow: 0 0 20px rgba(251, 191, 36, 0.1) !important;
     padding: 3px !important;
     transition: all 0.3s ease;
     position: relative;
@@ -476,35 +500,14 @@ html, body {
     width: 100%;
     height: 100%;
     min-height: 70px;
+    animation: appCardGlow 3s ease-in-out infinite;
 }
 
 .app-card:hover {
     transform: scale(1.04) translateY(-4px);
-    border-color: rgba(251, 191, 36, 0.35) !important;
-    box-shadow: 0 0 40px rgba(251, 191, 36, 0.15) !important;
-}
-
-/* ===== APP IMAGES WITH GLOWING BORDER AND BOUNCE ===== */
-.app-card {
-    background: transparent !important;
-    backdrop-filter: none !important;
-    border: none !important;
-    box-shadow: none !important;
-    padding: 0 !important;
-    border-radius: 0 !important;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-end;
-    width: 100%;
-    height: 100%;
-}
-
-.app-card:hover {
-    transform: scale(1.03) translateY(-4px);
+    border-color: rgba(251, 191, 36, 0.9) !important;
+    box-shadow: 0 0 50px rgba(251, 191, 36, 0.4), 0 0 80px rgba(251, 191, 36, 0.2) !important;
+    animation-play-state: paused;
 }
 
 .app-card .app-image {
@@ -548,6 +551,7 @@ html, body {
     transform: scale(1.05);
     border-color: rgba(251, 191, 36, 0.3);
 }
+
 /* ===== INDIVIDUAL APP COLORS - STRONG GLOW ===== */
 .app-card[data-app="dashboard"] .app-name {
     color: #fbbf24;
@@ -967,10 +971,10 @@ html, body {
     color: #fbbf24;
 }
 
-/* ===== MARKET GRID ===== */
+/* ===== MARKET GRID - 3 COLUMNS, 4 ROWS ORIGINAL ===== */
 .market-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 10px;
 }
 
@@ -1890,34 +1894,61 @@ html, body {
         max-width: 200px;
     }
     
- /* ===== MOBILE APP GRID FIX ===== */
+    /* ===== MOBILE APP GRID FIX ===== */
     .app-grid {
-        gap: 20px !important;
-        padding: 16px 8px !important;
+        gap: 8px !important;
+        padding: 6px 2px !important;
     }
     
     .app-grid-container {
-        padding: 16px 8px !important;
+        padding: 8px 4px !important;
+        height: calc(100vh - 64px - 64px) !important;
     }
     
     .app-card {
-        min-height: 130px !important;
-        padding: 6px !important;
-        border-radius: 16px !important;
+        min-height: 90px !important;
+        padding: 4px !important;
+        border-radius: 14px !important;
     }
     
     .app-card .app-image {
-        width: 90% !important;
-        height: 75% !important;
-        border-radius: 12px !important;
+        width: 92% !important;
+        height: 76% !important;
+        border-radius: 10px !important;
     }
     
     .app-card .app-name {
-        font-size: clamp(11px, 2.5vw, 16px) !important;
-        padding: 3px 10px !important;
-        margin-bottom: 6px !important;
-        margin-top: 2px !important;
+        font-size: clamp(10px, 2.2vw, 14px) !important;
+        padding: 2px 8px !important;
+        margin-bottom: 4px !important;
+        margin-top: 1px !important;
         letter-spacing: 1px !important;
+    }
+    
+    /* ===== MOBILE MARKET GRID - 3 COLUMNS ===== */
+    .market-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 8px !important;
+    }
+    
+    .market-image-container {
+        border-radius: 14px !important;
+    }
+    
+    .market-emoji {
+        font-size: 40px !important;
+    }
+    
+    .market-name {
+        font-size: 11px !important;
+    }
+    
+    .market-price {
+        font-size: 10px !important;
+    }
+    
+    .market-roi {
+        font-size: 9px !important;
     }
     
     /* ===== MOBILE WALLET CARDS ===== */
@@ -2007,31 +2038,53 @@ html, body {
     
     /* ===== EXTRA SMALL MOBILE FIX ===== */
     .app-grid {
-        gap: 16px !important;
-        padding: 12px 6px !important;
+        gap: 6px !important;
+        padding: 4px 2px !important;
     }
     
     .app-grid-container {
-        padding: 12px 6px !important;
+        padding: 6px 2px !important;
+        height: calc(100vh - 56px - 56px) !important;
     }
     
     .app-card {
-        min-height: 110px !important;
-        padding: 4px !important;
-        border-radius: 14px !important;
+        min-height: 72px !important;
+        padding: 3px !important;
+        border-radius: 12px !important;
     }
     
     .app-card .app-image {
-        width: 88% !important;
-        height: 72% !important;
-        border-radius: 10px !important;
+        width: 90% !important;
+        height: 74% !important;
+        border-radius: 8px !important;
     }
     
     .app-card .app-name {
-        font-size: clamp(9px, 2vw, 13px) !important;
-        padding: 2px 8px !important;
-        margin-bottom: 4px !important;
+        font-size: clamp(8px, 1.8vw, 11px) !important;
+        padding: 1px 6px !important;
+        margin-bottom: 3px !important;
         letter-spacing: 0.5px !important;
+    }
+    
+    /* ===== EXTRA SMALL MARKET ===== */
+    .market-grid {
+        gap: 6px !important;
+    }
+    
+    .market-emoji {
+        font-size: 32px !important;
+    }
+    
+    .market-name {
+        font-size: 10px !important;
+    }
+    
+    .market-price {
+        font-size: 9px !important;
+    }
+    
+    .market-roi {
+        font-size: 8px !important;
     }
     
     /* ===== EXTRA SMALL WALLET ===== */
