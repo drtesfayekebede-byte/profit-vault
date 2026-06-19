@@ -444,112 +444,239 @@ html, body {
     transform: scale(1.03) translateY(-4px);
 }
 
-.app-card .app-emoji {
-    font-size: clamp(70px, 15vw, 120px);
-    line-height: 1;
+/* ===== APP IMAGES WITH GLOWING BORDER AND BOUNCE ===== */
+.app-card {
+    background: transparent !important;
+    backdrop-filter: none !important;
+    border: 2px solid rgba(251, 191, 36, 0.3) !important;
+    box-shadow: 0 0 30px rgba(251, 191, 36, 0.1) !important;
+    padding: 5px !important;
+    border-radius: 24px !important;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.app-card:hover {
+    border-color: rgba(251, 191, 36, 0.8) !important;
+    box-shadow: 0 0 50px rgba(251, 191, 36, 0.3) !important;
+    transform: scale(1.03) translateY(-4px);
+}
+
+.app-card .app-image {
+    width: 92%;
+    height: 85%;
+    object-fit: contain;
     display: block;
-    margin-bottom: 0px;
+    border-radius: 16px;
+    filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.2));
+    transition: all 0.4s ease;
 }
 
+.app-card:hover .app-image {
+    filter: drop-shadow(0 0 35px rgba(255, 215, 0, 0.5));
+    transform: scale(1.02);
+}
+
+/* ===== BOLD, COLORFUL APP NAME ===== */
 .app-card .app-name {
-    font-size: clamp(12px, 1.8vw, 16px);
-    font-weight: bold;
-    color: #e2e8f0;
+    font-size: clamp(9px, 1.2vw, 13px);
+    font-weight: 900;
     text-align: center;
-    margin-top: 0px;
+    margin-top: 2px;
+    padding: 2px 10px;
+    border-radius: 10px;
+    background: rgba(0,0,0,0.4);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(251, 191, 36, 0.1);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: 'Times New Roman', Times, serif;
 }
 
-/* ===== COLORFUL APP CARDS ===== */
+/* ===== INDIVIDUAL APP COLORS ===== */
+.app-card[data-app="dashboard"] .app-name {
+    color: #fbbf24;
+    text-shadow: 0 0 20px rgba(251, 191, 36, 0.6), 0 0 40px rgba(251, 191, 36, 0.3);
+}
+.app-card[data-app="market"] .app-name {
+    color: #10b981;
+    text-shadow: 0 0 20px rgba(16, 185, 129, 0.6), 0 0 40px rgba(16, 185, 129, 0.3);
+}
+.app-card[data-app="games"] .app-name {
+    color: #8b5cf6;
+    text-shadow: 0 0 20px rgba(139, 92, 246, 0.6), 0 0 40px rgba(139, 92, 246, 0.3);
+}
+.app-card[data-app="airtime"] .app-name {
+    color: #06b6d4;
+    text-shadow: 0 0 20px rgba(6, 182, 212, 0.6), 0 0 40px rgba(6, 182, 212, 0.3);
+}
+.app-card[data-app="lottery"] .app-name {
+    color: #ec4899;
+    text-shadow: 0 0 20px rgba(236, 72, 153, 0.6), 0 0 40px rgba(236, 72, 153, 0.3);
+}
+.app-card[data-app="clinic"] .app-name {
+    color: #14b8a6;
+    text-shadow: 0 0 20px rgba(20, 184, 166, 0.6), 0 0 40px rgba(20, 184, 166, 0.3);
+}
+.app-card[data-app="guide"] .app-name {
+    color: #60a5fa;
+    text-shadow: 0 0 20px rgba(96, 165, 250, 0.6), 0 0 40px rgba(96, 165, 250, 0.3);
+}
+.app-card[data-app="wallet"] .app-name {
+    color: #fbbf24;
+    text-shadow: 0 0 20px rgba(251, 191, 36, 0.6), 0 0 40px rgba(251, 191, 36, 0.3);
+}
+.app-card[data-app="admin"] .app-name {
+    color: #ef4444;
+    text-shadow: 0 0 20px rgba(239, 68, 68, 0.6), 0 0 40px rgba(239, 68, 68, 0.3);
+}
+.app-card[data-app="contact"] .app-name {
+    color: #3b82f6;
+    text-shadow: 0 0 20px rgba(59, 130, 246, 0.6), 0 0 40px rgba(59, 130, 246, 0.3);
+}
+
+/* ===== COLORFUL GLOWING BORDERS ===== */
 .app-card[data-app="dashboard"] {
-    background: linear-gradient(145deg, rgba(251, 191, 36, 0.2), rgba(10, 10, 15, 0.85));
-    border-color: rgba(251, 191, 36, 0.4);
-    animation: glowDashboard 3s infinite;
+    border-color: rgba(251, 191, 36, 0.4) !important;
+    box-shadow: 0 0 30px rgba(251, 191, 36, 0.15) !important;
 }
 .app-card[data-app="dashboard"]:hover {
-    border-color: #fbbf24;
-    box-shadow: 0 0 40px rgba(251, 191, 36, 0.4);
+    border-color: #fbbf24 !important;
+    box-shadow: 0 0 50px rgba(251, 191, 36, 0.4) !important;
 }
 
 .app-card[data-app="market"] {
-    background: linear-gradient(145deg, rgba(16, 185, 129, 0.2), rgba(10, 10, 15, 0.85));
-    border-color: rgba(16, 185, 129, 0.4);
-    animation: glowMarket 3s infinite 0.2s;
+    border-color: rgba(16, 185, 129, 0.4) !important;
+    box-shadow: 0 0 30px rgba(16, 185, 129, 0.15) !important;
 }
 .app-card[data-app="market"]:hover {
-    border-color: #10b981;
-    box-shadow: 0 0 40px rgba(16, 185, 129, 0.4);
+    border-color: #10b981 !important;
+    box-shadow: 0 0 50px rgba(16, 185, 129, 0.4) !important;
 }
 
 .app-card[data-app="games"] {
-    background: linear-gradient(145deg, rgba(139, 92, 246, 0.2), rgba(10, 10, 15, 0.85));
-    border-color: rgba(139, 92, 246, 0.4);
-    animation: glowGames 3s infinite 0.4s;
+    border-color: rgba(139, 92, 246, 0.4) !important;
+    box-shadow: 0 0 30px rgba(139, 92, 246, 0.15) !important;
 }
 .app-card[data-app="games"]:hover {
-    border-color: #8b5cf6;
-    box-shadow: 0 0 40px rgba(139, 92, 246, 0.4);
+    border-color: #8b5cf6 !important;
+    box-shadow: 0 0 50px rgba(139, 92, 246, 0.4) !important;
 }
 
 .app-card[data-app="airtime"] {
-    background: linear-gradient(145deg, rgba(6, 182, 212, 0.2), rgba(10, 10, 15, 0.85));
-    border-color: rgba(6, 182, 212, 0.4);
-    animation: glowAirtime 3s infinite 0.6s;
+    border-color: rgba(6, 182, 212, 0.4) !important;
+    box-shadow: 0 0 30px rgba(6, 182, 212, 0.15) !important;
 }
 .app-card[data-app="airtime"]:hover {
-    border-color: #06b6d4;
-    box-shadow: 0 0 40px rgba(6, 182, 212, 0.4);
+    border-color: #06b6d4 !important;
+    box-shadow: 0 0 50px rgba(6, 182, 212, 0.4) !important;
 }
 
 .app-card[data-app="lottery"] {
-    background: linear-gradient(145deg, rgba(236, 72, 153, 0.2), rgba(10, 10, 15, 0.85));
-    border-color: rgba(236, 72, 153, 0.4);
-    animation: glowLottery 3s infinite 0.8s;
+    border-color: rgba(236, 72, 153, 0.4) !important;
+    box-shadow: 0 0 30px rgba(236, 72, 153, 0.15) !important;
 }
 .app-card[data-app="lottery"]:hover {
-    border-color: #ec4899;
-    box-shadow: 0 0 40px rgba(236, 72, 153, 0.4);
+    border-color: #ec4899 !important;
+    box-shadow: 0 0 50px rgba(236, 72, 153, 0.4) !important;
 }
 
 .app-card[data-app="clinic"] {
-    background: linear-gradient(145deg, rgba(20, 184, 166, 0.2), rgba(10, 10, 15, 0.85));
-    border-color: rgba(20, 184, 166, 0.4);
-    animation: glowClinic 3s infinite 1s;
+    border-color: rgba(20, 184, 166, 0.4) !important;
+    box-shadow: 0 0 30px rgba(20, 184, 166, 0.15) !important;
 }
 .app-card[data-app="clinic"]:hover {
-    border-color: #14b8a6;
-    box-shadow: 0 0 40px rgba(20, 184, 166, 0.4);
+    border-color: #14b8a6 !important;
+    box-shadow: 0 0 50px rgba(20, 184, 166, 0.4) !important;
 }
 
 .app-card[data-app="guide"] {
-    background: linear-gradient(145deg, rgba(100, 116, 139, 0.2), rgba(10, 10, 15, 0.85));
-    border-color: rgba(100, 116, 139, 0.4);
-    animation: glowGuide 3s infinite 1.2s;
+    border-color: rgba(100, 116, 139, 0.4) !important;
+    box-shadow: 0 0 30px rgba(100, 116, 139, 0.15) !important;
 }
 .app-card[data-app="guide"]:hover {
-    border-color: #64748b;
-    box-shadow: 0 0 40px rgba(100, 116, 139, 0.4);
+    border-color: #64748b !important;
+    box-shadow: 0 0 50px rgba(100, 116, 139, 0.4) !important;
 }
 
 .app-card[data-app="wallet"] {
-    background: linear-gradient(145deg, rgba(251, 191, 36, 0.25), rgba(16, 185, 129, 0.1), rgba(10, 10, 15, 0.85));
-    border-color: rgba(251, 191, 36, 0.5);
-    animation: glowWallet 3s infinite 0.3s;
+    border-color: rgba(251, 191, 36, 0.5) !important;
+    box-shadow: 0 0 30px rgba(251, 191, 36, 0.2) !important;
 }
 .app-card[data-app="wallet"]:hover {
-    border-color: #fbbf24;
-    box-shadow: 0 0 45px rgba(251, 191, 36, 0.5), 0 0 20px rgba(16, 185, 129, 0.3);
+    border-color: #fbbf24 !important;
+    box-shadow: 0 0 55px rgba(251, 191, 36, 0.5) !important;
 }
 
 .app-card[data-app="admin"] {
-    background: linear-gradient(145deg, rgba(239, 68, 68, 0.2), rgba(10, 10, 15, 0.85));
-    border-color: rgba(239, 68, 68, 0.4);
-    animation: glowAdmin 3s infinite 1.4s;
+    border-color: rgba(239, 68, 68, 0.4) !important;
+    box-shadow: 0 0 30px rgba(239, 68, 68, 0.15) !important;
 }
 .app-card[data-app="admin"]:hover {
-    border-color: #ef4444;
-    box-shadow: 0 0 40px rgba(239, 68, 68, 0.4);
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 50px rgba(239, 68, 68, 0.4) !important;
 }
 
+.app-card[data-app="contact"] {
+    border-color: rgba(59, 130, 246, 0.4) !important;
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.15) !important;
+}
+.app-card[data-app="contact"]:hover {
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 50px rgba(59, 130, 246, 0.4) !important;
+}
+
+/* ===== BOUNCE ANIMATIONS ===== */
+@keyframes bounceFloat {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
+}
+
+@keyframes bouncePulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.03); }
+}
+
+@keyframes bounceGlow {
+    0%, 100% { filter: drop-shadow(0 0 20px rgba(255,215,0,0.2)); }
+    50% { filter: drop-shadow(0 0 40px rgba(255,215,0,0.6)); }
+}
+
+.app-card[data-app="wallet"] .app-image {
+    animation: bounceFloat 2.5s ease-in-out infinite;
+}
+.app-card[data-app="market"] .app-image {
+    animation: bounceFloat 2.8s ease-in-out infinite 0.2s;
+}
+.app-card[data-app="games"] .app-image {
+    animation: bouncePulse 2s ease-in-out infinite 0.4s;
+}
+.app-card[data-app="lottery"] .app-image {
+    animation: bounceFloat 2.2s ease-in-out infinite 0.6s;
+}
+.app-card[data-app="dashboard"] .app-image {
+    animation: bounceGlow 3s ease-in-out infinite;
+}
+.app-card[data-app="clinic"] .app-image {
+    animation: bouncePulse 2.3s ease-in-out infinite 0.3s;
+}
+.app-card[data-app="airtime"] .app-image {
+    animation: bounceFloat 2.7s ease-in-out infinite 0.5s;
+}
+.app-card[data-app="guide"] .app-image {
+    animation: bounceFloat 3s ease-in-out infinite 0.7s;
+}
+.app-card[data-app="admin"] .app-image {
+    animation: bouncePulse 2.1s ease-in-out infinite 0.8s;
+}
+.app-card[data-app="contact"] .app-image {
+    animation: bounceFloat 2.4s ease-in-out infinite 0.9s;
+}
 /* ===== TAB CONTENT WRAPPER ===== */
 .tab-content-wrapper {
     display: none;
@@ -2807,15 +2934,19 @@ html, body {
             }
         }
 
-        function updateUserMenu() {
-            const items = document.getElementById('dropdownItems');
-            if (USER_ID) {
-                items.innerHTML = `<div onclick="goToProfile()">👤 Profile</div><div onclick="logout()">🚪 Logout</div>`;
-            } else {
-                items.innerHTML = `<div onclick="showAuthModal()">🔐 Login / Register</div>`;
-            }
-            setupAdminBottomRow();
-        }
+function updateUserMenu() {
+    const items = document.getElementById('dropdownItems');
+    if (USER_ID) {
+        items.innerHTML = `
+            <div onclick="goToProfile()">👤 Profile</div>
+            <div onclick="loadContactContent()">📞 Contact</div>
+            <div onclick="logout()">🚪 Logout</div>
+        `;
+    } else {
+        items.innerHTML = `<div onclick="showAuthModal()">🔐 Login / Register</div>`;
+    }
+    setupAdminBottomRow();
+}
 
         function setupAdminBottomRow() {
             const bottomRow = document.getElementById('bottomRow');
@@ -5341,7 +5472,13 @@ html, body {
                             </div>
                         </div>
                     </div>
-                    
+<!-- BATCH 9: Contact Settings -->
+<div class="admin-batch" data-batch="9">
+    <div class="card" id="contactSettingsCard">
+        <h3>📞 Contact Settings</h3>
+        <div class="loading">Click Load More to load contact settings...</div>
+    </div>
+</div>
                     <div class="load-more-container" id="loadMoreContainer">
                         <button class="load-more-btn" onclick="loadNextAdminBatch()">📥 Load More Sections</button>
                     </div>
@@ -5349,7 +5486,7 @@ html, body {
 
             // Store current batch
             window.currentAdminBatch = 1;
-            window.totalAdminBatches = 8;
+            window.totalAdminBatches = 9;
 
             // Load first batch data that we already have
             // (deposits, withdrawals, consultations already loaded)
@@ -5397,52 +5534,52 @@ html, body {
         }
 
         // Load next batch on demand
-        async function loadNextAdminBatch() {
-            const nextBatch = window.currentAdminBatch + 1;
-
-            if (nextBatch > window.totalAdminBatches) {
-                document.getElementById('loadMoreContainer').style.display = 'none';
-                return;
-            }
-
-            // Show loading in the batch container
-            const batchDiv = document.querySelector(`.admin-batch[data-batch="${nextBatch}"]`);
-            if (batchDiv) {
-                batchDiv.classList.add('active');
-            }
-
-            // Load data based on which batch is being loaded
-            switch (nextBatch) {
-                case 2: // Lottery Draws
-                    await loadLotteryDrawsBatch();
-                    break;
-                case 3: // Market Edit
-                    await loadMarketEditBatch();
-                    break;
-                case 4: // Airtime Cards + User Management
-                    await loadAirtimeAndUsersBatch();
-                    break;
-                case 5: // Deposit + Withdrawal Settings
-                    await loadSettingsBatch();
-                    break;
-                case 6: // Storage Cleanup
-                    await loadStorageCleanupBatch();
-                    break;
-                case 7: // App Profile Picture
-                    await loadProfilePictureBatch();
-                    break;
-                case 8: // Platform Statistics
-                    await loadStatisticsBatch();
-                    break;
-            }
-
-            window.currentAdminBatch = nextBatch;
-
-            // Hide load more button if this was the last batch
-            if (nextBatch === window.totalAdminBatches) {
-                document.getElementById('loadMoreContainer').style.display = 'none';
-            }
-        }
+async function loadNextAdminBatch() {
+    const nextBatch = window.currentAdminBatch + 1;
+    
+    if (nextBatch > window.totalAdminBatches) {
+        document.getElementById('loadMoreContainer').style.display = 'none';
+        return;
+    }
+    
+    const batchDiv = document.querySelector(`.admin-batch[data-batch="${nextBatch}"]`);
+    if (batchDiv) {
+        batchDiv.classList.add('active');
+    }
+    
+    switch(nextBatch) {
+        case 2:
+            await loadLotteryDrawsBatch();
+            break;
+        case 3:
+            await loadMarketEditBatch();
+            break;
+        case 4:
+            await loadAirtimeAndUsersBatch();
+            break;
+        case 5:
+            await loadSettingsBatch();
+            break;
+        case 6:
+            await loadStorageCleanupBatch();
+            break;
+        case 7:
+            await loadProfilePictureBatch();
+            break;
+        case 8:
+            await loadStatisticsBatch();
+            break;
+        case 9:
+            await loadContactSettingsBatch();
+            break;
+    }
+    
+    window.currentAdminBatch = nextBatch;
+    
+    if (nextBatch === window.totalAdminBatches) {
+        document.getElementById('loadMoreContainer').style.display = 'none';
+    }
+}
 
         // BATCH 2: Lottery Draws
         async function loadLotteryDrawsBatch() {
@@ -5671,7 +5808,68 @@ html, body {
                     `
             });
         }
-
+async function loadContactSettingsBatch() {
+    await loadAdminBatch({
+        containerId: 'contactSettingsCard',
+        loadingMessage: 'Loading contact settings...',
+        fetchFunction: async () => {
+            await loadContactSettings();
+            return contactSettings;
+        },
+        renderFunction: (settings) => `
+            <h3>📞 Contact Settings</h3>
+            <div style="margin-bottom:10px;">
+                <label>Telegram Group URL:</label>
+                <input type="text" id="contact_telegram_group" value="${settings.telegram_group || ''}" placeholder="https://t.me/yourgroup" style="width:100%; padding:8px; margin-top:5px; border-radius:8px; background:rgba(0,0,0,0.3); border:1px solid rgba(251,191,36,0.2); color:white;">
+            </div>
+            <div style="margin-bottom:10px;">
+                <label>Telegram Group Name:</label>
+                <input type="text" id="contact_telegram_group_name" value="${settings.telegram_group_name || 'Telegram Group'}" style="width:100%; padding:8px; margin-top:5px; border-radius:8px; background:rgba(0,0,0,0.3); border:1px solid rgba(251,191,36,0.2); color:white;">
+            </div>
+            <div style="margin-bottom:10px;">
+                <label>Telegram Channel URL:</label>
+                <input type="text" id="contact_telegram_channel" value="${settings.telegram_channel || ''}" placeholder="https://t.me/yourchannel" style="width:100%; padding:8px; margin-top:5px; border-radius:8px; background:rgba(0,0,0,0.3); border:1px solid rgba(251,191,36,0.2); color:white;">
+            </div>
+            <div style="margin-bottom:10px;">
+                <label>Telegram Channel Name:</label>
+                <input type="text" id="contact_telegram_channel_name" value="${settings.telegram_channel_name || 'Telegram Channel'}" style="width:100%; padding:8px; margin-top:5px; border-radius:8px; background:rgba(0,0,0,0.3); border:1px solid rgba(251,191,36,0.2); color:white;">
+            </div>
+            <div style="margin-bottom:10px;">
+                <label>TikTok URL:</label>
+                <input type="text" id="contact_tiktok" value="${settings.tiktok || ''}" placeholder="https://tiktok.com/@yourpage" style="width:100%; padding:8px; margin-top:5px; border-radius:8px; background:rgba(0,0,0,0.3); border:1px solid rgba(251,191,36,0.2); color:white;">
+            </div>
+            <div style="margin-bottom:10px;">
+                <label>TikTok Name:</label>
+                <input type="text" id="contact_tiktok_name" value="${settings.tiktok_name || 'TikTok'}" style="width:100%; padding:8px; margin-top:5px; border-radius:8px; background:rgba(0,0,0,0.3); border:1px solid rgba(251,191,36,0.2); color:white;">
+            </div>
+            <div style="margin-bottom:10px;">
+                <label>Instagram URL:</label>
+                <input type="text" id="contact_instagram" value="${settings.instagram || ''}" placeholder="https://instagram.com/yourpage" style="width:100%; padding:8px; margin-top:5px; border-radius:8px; background:rgba(0,0,0,0.3); border:1px solid rgba(251,191,36,0.2); color:white;">
+            </div>
+            <div style="margin-bottom:10px;">
+                <label>Instagram Name:</label>
+                <input type="text" id="contact_instagram_name" value="${settings.instagram_name || 'Instagram'}" style="width:100%; padding:8px; margin-top:5px; border-radius:8px; background:rgba(0,0,0,0.3); border:1px solid rgba(251,191,36,0.2); color:white;">
+            </div>
+            <div style="margin-bottom:10px;">
+                <label>YouTube URL:</label>
+                <input type="text" id="contact_youtube" value="${settings.youtube || ''}" placeholder="https://youtube.com/@yourchannel" style="width:100%; padding:8px; margin-top:5px; border-radius:8px; background:rgba(0,0,0,0.3); border:1px solid rgba(251,191,36,0.2); color:white;">
+            </div>
+            <div style="margin-bottom:10px;">
+                <label>YouTube Name:</label>
+                <input type="text" id="contact_youtube_name" value="${settings.youtube_name || 'YouTube'}" style="width:100%; padding:8px; margin-top:5px; border-radius:8px; background:rgba(0,0,0,0.3); border:1px solid rgba(251,191,36,0.2); color:white;">
+            </div>
+            <div style="margin-bottom:10px;">
+                <label>Facebook URL:</label>
+                <input type="text" id="contact_facebook" value="${settings.facebook || ''}" placeholder="https://facebook.com/yourpage" style="width:100%; padding:8px; margin-top:5px; border-radius:8px; background:rgba(0,0,0,0.3); border:1px solid rgba(251,191,36,0.2); color:white;">
+            </div>
+            <div style="margin-bottom:10px;">
+                <label>Facebook Name:</label>
+                <input type="text" id="contact_facebook_name" value="${settings.facebook_name || 'Facebook'}" style="width:100%; padding:8px; margin-top:5px; border-radius:8px; background:rgba(0,0,0,0.3); border:1px solid rgba(251,191,36,0.2); color:white;">
+            </div>
+            <button class="btn btn-sm btn-success" onclick="saveContactSettings()">💾 Save Contact Settings</button>
+        `
+    });
+}
         function renderPendingList(items, type) {
             if (!items?.length) return '<div>None</div>';
             return items.map(item => `
@@ -7577,47 +7775,97 @@ html, body {
             showGuide('en');
         }
 
-        // ===== APP LAUNCHER GRID =====
-        const APP_ITEMS = [
-            { id: 'dashboard', emoji: '📊', name: 'Dashboard' },
-            { id: 'market', emoji: '🛒', name: 'Market' },
-            { id: 'games', emoji: '🎮', name: 'Games' },
-            { id: 'airtime', emoji: '🃏', name: 'Airtime' },
-            { id: 'lottery', emoji: '🎟️', name: 'Lottery' },
-            { id: 'clinic', emoji: '🏥', name: 'Clinic' },
-            { id: 'guide', emoji: '📖', name: 'Guide' },
-            { id: 'wallet', emoji: '💰', name: 'Wallet' },
-            { id: 'admin', emoji: '👑', name: 'Admin' }
-        ];
+        // ===== APP LAUNCHER GRID =====const APP_ITEMS = [
+    { 
+        id: 'dashboard', 
+        image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/dashboard.png', 
+        name: 'Dashboard', 
+        adminOnly: false 
+    },
+    { 
+        id: 'market', 
+        image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/market.png', 
+        name: 'Market', 
+        adminOnly: false 
+    },
+    { 
+        id: 'games', 
+        image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/game.png', 
+        name: 'Games', 
+        adminOnly: false 
+    },
+    { 
+        id: 'airtime', 
+        image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/airtime.png', 
+        name: 'Airtime', 
+        adminOnly: false 
+    },
+    { 
+        id: 'lottery', 
+        image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/lottery.png', 
+        name: 'Lottery', 
+        adminOnly: false 
+    },
+    { 
+        id: 'clinic', 
+        image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/Clinic.png', 
+        name: 'Clinic', 
+        adminOnly: false 
+    },
+    { 
+        id: 'guide', 
+        image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/Guide.png', 
+        name: 'Guide', 
+        adminOnly: false 
+    },
+    { 
+        id: 'wallet', 
+        image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/wallet.png', 
+        name: 'Wallet', 
+        adminOnly: false 
+    },
+    { 
+        id: IS_ADMIN ? 'admin' : 'contact', 
+        image: IS_ADMIN 
+            ? 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/admin.png' 
+            : 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/contact.png', 
+        name: IS_ADMIN ? 'Admin' : 'Contact', 
+        adminOnly: false 
+    }
+];
 
-        // ===== FOOTER TABS =====
-        const FOOTER_TABS = [
-            { id: 'home', emoji: '🏠', label: 'Home' },
-            { id: 'dashboard', emoji: '📊', label: 'Dash' },
-            { id: 'market', emoji: '🛒', label: 'Market' },
-            { id: 'games', emoji: '🎮', label: 'Games' },
-            { id: 'airtime', emoji: '🃏', label: 'Airtime' },
-            { id: 'lottery', emoji: '🎟️', label: 'Lottery' },
-            { id: 'clinic', emoji: '🏥', label: 'Clinic' },
-            { id: 'guide', emoji: '📖', label: 'Guide' },
-            { id: 'wallet', emoji: '💰', label: 'Wallet' },
-            { id: 'admin', emoji: '👑', label: 'Admin' }
-        ];
+const FOOTER_TABS = [
+    { id: 'home', emoji: '🏠', label: 'Home', adminOnly: false },
+    { id: 'dashboard', emoji: '📊', label: 'Dash', adminOnly: false },
+    { id: 'market', emoji: '🛒', label: 'Market', adminOnly: false },
+    { id: 'games', emoji: '🎮', label: 'Games', adminOnly: false },
+    { id: 'airtime', emoji: '🃏', label: 'Airtime', adminOnly: false },
+    { id: 'lottery', emoji: '🎟️', label: 'Lottery', adminOnly: false },
+    { id: 'clinic', emoji: '🏥', label: 'Clinic', adminOnly: false },
+    { id: 'guide', emoji: '📖', label: 'Guide', adminOnly: false },
+    { id: 'wallet', emoji: '💰', label: 'Wallet', adminOnly: false },
+    { id: IS_ADMIN ? 'admin' : null, emoji: '👑', label: 'Admin', adminOnly: true }
+].filter(tab => tab !== null);
 
-        function renderFooterTabs() {
-            const container = document.getElementById('footerTabs');
-            if (!container) return;
-
-            container.innerHTML = FOOTER_TABS.map(tab => `
-                    <button class="app-footer-tab ${tab.id === 'home' ? 'active' : ''}" 
-                            data-tab="${tab.id}" 
-                            onclick="footerTabClick('${tab.id}')">
-                        <span class="tab-emoji">${tab.emoji}</span>
-                        <span class="tab-label">${tab.label}</span>
-                        <span class="tab-badge" id="badge-${tab.id}"></span>
-                    </button>
-                `).join('');
-        }
+function renderFooterTabs() {
+    const container = document.getElementById('footerTabs');
+    if (!container) return;
+    
+    const visibleTabs = FOOTER_TABS.filter(tab => {
+        if (tab.adminOnly && !IS_ADMIN) return false;
+        return true;
+    });
+    
+    container.innerHTML = visibleTabs.map(tab => `
+        <button class="app-footer-tab ${tab.id === 'home' ? 'active' : ''}" 
+                data-tab="${tab.id}" 
+                onclick="footerTabClick('${tab.id}')">
+            <span class="tab-emoji">${tab.emoji}</span>
+            <span class="tab-label">${tab.label}</span>
+            <span class="tab-badge" id="badge-${tab.id}"></span>
+        </button>
+    `).join('');
+}
 
         function footerTabClick(tabId) {
             // Update active tab
@@ -7663,66 +7911,73 @@ html, body {
             return emojis[type] || '💳';
         }
 
-        function renderAppGrid() {
-            const grid = document.getElementById('appGrid');
-            if (!grid) return;
+function renderAppGrid() {
+    const grid = document.getElementById('appGrid');
+    if (!grid) return;
+    
+    const visibleItems = APP_ITEMS.filter(item => {
+        if (item.adminOnly && !IS_ADMIN) return false;
+        return true;
+    });
+    
+    grid.innerHTML = visibleItems.map(item => `
+        <div class="app-card" data-app="${item.id}" onclick="openApp('${item.id}')">
+            <img src="${item.image}" alt="${item.name}" class="app-image" loading="lazy">
+            <span class="app-name">${item.name}</span>
+        </div>
+    `).join('');
+}
 
-            grid.innerHTML = APP_ITEMS.map(item => `
-                    <div class="app-card" data-app="${item.id}" onclick="openApp('${item.id}')">
-                        <span class="app-emoji">${item.emoji}</span>
-                        <span class="app-name">${item.name}</span>
-                    </div>
-                `).join('');
-        }
+function openApp(appId) {
+    document.getElementById('appHomeScreen').style.display = 'none';
+    document.getElementById('tabContentWrapper').classList.add('active');
+    document.getElementById('backButton').classList.add('visible');
 
-        function openApp(appId) {
-            // Hide home screen, show content wrapper
-            document.getElementById('appHomeScreen').style.display = 'none';
-            document.getElementById('tabContentWrapper').classList.add('active');
-            document.getElementById('backButton').classList.add('visible');
+    const container = document.getElementById('tabContentContainer');
 
-            // Get the container
-            const container = document.getElementById('tabContentContainer');
-
-            // Load the appropriate content
-            switch (appId) {
-                case 'wallet':
-                    loadWalletContent();
-                    break;
-                case 'dashboard':
-                    loadDashboardContent();
-                    break;
-                case 'market':
-                    loadMarketContent();
-                    break;
-                case 'games':
-                    loadGamesContent();
-                    break;
-                case 'airtime':
-                    loadAirtimeContent();
-                    break;
-                case 'lottery':
-                    loadLotteryContent();
-                    break;
-                case 'clinic':
-                    loadClinicContent();
-                    break;
-                case 'profile':
-                    loadProfileContent();
-                    break;
-                case 'contact':
-                    loadContactContent();
-                    break;
-                case 'guide':
-                    loadGuideContent();
-                    break;
-                case 'admin':
-                    loadAdminContent();
-                    break;
-                default:
-                    showToast('Coming soon!', 'info');
+    switch(appId) {
+        case 'wallet':
+            loadWalletContent();
+            break;
+        case 'dashboard':
+            loadDashboardContent();
+            break;
+        case 'market':
+            loadMarketContent();
+            break;
+        case 'games':
+            loadGamesContent();
+            break;
+        case 'airtime':
+            loadAirtimeContent();
+            break;
+        case 'lottery':
+            loadLotteryContent();
+            break;
+        case 'clinic':
+            loadClinicContent();
+            break;
+        case 'profile':
+            loadProfileContent();
+            break;
+        case 'contact':
+            loadContactContent();
+            break;
+        case 'guide':
+            loadGuideContent();
+            break;
+        case 'admin':
+            if (IS_ADMIN) {
+                loadAdminContent();
+            } else {
+                showToast('Admin access required', 'error');
+                goToHome();
             }
-        }
+            break;
+        default:
+            showToast('Coming soon!', 'info');
+    }
+}
 
         function goToHome() {
             document.getElementById('appHomeScreen').style.display = 'flex';
@@ -7964,7 +8219,139 @@ html, body {
             }
             initGuideTab();
         }
+function loadContactContent() {
+    const container = document.getElementById('tabContentContainer');
+    showAllBalancesInHeader(false);
+    
+    loadContactSettings().then(settings => {
+        container.innerHTML = `
+            <div class="card">
+                <h3>📞 Contact Us</h3>
+                <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 15px;">
+                    ${settings.telegram_group ? `
+                        <a href="${settings.telegram_group}" target="_blank" rel="noopener noreferrer" class="contact-link" style="display: flex; align-items: center; gap: 12px; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 16px; text-decoration: none; color: #e2e8f0; border: 1px solid rgba(251,191,36,0.2); transition: all 0.3s;">
+                            <span style="font-size: 32px;">💬</span>
+                            <div>
+                                <div style="font-weight: bold; font-size: 16px;">${settings.telegram_group_name || 'Telegram Group'}</div>
+                                <div style="font-size: 12px; color: #94a3b8;">Join our community</div>
+                            </div>
+                            <span style="margin-left: auto; color: #fbbf24;">→</span>
+                        </a>
+                    ` : ''}
+                    
+                    ${settings.telegram_channel ? `
+                        <a href="${settings.telegram_channel}" target="_blank" rel="noopener noreferrer" class="contact-link" style="display: flex; align-items: center; gap: 12px; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 16px; text-decoration: none; color: #e2e8f0; border: 1px solid rgba(251,191,36,0.2); transition: all 0.3s;">
+                            <span style="font-size: 32px;">📢</span>
+                            <div>
+                                <div style="font-weight: bold; font-size: 16px;">${settings.telegram_channel_name || 'Telegram Channel'}</div>
+                                <div style="font-size: 12px; color: #94a3b8;">Follow for updates</div>
+                            </div>
+                            <span style="margin-left: auto; color: #fbbf24;">→</span>
+                        </a>
+                    ` : ''}
+                    
+                    ${settings.tiktok ? `
+                        <a href="${settings.tiktok}" target="_blank" rel="noopener noreferrer" class="contact-link" style="display: flex; align-items: center; gap: 12px; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 16px; text-decoration: none; color: #e2e8f0; border: 1px solid rgba(251,191,36,0.2); transition: all 0.3s;">
+                            <span style="font-size: 32px;">🎵</span>
+                            <div>
+                                <div style="font-weight: bold; font-size: 16px;">${settings.tiktok_name || 'TikTok'}</div>
+                                <div style="font-size: 12px; color: #94a3b8;">Follow us</div>
+                            </div>
+                            <span style="margin-left: auto; color: #fbbf24;">→</span>
+                        </a>
+                    ` : ''}
+                    
+                    ${settings.instagram ? `
+                        <a href="${settings.instagram}" target="_blank" rel="noopener noreferrer" class="contact-link" style="display: flex; align-items: center; gap: 12px; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 16px; text-decoration: none; color: #e2e8f0; border: 1px solid rgba(251,191,36,0.2); transition: all 0.3s;">
+                            <span style="font-size: 32px;">📸</span>
+                            <div>
+                                <div style="font-weight: bold; font-size: 16px;">${settings.instagram_name || 'Instagram'}</div>
+                                <div style="font-size: 12px; color: #94a3b8;">Follow us</div>
+                            </div>
+                            <span style="margin-left: auto; color: #fbbf24;">→</span>
+                        </a>
+                    ` : ''}
+                    
+                    ${settings.youtube ? `
+                        <a href="${settings.youtube}" target="_blank" rel="noopener noreferrer" class="contact-link" style="display: flex; align-items: center; gap: 12px; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 16px; text-decoration: none; color: #e2e8f0; border: 1px solid rgba(251,191,36,0.2); transition: all 0.3s;">
+                            <span style="font-size: 32px;">▶️</span>
+                            <div>
+                                <div style="font-weight: bold; font-size: 16px;">${settings.youtube_name || 'YouTube'}</div>
+                                <div style="font-size: 12px; color: #94a3b8;">Watch our videos</div>
+                            </div>
+                            <span style="margin-left: auto; color: #fbbf24;">→</span>
+                        </a>
+                    ` : ''}
+                    
+                    ${settings.facebook ? `
+                        <a href="${settings.facebook}" target="_blank" rel="noopener noreferrer" class="contact-link" style="display: flex; align-items: center; gap: 12px; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 16px; text-decoration: none; color: #e2e8f0; border: 1px solid rgba(251,191,36,0.2); transition: all 0.3s;">
+                            <span style="font-size: 32px;">👍</span>
+                            <div>
+                                <div style="font-weight: bold; font-size: 16px;">${settings.facebook_name || 'Facebook'}</div>
+                                <div style="font-size: 12px; color: #94a3b8;">Like our page</div>
+                            </div>
+                            <span style="margin-left: auto; color: #fbbf24;">→</span>
+                        </a>
+                    ` : ''}
+                    
+                    ${!settings.telegram_group && !settings.telegram_channel && !settings.tiktok && !settings.instagram && !settings.youtube && !settings.facebook ? `
+                        <div style="text-align: center; padding: 30px; color: #94a3b8;">
+                            <div style="font-size: 48px; margin-bottom: 10px;">📱</div>
+                            <p>No contact links available yet.</p>
+                            <p style="font-size: 12px;">Please check back later.</p>
+                        </div>
+                    ` : ''}
+                </div>
+            </div>
+        `;
+    });
+}
 
+// ===== CONTACT SETTINGS FUNCTIONS =====
+let contactSettings = {
+    telegram_group: '',
+    telegram_group_name: 'Telegram Group',
+    telegram_channel: '',
+    telegram_channel_name: 'Telegram Channel',
+    tiktok: '',
+    tiktok_name: 'TikTok',
+    instagram: '',
+    instagram_name: 'Instagram',
+    youtube: '',
+    youtube_name: 'YouTube',
+    facebook: '',
+    facebook_name: 'Facebook'
+};
+
+async function loadContactSettings() {
+    const { data } = await sb.from('app_settings').select('key, value');
+    if (data) {
+        data.forEach(setting => {
+            contactSettings[setting.key] = setting.value;
+        });
+    }
+    return contactSettings;
+}
+
+async function saveContactSettings() {
+    const updates = [
+        sb.from('app_settings').upsert({ key: 'telegram_group', value: document.getElementById('contact_telegram_group').value.trim() }),
+        sb.from('app_settings').upsert({ key: 'telegram_group_name', value: document.getElementById('contact_telegram_group_name').value.trim() }),
+        sb.from('app_settings').upsert({ key: 'telegram_channel', value: document.getElementById('contact_telegram_channel').value.trim() }),
+        sb.from('app_settings').upsert({ key: 'telegram_channel_name', value: document.getElementById('contact_telegram_channel_name').value.trim() }),
+        sb.from('app_settings').upsert({ key: 'tiktok', value: document.getElementById('contact_tiktok').value.trim() }),
+        sb.from('app_settings').upsert({ key: 'tiktok_name', value: document.getElementById('contact_tiktok_name').value.trim() }),
+        sb.from('app_settings').upsert({ key: 'instagram', value: document.getElementById('contact_instagram').value.trim() }),
+        sb.from('app_settings').upsert({ key: 'instagram_name', value: document.getElementById('contact_instagram_name').value.trim() }),
+        sb.from('app_settings').upsert({ key: 'youtube', value: document.getElementById('contact_youtube').value.trim() }),
+        sb.from('app_settings').upsert({ key: 'youtube_name', value: document.getElementById('contact_youtube_name').value.trim() }),
+        sb.from('app_settings').upsert({ key: 'facebook', value: document.getElementById('contact_facebook').value.trim() }),
+        sb.from('app_settings').upsert({ key: 'facebook_name', value: document.getElementById('contact_facebook_name').value.trim() })
+    ];
+    await Promise.all(updates);
+    await loadContactSettings();
+    showToast('Contact settings saved!', 'success');
+}
         function loadProfileContent() {
             const container = document.getElementById('tabContentContainer');
             showAllBalancesInHeader(false);
@@ -7976,17 +8363,6 @@ html, body {
             }
             loadProfileAndCards();
             loadTransactions();
-        }
-
-        function loadContactContent() {
-            const container = document.getElementById('tabContentContainer');
-            showAllBalancesInHeader(false);
-            const contactContent = document.getElementById('contact');
-            if (contactContent) {
-                container.innerHTML = contactContent.outerHTML;
-            } else {
-                container.innerHTML = '<div class="loading">Loading contact...</div>';
-            }
         }
 
         function loadAdminContent() {
