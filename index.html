@@ -138,6 +138,32 @@
     100% { opacity: 0.8; }
 }
 
+/* ===== WALLET BALANCE CARD GLOW ANIMATIONS ===== */
+@keyframes glowRed {
+    0%, 100% { box-shadow: 0 0 10px rgba(239, 68, 68, 0.2); }
+    50% { box-shadow: 0 0 30px rgba(239, 68, 68, 0.6), 0 0 60px rgba(239, 68, 68, 0.3); }
+}
+@keyframes glowGreen {
+    0%, 100% { box-shadow: 0 0 10px rgba(16, 185, 129, 0.2); }
+    50% { box-shadow: 0 0 30px rgba(16, 185, 129, 0.6), 0 0 60px rgba(16, 185, 129, 0.3); }
+}
+@keyframes glowYellow {
+    0%, 100% { box-shadow: 0 0 10px rgba(251, 191, 36, 0.2); }
+    50% { box-shadow: 0 0 30px rgba(251, 191, 36, 0.6), 0 0 60px rgba(251, 191, 36, 0.3); }
+}
+
+/* ===== RGB GLOWING BACKGROUND ===== */
+@keyframes rgbPulse {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes rgbRotate {
+    0% { filter: hue-rotate(0deg); }
+    100% { filter: hue-rotate(360deg); }
+}
+
 /* ===== BASE ===== */
 html, body {
     overflow-x: hidden;
@@ -159,12 +185,33 @@ html, body {
     z-index: -1;
     background: #0a0a0f;
     background-image: 
-        radial-gradient(circle at 20% 30%, rgba(255, 51, 102, 0.4), transparent 50%),
-        radial-gradient(circle at 80% 70%, rgba(0, 102, 255, 0.4), transparent 50%),
-        radial-gradient(circle at 40% 80%, rgba(0, 255, 102, 0.35), transparent 50%),
-        radial-gradient(circle at 60% 40%, rgba(255, 215, 0, 0.15), transparent 40%);
+        radial-gradient(circle at 20% 30%, rgba(255, 0, 0, 0.5), transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(0, 255, 0, 0.5), transparent 50%),
+        radial-gradient(circle at 40% 80%, rgba(0, 0, 255, 0.5), transparent 50%),
+        radial-gradient(circle at 60% 40%, rgba(255, 255, 0, 0.3), transparent 40%),
+        radial-gradient(circle at 10% 90%, rgba(255, 0, 255, 0.3), transparent 40%),
+        radial-gradient(circle at 90% 10%, rgba(0, 255, 255, 0.3), transparent 40%);
+    background-size: 400% 400%;
+    animation: rgbPulse 8s ease-in-out infinite alternate, rgbRotate 20s linear infinite;
     pointer-events: none;
-    animation: backgroundPulse 8s ease-in-out infinite alternate;
+    filter: blur(0px);
+}
+
+.background-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(circle at 30% 40%, rgba(255, 0, 0, 0.15), transparent 30%),
+        radial-gradient(circle at 70% 60%, rgba(0, 255, 0, 0.15), transparent 30%),
+        radial-gradient(circle at 50% 80%, rgba(0, 0, 255, 0.15), transparent 30%),
+        radial-gradient(circle at 20% 70%, rgba(255, 255, 0, 0.1), transparent 20%),
+        radial-gradient(circle at 80% 30%, rgba(255, 0, 255, 0.1), transparent 20%);
+    animation: rgbPulse 12s ease-in-out infinite alternate-reverse;
+    pointer-events: none;
 }
 
 /* ===== HEADER ===== */
@@ -172,20 +219,20 @@ html, body {
     position: sticky;
     top: 0;
     z-index: 100;
-    background: rgba(10, 10, 15, 0.85);
-    backdrop-filter: blur(10px);
-    border-bottom: 2px solid rgba(251, 191, 36, 0.3);
-    box-shadow: 0 0 20px rgba(251, 191, 36, 0.1);
-    padding: 0 24px;         
+    background: rgba(10, 10, 15, 0.88);
+    backdrop-filter: blur(15px);
+    border-bottom: 3px solid rgba(251, 191, 36, 0.3);
+    box-shadow: 0 0 30px rgba(251, 191, 36, 0.15), inset 0 0 30px rgba(251, 191, 36, 0.05);
+    padding: 0 32px;
 }
 
 .header-content {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 16px 20px;       
-    min-height: 76px;         
-    max-width: 1600px;     
+    padding: 20px 24px;
+    min-height: 88px;
+    max-width: 1600px;
     margin: 0 auto;
     width: 100%;
 }
@@ -193,12 +240,12 @@ html, body {
 .app-logo {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 12px;
     flex-shrink: 0;
 }
 
 .app-logo h1 {
-    font-size: 20px;
+    font-size: 26px;
     white-space: nowrap;
     font-family: 'Times New Roman', Times, serif;
     font-weight: 900;
@@ -209,7 +256,7 @@ html, body {
 }
 
 .logo-icon {
-    font-size: 26px;
+    font-size: 32px;
     flex-shrink: 0;
 }
 
@@ -217,31 +264,33 @@ html, body {
 .header-balances {
     display: flex;
     align-items: center;
-    gap: 12px;                
-    padding: 8px 20px;        
-    border-radius: 28px;      
-    max-width: 380px;         
-    min-width: 120px;         
-    margin: 0 20px;           
+    gap: 16px;
+    padding: 10px 28px;
+    border-radius: 32px;
+    max-width: 450px;
+    min-width: 160px;
+    margin: 0 24px;
+    background: rgba(10, 10, 15, 0.5);
+    border: 1px solid rgba(251, 191, 36, 0.1);
 }
 
 .header-balance-item {
     display: flex;
     align-items: center;
-    gap: 5px;                 
-    padding: 4px 10px;        
-    border-radius: 14px;      
-    font-size: 14px;          
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 16px;
+    font-size: 16px;
 }
 
 .header-balance-item .balance-icon {
-    font-size: 18px;
+    font-size: 22px;
 }
 
 .header-balance-item .balance-value {
-    font-size: 16px;
+    font-size: 20px;
     font-weight: bold;
-    min-width: 32px;
+    min-width: 40px;
     text-align: center;
 }
 
@@ -249,8 +298,8 @@ html, body {
     color: #60a5fa;
 }
 .balance-coins {
-    background: rgba(96, 165, 250, 0.1);
-    border: 1px solid rgba(96, 165, 250, 0.15);
+    background: rgba(96, 165, 250, 0.12);
+    border: 1px solid rgba(96, 165, 250, 0.2);
     animation: pulseBlue 2s infinite;
 }
 
@@ -273,39 +322,39 @@ html, body {
     animation: pulseBlue 2s infinite;
 }
 .header-balances.show-all .header-balance-item .balance-value {
-    font-size: 11px;
+    font-size: 14px;
 }
 .header-balances.show-all .header-balance-item .balance-icon {
-    font-size: 11px;
+    font-size: 14px;
 }
 
 .balance-money .balance-value {
     color: #10b981;
 }
 .balance-money {
-    background: rgba(16, 185, 129, 0.1);
-    border: 1px solid rgba(16, 185, 129, 0.15);
+    background: rgba(16, 185, 129, 0.12);
+    border: 1px solid rgba(16, 185, 129, 0.2);
 }
 .balance-bonus .balance-value {
     color: #fbbf24;
 }
 .balance-bonus {
-    background: rgba(251, 191, 36, 0.1);
-    border: 1px solid rgba(251, 191, 36, 0.15);
+    background: rgba(251, 191, 36, 0.12);
+    border: 1px solid rgba(251, 191, 36, 0.2);
 }
 
 /* ===== PROFILE AREA ===== */
 .profile-area {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 16px;
     flex-shrink: 0;
     position: relative;
 }
 
 .profile-avatar {
-    width: 40px;
-    height: 40px;
+    width: 50px;
+    height: 50px;
     background: linear-gradient(135deg, #3b82f6, #8b5cf6);
     border-radius: 50%;
     display: flex;
@@ -316,6 +365,7 @@ html, body {
     transition: 0.2s;
     border: 2px solid rgba(251, 191, 36, 0.3);
     flex-shrink: 0;
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
 }
 
 .profile-avatar img {
@@ -325,8 +375,8 @@ html, body {
 }
 
 .profile-avatar:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+    transform: scale(1.08);
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
 }
 
 .notification-bell-wrapper {
@@ -336,27 +386,27 @@ html, body {
 }
 
 .bell-icon {
-    font-size: 22px;
+    font-size: 28px;
     line-height: 1;
 }
 
 .notification-badge {
     display: none;
     position: absolute;
-    top: -5px;
-    right: -8px;
+    top: -6px;
+    right: -10px;
     background: #ef4444;
     color: white;
-    font-size: 9px;
+    font-size: 10px;
     font-weight: bold;
-    min-width: 16px;
-    height: 16px;
+    min-width: 18px;
+    height: 18px;
     border-radius: 50%;
     text-align: center;
-    line-height: 16px;
-    padding: 0 4px;
+    line-height: 18px;
+    padding: 0 5px;
     border: 2px solid #000;
-    box-shadow: 0 0 5px rgba(239, 68, 68, 0.5);
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.6);
 }
 
 /* ===== DROPDOWN MENU ===== */
@@ -364,12 +414,12 @@ html, body {
     display: none;
     position: absolute;
     right: 10px;
-    top: 50px;
+    top: 58px;
     background: #1e293b;
-    border-radius: 12px;
-    box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.6);
     z-index: 100000;
-    min-width: 150px;
+    min-width: 180px;
     overflow: hidden;
     border: 1px solid rgba(251, 191, 36, 0.2);
 }
@@ -380,11 +430,11 @@ html, body {
 
 .dropdown-menu div {
     color: white;
-    padding: 10px 16px;
+    padding: 12px 20px;
     display: block;
     cursor: pointer;
     transition: 0.2s;
-    font-size: 14px;
+    font-size: 15px;
 }
 
 .dropdown-menu div:hover {
@@ -395,27 +445,27 @@ html, body {
 .app-grid-container {
     display: flex;
     flex-direction: column;
-    height: calc(100vh - 60px - 60px);
-    padding: 16px;
+    height: calc(100vh - 88px - 88px);
+    padding: 10px;
     overflow: hidden;
 }
 
 .app-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-    padding: 12px 8px;
+    gap: 8px;
+    padding: 6px 2px;
     flex: 1;
     align-content: stretch;
 }
 
 .app-card {
-    background: rgba(10, 10, 15, 0.5) !important;
+    background: rgba(10, 10, 15, 0.4) !important;
     backdrop-filter: blur(5px) !important;
-    border: 2px solid rgba(251, 191, 36, 0.15) !important;
+    border: 2px solid rgba(251, 191, 36, 0.12) !important;
     border-radius: 16px !important;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.3) !important;
-    padding: 4px !important;
+    padding: 3px !important;
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
@@ -425,17 +475,13 @@ html, body {
     justify-content: flex-end;
     width: 100%;
     height: 100%;
-    min-height: 100px;
+    min-height: 70px;
 }
 
 .app-card:hover {
-    transform: scale(1.03) translateY(-4px);
-    border-color: rgba(251, 191, 36, 0.4) !important;
-    box-shadow: 0 0 30px rgba(251, 191, 36, 0.2) !important;
-}
-
-.app-card:hover {
-    transform: scale(1.03) translateY(-4px);
+    transform: scale(1.04) translateY(-4px);
+    border-color: rgba(251, 191, 36, 0.35) !important;
+    box-shadow: 0 0 40px rgba(251, 191, 36, 0.15) !important;
 }
 
 /* ===== APP IMAGES WITH GLOWING BORDER AND BOUNCE ===== */
@@ -462,45 +508,45 @@ html, body {
 }
 
 .app-card .app-image {
-    width: 92%;
-    height: 82%;
+    width: 96%;
+    height: 80%;
     object-fit: contain;
     display: block;
     border-radius: 12px;
-    filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.1));
+    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.08));
     transition: all 0.4s ease;
     position: relative;
-    margin-top: 4px;
+    margin-top: 1px;
 }
 
 .app-card:hover .app-image {
     filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.2));
-    transform: scale(1.02);
+    transform: scale(1.03);
 }
 
 /* ===== BIG, BOLD, COLORFUL TEXT BELOW IMAGE ===== */
 .app-card .app-name {
-    font-size: clamp(12px, 2vw, 18px);
+    font-size: clamp(10px, 1.6vw, 15px);
     font-weight: 900;
     text-align: center;
-    padding: 4px 12px;
+    padding: 2px 8px;
     background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(5px);
     border: 1px solid rgba(251, 191, 36, 0.1);
-    border-radius: 10px;
+    border-radius: 8px;
     text-transform: uppercase;
-    letter-spacing: 1.5px;
+    letter-spacing: 1.2px;
     font-family: 'Times New Roman', Times, serif;
     text-shadow: 0 0 20px currentColor, 0 0 40px currentColor;
     position: relative;
     z-index: 2;
-    margin-bottom: 8px;
-    margin-top: 4px;
+    margin-bottom: 4px;
+    margin-top: 1px;
 }
 
 .app-card:hover .app-name {
     transform: scale(1.05);
-    border-color: rgba(251, 191, 36, 0.4);
+    border-color: rgba(251, 191, 36, 0.3);
 }
 /* ===== INDIVIDUAL APP COLORS - STRONG GLOW ===== */
 .app-card[data-app="dashboard"] .app-name {
@@ -547,7 +593,7 @@ html, body {
 /* ===== TAB CONTENT WRAPPER ===== */
 .tab-content-wrapper {
     display: none;
-    height: calc(100vh - 60px - 60px);
+    height: calc(100vh - 88px - 88px);
     overflow-y: auto;
     padding: 0 10px 20px;
 }
@@ -710,49 +756,92 @@ html, body {
 .wallet-balances {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-    margin-bottom: 16px;
+    gap: 12px;
+    margin-bottom: 20px;
 }
 
 .wallet-balance-card {
-    background: rgba(10, 10, 15, 0.7);
     backdrop-filter: blur(10px);
-    border-radius: 16px;
-    padding: 12px 6px;
+    border-radius: 20px;
+    padding: 16px 8px;
     text-align: center;
-    border: 1px solid rgba(251, 191, 36, 0.15);
-    box-shadow: 0 0 15px rgba(251, 191, 36, 0.05);
+    transition: all 0.3s ease;
+}
+
+.wallet-balance-card:hover {
+    transform: translateY(-4px) scale(1.02);
 }
 
 .wallet-balance-card .balance-emoji {
-    font-size: 28px;
+    font-size: 32px;
     display: block;
-    margin-bottom: 2px;
+    margin-bottom: 4px;
 }
 
 .wallet-balance-card .balance-amount {
-    font-size: 20px;
+    font-size: 24px;
     font-weight: bold;
     display: block;
-    margin-bottom: 2px;
+    margin-bottom: 4px;
 }
 
-.wallet-balance-card .balance-amount.green { color: #10b981; }
-.wallet-balance-card .balance-amount.gold { color: #fbbf24; }
-.wallet-balance-card .balance-amount.blue { color: #60a5fa; }
-
 .wallet-balance-card .balance-label {
-    font-size: 9px;
-    color: #94a3b8;
+    font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    font-weight: bold;
+}
+
+/* CARD 1: RED (Balance) */
+.wallet-balance-card:nth-child(1) {
+    background: rgba(239, 68, 68, 0.15) !important;
+    border: 2px solid rgba(239, 68, 68, 0.4) !important;
+    animation: glowRed 2s ease-in-out infinite !important;
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.2) !important;
+}
+.wallet-balance-card:nth-child(1) .balance-amount {
+    color: #ef4444 !important;
+    text-shadow: 0 0 20px rgba(239, 68, 68, 0.5), 0 0 40px rgba(239, 68, 68, 0.3) !important;
+}
+.wallet-balance-card:nth-child(1) .balance-label {
+    color: #ef4444 !important;
+}
+
+/* CARD 2: GREEN (Bonus) */
+.wallet-balance-card:nth-child(2) {
+    background: rgba(16, 185, 129, 0.15) !important;
+    border: 2px solid rgba(16, 185, 129, 0.4) !important;
+    animation: glowGreen 2.5s ease-in-out infinite !important;
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.2) !important;
+}
+.wallet-balance-card:nth-child(2) .balance-amount {
+    color: #10b981 !important;
+    text-shadow: 0 0 20px rgba(16, 185, 129, 0.5), 0 0 40px rgba(16, 185, 129, 0.3) !important;
+}
+.wallet-balance-card:nth-child(2) .balance-label {
+    color: #10b981 !important;
+}
+
+/* CARD 3: YELLOW (Coins) */
+.wallet-balance-card:nth-child(3) {
+    background: rgba(251, 191, 36, 0.15) !important;
+    border: 2px solid rgba(251, 191, 36, 0.4) !important;
+    animation: glowYellow 3s ease-in-out infinite !important;
+    box-shadow: 0 0 20px rgba(251, 191, 36, 0.2) !important;
+}
+.wallet-balance-card:nth-child(3) .balance-amount {
+    color: #fbbf24 !important;
+    text-shadow: 0 0 20px rgba(251, 191, 36, 0.5), 0 0 40px rgba(251, 191, 36, 0.3) !important;
+}
+.wallet-balance-card:nth-child(3) .balance-label {
+    color: #fbbf24 !important;
 }
 
 /* ===== WALLET TABS ===== */
 .wallet-filter-tabs {
     display: flex;
-    gap: 6px;
-    margin: 12px 0 16px;
+    gap: 8px;
+    margin: 16px 0 20px;
     overflow-x: auto;
     padding: 2px 0;
 }
@@ -760,10 +849,10 @@ html, body {
 .wallet-filter-tab {
     background: rgba(10, 10, 15, 0.5);
     border: 1px solid rgba(251, 191, 36, 0.15);
-    padding: 8px 16px;
-    border-radius: 20px;
+    padding: 10px 20px;
+    border-radius: 24px;
     color: #94a3b8;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -775,7 +864,7 @@ html, body {
     background: linear-gradient(135deg, #fbbf24, #d97706);
     color: #1a1a2e;
     border-color: transparent;
-    box-shadow: 0 0 20px rgba(251, 191, 36, 0.3);
+    box-shadow: 0 0 25px rgba(251, 191, 36, 0.4);
 }
 
 .wallet-filter-tab:hover {
@@ -787,16 +876,16 @@ html, body {
 .wallet-transaction {
     background: rgba(10, 10, 15, 0.7);
     backdrop-filter: blur(5px);
-    border-radius: 14px;
-    padding: 12px;
-    margin-bottom: 8px;
+    border-radius: 16px;
+    padding: 14px;
+    margin-bottom: 10px;
     border: 1px solid rgba(251, 191, 36, 0.08);
     transition: all 0.3s ease;
 }
 
 .wallet-transaction:hover {
     border-color: rgba(251, 191, 36, 0.2);
-    transform: translateX(2px);
+    transform: translateX(4px);
 }
 
 .wallet-transaction-content {
@@ -808,13 +897,13 @@ html, body {
 .wallet-transaction-left {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     flex: 1;
     min-width: 0;
 }
 
 .wallet-transaction-emoji {
-    font-size: 22px;
+    font-size: 24px;
     flex-shrink: 0;
 }
 
@@ -825,12 +914,12 @@ html, body {
 
 .wallet-transaction-type {
     font-weight: bold;
-    font-size: 13px;
+    font-size: 14px;
     color: #e2e8f0;
 }
 
 .wallet-transaction-date {
-    font-size: 10px;
+    font-size: 11px;
     color: #94a3b8;
 }
 
@@ -841,13 +930,13 @@ html, body {
 
 .wallet-transaction-amount {
     font-weight: bold;
-    font-size: 15px;
+    font-size: 16px;
 }
 .wallet-transaction-amount.positive { color: #10b981; }
 .wallet-transaction-amount.negative { color: #ef4444; }
 
 .wallet-transaction-status {
-    font-size: 10px;
+    font-size: 11px;
 }
 .wallet-transaction-status.completed { color: #10b981; }
 .wallet-transaction-status.pending { color: #f59e0b; }
@@ -1367,25 +1456,25 @@ html, body {
     bottom: 0;
     z-index: 99;
     background: rgba(10, 10, 15, 0.92);
-    backdrop-filter: blur(10px);
-    border-top: 2px solid transparent;
+    backdrop-filter: blur(15px);
+    border-top: 3px solid transparent;
     background-image: linear-gradient(rgba(10, 10, 15, 0.92), rgba(10, 10, 15, 0.92)),
         linear-gradient(90deg, transparent, #fbbf24, #d97706, #fbbf24, transparent);
     background-origin: padding-box, border-box;
     background-clip: padding-box, border-box;
-    box-shadow: 0 -5px 30px rgba(251, 191, 36, 0.1);
-    padding: 12px 24px;       /* ← MORE PADDING */
-    min-height: 76px;         /* ← TALLER */
+    box-shadow: 0 -5px 40px rgba(251, 191, 36, 0.15);
+    padding: 14px 32px;
+    min-height: 88px;
     user-select: none;
 }
 
 .app-footer::before {
     content: '';
     position: absolute;
-    top: -2px;
+    top: -3px;
     left: 0;
     width: 100%;
-    height: 2px;
+    height: 3px;
     background: linear-gradient(90deg, transparent, #fbbf24, #d97706, #fbbf24, transparent);
     background-size: 200% 100%;
     animation: shimmerGold 3s linear infinite;
@@ -1395,9 +1484,9 @@ html, body {
     display: flex;
     justify-content: space-around;
     align-items: center;
-    gap: 2px;
+    gap: 4px;
     overflow-x: auto;
-    padding: 4px 4px;
+    padding: 6px 4px;
     max-width: 1200px;
     margin: 0 auto;
     scrollbar-width: none;
@@ -1416,12 +1505,12 @@ html, body {
     background: none;
     border: none;
     color: #94a3b8;
-    font-size: 11px;          
-    padding: 8px 14px;       
+    font-size: 12px;
+    padding: 10px 18px;
     cursor: pointer;
     transition: all 0.3s ease;
-    border-radius: 12px;      
-    min-width: 56px;         
+    border-radius: 14px;
+    min-width: 64px;
     position: relative;
     flex-shrink: 0;
     -webkit-tap-highlight-color: transparent;
@@ -1432,15 +1521,15 @@ html, body {
 }
 
 .app-footer-tab .tab-emoji {
-    font-size: 20px;
+    font-size: 24px;
     line-height: 1;
     transition: all 0.3s ease;
     pointer-events: none;
 }
 
 .app-footer-tab .tab-label {
-    font-size: 8px;
-    margin-top: 1px;
+    font-size: 10px;
+    margin-top: 2px;
     font-weight: bold;
     transition: all 0.3s ease;
     pointer-events: none;
@@ -1452,8 +1541,8 @@ html, body {
 }
 
 .app-footer-tab.active .tab-emoji {
-    transform: scale(1.15);
-    text-shadow: 0 0 20px rgba(251, 191, 36, 0.5);
+    transform: scale(1.2);
+    text-shadow: 0 0 30px rgba(251, 191, 36, 0.6);
 }
 
 .app-footer-tab.active .tab-label {
@@ -1463,19 +1552,19 @@ html, body {
 .app-footer-tab.active::after {
     content: '';
     position: absolute;
-    bottom: -4px;
+    bottom: -6px;
     left: 50%;
     transform: translateX(-50%);
-    width: 20px;
-    height: 2px;
+    width: 24px;
+    height: 3px;
     background: linear-gradient(90deg, transparent, #fbbf24, transparent);
-    border-radius: 2px;
+    border-radius: 3px;
     animation: tabActivePulse 1.5s ease-in-out infinite;
 }
 
 .app-footer-tab:hover {
     color: #fbbf24;
-    transform: translateY(-2px);
+    transform: translateY(-3px);
 }
 
 .app-footer-tab .tab-badge {
@@ -1484,14 +1573,14 @@ html, body {
     right: -2px;
     background: #ef4444;
     color: white;
-    font-size: 7px;
+    font-size: 8px;
     font-weight: bold;
-    min-width: 14px;
-    height: 14px;
+    min-width: 16px;
+    height: 16px;
     border-radius: 50%;
     text-align: center;
-    line-height: 14px;
-    padding: 0 3px;
+    line-height: 16px;
+    padding: 0 4px;
     border: 1px solid #000;
     display: none;
 }
@@ -1830,6 +1919,41 @@ html, body {
         margin-top: 2px !important;
         letter-spacing: 1px !important;
     }
+    
+    /* ===== MOBILE WALLET CARDS ===== */
+    .wallet-balance-card {
+        padding: 12px 6px !important;
+        border-radius: 16px !important;
+    }
+    .wallet-balance-card .balance-emoji {
+        font-size: 26px !important;
+    }
+    .wallet-balance-card .balance-amount {
+        font-size: 20px !important;
+    }
+    .wallet-balance-card .balance-label {
+        font-size: 10px !important;
+    }
+    .wallet-balances {
+        gap: 8px !important;
+    }
+    
+    /* ===== MOBILE FOOTER ===== */
+    .app-footer {
+        padding: 10px 12px !important;
+        min-height: 64px !important;
+    }
+    .app-footer-tab {
+        padding: 6px 10px !important;
+        min-width: 44px !important;
+        font-size: 10px !important;
+    }
+    .app-footer-tab .tab-emoji {
+        font-size: 18px !important;
+    }
+    .app-footer-tab .tab-label {
+        font-size: 8px !important;
+    }
 }
 
 @media (max-width: 400px) {
@@ -1909,6 +2033,46 @@ html, body {
         margin-bottom: 4px !important;
         letter-spacing: 0.5px !important;
     }
+    
+    /* ===== EXTRA SMALL WALLET ===== */
+    .wallet-balance-card {
+        padding: 10px 4px !important;
+        border-radius: 14px !important;
+    }
+    .wallet-balance-card .balance-emoji {
+        font-size: 22px !important;
+    }
+    .wallet-balance-card .balance-amount {
+        font-size: 17px !important;
+    }
+    .wallet-balance-card .balance-label {
+        font-size: 9px !important;
+    }
+    .wallet-balances {
+        gap: 6px !important;
+    }
+    
+    .wallet-filter-tab {
+        padding: 6px 10px !important;
+        font-size: 11px !important;
+        border-radius: 16px !important;
+    }
+    
+    .app-footer {
+        padding: 6px 8px !important;
+        min-height: 56px !important;
+    }
+    .app-footer-tab {
+        padding: 4px 6px !important;
+        min-width: 36px !important;
+        font-size: 8px !important;
+    }
+    .app-footer-tab .tab-emoji {
+        font-size: 14px !important;
+    }
+    .app-footer-tab .tab-label {
+        font-size: 6px !important;
+    }
 }
 
 @media (max-width: 768px) {
@@ -1927,34 +2091,31 @@ html, body {
 
 @media (min-width: 600px) {
     .app-logo h1 {
-        font-size: 24px;
+        font-size: 28px;
         text-shadow: 2px 2px 0 #8B0000, 4px 4px 0 #8B0000, 6px 6px 0 #8B0000, 8px 8px 0 #8B0000, 10px 10px 0 #8B0000;
     }
     .logo-icon {
-        font-size: 34px;
-    }
-    .app-card .app-emoji {
-        font-size: clamp(50px, 6vw, 72px);
+        font-size: 36px;
     }
     .app-card .app-name {
-        font-size: clamp(11px, 1.2vw, 14px);
+        font-size: clamp(13px, 1.4vw, 18px);
     }
     .app-card {
-        min-height: 110px;
+        min-height: 120px;
         border-radius: 20px;
     }
     .app-grid {
         gap: 12px;
     }
     .app-footer-tab .tab-emoji {
-        font-size: 22px;
+        font-size: 26px;
     }
     .app-footer-tab .tab-label {
-        font-size: 10px;
+        font-size: 11px;
     }
     .app-footer-tab {
-        min-width: 44px;
-        padding: 6px 10px;
+        min-width: 52px;
+        padding: 8px 14px;
     }
 }
 </style>
