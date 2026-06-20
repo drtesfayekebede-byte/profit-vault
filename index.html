@@ -238,25 +238,9 @@ html, body {
     z-index: 100;
     background: rgba(10, 10, 15, 0.88);
     backdrop-filter: blur(15px);
-    border-bottom: 2px solid transparent;
-    background-image: linear-gradient(rgba(10, 10, 15, 0.88), rgba(10, 10, 15, 0.88)),
-        linear-gradient(90deg, transparent, #fbbf24, #d97706, #fbbf24, transparent);
-    background-origin: padding-box, border-box;
-    background-clip: padding-box, border-box;
+    border-bottom: none;
     box-shadow: 0 0 40px rgba(251, 191, 36, 0.1), inset 0 0 30px rgba(251, 191, 36, 0.05);
     padding: 0 32px;
-}
-
-.header::before {
-    content: '';
-    position: absolute;
-    bottom: -3px;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, #fbbf24, #d97706, #fbbf24, transparent);
-    background-size: 200% 100%;
-    animation: shimmerGold 3s linear infinite;
 }
 
 .header-content {
@@ -479,7 +463,7 @@ html, body {
     display: flex;
     flex-direction: column;
     height: calc(100vh - 88px - 88px);
-    padding: 2px 2px 2px 2px;
+    padding: 4px 8px 8px 8px;
     overflow: hidden;
 }
 
@@ -488,7 +472,7 @@ html, body {
     background: rgba(10, 10, 15, 0.3);
     border: 3px solid rgba(251, 191, 36, 0.3);
     border-radius: 24px;
-    padding: 0px;
+    padding: 12px;
     box-shadow: 0 0 20px rgba(251, 191, 36, 0.05), inset 0 0 20px rgba(251, 191, 36, 0.02);
     animation: appGridGlow 3s ease-in-out infinite;
     flex: 1;
@@ -502,10 +486,11 @@ html, body {
     animation-play-state: paused;
 }
 
+/* ===== APP GRID - 3 COLUMNS x 3 ROWS ===== */
 .app-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
     padding: 4px 2px;
     flex: 1;
     align-content: stretch;
@@ -513,41 +498,40 @@ html, body {
     height: 100%;
 }
 
-/* ===== APP CARDS - NO INDIVIDUAL BORDERS ===== */
+/* ===== APP CARDS - NO BACKGROUND, NO BORDER, CIRCLE IMAGES ===== */
 .app-card {
-    background: rgba(10, 10, 15, 0.3) !important;
-    backdrop-filter: blur(5px) !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
     border: none !important;
-    border-radius: 16px !important;
+    border-radius: 0 !important;
     box-shadow: none !important;
-    padding: 1px !important;
+    padding: 0px !important;
     transition: all 0.3s ease;
     position: relative;
-    overflow: hidden;
+    overflow: visible;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: center;
     width: 100%;
     height: 100%;
-    min-height: 60px;
+    min-height: 50px;
 }
 
 .app-card:hover {
-    transform: scale(1.04) translateY(-4px);
-    background: rgba(10, 10, 15, 0.5) !important;
+    transform: scale(1.05) translateY(-4px);
 }
 
 .app-card .app-image {
-    width: 50%;
-    height: 50%;
+    width: 100%;
+    height: 100%;
     object-fit: contain;
     display: block;
-    border-radius: 12px;
+    border-radius: 50%;
     filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.08));
     transition: all 0.4s ease;
     position: relative;
-    margin-top: 1px;
+    aspect-ratio: 1 / 1;
 }
 
 .app-card:hover .app-image {
@@ -556,22 +540,21 @@ html, body {
 }
 
 .app-card .app-name {
-    font-size: clamp(10px, 1.6vw, 15px);
+    font-size: clamp(9px, 1.3vw, 12px);
     font-weight: 900;
     text-align: center;
     padding: 2px 8px;
+    margin-top: 6px;
     background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(5px);
     border: 1px solid rgba(251, 191, 36, 0.1);
-    border-radius: 8px;
+    border-radius: 6px;
     text-transform: uppercase;
-    letter-spacing: 1.2px;
+    letter-spacing: 0.8px;
     font-family: 'Times New Roman', Times, serif;
     text-shadow: 0 0 20px currentColor, 0 0 40px currentColor;
     position: relative;
     z-index: 2;
-    margin-bottom: 3px;
-    margin-top: 1px;
 }
 
 .app-card:hover .app-name {
@@ -619,6 +602,10 @@ html, body {
 .app-card[data-app="contact"] .app-name {
     color: #3b82f6;
     text-shadow: 0 0 30px rgba(59, 130, 246, 0.8), 0 0 60px rgba(59, 130, 246, 0.4), 0 0 90px rgba(59, 130, 246, 0.2);
+}
+.app-card[data-app="profile"] .app-name {
+    color: #8b5cf6;
+    text-shadow: 0 0 30px rgba(139, 92, 246, 0.8), 0 0 60px rgba(139, 92, 246, 0.4), 0 0 90px rgba(139, 92, 246, 0.2);
 }
 
 /* ===== TAB CONTENT WRAPPER ===== */
@@ -1000,7 +987,7 @@ html, body {
     color: #fbbf24;
 }
 
-/* ===== MARKET GRID - 3 COLUMNS, 4 ROWS ORIGINAL ===== */
+/* ===== MARKET GRID - 3 COLUMNS ORIGINAL ===== */
 .market-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -1490,27 +1477,11 @@ html, body {
     z-index: 99;
     background: rgba(10, 10, 15, 0.92);
     backdrop-filter: blur(15px);
-    border-top: 2px solid transparent;
-    background-image: linear-gradient(rgba(10, 10, 15, 0.92), rgba(10, 10, 15, 0.92)),
-        linear-gradient(90deg, transparent, #fbbf24, #d97706, #fbbf24, transparent);
-    background-origin: padding-box, border-box;
-    background-clip: padding-box, border-box;
+    border-top: none;
     box-shadow: 0 -5px 40px rgba(251, 191, 36, 0.15);
     padding: 14px 32px;
     min-height: 88px;
     user-select: none;
-}
-
-.app-footer::before {
-    content: '';
-    position: absolute;
-    top: -3px;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, #fbbf24, #d97706, #fbbf24, transparent);
-    background-size: 200% 100%;
-    animation: shimmerGold 3s linear infinite;
 }
 
 .app-footer-tabs {
@@ -1923,11 +1894,11 @@ html, body {
         max-width: 200px;
     }
     
-    /* ===== MOBILE APP GRID - 2 COLUMNS ===== */
+    /* ===== MOBILE APP GRID - 3 COLUMNS ===== */
     .app-grid {
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: 1px !important;
-        padding: 2px 1px !important;
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 6px !important;
+        padding: 4px 2px !important;
     }
     
     .app-grid-container {
@@ -1936,29 +1907,27 @@ html, body {
     }
     
     .app-grid-wrapper {
-        padding: 4px !important;
+        padding: 10px !important;
         border-width: 2px !important;
         border-radius: 20px !important;
     }
     
     .app-card {
-        min-height: 60px !important;
-        padding: 3px !important;
-        border-radius: 14px !important;
+        min-height: 70px !important;
+        padding: 0px !important;
     }
     
     .app-card .app-image {
-        width: 50% !important;
-        height: 50% !important;
-        border-radius: 10px !important;
+        width: 100% !important;
+        height: 100% !important;
+        border-radius: 50% !important;
     }
     
     .app-card .app-name {
-        font-size: clamp(9px, 2.2vw, 13px) !important;
-        padding: 2px 6px !important;
-        margin-bottom: 3px !important;
-        margin-top: 1px !important;
-        letter-spacing: 0.8px !important;
+        font-size: clamp(7px, 1.8vw, 10px) !important;
+        padding: 1px 4px !important;
+        margin-top: 4px !important;
+        letter-spacing: 0.5px !important;
     }
     
     /* ===== MOBILE BACK TO HOME ===== */
@@ -2080,41 +2049,40 @@ html, body {
         max-width: 140px;
     }
     
-    /* ===== EXTRA SMALL MOBILE APP GRID - 2 COLUMNS ===== */
+    /* ===== EXTRA SMALL MOBILE APP GRID - 3 COLUMNS ===== */
     .app-grid {
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: 1px !important;
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 4px !important;
         padding: 2px 1px !important;
     }
     
     .app-grid-container {
-        padding: 3px 4px !important;
+        padding: 2px 4px !important;
         height: calc(100vh - 56px - 56px) !important;
     }
     
     .app-grid-wrapper {
-        padding: 4px !important;
+        padding: 8px !important;
         border-width: 2px !important;
         border-radius: 16px !important;
     }
     
     .app-card {
-        min-height: 65px !important;
-        padding: 2px !important;
-        border-radius: 12px !important;
+        min-height: 55px !important;
+        padding: 0px !important;
     }
     
     .app-card .app-image {
-        width: 50% !important;
-        height: 50% !important;
-        border-radius: 8px !important;
+        width: 100% !important;
+        height: 100% !important;
+        border-radius: 50% !important;
     }
     
     .app-card .app-name {
-        font-size: clamp(7px, 1.8vw, 10px) !important;
-        padding: 1px 5px !important;
-        margin-bottom: 2px !important;
-        letter-spacing: 0.5px !important;
+        font-size: clamp(6px, 1.5vw, 8px) !important;
+        padding: 1px 3px !important;
+        margin-top: 3px !important;
+        letter-spacing: 0.3px !important;
     }
     
     /* ===== EXTRA SMALL BACK TO HOME ===== */
@@ -2187,6 +2155,7 @@ html, body {
         font-size: 6px !important;
     }
 }
+
 @media (max-width: 768px) {
     .investments-grid {
         grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -2210,14 +2179,13 @@ html, body {
         font-size: 36px;
     }
     .app-card .app-name {
-        font-size: clamp(13px, 1.4vw, 18px);
+        font-size: clamp(11px, 1.4vw, 15px);
     }
     .app-card {
-        min-height: 110px;
-        border-radius: 20px;
+        min-height: 80px;
     }
     .app-grid {
-        gap: 1px;
+        gap: 12px;
     }
     .app-footer-tab .tab-emoji {
         font-size: 26px;
