@@ -133,19 +133,19 @@
     50% { box-shadow: 0 0 30px rgba(239, 68, 68, 0.5); }
 }
 
-/* ===== COMMON APP GRID WRAPPER GLOW BORDER ===== */
+/* ===== COMMON APP GRID WRAPPER GLOW BORDER - REDUCED ===== */
 @keyframes appGridGlow {
     0% { 
-        border-color: rgba(251, 191, 36, 0.3); 
-        box-shadow: 0 0 20px rgba(251, 191, 36, 0.05), inset 0 0 20px rgba(251, 191, 36, 0.02);
+        border-color: rgba(251, 191, 36, 0.15); 
+        box-shadow: 0 0 5px rgba(251, 191, 36, 0.02), inset 0 0 5px rgba(251, 191, 36, 0.01);
     }
     50% { 
-        border-color: rgba(251, 191, 36, 0.8); 
-        box-shadow: 0 0 50px rgba(251, 191, 36, 0.25), 0 0 80px rgba(251, 191, 36, 0.1), inset 0 0 40px rgba(251, 191, 36, 0.08);
+        border-color: rgba(251, 191, 36, 0.35); 
+        box-shadow: 0 0 12px rgba(251, 191, 36, 0.06), inset 0 0 12px rgba(251, 191, 36, 0.03);
     }
     100% { 
-        border-color: rgba(251, 191, 36, 0.3); 
-        box-shadow: 0 0 20px rgba(251, 191, 36, 0.05), inset 0 0 20px rgba(251, 191, 36, 0.02);
+        border-color: rgba(251, 191, 36, 0.15); 
+        box-shadow: 0 0 5px rgba(251, 191, 36, 0.02), inset 0 0 5px rgba(251, 191, 36, 0.01);
     }
 }
 
@@ -165,14 +165,20 @@
 
 /* ===== BLACK BACKGROUND WITH RGB GLOW ===== */
 @keyframes rgbGlow {
-    0% { opacity: 0.3; transform: scale(1); }
-    50% { opacity: 0.7; transform: scale(1.08); }
-    100% { opacity: 0.3; transform: scale(1); }
+    0% { opacity: 0.4; transform: scale(1); }
+    50% { opacity: 0.9; transform: scale(1.08); }
+    100% { opacity: 0.4; transform: scale(1); }
 }
 
 @keyframes rgbRotate {
     0% { filter: hue-rotate(0deg); }
     100% { filter: hue-rotate(360deg); }
+}
+
+@keyframes backgroundPulse {
+    0% { opacity: 0.7; }
+    50% { opacity: 1; }
+    100% { opacity: 0.7; }
 }
 
 /* ===== BASE ===== */
@@ -189,7 +195,7 @@ html, body {
     left: 0;
 }
 
-/* ===== PURE BLACK BACKGROUND WITH RGB GLOW ===== */
+/* ===== COMPLETELY TRANSPARENT BACKGROUND WITH RGB GLOW ===== */
 .background-wrapper {
     position: fixed;
     top: 0;
@@ -201,19 +207,6 @@ html, body {
     pointer-events: none;
 }
 
-/* Add a semi-transparent gradient overlay */
-.background-wrapper::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.4) 100%);
-    pointer-events: none;
-    z-index: -1;
-}
-
 /* ===== RGB GLOW LAYER ===== */
 .background-wrapper::before {
     content: '';
@@ -223,14 +216,14 @@ html, body {
     width: 100%;
     height: 100%;
     background: 
-        radial-gradient(circle at 15% 20%, rgba(255, 0, 0, 0.35), transparent 45%),
-        radial-gradient(circle at 85% 30%, rgba(0, 255, 0, 0.30), transparent 40%),
-        radial-gradient(circle at 50% 85%, rgba(0, 0, 255, 0.30), transparent 40%),
-        radial-gradient(circle at 20% 80%, rgba(255, 0, 255, 0.25), transparent 35%),
-        radial-gradient(circle at 80% 70%, rgba(0, 255, 255, 0.25), transparent 35%),
-        radial-gradient(circle at 45% 45%, rgba(255, 215, 0, 0.20), transparent 30%),
-        radial-gradient(circle at 5% 60%, rgba(255, 100, 0, 0.15), transparent 30%),
-        radial-gradient(circle at 95% 10%, rgba(0, 100, 255, 0.15), transparent 30%);
+        radial-gradient(circle at 15% 20%, rgba(255, 0, 0, 0.5), transparent 45%),
+        radial-gradient(circle at 85% 30%, rgba(0, 255, 0, 0.45), transparent 40%),
+        radial-gradient(circle at 50% 85%, rgba(0, 0, 255, 0.45), transparent 40%),
+        radial-gradient(circle at 20% 80%, rgba(255, 0, 255, 0.35), transparent 35%),
+        radial-gradient(circle at 80% 70%, rgba(0, 255, 255, 0.35), transparent 35%),
+        radial-gradient(circle at 45% 45%, rgba(255, 215, 0, 0.30), transparent 30%),
+        radial-gradient(circle at 5% 60%, rgba(255, 100, 0, 0.20), transparent 30%),
+        radial-gradient(circle at 95% 10%, rgba(0, 100, 255, 0.20), transparent 30%);
     background-size: 400% 400%;
     animation: rgbGlow 6s ease-in-out infinite alternate, rgbRotate 20s linear infinite;
     pointer-events: none;
@@ -253,7 +246,8 @@ html, body {
     animation: rgbGlow 8s ease-in-out infinite alternate-reverse;
     pointer-events: none;
 }
-/* ===== HEADER - FIXED ===== */
+
+/* ===== HEADER - DEEP BLACK ===== */
 .header {
     position: fixed;
     top: 0;
@@ -261,7 +255,7 @@ html, body {
     right: 0;
     width: 100%;
     z-index: 100;
-    background: rgba(0, 0, 0, 0.85);
+    background: rgba(0, 0, 0, 0.88);
     backdrop-filter: blur(15px);
     border-bottom: none;
     box-shadow: 0 0 40px rgba(255, 215, 0, 0.08), inset 0 0 30px rgba(255, 215, 0, 0.03);
@@ -455,6 +449,55 @@ html, body {
     box-shadow: 0 0 10px rgba(239, 68, 68, 0.6);
 }
 
+/* ===== NOTIFICATION DROPDOWN - CENTERED TEXT ===== */
+.notification-dropdown {
+    display: none;
+    position: absolute;
+    right: -10px;
+    top: 40px;
+    background: #1e293b;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    z-index: 100001;
+    min-width: 300px;
+    max-width: 350px;
+    max-height: 400px;
+    overflow: hidden;
+    border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+.notification-item {
+    padding: 12px 16px !important;
+    font-size: 13px !important;
+    text-align: center !important;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.notification-item:last-child {
+    border-bottom: none;
+}
+
+.notification-item .notif-title {
+    font-size: 14px !important;
+    font-weight: bold !important;
+    color: #fbbf24 !important;
+    text-align: center !important;
+}
+
+.notification-item .notif-message {
+    font-size: 12px !important;
+    color: #e2e8f0 !important;
+    text-align: center !important;
+    margin-top: 4px !important;
+}
+
+.notification-item .notif-time {
+    font-size: 10px !important;
+    color: #94a3b8 !important;
+    text-align: center !important;
+    margin-top: 4px !important;
+}
+
 /* ===== DROPDOWN MENU ===== */
 .dropdown-menu {
     display: none;
@@ -487,7 +530,7 @@ html, body {
     background: #334155;
 }
 
-/* ===== APP GRID CONTAINER - FILLS REMAINING SPACE ===== */
+/* ===== APP GRID CONTAINER ===== */
 .app-grid-container {
     display: flex;
     flex-direction: column;
@@ -500,13 +543,13 @@ html, body {
     overflow: hidden;
 }
 
-/* ===== APP GRID WRAPPER - ONE COMMON GLOWING BORDER ===== */
+/* ===== APP GRID WRAPPER - REDUCED GLOW, NARROW SPACE ===== */
 .app-grid-wrapper {
-    background: rgba(0, 0, 0, 0.3);
-    border: 3px solid rgba(255, 215, 0, 0.3);
-    border-radius: 20px;
-    padding: 4px 12px;  
-    box-shadow: 0 0 20px rgba(255, 215, 0, 0.05), inset 0 0 20px rgba(255, 215, 0, 0.02);
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 215, 0, 0.2);
+    border-radius: 16px;
+    padding: 1px 12px;
+    box-shadow: 0 0 8px rgba(255, 215, 0, 0.03), inset 0 0 8px rgba(255, 215, 0, 0.02);
     animation: appGridGlow 3s ease-in-out infinite;
     flex: 1;
     display: flex;
@@ -518,8 +561,8 @@ html, body {
 }
 
 .app-grid-wrapper:hover {
-    border-color: rgba(255, 215, 0, 0.9);
-    box-shadow: 0 0 60px rgba(255, 215, 0, 0.4), 0 0 100px rgba(255, 215, 0, 0.15), inset 0 0 40px rgba(255, 215, 0, 0.1);
+    border-color: rgba(255, 215, 0, 0.5);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.1);
     animation-play-state: paused;
 }
 
@@ -527,7 +570,7 @@ html, body {
 .app-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
+    gap: 8px;
     padding: 0;
     width: 100%;
     height: 100%;
@@ -535,7 +578,7 @@ html, body {
     align-content: center;
 }
 
-/* ===== APP CARDS - NO BACKGROUND, NO BORDER, ORIGINAL IMAGE SHAPE ===== */
+/* ===== APP CARDS ===== */
 .app-card {
     background: transparent !important;
     backdrop-filter: none !important;
@@ -650,34 +693,39 @@ html, body {
     right: 0;
     bottom: 76px;
     overflow-y: auto;
-    padding: 8px 12px 16px;
+    padding: 8px 12px 80px;
+    position: relative;
 }
 
 .tab-content-wrapper.active {
     display: block;
 }
 
-/* ===== BACK TO HOME BUTTON - GREEN BACKGROUND ===== */
+/* ===== BACK TO HOME BUTTON - LEFT LOWER EDGE ===== */
 .back-button {
     display: none;
     color: #ffffff;
     font-size: 18px;
     font-weight: 900;
-    padding: 14px 10px;
+    padding: 10px 16px;
     cursor: pointer;
     background: linear-gradient(135deg, #10b981, #059669) !important;
     border: none;
     border-radius: 12px;
     align-items: center;
     gap: 10px;
-    width: 100%;
-    text-align: left;
-    margin-bottom: 16px;
+    width: auto;
+    text-align: center;
+    margin-bottom: 0;
     letter-spacing: 0.8px;
     text-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
     min-height: 48px;
     box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
     transition: all 0.3s ease;
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    z-index: 10;
 }
 
 .back-button.visible {
@@ -705,7 +753,7 @@ html, body {
 #contact.tab-content {
     border-radius: 28px !important;
     padding: 16px !important;
-    background: rgba(0, 0, 0, 0.85) !important;
+    background: rgba(0, 0, 0, 0.3) !important;
     backdrop-filter: blur(2px) !important;
     margin-bottom: 20px !important;
 }
@@ -1004,7 +1052,7 @@ html, body {
 
 /* ===== CARDS & CONTAINERS ===== */
 .card {
-    background: rgba(0, 0, 0, 0.85);
+    background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(2px);
     border-radius: 28px;
     padding: 18px;
@@ -1511,7 +1559,7 @@ html, body {
     font-size: 14px;
 }
 
-/* ===== FOOTER - FIXED ===== */
+/* ===== FOOTER - DEEP BLACK ===== */
 .app-footer {
     position: fixed;
     bottom: 0;
@@ -1772,7 +1820,7 @@ html, body {
     margin-top: 15px;
 }
 .investment-card {
-    background: rgba(0, 0, 0, 0.85);
+    background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(2px);
     border-radius: 28px;
     padding: 20px 15px;
@@ -1893,23 +1941,19 @@ html, body {
 
 /* ===== RESPONSIVE - ADJUSTS FOR ALL SCREENS ===== */
 @media (max-width: 600px) {
-    .header {
-        height: 60px;
-        min-height: 60px;
-        max-height: 60px;
-        padding: 0 12px;
-    }
-    .header-content {
-        padding: 6px 10px;
-    }
     .app-logo h1 {
-        font-size: 16px;
+        font-size: 14px;
+        text-shadow: 1px 1px 0 #FF4500, 2px 2px 0 #8B0000, 0 0 10px rgba(255, 215, 0, 0.5);
     }
     .logo-icon {
         font-size: 20px;
     }
-    .app-logo {
-        gap: 6px;
+    .header-content {
+        padding: 6px 0;
+        min-height: 50px;
+    }
+    .header {
+        padding: 0 10px;
     }
     .profile-avatar {
         width: 34px;
@@ -1919,23 +1963,21 @@ html, body {
         font-size: 18px;
     }
     .header-balances {
-        padding: 4px 10px;
-        gap: 6px;
+        padding: 2px 8px;
+        gap: 4px;
         max-width: 160px;
         min-width: 60px;
-        margin: 0 8px;
     }
     .header-balance-item {
-        padding: 2px 6px;
+        padding: 1px 3px;
         font-size: 10px;
-        border-radius: 10px;
     }
     .header-balance-item .balance-icon {
-        font-size: 12px;
+        font-size: 11px;
     }
     .header-balance-item .balance-value {
-        font-size: 11px;
-        min-width: 20px;
+        font-size: 10px;
+        min-width: 18px;
     }
     .header-balances.show-all .header-balance-item .balance-value {
         font-size: 9px;
@@ -1944,152 +1986,166 @@ html, body {
         font-size: 9px;
     }
     .header-balances.show-all {
-        gap: 3px;
-        padding: 3px 6px;
-        max-width: 180px;
+        gap: 2px;
+        padding: 2px 4px;
+        max-width: 200px;
+    }
+    
+    /* ===== MOBILE APP GRID ===== */
+    .app-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 6px !important;
+        padding: 0 !important;
     }
     
     .app-grid-container {
+        padding: 4px 6px !important;
+        height: calc(100vh - 64px - 64px) !important;
         top: 60px;
         bottom: 60px;
-        padding: 4px 8px;
-    }
-    .app-grid-wrapper {
-        padding: 10px;
-        border-radius: 18px;
-        border-width: 2px;
-    }
-    .app-grid {
-        gap: 8px;
-    }
-    .app-card {
-        min-height: 45px;
-        padding: 2px !important;
-    }
-    .app-card .app-image {
-        height: 76%;
-    }
-    .app-card .app-name {
-        font-size: clamp(7px, 1.6vw, 10px);
-        padding: 1px 4px;
-        margin-top: 2px;
-        letter-spacing: 0.5px;
     }
     
+    .app-grid-wrapper {
+        padding: 6px !important;
+        border-width: 1px !important;
+        border-radius: 14px !important;
+    }
+    
+    .app-card {
+        min-height: 45px !important;
+        padding: 2px !important;
+    }
+    
+    .app-card .app-image {
+        width: 100% !important;
+        height: 76% !important;
+        border-radius: 0 !important;
+    }
+    
+    .app-card .app-name {
+        font-size: clamp(7px, 1.6vw, 10px) !important;
+        padding: 1px 4px !important;
+        margin-top: 2px !important;
+        letter-spacing: 0.5px !important;
+    }
+    
+    /* ===== MOBILE BACK TO HOME ===== */
+    .back-button {
+        font-size: 15px !important;
+        padding: 8px 12px !important;
+        min-height: 40px !important;
+        margin-bottom: 0 !important;
+        bottom: 8px !important;
+        left: 8px !important;
+        border-radius: 10px !important;
+    }
+    
+    /* ===== MOBILE MARKET GRID ===== */
+    .market-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 8px !important;
+    }
+    
+    .market-image-container {
+        border-radius: 14px !important;
+    }
+    
+    .market-emoji {
+        font-size: 40px !important;
+    }
+    
+    .market-name {
+        font-size: 11px !important;
+    }
+    
+    .market-price {
+        font-size: 10px !important;
+    }
+    
+    .market-roi {
+        font-size: 9px !important;
+    }
+    
+    /* ===== MOBILE WALLET CARDS ===== */
+    .wallet-balance-card {
+        padding: 12px 6px !important;
+        border-radius: 16px !important;
+    }
+    .wallet-balance-card .balance-emoji {
+        font-size: 26px !important;
+    }
+    .wallet-balance-card .balance-amount {
+        font-size: 20px !important;
+    }
+    .wallet-balance-card .balance-label {
+        font-size: 10px !important;
+    }
+    .wallet-balances {
+        gap: 8px !important;
+    }
+    
+    /* ===== MOBILE FOOTER ===== */
     .app-footer {
-        height: 60px;
-        min-height: 60px;
-        max-height: 60px;
-        padding: 6px 10px;
+        padding: 6px 12px !important;
+        min-height: 60px !important;
+        height: 60px !important;
     }
     .app-footer-tab {
-        padding: 3px 6px;
-        min-width: 32px;
-        font-size: 8px;
+        padding: 3px 6px !important;
+        min-width: 32px !important;
+        font-size: 8px !important;
     }
     .app-footer-tab .tab-emoji {
-        font-size: 16px;
+        font-size: 16px !important;
     }
     .app-footer-tab .tab-label {
-        font-size: 6px;
+        font-size: 6px !important;
     }
     
     .tab-content-wrapper {
-        top: 60px;
-        bottom: 60px;
-        padding: 4px 8px 8px;
-    }
-    .back-button {
-        font-size: 15px;
-        padding: 10px 8px;
-        min-height: 40px;
-        border-radius: 10px;
-        margin-bottom: 12px;
-    }
-    
-    .wallet-balance-card {
-        padding: 10px 4px;
-        border-radius: 14px;
-    }
-    .wallet-balance-card .balance-emoji {
-        font-size: 24px;
-    }
-    .wallet-balance-card .balance-amount {
-        font-size: 18px;
-    }
-    .wallet-balance-card .balance-label {
-        font-size: 9px;
-    }
-    .wallet-balances {
-        gap: 6px;
-    }
-    .wallet-filter-tab {
-        padding: 6px 12px;
-        font-size: 11px;
-        border-radius: 16px;
-    }
-    
-    .market-grid {
-        gap: 6px;
-    }
-    .market-emoji {
-        font-size: 36px;
-    }
-    .market-name {
-        font-size: 10px;
-    }
-    .market-price {
-        font-size: 9px;
-    }
-    .market-roi {
-        font-size: 8px;
-    }
-    .market-image-container {
-        border-radius: 12px;
+        top: 60px !important;
+        bottom: 60px !important;
+        padding: 4px 8px 8px !important;
     }
 }
 
 @media (max-width: 400px) {
-    .header {
-        height: 52px;
-        min-height: 52px;
-        max-height: 52px;
-        padding: 0 8px;
-    }
-    .header-content {
-        padding: 4px 6px;
-    }
     .app-logo h1 {
-        font-size: 13px;
+        font-size: 12px;
     }
     .logo-icon {
         font-size: 16px;
+    }
+    .header-content {
+        padding: 4px 0;
+        min-height: 44px;
+    }
+    .header {
+        padding: 0 6px;
     }
     .profile-avatar {
         width: 28px;
         height: 28px;
     }
     .bell-icon {
-        font-size: 15px;
+        font-size: 16px;
     }
     .header-balances {
-        padding: 2px 6px;
-        gap: 3px;
+        padding: 2px 4px;
+        gap: 2px;
         max-width: 120px;
         min-width: 40px;
         border-radius: 12px;
-        margin: 0 4px;
     }
     .header-balance-item {
-        padding: 1px 3px;
+        padding: 1px 2px;
         font-size: 8px;
-        border-radius: 6px;
     }
     .header-balance-item .balance-icon {
-        font-size: 9px;
+        font-size: 8px;
     }
     .header-balance-item .balance-value {
-        font-size: 9px;
+        font-size: 8px;
         min-width: 14px;
     }
     .header-balances.show-all .header-balance-item .balance-value {
@@ -2099,112 +2155,167 @@ html, body {
         font-size: 7px;
     }
     .header-balances.show-all {
-        max-width: 130px;
+        max-width: 140px;
+    }
+    
+    /* ===== EXTRA SMALL MOBILE APP GRID ===== */
+    .app-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 4px !important;
+        padding: 0 !important;
     }
     
     .app-grid-container {
+        padding: 3px 4px !important;
+        height: calc(100vh - 52px - 52px) !important;
         top: 52px;
         bottom: 52px;
-        padding: 3px 4px;
     }
+    
     .app-grid-wrapper {
-        padding: 8px;
-        border-radius: 14px;
-        border-width: 2px;
+        padding: 4px !important;
+        border-width: 1px !important;
+        border-radius: 12px !important;
     }
-    .app-grid {
-        gap: 5px;
-    }
+    
     .app-card {
-        min-height: 35px;
+        min-height: 35px !important;
         padding: 1px !important;
     }
+    
     .app-card .app-image {
-        height: 70%;
+        width: 100% !important;
+        height: 70% !important;
+        border-radius: 0 !important;
     }
+    
     .app-card .app-name {
-        font-size: clamp(6px, 1.4vw, 8px);
-        padding: 1px 3px;
-        margin-top: 1px;
-        letter-spacing: 0.3px;
+        font-size: clamp(6px, 1.4vw, 8px) !important;
+        padding: 1px 3px !important;
+        margin-top: 1px !important;
+        letter-spacing: 0.3px !important;
+    }
+    
+    /* ===== EXTRA SMALL BACK TO HOME ===== */
+    .back-button {
+        font-size: 13px !important;
+        padding: 6px 10px !important;
+        min-height: 34px !important;
+        margin-bottom: 0 !important;
+        bottom: 6px !important;
+        left: 6px !important;
+        border-radius: 8px !important;
+    }
+    
+    /* ===== EXTRA SMALL MARKET ===== */
+    .market-grid {
+        gap: 6px !important;
+    }
+    
+    .market-emoji {
+        font-size: 32px !important;
+    }
+    
+    .market-name {
+        font-size: 10px !important;
+    }
+    
+    .market-price {
+        font-size: 9px !important;
+    }
+    
+    .market-roi {
+        font-size: 8px !important;
+    }
+    
+    /* ===== EXTRA SMALL WALLET ===== */
+    .wallet-balance-card {
+        padding: 10px 4px !important;
+        border-radius: 14px !important;
+    }
+    .wallet-balance-card .balance-emoji {
+        font-size: 22px !important;
+    }
+    .wallet-balance-card .balance-amount {
+        font-size: 17px !important;
+    }
+    .wallet-balance-card .balance-label {
+        font-size: 9px !important;
+    }
+    .wallet-balances {
+        gap: 6px !important;
+    }
+    
+    .wallet-filter-tab {
+        padding: 6px 10px !important;
+        font-size: 11px !important;
+        border-radius: 16px !important;
     }
     
     .app-footer {
-        height: 52px;
-        min-height: 52px;
-        max-height: 52px;
-        padding: 4px 6px;
+        padding: 4px 6px !important;
+        min-height: 52px !important;
+        height: 52px !important;
     }
     .app-footer-tab {
-        padding: 2px 4px;
-        min-width: 26px;
-        font-size: 7px;
-        border-radius: 6px;
+        padding: 2px 4px !important;
+        min-width: 26px !important;
+        font-size: 7px !important;
     }
     .app-footer-tab .tab-emoji {
-        font-size: 13px;
+        font-size: 13px !important;
     }
     .app-footer-tab .tab-label {
-        font-size: 5px;
+        font-size: 5px !important;
     }
     
     .tab-content-wrapper {
-        top: 52px;
-        bottom: 52px;
-        padding: 3px 6px 6px;
-    }
-    .back-button {
-        font-size: 13px;
-        padding: 8px 6px;
-        min-height: 34px;
-        border-radius: 8px;
-        margin-bottom: 8px;
-    }
-    
-    .wallet-balance-card {
-        padding: 8px 3px;
-        border-radius: 12px;
-    }
-    .wallet-balance-card .balance-emoji {
-        font-size: 20px;
-    }
-    .wallet-balance-card .balance-amount {
-        font-size: 15px;
-    }
-    .wallet-balance-card .balance-label {
-        font-size: 8px;
-    }
-    .wallet-balances {
-        gap: 4px;
-    }
-    .wallet-filter-tab {
-        padding: 4px 8px;
-        font-size: 10px;
-        border-radius: 12px;
+        top: 52px !important;
+        bottom: 52px !important;
+        padding: 3px 6px 6px !important;
     }
 }
 
-@media (min-width: 601px) and (max-width: 1024px) {
-    .app-grid {
-        gap: 14px;
+@media (max-width: 768px) {
+    .investments-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 15px;
     }
-    .app-card .app-image {
-        height: 80%;
+    .circle-timer {
+        width: 120px;
+        height: 120px;
     }
-    .app-card .app-name {
-        font-size: clamp(10px, 1.4vw, 14px);
+    .timer-digits {
+        font-size: 18px;
     }
 }
 
-@media (min-width: 1025px) {
-    .app-grid {
-        gap: 18px;
+@media (min-width: 600px) {
+    .app-logo h1 {
+        font-size: 28px;
+        text-shadow: 2px 2px 0 #8B0000, 4px 4px 0 #8B0000, 6px 6px 0 #8B0000, 8px 8px 0 #8B0000, 10px 10px 0 #8B0000;
     }
-    .app-card .app-image {
-        height: 85%;
+    .logo-icon {
+        font-size: 36px;
     }
     .app-card .app-name {
-        font-size: clamp(12px, 1.2vw, 16px);
+        font-size: clamp(11px, 1.4vw, 15px);
+    }
+    .app-card {
+        min-height: 80px;
+    }
+    .app-grid {
+        gap: 12px;
+    }
+    .app-footer-tab .tab-emoji {
+        font-size: 26px;
+    }
+    .app-footer-tab .tab-label {
+        font-size: 11px;
+    }
+    .app-footer-tab {
+        min-width: 52px;
+        padding: 8px 14px;
     }
 }
 </style>
@@ -7711,7 +7822,7 @@ async function loadContactSettingsBatch() {
 let APP_ITEMS = [];
 
 if (IS_ADMIN) {
-    // ADMIN VIEW - 3 columns x 3 rows (9 items)
+    // ADMIN VIEW - 3 columns x 3 rows (9 items) - Admin tab in 9th position
     APP_ITEMS = [
         { 
             id: 'dashboard', 
@@ -7762,12 +7873,6 @@ if (IS_ADMIN) {
             adminOnly: false 
         },
         { 
-            id: 'contact', 
-            image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/contact.png', 
-            name: 'Contact', 
-            adminOnly: false 
-        },
-        { 
             id: 'admin', 
             image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/admin.png', 
             name: 'Admin', 
@@ -7775,7 +7880,7 @@ if (IS_ADMIN) {
         }
     ];
 } else {
-    // NON-ADMIN VIEW - 3 columns x 3 rows (9 items)
+    // NON-ADMIN VIEW - 3 columns x 3 rows (9 items) - Contact in 9th position
     APP_ITEMS = [
         { 
             id: 'dashboard', 
@@ -7842,20 +7947,21 @@ const FOOTER_TABS = [
     { id: 'clinic', emoji: '🏥', label: 'Clinic', adminOnly: false },
     { id: 'guide', emoji: '📖', label: 'Guide', adminOnly: false },
     { id: 'wallet', emoji: '💰', label: 'Wallet', adminOnly: false },
-    { id: IS_ADMIN ? 'admin' : 'contact', emoji: IS_ADMIN ? '👑' : '📞', label: IS_ADMIN ? 'Admin' : 'Contact', adminOnly: false }
+    { 
+        id: IS_ADMIN ? 'admin' : 'contact', 
+        emoji: IS_ADMIN ? '👑' : '📞', 
+        label: IS_ADMIN ? 'Admin' : 'Contact', 
+        adminOnly: false 
+    }
 ];
 
 function renderFooterTabs() {
     const container = document.getElementById('footerTabs');
     if (!container) return;
     
-    const visibleTabs = FOOTER_TABS.filter(tab => {
-        if (tab.adminOnly && !IS_ADMIN) return false;
-        return true;
-    });
-    
-    container.innerHTML = visibleTabs.map(tab => `
-        <button class="app-footer-tab ${tab.id === 'home' ? 'active' : ''}" 
+    // No need to filter anymore - FOOTER_TABS already has conditional
+    container.innerHTML = FOOTER_TABS.map(tab => `
+        <button class="app-footer-tab ${tab.id === 'dashboard' ? 'active' : ''}" 
                 data-tab="${tab.id}" 
                 onclick="footerTabClick('${tab.id}')">
             <span class="tab-emoji">${tab.emoji}</span>
@@ -8265,6 +8371,12 @@ async function saveContactSettings() {
 }
 
 function loadContactContent() {
+    // Close dropdown menu - ADD THIS
+    const menu = document.getElementById('dropdownMenu');
+    if (menu) {
+        menu.classList.remove('show');
+    }
+    
     const container = document.getElementById('tabContentContainer');
     showAllBalancesInHeader(false);
     
