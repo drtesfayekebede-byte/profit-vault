@@ -197,8 +197,21 @@ html, body {
     width: 100%;
     height: 100%;
     z-index: -1;
-    background: #000000;
+    background: transparent;
     pointer-events: none;
+}
+
+/* Add a semi-transparent gradient overlay */
+.background-wrapper::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.4) 100%);
+    pointer-events: none;
+    z-index: -1;
 }
 
 /* ===== RGB GLOW LAYER ===== */
@@ -248,7 +261,7 @@ html, body {
     right: 0;
     width: 100%;
     z-index: 100;
-    background: rgba(10, 46, 26, 0.88);
+    background: rgba(0, 0, 0, 0.85);
     backdrop-filter: blur(15px);
     border-bottom: none;
     box-shadow: 0 0 40px rgba(255, 215, 0, 0.08), inset 0 0 30px rgba(255, 215, 0, 0.03);
@@ -303,7 +316,7 @@ html, body {
     max-width: 380px;
     min-width: 120px;
     margin: 0 16px;
-    background: rgba(10, 46, 26, 0.5);
+    background: rgba(0, 0, 0, 0.5);
     border: 1px solid rgba(255, 215, 0, 0.15);
 }
 
@@ -692,7 +705,7 @@ html, body {
 #contact.tab-content {
     border-radius: 28px !important;
     padding: 16px !important;
-    background: rgba(10, 46, 26, 0.85) !important;
+    background: rgba(0, 0, 0, 0.85) !important;
     backdrop-filter: blur(2px) !important;
     margin-bottom: 20px !important;
 }
@@ -895,7 +908,7 @@ html, body {
 }
 
 .wallet-filter-tab {
-    background: rgba(10, 46, 26, 0.5);
+    background: rgba(0, 0, 0, 0.5);
     border: 1px solid rgba(255, 215, 0, 0.15);
     padding: 10px 20px;
     border-radius: 24px;
@@ -922,7 +935,7 @@ html, body {
 
 /* ===== TRANSACTIONS ===== */
 .wallet-transaction {
-    background: rgba(10, 46, 26, 0.7);
+    background: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(5px);
     border-radius: 16px;
     padding: 14px;
@@ -991,7 +1004,7 @@ html, body {
 
 /* ===== CARDS & CONTAINERS ===== */
 .card {
-    background: rgba(10, 46, 26, 0.85);
+    background: rgba(0, 0, 0, 0.85);
     backdrop-filter: blur(2px);
     border-radius: 28px;
     padding: 18px;
@@ -1506,7 +1519,7 @@ html, body {
     right: 0;
     width: 100%;
     z-index: 99;
-    background: rgba(10, 46, 26, 0.92);
+    background: rgba(0, 0, 0, 0.92);
     backdrop-filter: blur(15px);
     border-top: none;
     box-shadow: 0 -5px 40px rgba(255, 215, 0, 0.08);
@@ -1759,7 +1772,7 @@ html, body {
     margin-top: 15px;
 }
 .investment-card {
-    background: rgba(10, 46, 26, 0.85);
+    background: rgba(0, 0, 0, 0.85);
     backdrop-filter: blur(2px);
     border-radius: 28px;
     padding: 20px 15px;
@@ -2926,19 +2939,18 @@ function updateUserMenu() {
             }
         }
 
-        function goToProfile() {
-            document.getElementById('dropdownMenu').classList.remove('show');
-
-            // Remove active class from all tabs and tab-content
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-
-            // Show profile tab content directly
-            const profileContent = document.getElementById('profile');
-            if (profileContent) {
-                profileContent.classList.add('active');
-            }
-        }
+function goToProfile() {
+    document.getElementById('dropdownMenu').classList.remove('show');
+    
+    // Close notification dropdown if open
+    const notificationDropdown = document.getElementById('notificationDropdown');
+    if (notificationDropdown) {
+        notificationDropdown.style.display = 'none';
+    }
+    
+    // Use the existing openApp function to load profile
+    openApp('profile');
+}
 
         // Close dropdown when clicking outside - UPDATED to exclude bell
         document.addEventListener('click', function(e) {
@@ -7830,11 +7842,8 @@ const FOOTER_TABS = [
     { id: 'clinic', emoji: '🏥', label: 'Clinic', adminOnly: false },
     { id: 'guide', emoji: '📖', label: 'Guide', adminOnly: false },
     { id: 'wallet', emoji: '💰', label: 'Wallet', adminOnly: false },
-    { id: 'admin', emoji: '👑', label: 'Admin', adminOnly: true }
-].filter(tab => {
-    if (tab.adminOnly && !IS_ADMIN) return false;
-    return true;
-});
+    { id: IS_ADMIN ? 'admin' : 'contact', emoji: IS_ADMIN ? '👑' : '📞', label: IS_ADMIN ? 'Admin' : 'Contact', adminOnly: false }
+];
 
 function renderFooterTabs() {
     const container = document.getElementById('footerTabs');
