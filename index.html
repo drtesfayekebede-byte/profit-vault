@@ -7677,7 +7677,6 @@ let APP_ITEMS = [];
 
 if (IS_ADMIN) {
     // ADMIN VIEW - 3 columns x 3 rows (9 items)
-    // Profile is in dropdown menu only
     APP_ITEMS = [
         { 
             id: 'dashboard', 
@@ -7693,7 +7692,7 @@ if (IS_ADMIN) {
         },
         { 
             id: 'games', 
-            image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/game.png', 
+            image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/games.png', 
             name: 'Games', 
             adminOnly: false 
         },
@@ -7711,13 +7710,13 @@ if (IS_ADMIN) {
         },
         { 
             id: 'clinic', 
-            image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/Clinic.png', 
+            image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/clinic.png', 
             name: 'Clinic', 
             adminOnly: false 
         },
         { 
             id: 'guide', 
-            image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/Guide.png', 
+            image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/guide.png', 
             name: 'Guide', 
             adminOnly: false 
         },
@@ -7739,11 +7738,9 @@ if (IS_ADMIN) {
             name: 'Admin', 
             adminOnly: true 
         }
-        // ← PROFILE REMOVED - ONLY IN DROPDOWN MENU
     ];
 } else {
     // NON-ADMIN VIEW - 3 columns x 3 rows (9 items)
-    // Profile is in dropdown menu only
     APP_ITEMS = [
         { 
             id: 'dashboard', 
@@ -7759,7 +7756,7 @@ if (IS_ADMIN) {
         },
         { 
             id: 'games', 
-            image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/game.png', 
+            image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/games.png', 
             name: 'Games', 
             adminOnly: false 
         },
@@ -7777,13 +7774,13 @@ if (IS_ADMIN) {
         },
         { 
             id: 'clinic', 
-            image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/Clinic.png', 
+            image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/clinic.png', 
             name: 'Clinic', 
             adminOnly: false 
         },
         { 
             id: 'guide', 
-            image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/Guide.png', 
+            image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/guide.png', 
             name: 'Guide', 
             adminOnly: false 
         },
