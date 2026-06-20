@@ -482,11 +482,13 @@ html, body {
     border: 3px solid rgba(251, 191, 36, 0.3);
     border-radius: 24px;
     padding: 16px;
-    padding-bottom: 16px;
     box-shadow: 0 0 20px rgba(251, 191, 36, 0.05), inset 0 0 20px rgba(251, 191, 36, 0.02);
     animation: appGridGlow 3s ease-in-out infinite;
-    display: block;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;  /* ← Aligns content to top */
     height: 100%;
+    overflow: hidden;
 }
 .app-grid-wrapper:hover {
     border-color: rgba(251, 191, 36, 0.9);
@@ -495,15 +497,30 @@ html, body {
 }
 
 /* ===== APP GRID - 3 COLUMNS x 3 ROWS ===== */
+.app-grid-wrapper {
+    background: rgba(10, 10, 15, 0.3);
+    border: 3px solid rgba(251, 191, 36, 0.3);
+    border-radius: 24px;
+    padding: 16px;
+    box-shadow: 0 0 20px rgba(251, 191, 36, 0.05), inset 0 0 20px rgba(251, 191, 36, 0.02);
+    animation: appGridGlow 3s ease-in-out infinite;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;  /* ← Aligns content to top */
+    height: 100%;
+    overflow: hidden;
+}
+
 .app-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 10px;
     row-gap: 8px;
     padding: 0;
-    margin-top: 24px;  /* ← ADJUST THIS to control downward shift */
+    margin-top: 48px;  /* ← ADJUST THIS to control downward shift */
     width: 100%;
-    height: calc(100% - 48px);
+    flex: 1;
+    align-content: start;
 }
 
 /* ===== APP CARDS - NO BACKGROUND, NO BORDER, KEEP ORIGINAL IMAGE SHAPE ===== */
