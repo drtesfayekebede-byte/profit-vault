@@ -238,7 +238,7 @@ html, body {
     z-index: 100;
     background: rgba(10, 10, 15, 0.88);
     backdrop-filter: blur(15px);
-    border-bottom: 3px solid transparent;
+    border-bottom: 2px solid transparent;
     background-image: linear-gradient(rgba(10, 10, 15, 0.88), rgba(10, 10, 15, 0.88)),
         linear-gradient(90deg, transparent, #fbbf24, #d97706, #fbbf24, transparent);
     background-origin: padding-box, border-box;
@@ -253,7 +253,7 @@ html, body {
     bottom: -3px;
     left: 0;
     width: 100%;
-    height: 3px;
+    height: 2px;
     background: linear-gradient(90deg, transparent, #fbbf24, #d97706, #fbbf24, transparent);
     background-size: 200% 100%;
     animation: shimmerGold 3s linear infinite;
@@ -504,8 +504,8 @@ html, body {
 
 .app-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
     padding: 4px 2px;
     flex: 1;
     align-content: stretch;
@@ -1490,7 +1490,7 @@ html, body {
     z-index: 99;
     background: rgba(10, 10, 15, 0.92);
     backdrop-filter: blur(15px);
-    border-top: 3px solid transparent;
+    border-top: 2px solid transparent;
     background-image: linear-gradient(rgba(10, 10, 15, 0.92), rgba(10, 10, 15, 0.92)),
         linear-gradient(90deg, transparent, #fbbf24, #d97706, #fbbf24, transparent);
     background-origin: padding-box, border-box;
@@ -1507,7 +1507,7 @@ html, body {
     top: -3px;
     left: 0;
     width: 100%;
-    height: 3px;
+    height: 2px;
     background: linear-gradient(90deg, transparent, #fbbf24, #d97706, #fbbf24, transparent);
     background-size: 200% 100%;
     animation: shimmerGold 3s linear infinite;
@@ -1923,8 +1923,9 @@ html, body {
         max-width: 200px;
     }
     
-    /* ===== MOBILE APP GRID - REDUCED SPACE ===== */
+    /* ===== MOBILE APP GRID - 2 COLUMNS ===== */
     .app-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
         gap: 6px !important;
         padding: 4px 2px !important;
     }
@@ -2079,8 +2080,9 @@ html, body {
         max-width: 140px;
     }
     
-    /* ===== EXTRA SMALL MOBILE APP GRID ===== */
+    /* ===== EXTRA SMALL MOBILE APP GRID - 2 COLUMNS ===== */
     .app-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
         gap: 5px !important;
         padding: 3px 1px !important;
     }
@@ -2185,7 +2187,6 @@ html, body {
         font-size: 6px !important;
     }
 }
-
 @media (max-width: 768px) {
     .investments-grid {
         grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -7728,67 +7729,142 @@ async function loadContactSettingsBatch() {
             showGuide('en');
         }
 
-       // ===== APP LAUNCHER GRID =====
+// ===== APP LAUNCHER GRID =====
 
-const APP_ITEMS = [
-    { 
-        id: 'dashboard', 
-        image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/dashboard.png', 
-        name: 'Dashboard', 
-        adminOnly: false 
-    },
-    { 
-        id: 'market', 
-        image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/market.png', 
-        name: 'Market', 
-        adminOnly: false 
-    },
-    { 
-        id: 'games', 
-        image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/game.png', 
-        name: 'Games', 
-        adminOnly: false 
-    },
-    { 
-        id: 'airtime', 
-        image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/airtime.png', 
-        name: 'Airtime', 
-        adminOnly: false 
-    },
-    { 
-        id: 'lottery', 
-        image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/lottery.png', 
-        name: 'Lottery', 
-        adminOnly: false 
-    },
-    { 
-        id: 'clinic', 
-        image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/Clinic.png', 
-        name: 'Clinic', 
-        adminOnly: false 
-    },
-    { 
-        id: 'guide', 
-        image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/Guide.png', 
-        name: 'Guide', 
-        adminOnly: false 
-    },
-    { 
-        id: 'wallet', 
-        image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/wallet.png', 
-        name: 'Wallet', 
-        adminOnly: false 
-    },
-    { 
-        id: IS_ADMIN ? 'admin' : 'contact', 
-        image: IS_ADMIN 
-            ? 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/admin.png' 
-            : 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/contact.png', 
-        name: IS_ADMIN ? 'Admin' : 'Contact', 
-        adminOnly: false 
-    }
-];
+// Build APP_ITEMS based on admin status
+let APP_ITEMS = [];
 
+if (IS_ADMIN) {
+    // ADMIN VIEW - 2 columns x 5 rows (10 items)
+    // Contact is in position 9, Admin is in position 10
+    APP_ITEMS = [
+        { 
+            id: 'dashboard', 
+            image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/dashboard.png', 
+            name: 'Dashboard', 
+            adminOnly: false 
+        },
+        { 
+            id: 'market', 
+            image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/market.png', 
+            name: 'Market', 
+            adminOnly: false 
+        },
+        { 
+            id: 'games', 
+            image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/game.png', 
+            name: 'Games', 
+            adminOnly: false 
+        },
+        { 
+            id: 'airtime', 
+            image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/airtime.png', 
+            name: 'Airtime', 
+            adminOnly: false 
+        },
+        { 
+            id: 'lottery', 
+            image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/lottery.png', 
+            name: 'Lottery', 
+            adminOnly: false 
+        },
+        { 
+            id: 'clinic', 
+            image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/Clinic.png', 
+            name: 'Clinic', 
+            adminOnly: false 
+        },
+        { 
+            id: 'guide', 
+            image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/Guide.png', 
+            name: 'Guide', 
+            adminOnly: false 
+        },
+        { 
+            id: 'wallet', 
+            image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/wallet.png', 
+            name: 'Wallet', 
+            adminOnly: false 
+        },
+        { 
+            id: 'contact', 
+            image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/contact.png', 
+            name: 'Contact', 
+            adminOnly: false 
+        },
+        { 
+            id: 'admin', 
+            image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/admin.png', 
+            name: 'Admin', 
+            adminOnly: true 
+        }
+    ];
+} else {
+    // NON-ADMIN VIEW - 2 columns x 5 rows (10 items)
+    // Contact is in position 9, Profile is in position 10
+    APP_ITEMS = [
+        { 
+            id: 'dashboard', 
+            image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/dashboard.png', 
+            name: 'Dashboard', 
+            adminOnly: false 
+        },
+        { 
+            id: 'market', 
+            image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/market.png', 
+            name: 'Market', 
+            adminOnly: false 
+        },
+        { 
+            id: 'games', 
+            image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/game.png', 
+            name: 'Games', 
+            adminOnly: false 
+        },
+        { 
+            id: 'airtime', 
+            image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/airtime.png', 
+            name: 'Airtime', 
+            adminOnly: false 
+        },
+        { 
+            id: 'lottery', 
+            image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/lottery.png', 
+            name: 'Lottery', 
+            adminOnly: false 
+        },
+        { 
+            id: 'clinic', 
+            image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/Clinic.png', 
+            name: 'Clinic', 
+            adminOnly: false 
+        },
+        { 
+            id: 'guide', 
+            image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/Guide.png', 
+            name: 'Guide', 
+            adminOnly: false 
+        },
+        { 
+            id: 'wallet', 
+            image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/wallet.png', 
+            name: 'Wallet', 
+            adminOnly: false 
+        },
+        { 
+            id: 'contact', 
+            image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/contact.png', 
+            name: 'Contact', 
+            adminOnly: false 
+        },
+        { 
+            id: 'profile', 
+            image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/profile.png', 
+            name: 'Profile', 
+            adminOnly: false 
+        }
+    ];
+}
 const FOOTER_TABS = [
     { id: 'home', emoji: '🏠', label: 'Home', adminOnly: false },
     { id: 'dashboard', emoji: '📊', label: 'Dash', adminOnly: false },
