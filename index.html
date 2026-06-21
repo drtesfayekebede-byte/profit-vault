@@ -5867,165 +5867,179 @@
         // ADMIN PANEL - FIXED
         // ================================================================
 
-        async function loadAdminPanel() {
-            const adminDiv = document.getElementById('admin');
-            if (!adminDiv) return;
+async function loadAdminPanel() {
+    const adminDiv = document.getElementById('admin');
+    if (!adminDiv) {
+        console.warn('Admin div not found');
+        return;
+    }
 
-            adminDiv.innerHTML = '<div class="loading">Loading admin panel...</div>';
+    // Check if user is admin before loading
+    if (!AppState.isAdmin) {
+        adminDiv.innerHTML = '<div class="loading" style="color: #ef4444;">Access denied. Admin only.</div>';
+        return;
+    }
 
-            try {
-                const [deposits, withdrawals, cons] = await Promise.all([
-                    sb.from('pending_deposits').select('*').eq('status', 'pending'),
-                    sb.from('pending_withdrawals').select('*').eq('status', 'pending'),
-                    sb.from('health_consultations').select('*').eq('status', 'pending')
-                ]);
+    adminDiv.innerHTML = '<div class="loading">Loading admin panel...</div>';
 
-                adminDiv.innerHTML = `
-                        <div id="adminBatches">
-                            <!-- BATCH 1: Pending Requests -->
-                            <div class="admin-batch active" data-batch="1">
-                                <div class="card"><h3>💰 Pending Deposits</h3>${renderPendingList(deposits.data, 'deposit')}</div>
-                                <div class="card"><h3>📤 Pending Withdrawals</h3>${renderPendingList(withdrawals.data, 'withdraw')}</div>
-                                <div class="card"><h3>🏥 Pending Consultations</h3>${renderConsultationsList(cons.data)}</div>
-                            </div>
-                            
-                            <!-- BATCH 2: Lottery Draws -->
-                            <div class="admin-batch" data-batch="2">
-                                <div class="card" id="lotteryDrawsCard">
-                                    <h3>🎰 Lottery Draws</h3>
-                                    <div class="loading">Click Load More to load lottery draws...</div>
+    try {
+        const [deposits, withdrawals, cons] = await Promise.all([
+            sb.from('pending_deposits').select('*').eq('status', 'pending'),
+            sb.from('pending_withdrawals').select('*').eq('status', 'pending'),
+            sb.from('health_consultations').select('*').eq('status', 'pending')
+        ]);
+
+        // Make sure data exists before rendering
+        const depositsData = deposits?.data || [];
+        const withdrawalsData = withdrawals?.data || [];
+        const consData = cons?.data || [];
+
+        adminDiv.innerHTML = `
+                <div id="adminBatches">
+                    <!-- BATCH 1: Pending Requests -->
+                    <div class="admin-batch active" data-batch="1">
+                        <div class="card"><h3>💰 Pending Deposits</h3>${renderPendingList(depositsData, 'deposit')}</div>
+                        <div class="card"><h3>📤 Pending Withdrawals</h3>${renderPendingList(withdrawalsData, 'withdraw')}</div>
+                        <div class="card"><h3>🏥 Pending Consultations</h3>${renderConsultationsList(consData)}</div>
+                    </div>
+                    
+                    <!-- BATCH 2: Lottery Draws -->
+                    <div class="admin-batch" data-batch="2">
+                        <div class="card" id="lotteryDrawsCard">
+                            <h3>🎰 Lottery Draws</h3>
+                            <div class="loading">Click Load More to load lottery draws...</div>
+                        </div>
+                    </div>
+                    
+                    <!-- BATCH 3: Market Edit -->
+                    <div class="admin-batch" data-batch="3">
+                        <div class="card" id="marketEditCard">
+                            <h3>🛠️ Edit Market (Name, Emoji, Price, ROI, Image)</h3>
+                            <div class="loading">Click Load More to load market settings...</div>
+                        </div>
+                    </div>
+                    
+                    <!-- BATCH 4: Airtime Cards + User Management -->
+                    <div class="admin-batch" data-batch="4">
+                        <div class="card" id="airtimeCardsCard">
+                            <h3>🃏 Airtime Cards</h3>
+                            <div class="loading">Click Load More to load airtime cards...</div>
+                        </div>
+                        <div class="card" id="userManagementCard">
+                            <h3>👥 USER MANAGEMENT (Click any user to manage)</h3>
+                            <div class="loading">Click Load More to load user management...</div>
+                        </div>
+                    </div>
+                    
+                    <!-- BATCH 5: Deposit + Withdrawal Settings -->
+                    <div class="admin-batch" data-batch="5">
+                        <div class="card" id="depositSettingsCard">
+                            <h3>💰 Deposit Settings (Edit Payment Info)</h3>
+                            <div class="loading">Click Load More to load deposit settings...</div>
+                        </div>
+                        <div class="card" id="withdrawalSettingsCard">
+                            <h3>🔧 Withdrawal Settings</h3>
+                            <div class="loading">Click Load More to load withdrawal settings...</div>
+                        </div>
+                    </div>
+                    
+                    <!-- BATCH 5.5: Notification System -->
+                    <div class="card" style="margin-top: 15px;">
+                        <h3>🔔 Send Notifications</h3>
+                        <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                            <p style="font-weight: bold; color: #fbbf24; margin-bottom: 10px;">📢 Send to All Active Users</p>
+                            <div style="margin-bottom: 10px;">
+                                <input type="text" id="adminBroadcastTitle" placeholder="Title (e.g., Important Update)" 
+                                       style="width: 100%; padding: 10px; border-radius: 10px; margin-bottom: 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; font-size: 14px;">
+                                <textarea id="adminBroadcastMessage" rows="3" placeholder="Message to all users..." 
+                                          style="width: 100%; padding: 10px; border-radius: 10px; margin-bottom: 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; font-size: 14px; resize: vertical;"></textarea>
+                                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px;">
+                                    <select id="adminBroadcastLink" style="flex: 1; padding: 10px; border-radius: 10px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; font-size: 14px;">
+                                        <option value="#dashboard">📊 Dashboard</option>
+                                        <option value="#market">🛒 Market</option>
+                                        <option value="#games">🎮 Games</option>
+                                        <option value="#lottery">🎟️ Lottery</option>
+                                        <option value="#cards">🃏 Airtime</option>
+                                        <option value="#clinic">🏥 Clinic</option>
+                                        <option value="#profile">👤 Profile</option>
+                                    </select>
                                 </div>
-                            </div>
-                            
-                            <!-- BATCH 3: Market Edit -->
-                            <div class="admin-batch" data-batch="3">
-                                <div class="card" id="marketEditCard">
-                                    <h3>🛠️ Edit Market (Name, Emoji, Price, ROI, Image)</h3>
-                                    <div class="loading">Click Load More to load market settings...</div>
-                                </div>
-                            </div>
-                            
-                            <!-- BATCH 4: Airtime Cards + User Management -->
-                            <div class="admin-batch" data-batch="4">
-                                <div class="card" id="airtimeCardsCard">
-                                    <h3>🃏 Airtime Cards</h3>
-                                    <div class="loading">Click Load More to load airtime cards...</div>
-                                </div>
-                                <div class="card" id="userManagementCard">
-                                    <h3>👥 USER MANAGEMENT (Click any user to manage)</h3>
-                                    <div class="loading">Click Load More to load user management...</div>
-                                </div>
-                            </div>
-                            
-                            <!-- BATCH 5: Deposit + Withdrawal Settings -->
-                            <div class="admin-batch" data-batch="5">
-                                <div class="card" id="depositSettingsCard">
-                                    <h3>💰 Deposit Settings (Edit Payment Info)</h3>
-                                    <div class="loading">Click Load More to load deposit settings...</div>
-                                </div>
-                                <div class="card" id="withdrawalSettingsCard">
-                                    <h3>🔧 Withdrawal Settings</h3>
-                                    <div class="loading">Click Load More to load withdrawal settings...</div>
-                                </div>
-                            </div>
-                            
-                            <!-- BATCH 5.5: Notification System -->
-                            <div class="card" style="margin-top: 15px;">
-                                <h3>🔔 Send Notifications</h3>
-                                <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                                    <p style="font-weight: bold; color: #fbbf24; margin-bottom: 10px;">📢 Send to All Active Users</p>
-                                    <div style="margin-bottom: 10px;">
-                                        <input type="text" id="adminBroadcastTitle" placeholder="Title (e.g., Important Update)" 
-                                               style="width: 100%; padding: 10px; border-radius: 10px; margin-bottom: 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; font-size: 14px;">
-                                        <textarea id="adminBroadcastMessage" rows="3" placeholder="Message to all users..." 
-                                                  style="width: 100%; padding: 10px; border-radius: 10px; margin-bottom: 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; font-size: 14px; resize: vertical;"></textarea>
-                                        <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px;">
-                                            <select id="adminBroadcastLink" style="flex: 1; padding: 10px; border-radius: 10px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; font-size: 14px;">
-                                                <option value="#dashboard">📊 Dashboard</option>
-                                                <option value="#market">🛒 Market</option>
-                                                <option value="#games">🎮 Games</option>
-                                                <option value="#lottery">🎟️ Lottery</option>
-                                                <option value="#cards">🃏 Airtime</option>
-                                                <option value="#clinic">🏥 Clinic</option>
-                                                <option value="#profile">👤 Profile</option>
-                                            </select>
-                                        </div>
-                                        <button class="btn btn-success" onclick="adminSendBroadcast(event)" style="width: 100%;">
-                                            📤 Send to All Active Users
-                                        </button>
-                                    </div>
-                                </div>
-                                <div>
-                                    <p style="font-weight: bold; color: #fbbf24; margin-bottom: 10px;">👤 Send to Specific User</p>
-                                    <div style="margin-bottom: 10px;">
-                                        <input type="text" id="adminDirectUserId" placeholder="User ID (paste from user list)" 
-                                               style="width: 100%; padding: 10px; border-radius: 10px; margin-bottom: 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; font-size: 14px;">
-                                        <input type="text" id="adminDirectTitle" placeholder="Title" 
-                                               style="width: 100%; padding: 10px; border-radius: 10px; margin-bottom: 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; font-size: 14px;">
-                                        <textarea id="adminDirectMessage" rows="3" placeholder="Message..." 
-                                                  style="width: 100%; padding: 10px; border-radius: 10px; margin-bottom: 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; font-size: 14px; resize: vertical;"></textarea>
-                                        <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px;">
-                                            <select id="adminDirectLink" style="flex: 1; padding: 10px; border-radius: 10px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; font-size: 14px;">
-                                                <option value="#dashboard">📊 Dashboard</option>
-                                                <option value="#market">🛒 Market</option>
-                                                <option value="#games">🎮 Games</option>
-                                                <option value="#lottery">🎟️ Lottery</option>
-                                                <option value="#cards">🃏 Airtime</option>
-                                                <option value="#clinic">🏥 Clinic</option>
-                                                <option value="#profile">👤 Profile</option>
-                                            </select>
-                                        </div>
-                                        <button class="btn btn-info" onclick="adminSendDirectNotification(event)" style="width: 100%;">
-                                            📤 Send to User
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- BATCH 6: Storage Cleanup -->
-                            <div class="admin-batch" data-batch="6">
-                                <div class="card" id="storageCleanupCard">
-                                    <h3>🧹 Storage Cleanup</h3>
-                                    <div class="loading">Click Load More to load storage cleanup...</div>
-                                </div>
-                            </div>
-                            
-                            <!-- BATCH 7: App Profile Picture -->
-                            <div class="admin-batch" data-batch="7">
-                                <div class="card" id="profilePictureCard">
-                                    <h3>🖼️ App Profile Picture</h3>
-                                    <div class="loading">Click Load More to load profile picture settings...</div>
-                                </div>
-                            </div>
-                            
-                            <!-- BATCH 8: Platform Statistics -->
-                            <div class="admin-batch" data-batch="8">
-                                <div class="card" id="statsCard">
-                                    <h3>📊 Platform Statistics</h3>
-                                    <div class="loading">Click Load More to load statistics...</div>
-                                </div>
-                            </div>
-                            
-                            <!-- BATCH 9: Contact Settings -->
-                            <div class="admin-batch" data-batch="9">
-                                <div class="card" id="contactSettingsCard">
-                                    <h3>📞 Contact Settings</h3>
-                                    <div class="loading">Click Load More to load contact settings...</div>
-                                </div>
+                                <button class="btn btn-success" onclick="adminSendBroadcast(event)" style="width: 100%;">
+                                    📤 Send to All Active Users
+                                </button>
                             </div>
                         </div>
-                        <div class="load-more-container" id="loadMoreContainer">
-                            <button class="load-more-btn" onclick="loadNextAdminBatch()">📥 Load More Sections</button>
+                        <div>
+                            <p style="font-weight: bold; color: #fbbf24; margin-bottom: 10px;">👤 Send to Specific User</p>
+                            <div style="margin-bottom: 10px;">
+                                <input type="text" id="adminDirectUserId" placeholder="User ID (paste from user list)" 
+                                       style="width: 100%; padding: 10px; border-radius: 10px; margin-bottom: 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; font-size: 14px;">
+                                <input type="text" id="adminDirectTitle" placeholder="Title" 
+                                       style="width: 100%; padding: 10px; border-radius: 10px; margin-bottom: 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; font-size: 14px;">
+                                <textarea id="adminDirectMessage" rows="3" placeholder="Message..." 
+                                          style="width: 100%; padding: 10px; border-radius: 10px; margin-bottom: 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; font-size: 14px; resize: vertical;"></textarea>
+                                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px;">
+                                    <select id="adminDirectLink" style="flex: 1; padding: 10px; border-radius: 10px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; font-size: 14px;">
+                                        <option value="#dashboard">📊 Dashboard</option>
+                                        <option value="#market">🛒 Market</option>
+                                        <option value="#games">🎮 Games</option>
+                                        <option value="#lottery">🎟️ Lottery</option>
+                                        <option value="#cards">🃏 Airtime</option>
+                                        <option value="#clinic">🏥 Clinic</option>
+                                        <option value="#profile">👤 Profile</option>
+                                    </select>
+                                </div>
+                                <button class="btn btn-info" onclick="adminSendDirectNotification(event)" style="width: 100%;">
+                                    📤 Send to User
+                                </button>
+                            </div>
                         </div>
-                    `;
+                    </div>
+                    
+                    <!-- BATCH 6: Storage Cleanup -->
+                    <div class="admin-batch" data-batch="6">
+                        <div class="card" id="storageCleanupCard">
+                            <h3>🧹 Storage Cleanup</h3>
+                            <div class="loading">Click Load More to load storage cleanup...</div>
+                        </div>
+                    </div>
+                    
+                    <!-- BATCH 7: App Profile Picture -->
+                    <div class="admin-batch" data-batch="7">
+                        <div class="card" id="profilePictureCard">
+                            <h3>🖼️ App Profile Picture</h3>
+                            <div class="loading">Click Load More to load profile picture settings...</div>
+                        </div>
+                    </div>
+                    
+                    <!-- BATCH 8: Platform Statistics -->
+                    <div class="admin-batch" data-batch="8">
+                        <div class="card" id="statsCard">
+                            <h3>📊 Platform Statistics</h3>
+                            <div class="loading">Click Load More to load statistics...</div>
+                        </div>
+                    </div>
+                    
+                    <!-- BATCH 9: Contact Settings -->
+                    <div class="admin-batch" data-batch="9">
+                        <div class="card" id="contactSettingsCard">
+                            <h3>📞 Contact Settings</h3>
+                            <div class="loading">Click Load More to load contact settings...</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="load-more-container" id="loadMoreContainer">
+                    <button class="load-more-btn" onclick="loadNextAdminBatch()">📥 Load More Sections</button>
+                </div>
+            `;
 
-                window.currentAdminBatch = 1;
-                window.totalAdminBatches = 9;
+        window.currentAdminBatch = 1;
+        window.totalAdminBatches = 9;
 
-            } catch (err) {
-                adminDiv.innerHTML = `<div class="loading" style="color: #ef4444;">Error loading admin panel: ${err.message}</div>`;
-            }
-        }
+    } catch (err) {
+        adminDiv.innerHTML = `<div class="loading" style="color: #ef4444;">Error loading admin panel: ${err.message}</div>`;
+    }
+}
 
         function renderPendingList(items, type) {
             if (!items?.length) return '<div>None</div>';
@@ -7685,63 +7699,75 @@
         }
 
         function goToHome() {
+            // Show home screen
             document.getElementById('appHomeScreen').style.display = 'flex';
             document.getElementById('tabContentWrapper').classList.remove('active');
             document.getElementById('backButton').classList.remove('visible');
-            document.querySelectorAll('#tabContentContainer > div').forEach(div => {
-                div.style.display = 'none';
-            });
             showAllBalancesInHeader(false);
-        }
-
-        function openApp(appId) {
-            document.getElementById('appHomeScreen').style.display = 'none';
-            document.getElementById('tabContentWrapper').classList.add('active');
-            document.getElementById('backButton').classList.add('visible');
-
-            switch (appId) {
-                case 'wallet':
-                    loadWalletContent();
-                    break;
-                case 'dashboard':
-                    loadDashboardContent();
-                    break;
-                case 'market':
-                    loadMarketContent();
-                    break;
-                case 'games':
-                    loadGamesContent();
-                    break;
-                case 'airtime':
-                    loadAirtimeContent();
-                    break;
-                case 'lottery':
-                    loadLotteryContent();
-                    break;
-                case 'clinic':
-                    loadClinicContent();
-                    break;
-                case 'profile':
-                    loadProfileContent();
-                    break;
-                case 'contact':
-                    loadContactContent();
-                    break;
-                case 'guide':
-                    loadGuideContent();
-                    break;
-                case 'admin':
-                    if (AppState.isAdmin) {
-                        loadAdminContent();
-                    } else {
-                        showToast('Admin access required', 'error');
-                        goToHome();
-                    }
-                    break;
-                default:
-                    showToast('Coming soon!', 'info');
+    
+            // ✅ CLEAR the tab content container completely
+            const container = document.getElementById('tabContentContainer');
+            if (container) {
+                container.innerHTML = '';
             }
         }
+function openApp(appId) {
+    // Hide home screen
+    document.getElementById('appHomeScreen').style.display = 'none';
+    document.getElementById('tabContentWrapper').classList.add('active');
+    document.getElementById('backButton').classList.add('visible');
+
+    // ✅ CLEAR the container before loading new content
+    const container = document.getElementById('tabContentContainer');
+    if (!container) return;
+    
+    // Clear previous content
+    container.innerHTML = '';
+
+    switch (appId) {
+        case 'wallet':
+            loadWalletContent();
+            break;
+        case 'dashboard':
+            loadDashboardContent();
+            break;
+        case 'market':
+            loadMarketContent();
+            break;
+        case 'games':
+            loadGamesContent();
+            break;
+        case 'airtime':
+            loadAirtimeContent();
+            break;
+        case 'lottery':
+            loadLotteryContent();
+            break;
+        case 'clinic':
+            loadClinicContent();
+            break;
+        case 'profile':
+            loadProfileContent();
+            break;
+        case 'contact':
+            loadContactContent();
+            break;
+        case 'guide':
+            loadGuideContent();
+            break;
+        case 'admin':
+            if (AppState.isAdmin) {
+                loadAdminContent();
+            } else {
+                showToast('Admin access required', 'error');
+                goToHome();
+            }
+            break;
+        default:
+            showToast('Coming soon!', 'info');
+            goToHome();
+    }
+}
 
         // ================================================================
         // CONTENT LOADERS
@@ -7935,9 +7961,13 @@
                 return;
             }
             const container = document.getElementById('tabContentContainer');
+            if (!container) return;
             showAllBalancesInHeader(false);
             container.innerHTML = '<div class="loading">Loading admin panel...</div>';
-            loadAdminPanel();
+            // Add a small delay to ensure DOM is ready
+            setTimeout(() => {
+                loadAdminPanel();
+            }, 100);
         }
 
         // ================================================================
