@@ -133,23 +133,23 @@
     50% { box-shadow: 0 0 30px rgba(255, 23, 68, 0.5); }
 }
 
-/* ===== COMMON APP GRID WRAPPER GLOW BORDER - RGB GLOW ===== */
+/* ===== COMMON APP GRID WRAPPER GLOW BORDER - THICK RGB GLOW ===== */
 @keyframes appGridGlow {
     0% { 
-        border-color: rgba(0, 255, 255, 0.2); 
-        box-shadow: 0 0 10px rgba(0, 255, 255, 0.1), 0 0 20px rgba(255, 0, 255, 0.05), inset 0 0 10px rgba(0, 255, 255, 0.05);
+        border-color: rgba(0, 255, 255, 0.4); 
+        box-shadow: 0 0 25px rgba(0, 255, 255, 0.3), 0 0 50px rgba(255, 0, 255, 0.15), inset 0 0 25px rgba(0, 255, 255, 0.1);
     }
     33% {
-        border-color: rgba(255, 0, 255, 0.3);
-        box-shadow: 0 0 15px rgba(255, 0, 255, 0.15), 0 0 25px rgba(0, 102, 255, 0.08), inset 0 0 15px rgba(255, 0, 255, 0.08);
+        border-color: rgba(255, 0, 255, 0.5);
+        box-shadow: 0 0 35px rgba(255, 0, 255, 0.4), 0 0 60px rgba(0, 102, 255, 0.2), inset 0 0 35px rgba(255, 0, 255, 0.15);
     }
     66% {
-        border-color: rgba(0, 102, 255, 0.3);
-        box-shadow: 0 0 15px rgba(0, 102, 255, 0.15), 0 0 25px rgba(0, 255, 255, 0.08), inset 0 0 15px rgba(0, 102, 255, 0.08);
+        border-color: rgba(0, 102, 255, 0.5);
+        box-shadow: 0 0 35px rgba(0, 102, 255, 0.4), 0 0 60px rgba(0, 255, 255, 0.2), inset 0 0 35px rgba(0, 102, 255, 0.15);
     }
     100% { 
-        border-color: rgba(0, 255, 255, 0.2); 
-        box-shadow: 0 0 10px rgba(0, 255, 255, 0.1), 0 0 20px rgba(255, 0, 255, 0.05), inset 0 0 10px rgba(0, 255, 255, 0.05);
+        border-color: rgba(0, 255, 255, 0.4); 
+        box-shadow: 0 0 25px rgba(0, 255, 255, 0.3), 0 0 50px rgba(255, 0, 255, 0.15), inset 0 0 25px rgba(0, 255, 255, 0.1);
     }
 }
 
@@ -167,40 +167,7 @@
     50% { box-shadow: 0 0 30px rgba(251, 191, 36, 0.6), 0 0 60px rgba(251, 191, 36, 0.3); }
 }
 
-/* ===== ETHEREAL WHITE BACKGROUND WITH RGB GLOW ===== */
-@keyframes etherealPulse {
-    0% { background-position: 0% 50%; opacity: 0.6; }
-    50% { background-position: 100% 50%; opacity: 0.9; }
-    100% { background-position: 0% 50%; opacity: 0.6; }
-}
-
-@keyframes dotFloat {
-    0% { transform: translateY(0px) scale(1); opacity: 0.4; }
-    50% { transform: translateY(-10px) scale(1.2); opacity: 0.8; }
-    100% { transform: translateY(0px) scale(1); opacity: 0.4; }
-}
-
-@keyframes tendrilSway {
-    0% { transform: rotate(-2deg); }
-    50% { transform: rotate(2deg); }
-    100% { transform: rotate(-2deg); }
-}
-
-/* ===== BASE ===== */
-html, body {
-    overflow: hidden;
-    background: #f5f5f8;
-    height: 100vh;
-    width: 100vw;
-    margin: 0;
-    padding: 0;
-    color: #1a1a2e;
-    position: fixed;
-    top: 0;
-    left: 0;
-}
-
-/* ===== ETHEREAL WHITE BACKGROUND WITH RGB GLOW ===== */
+/* ===== BACKGROUND WITH CUSTOM IMAGE ===== */
 .background-wrapper {
     position: fixed;
     top: 0;
@@ -208,14 +175,12 @@ html, body {
     width: 100%;
     height: 100%;
     z-index: -1;
-    background: linear-gradient(135deg, #ffffff 0%, #f0f0f5 30%, #e8e8f0 60%, #f5f5ff 100%);
-    background-size: 400% 400%;
-    animation: etherealPulse 15s ease-in-out infinite alternate;
+    background: url('https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/background/profitvault.png') no-repeat center center fixed;
+    background-size: cover;
     pointer-events: none;
-    overflow: hidden;
 }
 
-/* ===== RGB GLOW LAYER ===== */
+/* ===== IMAGE OVERLAY - RGB GLOW ===== */
 .background-wrapper::before {
     content: '';
     position: absolute;
@@ -230,66 +195,23 @@ html, body {
         radial-gradient(circle at 20% 80%, rgba(0, 255, 200, 0.08), transparent 35%),
         radial-gradient(circle at 80% 70%, rgba(200, 0, 255, 0.08), transparent 35%),
         radial-gradient(circle at 45% 45%, rgba(0, 150, 255, 0.06), transparent 30%);
-    background-size: 400% 400%;
-    animation: etherealPulse 12s ease-in-out infinite alternate;
     pointer-events: none;
 }
 
-/* ===== DOTTED PATHS / TENDRILLS ===== */
-.background-wrapper::after {
-    content: '';
-    position: absolute;
+/* ===== BASE ===== */
+html, body {
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    margin: 0;
+    padding: 0;
+    color: #e2e8f0;
+    position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    background: 
-        /* Dotted path 1 - flowing from top-left */
-        radial-gradient(circle at 10% 15%, rgba(100, 100, 120, 0.15) 2px, transparent 2px),
-        radial-gradient(circle at 15% 20%, rgba(100, 100, 120, 0.12) 2px, transparent 2px),
-        radial-gradient(circle at 22% 22%, rgba(100, 100, 120, 0.10) 2px, transparent 2px),
-        radial-gradient(circle at 30% 20%, rgba(100, 100, 120, 0.12) 2px, transparent 2px),
-        radial-gradient(circle at 38% 15%, rgba(100, 100, 120, 0.15) 2px, transparent 2px),
-        radial-gradient(circle at 45% 10%, rgba(100, 100, 120, 0.12) 2px, transparent 2px),
-        radial-gradient(circle at 52% 8%, rgba(100, 100, 120, 0.10) 2px, transparent 2px),
-        radial-gradient(circle at 60% 10%, rgba(100, 100, 120, 0.12) 2px, transparent 2px),
-        radial-gradient(circle at 68% 15%, rgba(100, 100, 120, 0.10) 2px, transparent 2px),
-        radial-gradient(circle at 75% 20%, rgba(100, 100, 120, 0.12) 2px, transparent 2px),
-        radial-gradient(circle at 82% 25%, rgba(100, 100, 120, 0.10) 2px, transparent 2px),
-        radial-gradient(circle at 88% 30%, rgba(100, 100, 120, 0.12) 2px, transparent 2px),
-        radial-gradient(circle at 93% 35%, rgba(100, 100, 120, 0.10) 2px, transparent 2px),
-        radial-gradient(circle at 96% 40%, rgba(100, 100, 120, 0.08) 2px, transparent 2px),
-        /* Dotted path 2 - weaving */
-        radial-gradient(circle at 5% 40%, rgba(150, 150, 180, 0.08) 2px, transparent 2px),
-        radial-gradient(circle at 12% 45%, rgba(150, 150, 180, 0.10) 2px, transparent 2px),
-        radial-gradient(circle at 20% 48%, rgba(150, 150, 180, 0.08) 2px, transparent 2px),
-        radial-gradient(circle at 28% 50%, rgba(150, 150, 180, 0.10) 2px, transparent 2px),
-        radial-gradient(circle at 36% 48%, rgba(150, 150, 180, 0.08) 2px, transparent 2px),
-        radial-gradient(circle at 44% 45%, rgba(150, 150, 180, 0.10) 2px, transparent 2px),
-        radial-gradient(circle at 52% 42%, rgba(150, 150, 180, 0.08) 2px, transparent 2px),
-        radial-gradient(circle at 60% 40%, rgba(150, 150, 180, 0.10) 2px, transparent 2px),
-        radial-gradient(circle at 68% 42%, rgba(150, 150, 180, 0.08) 2px, transparent 2px),
-        radial-gradient(circle at 76% 45%, rgba(150, 150, 180, 0.10) 2px, transparent 2px),
-        radial-gradient(circle at 84% 48%, rgba(150, 150, 180, 0.08) 2px, transparent 2px),
-        radial-gradient(circle at 92% 50%, rgba(150, 150, 180, 0.10) 2px, transparent 2px),
-        /* Dotted path 3 - bottom */
-        radial-gradient(circle at 8% 70%, rgba(120, 120, 140, 0.10) 2px, transparent 2px),
-        radial-gradient(circle at 16% 68%, rgba(120, 120, 140, 0.08) 2px, transparent 2px),
-        radial-gradient(circle at 24% 65%, rgba(120, 120, 140, 0.10) 2px, transparent 2px),
-        radial-gradient(circle at 32% 62%, rgba(120, 120, 140, 0.08) 2px, transparent 2px),
-        radial-gradient(circle at 40% 60%, rgba(120, 120, 140, 0.10) 2px, transparent 2px),
-        radial-gradient(circle at 48% 62%, rgba(120, 120, 140, 0.08) 2px, transparent 2px),
-        radial-gradient(circle at 56% 65%, rgba(120, 120, 140, 0.10) 2px, transparent 2px),
-        radial-gradient(circle at 64% 68%, rgba(120, 120, 140, 0.08) 2px, transparent 2px),
-        radial-gradient(circle at 72% 70%, rgba(120, 120, 140, 0.10) 2px, transparent 2px),
-        radial-gradient(circle at 80% 72%, rgba(120, 120, 140, 0.08) 2px, transparent 2px),
-        radial-gradient(circle at 88% 70%, rgba(120, 120, 140, 0.10) 2px, transparent 2px),
-        radial-gradient(circle at 95% 68%, rgba(120, 120, 140, 0.08) 2px, transparent 2px);
-    pointer-events: none;
-    background-size: 100% 100%;
 }
 
-/* ===== HEADER ===== */
+/* ===== HEADER - DEEP BLACK ===== */
 .header {
     position: fixed;
     top: 0;
@@ -297,10 +219,10 @@ html, body {
     right: 0;
     width: 100%;
     z-index: 100;
-    background: rgba(255, 255, 255, 0.85);
+    background: rgba(0, 0, 0, 0.92);
     backdrop-filter: blur(15px);
-    border-bottom: 2px solid rgba(0, 200, 255, 0.15);
-    box-shadow: 0 0 40px rgba(0, 200, 255, 0.05), inset 0 0 30px rgba(255, 0, 255, 0.03);
+    border-bottom: 2px solid rgba(0, 255, 255, 0.15);
+    box-shadow: 0 0 40px rgba(0, 255, 255, 0.08);
     padding: 0 32px;
     height: 76px;
     min-height: 76px;
@@ -332,8 +254,8 @@ html, body {
     white-space: nowrap;
     font-family: 'Times New Roman', Times, serif;
     font-style: italic;
-    color: #1a1a2e;
-    text-shadow: 0 0 20px rgba(255, 0, 128, 0.15), 0 0 40px rgba(0, 200, 255, 0.10);
+    color: #FFD700;
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
 }
 
 .logo-icon {
@@ -351,8 +273,8 @@ html, body {
     max-width: 380px;
     min-width: 120px;
     margin: 0 16px;
-    background: rgba(255, 255, 255, 0.5);
-    border: 1px solid rgba(0, 200, 255, 0.15);
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(0, 255, 255, 0.15);
 }
 
 .header-balance-item {
@@ -363,6 +285,7 @@ html, body {
     border-radius: 14px;
     font-size: 14px;
     font-weight: 700;
+    color: #e2e8f0;
 }
 
 .header-balance-item .balance-icon {
@@ -377,11 +300,11 @@ html, body {
 }
 
 .balance-coins .balance-value {
-    color: #0066FF;
+    color: #60a5fa;
 }
 .balance-coins {
-    background: rgba(0, 102, 255, 0.10);
-    border: 1px solid rgba(0, 102, 255, 0.15);
+    background: rgba(96, 165, 250, 0.12);
+    border: 1px solid rgba(96, 165, 250, 0.2);
     animation: pulseBlue 2s infinite;
 }
 
@@ -414,15 +337,15 @@ html, body {
     color: #10b981;
 }
 .balance-money {
-    background: rgba(16, 185, 129, 0.10);
-    border: 1px solid rgba(16, 185, 129, 0.15);
+    background: rgba(16, 185, 129, 0.12);
+    border: 1px solid rgba(16, 185, 129, 0.2);
 }
 .balance-bonus .balance-value {
     color: #fbbf24;
 }
 .balance-bonus {
-    background: rgba(251, 191, 36, 0.10);
-    border: 1px solid rgba(251, 191, 36, 0.15);
+    background: rgba(251, 191, 36, 0.12);
+    border: 1px solid rgba(251, 191, 36, 0.2);
 }
 
 /* ===== PROFILE AREA ===== */
@@ -445,7 +368,7 @@ html, body {
     overflow: hidden;
     cursor: pointer;
     transition: 0.2s;
-    border: 2px solid rgba(0, 200, 255, 0.3);
+    border: 2px solid rgba(0, 255, 255, 0.3);
     flex-shrink: 0;
     box-shadow: 0 0 20px rgba(59, 130, 246, 0.15);
 }
@@ -505,7 +428,7 @@ html, body {
     max-width: 350px;
     max-height: 400px;
     overflow: hidden;
-    border: 1px solid rgba(0, 200, 255, 0.3);
+    border: 1px solid rgba(0, 255, 255, 0.3);
 }
 
 .notification-item {
@@ -554,7 +477,7 @@ html, body {
     z-index: 100000;
     min-width: 170px;
     overflow: hidden;
-    border: 1px solid rgba(0, 200, 255, 0.2);
+    border: 1px solid rgba(0, 255, 255, 0.2);
 }
 
 .dropdown-menu.show {
@@ -594,7 +517,7 @@ html, body {
 }
 
 .app-grid-container::-webkit-scrollbar-track {
-    background: rgba(200, 200, 220, 0.2);
+    background: rgba(255, 255, 255, 0.1);
     border-radius: 4px;
 }
 
@@ -603,14 +526,14 @@ html, body {
     border-radius: 4px;
 }
 
-/* ===== APP GRID WRAPPER - RGB GLOW BORDER ===== */
+/* ===== APP GRID WRAPPER - THICK RGB GLOW BORDER ===== */
 .app-grid-wrapper {
-    background: rgba(255, 255, 255, 0.4);
+    background: rgba(0, 0, 0, 0.25);
     backdrop-filter: blur(5px);
-    border: 2px solid rgba(0, 255, 255, 0.2);
+    border: 4px solid rgba(0, 255, 255, 0.3);
     border-radius: 24px;
     padding: 16px;
-    box-shadow: 0 0 20px rgba(0, 255, 255, 0.08), 0 0 40px rgba(255, 0, 255, 0.04), inset 0 0 20px rgba(0, 255, 255, 0.04);
+    box-shadow: 0 0 30px rgba(0, 255, 255, 0.15), 0 0 60px rgba(255, 0, 255, 0.08), inset 0 0 30px rgba(0, 255, 255, 0.08);
     animation: appGridGlow 4s ease-in-out infinite;
     flex: 1;
     display: flex;
@@ -623,8 +546,8 @@ html, body {
 }
 
 .app-grid-wrapper:hover {
-    border-color: rgba(0, 255, 255, 0.5);
-    box-shadow: 0 0 30px rgba(0, 255, 255, 0.2), 0 0 60px rgba(255, 0, 255, 0.1);
+    border-color: rgba(0, 255, 255, 0.7);
+    box-shadow: 0 0 50px rgba(0, 255, 255, 0.3), 0 0 80px rgba(255, 0, 255, 0.15);
     animation-play-state: paused;
 }
 
@@ -640,14 +563,14 @@ html, body {
     align-content: center;
 }
 
-/* ===== APP CARDS ===== */
+/* ===== APP CARDS - TRANSPARENT LIGHT BLACK ===== */
 .app-card {
-    background: rgba(255, 255, 255, 0.3) !important;
+    background: rgba(0, 0, 0, 0.35) !important;
     backdrop-filter: blur(5px) !important;
-    border: none !important;
+    border: 1px solid rgba(0, 255, 255, 0.1) !important;
     border-radius: 16px !important;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05) !important;
-    padding: 4px !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
+    padding: 8px !important;
     transition: all 0.3s ease;
     position: relative;
     overflow: visible;
@@ -662,7 +585,9 @@ html, body {
 
 .app-card:hover {
     transform: scale(1.05) translateY(-4px);
-    box-shadow: 0 8px 30px rgba(0, 200, 255, 0.15) !important;
+    background: rgba(0, 0, 0, 0.5) !important;
+    border-color: rgba(0, 255, 255, 0.3) !important;
+    box-shadow: 0 8px 30px rgba(0, 255, 255, 0.15) !important;
 }
 
 .app-card .app-image {
@@ -671,13 +596,13 @@ html, body {
     object-fit: contain;
     display: block;
     border-radius: 0;
-    filter: drop-shadow(0 0 10px rgba(0, 200, 255, 0.08));
+    filter: drop-shadow(0 0 10px rgba(0, 255, 255, 0.08));
     transition: all 0.4s ease;
     position: relative;
 }
 
 .app-card:hover .app-image {
-    filter: drop-shadow(0 0 30px rgba(0, 200, 255, 0.2));
+    filter: drop-shadow(0 0 30px rgba(0, 255, 255, 0.2));
     transform: scale(1.03);
 }
 
@@ -685,11 +610,11 @@ html, body {
     font-size: clamp(10px, 1.4vw, 14px);
     font-weight: 900;
     text-align: center;
-    padding: 3px 8px;
+    padding: 4px 10px;
     margin-top: 4px;
-    background: rgba(255, 255, 255, 0.7);
+    background: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(5px);
-    border: 1px solid rgba(0, 200, 255, 0.1);
+    border: 1px solid rgba(0, 255, 255, 0.15);
     border-radius: 8px;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -698,25 +623,26 @@ html, body {
     position: relative;
     z-index: 2;
     white-space: nowrap;
+    color: #ffffff;
 }
 
 .app-card:hover .app-name {
     transform: scale(1.05);
-    border-color: rgba(0, 200, 255, 0.3);
+    border-color: rgba(0, 255, 255, 0.3);
 }
 
 /* ===== INDIVIDUAL APP COLORS - BOLD & COLORFUL ===== */
 .app-card[data-app="dashboard"] .app-name {
-    color: #00bfff;
-    text-shadow: 0 0 30px rgba(0, 191, 255, 0.5), 0 0 60px rgba(0, 191, 255, 0.2);
+    color: #00ffff;
+    text-shadow: 0 0 30px rgba(0, 255, 255, 0.5), 0 0 60px rgba(0, 255, 255, 0.2);
 }
 .app-card[data-app="market"] .app-name {
-    color: #ff0080;
-    text-shadow: 0 0 30px rgba(255, 0, 128, 0.5), 0 0 60px rgba(255, 0, 128, 0.2);
+    color: #ff00ff;
+    text-shadow: 0 0 30px rgba(255, 0, 255, 0.5), 0 0 60px rgba(255, 0, 255, 0.2);
 }
 .app-card[data-app="games"] .app-name {
-    color: #9900ff;
-    text-shadow: 0 0 30px rgba(153, 0, 255, 0.5), 0 0 60px rgba(153, 0, 255, 0.2);
+    color: #0066ff;
+    text-shadow: 0 0 30px rgba(0, 102, 255, 0.5), 0 0 60px rgba(0, 102, 255, 0.2);
 }
 .app-card[data-app="airtime"] .app-name {
     color: #00ffaa;
@@ -764,7 +690,7 @@ html, body {
 }
 
 .tab-content-wrapper::-webkit-scrollbar-track {
-    background: rgba(200, 200, 220, 0.2);
+    background: rgba(255, 255, 255, 0.1);
     border-radius: 4px;
 }
 
@@ -828,7 +754,7 @@ html, body {
 #contact.tab-content {
     border-radius: 28px !important;
     padding: 20px !important;
-    background: rgba(255, 255, 255, 0.7) !important;
+    background: rgba(0, 0, 0, 0.4) !important;
     backdrop-filter: blur(10px) !important;
     margin-bottom: 20px !important;
     border: 2px solid rgba(0, 255, 255, 0.2) !important;
@@ -953,6 +879,7 @@ html, body {
     text-align: center;
     transition: all 0.3s ease;
     font-weight: 700;
+    color: #e2e8f0;
 }
 
 .wallet-balance-card:hover {
@@ -981,7 +908,7 @@ html, body {
 
 /* CARD 1: RED (Balance) */
 .wallet-balance-card:nth-child(1) {
-    background: rgba(239, 68, 68, 0.10) !important;
+    background: rgba(239, 68, 68, 0.15) !important;
     border: 2px solid rgba(239, 68, 68, 0.3) !important;
     animation: glowRed 2s ease-in-out infinite !important;
     box-shadow: 0 0 20px rgba(239, 68, 68, 0.1) !important;
@@ -996,7 +923,7 @@ html, body {
 
 /* CARD 2: GREEN (Bonus) */
 .wallet-balance-card:nth-child(2) {
-    background: rgba(16, 185, 129, 0.10) !important;
+    background: rgba(16, 185, 129, 0.15) !important;
     border: 2px solid rgba(16, 185, 129, 0.3) !important;
     animation: glowGreen 2.5s ease-in-out infinite !important;
     box-shadow: 0 0 20px rgba(16, 185, 129, 0.1) !important;
@@ -1011,7 +938,7 @@ html, body {
 
 /* CARD 3: YELLOW (Coins) */
 .wallet-balance-card:nth-child(3) {
-    background: rgba(251, 191, 36, 0.10) !important;
+    background: rgba(251, 191, 36, 0.15) !important;
     border: 2px solid rgba(251, 191, 36, 0.3) !important;
     animation: glowYellow 3s ease-in-out infinite !important;
     box-shadow: 0 0 20px rgba(251, 191, 36, 0.1) !important;
@@ -1034,11 +961,11 @@ html, body {
 }
 
 .wallet-filter-tab {
-    background: rgba(255, 255, 255, 0.5);
-    border: 1px solid rgba(0, 200, 255, 0.15);
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(0, 255, 255, 0.15);
     padding: 10px 20px;
     border-radius: 24px;
-    color: #4a4a6a;
+    color: #94a3b8;
     font-size: 14px;
     font-weight: 700;
     cursor: pointer;
@@ -1056,23 +983,24 @@ html, body {
 
 .wallet-filter-tab:hover {
     transform: translateY(-2px);
-    border-color: rgba(0, 200, 255, 0.4);
+    border-color: rgba(0, 255, 255, 0.4);
 }
 
 /* ===== TRANSACTIONS ===== */
 .wallet-transaction {
-    background: rgba(255, 255, 255, 0.6);
+    background: rgba(0, 0, 0, 0.3);
     backdrop-filter: blur(5px);
     border-radius: 16px;
     padding: 14px;
     margin-bottom: 10px;
-    border: 1px solid rgba(0, 200, 255, 0.08);
+    border: 1px solid rgba(0, 255, 255, 0.08);
     transition: all 0.3s ease;
     font-weight: 600;
+    color: #e2e8f0;
 }
 
 .wallet-transaction:hover {
-    border-color: rgba(0, 200, 255, 0.2);
+    border-color: rgba(0, 255, 255, 0.2);
     transform: translateX(4px);
 }
 
@@ -1103,13 +1031,13 @@ html, body {
 .wallet-transaction-type {
     font-weight: 900;
     font-size: 15px;
-    color: #1a1a2e;
+    color: #e2e8f0;
 }
 
 .wallet-transaction-date {
     font-size: 12px;
     font-weight: 600;
-    color: #6a6a8a;
+    color: #94a3b8;
 }
 
 .wallet-transaction-right {
@@ -1133,20 +1061,21 @@ html, body {
 
 /* ===== CARDS & CONTAINERS ===== */
 .card {
-    background: rgba(255, 255, 255, 0.6);
+    background: rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(5px);
     border-radius: 28px;
     padding: 20px;
     margin-bottom: 18px;
-    border: 2px solid rgba(0, 200, 255, 0.15);
+    border: 2px solid rgba(0, 255, 255, 0.15);
     transition: all 0.3s;
     animation: fadeIn 0.3s ease-out;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    color: #e2e8f0;
 }
 
 .card:hover {
-    border-color: rgba(0, 200, 255, 0.3);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06), 0 0 20px rgba(0, 200, 255, 0.05);
+    border-color: rgba(0, 255, 255, 0.3);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3), 0 0 20px rgba(0, 255, 255, 0.05);
 }
 
 .card h3 {
@@ -1155,7 +1084,7 @@ html, body {
     font-weight: 900;
     border-left: 4px solid #00bfff;
     padding-left: 12px;
-    color: #1a1a2e;
+    color: #00bfff;
     text-shadow: 0 0 20px rgba(0, 191, 255, 0.1);
 }
 
@@ -1182,19 +1111,19 @@ html, body {
     aspect-ratio: 1 / 1;
     width: 100%;
     overflow: hidden;
-    border: 2px solid rgba(0, 200, 255, 0.3);
+    border: 2px solid rgba(0, 255, 255, 0.3);
     border-radius: 20px;
-    background: rgba(255, 255, 255, 0.5);
+    background: rgba(0, 0, 0, 0.3);
     position: relative;
-    box-shadow: 0 10px 20px -5px rgba(0,0,0,0.05);
+    box-shadow: 0 10px 20px -5px rgba(0,0,0,0.3);
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .market-image-container:hover {
-    border-color: rgba(0, 200, 255, 0.6);
-    box-shadow: 0 0 25px rgba(0, 200, 255, 0.15);
+    border-color: rgba(0, 255, 255, 0.6);
+    box-shadow: 0 0 25px rgba(0, 255, 255, 0.15);
 }
 
 .market-image {
@@ -1204,7 +1133,6 @@ html, body {
     display: block;
 }
 
-/* ===== MARKET EMOJI - BOLD, BIG, 100% FILL ===== */
 .market-emoji {
     width: 100%;
     height: 100%;
@@ -1213,8 +1141,8 @@ html, body {
     justify-content: center;
     font-size: 72px;
     font-weight: 900;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(240, 240, 255, 0.5));
-    text-shadow: 0 0 30px rgba(0, 200, 255, 0.1);
+    background: rgba(0, 0, 0, 0.2);
+    text-shadow: 0 0 30px rgba(0, 255, 255, 0.1);
 }
 
 .market-owned-badge {
@@ -1250,7 +1178,7 @@ html, body {
 .market-name {
     font-weight: 900;
     font-size: 14px;
-    color: #1a1a2e;
+    color: #e2e8f0;
 }
 
 .market-price {
@@ -1262,7 +1190,7 @@ html, body {
 .market-roi {
     font-size: 12px;
     font-weight: 700;
-    color: #6a6a8a;
+    color: #94a3b8;
 }
 
 .market-item.owned {
@@ -1304,18 +1232,19 @@ html, body {
 
 .game-card {
     aspect-ratio: 1;
-    background: linear-gradient(145deg, rgba(255, 255, 255, 0.8), rgba(240, 240, 255, 0.5));
+    background: rgba(0, 0, 0, 0.3);
     border-radius: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: all 0.2s ease;
-    border: 2px solid rgba(0, 200, 255, 0.2);
+    border: 2px solid rgba(0, 255, 255, 0.2);
     font-size: 40px;
     font-weight: 900;
     transform-style: preserve-3d;
-    box-shadow: 0 8px 16px rgba(0,0,0,0.05);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    color: #e2e8f0;
 }
 
 .game-card:hover {
@@ -1341,7 +1270,7 @@ html, body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.6);
+    background: rgba(0, 0, 0, 0.85);
     backdrop-filter: blur(10px);
     justify-content: center;
     align-items: center;
@@ -1351,7 +1280,7 @@ html, body {
 .modal.active { display: flex; }
 
 .modal-content {
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba(0, 0, 0, 0.8);
     backdrop-filter: blur(15px);
     border-radius: 32px;
     padding: 25px;
@@ -1359,8 +1288,9 @@ html, body {
     max-width: 400px;
     max-height: 85vh;
     overflow-y: auto;
-    border: 2px solid rgba(0, 200, 255, 0.2);
-    box-shadow: 0 25px 40px rgba(0,0,0,0.1), 0 0 30px rgba(0, 200, 255, 0.05);
+    border: 2px solid rgba(0, 255, 255, 0.2);
+    box-shadow: 0 25px 40px rgba(0,0,0,0.3), 0 0 30px rgba(0, 255, 255, 0.05);
+    color: #e2e8f0;
 }
 
 .modal.active {
@@ -1388,9 +1318,9 @@ html, body {
     display: flex;
     align-items: center;
     gap: 12px;
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba(0, 0, 0, 0.85);
     backdrop-filter: blur(10px);
-    color: #1a1a2e;
+    color: #e2e8f0;
     border-left: 5px solid #10b981;
     padding: 12px 24px;
     border-radius: 60px;
@@ -1399,7 +1329,7 @@ html, body {
     z-index: 1001;
     white-space: nowrap;
     font-size: 15px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
 }
 
 .toast.show { display: flex; animation: fadeIn 0.2s; }
@@ -1418,7 +1348,7 @@ html, body {
     text-align: center;
     padding: 30px;
     opacity: 0.7;
-    color: #6a6a8a;
+    color: #94a3b8;
     font-weight: 600;
 }
 
@@ -1478,14 +1408,15 @@ html, body {
 }
 
 #authModal .modal-content {
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba(0, 0, 0, 0.85);
     backdrop-filter: blur(15px);
     border-radius: 48px;
     padding: 30px 25px;
     width: 90%;
     max-width: 420px;
-    box-shadow: 0 25px 40px rgba(0,0,0,0.1);
-    border: 2px solid rgba(0, 200, 255, 0.15);
+    box-shadow: 0 25px 40px rgba(0,0,0,0.3);
+    border: 2px solid rgba(0, 255, 255, 0.15);
+    color: #e2e8f0;
     animation: slideUpFlicker 0.4s ease-out;
 }
 
@@ -1493,15 +1424,15 @@ html, body {
     font-size: 42px;
     font-weight: 900;
     font-style: italic;
-    color: #1a1a2e;
-    text-shadow: 0 0 20px rgba(0, 191, 255, 0.2), 0 0 40px rgba(255, 0, 255, 0.1);
+    color: #FFD700;
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
     letter-spacing: 2px;
     margin-bottom: 8px;
     text-align: center;
 }
 
 .auth-header p {
-    color: #4a4a6a;
+    color: #94a3b8;
     font-size: 15px;
     font-weight: 600;
     margin-bottom: 20px;
@@ -1545,11 +1476,11 @@ html, body {
     padding-right: 45px !important;
     width: 100% !important;
     box-sizing: border-box !important;
-    background: rgba(255, 255, 255, 0.8);
-    border: 1px solid rgba(0, 200, 255, 0.15);
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(0, 255, 255, 0.15);
     border-radius: 60px;
     padding: 14px 20px;
-    color: #1a1a2e;
+    color: #e2e8f0;
     font-size: 16px;
     font-weight: 600;
     transition: 0.2s;
@@ -1581,11 +1512,11 @@ html, body {
 }
 
 #authForm input {
-    background: rgba(255, 255, 255, 0.8);
-    border: 1px solid rgba(0, 200, 255, 0.15);
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(0, 255, 255, 0.15);
     border-radius: 60px;
     padding: 14px 20px;
-    color: #1a1a2e;
+    color: #e2e8f0;
     font-size: 16px;
     font-weight: 600;
     margin-bottom: 16px;
@@ -1654,12 +1585,12 @@ html, body {
 #authForm .or-divider {
     text-align: center;
     margin: 8px 0;
-    color: #6a6a8a;
+    color: #94a3b8;
     font-size: 14px;
     font-weight: 600;
 }
 
-/* ===== FOOTER ===== */
+/* ===== FOOTER - DEEP BLACK ===== */
 .app-footer {
     position: fixed;
     bottom: 0;
@@ -1667,10 +1598,10 @@ html, body {
     right: 0;
     width: 100%;
     z-index: 99;
-    background: rgba(255, 255, 255, 0.85);
+    background: rgba(0, 0, 0, 0.92);
     backdrop-filter: blur(15px);
-    border-top: 2px solid rgba(0, 200, 255, 0.15);
-    box-shadow: 0 -5px 40px rgba(0, 200, 255, 0.05);
+    border-top: 2px solid rgba(0, 255, 255, 0.15);
+    box-shadow: 0 -5px 40px rgba(0, 255, 255, 0.08);
     padding: 10px 24px;
     height: 76px;
     min-height: 76px;
@@ -1705,7 +1636,7 @@ html, body {
     justify-content: center;
     background: none;
     border: none;
-    color: #4a4a6a;
+    color: #94a3b8;
     font-size: 11px;
     font-weight: 700;
     padding: 4px 10px;
@@ -1830,11 +1761,12 @@ html, body {
     display: flex;
     align-items: center;
     gap: 12px;
-    background: rgba(255, 255, 255, 0.5);
+    background: rgba(0, 0, 0, 0.3);
     padding: 8px 12px;
     border-radius: 12px;
     margin-bottom: 8px;
     font-weight: 600;
+    color: #e2e8f0;
 }
 .transaction-item input {
     margin-right: 8px;
@@ -1858,7 +1790,7 @@ html, body {
 }
 
 .quad-item {
-    background: rgba(255, 255, 255, 0.5);
+    background: rgba(0, 0, 0, 0.3);
     border-radius: 20px;
     padding: 12px;
     margin-bottom: 8px;
@@ -1866,12 +1798,13 @@ html, body {
     justify-content: space-between;
     align-items: center;
     font-weight: 700;
+    color: #e2e8f0;
 }
 .quad-item.unlocked { border-left: 4px solid #10b981; }
 .quad-item.locked { border-left: 4px solid #ef4444; }
 
 .progress-bar {
-    background: rgba(0, 0, 0, 0.05);
+    background: rgba(255,255,255,0.1);
     border-radius: 20px;
     height: 12px;
     overflow: hidden;
@@ -1897,6 +1830,7 @@ html, body {
     align-items: center;
     margin-top: 15px;
     font-weight: 700;
+    color: #e2e8f0;
 }
 #toggleKnob {
     width: 20px;
@@ -1916,6 +1850,7 @@ html, body {
     margin-top: 20px;
     align-items: center;
     font-weight: 700;
+    color: #e2e8f0;
 }
 
 /* ===== INVESTMENT CARDS ===== */
@@ -1926,20 +1861,21 @@ html, body {
     margin-top: 15px;
 }
 .investment-card {
-    background: rgba(255, 255, 255, 0.6);
+    background: rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(5px);
     border-radius: 28px;
     padding: 20px 15px;
     text-align: center;
-    border: 2px solid rgba(0, 200, 255, 0.15);
+    border: 2px solid rgba(0, 255, 255, 0.15);
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
+    color: #e2e8f0;
 }
 .investment-card:hover {
-    border-color: rgba(0, 200, 255, 0.4);
+    border-color: rgba(0, 255, 255, 0.4);
     transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
 }
 .circle-timer {
     position: relative;
@@ -1954,7 +1890,7 @@ html, body {
     transform: rotate(-90deg);
 }
 .circle-bg {
-    stroke: rgba(0, 0, 0, 0.05);
+    stroke: rgba(255, 255, 255, 0.1);
     stroke-width: 8;
 }
 .circle-fill {
@@ -1975,7 +1911,7 @@ html, body {
     font-weight: 900;
     font-family: monospace;
     letter-spacing: 2px;
-    background: linear-gradient(135deg, #1a1a2e, #00bfff);
+    background: linear-gradient(135deg, #00bfff, #9900ff);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -1983,14 +1919,14 @@ html, body {
 .timer-label {
     font-size: 9px;
     font-weight: 700;
-    color: #6a6a8a;
+    color: #94a3b8;
     margin-top: 2px;
     text-transform: uppercase;
 }
 .circle-progress-bar {
     width: 80%;
     height: 4px;
-    background: rgba(0,0,0,0.05);
+    background: rgba(255,255,255,0.1);
     border-radius: 2px;
     margin: 8px auto 0;
     overflow: hidden;
@@ -2009,13 +1945,13 @@ html, body {
 .asset-name {
     font-size: 20px;
     font-weight: 900;
-    color: #1a1a2e;
+    color: #00bfff;
     margin-bottom: 10px;
 }
 .investment-details {
     margin-top: 10px;
     padding-top: 10px;
-    border-top: 1px solid rgba(0,0,0,0.05);
+    border-top: 1px solid rgba(255,255,255,0.1);
 }
 .detail-row {
     display: flex;
@@ -2023,12 +1959,13 @@ html, body {
     margin-bottom: 8px;
     font-size: 14px;
     font-weight: 600;
+    color: #e2e8f0;
 }
 .detail-label {
-    color: #6a6a8a;
+    color: #94a3b8;
 }
 .detail-value {
-    color: #1a1a2e;
+    color: #00bfff;
     font-weight: 900;
 }
 .sell-button {
@@ -2112,7 +2049,7 @@ html, body {
     .app-grid-wrapper {
         padding: 12px;
         border-radius: 18px;
-        border-width: 2px;
+        border-width: 3px;
         min-height: 200px;
     }
     .app-grid {
@@ -2120,14 +2057,14 @@ html, body {
     }
     .app-card {
         min-height: 50px;
-        padding: 3px !important;
+        padding: 6px !important;
     }
     .app-card .app-image {
         height: 76%;
     }
     .app-card .app-name {
         font-size: clamp(8px, 1.8vw, 11px);
-        padding: 2px 5px;
+        padding: 2px 6px;
         margin-top: 2px;
         letter-spacing: 0.5px;
     }
@@ -2275,7 +2212,7 @@ html, body {
     .app-grid-wrapper {
         padding: 8px;
         border-radius: 14px;
-        border-width: 2px;
+        border-width: 3px;
         min-height: 150px;
     }
     .app-grid {
@@ -2283,7 +2220,7 @@ html, body {
     }
     .app-card {
         min-height: 40px;
-        padding: 2px !important;
+        padding: 4px !important;
     }
     .app-card .app-image {
         height: 70%;
