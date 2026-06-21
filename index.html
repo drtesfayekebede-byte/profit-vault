@@ -2960,6 +2960,7 @@
             currentUser: null,
             isLoggingOut: false,
             isProduction: window.location.hostname !== 'localhost' && !window.location.hostname.includes('127.0.0.1'),
+            authCheckDone: false,
             
             // Processing flags
             processing: {
@@ -3709,6 +3710,10 @@
         }
 
         async function checkSession() {
+            // Prevent duplicate calls
+            if (AppState.authCheckDone) return;
+            AppState.authCheckDone = true;
+
             const bgWrapper = document.getElementById('backgroundWrapper');
             if (bgWrapper) bgWrapper.style.display = 'none';
 
@@ -8307,63 +8312,68 @@
             else toggleKnob.style.left = '3px';
         }
 
-        // Handle auth state changes
-        let lastSessionRefresh = 0;
-        let isProcessingAuth = false;
+// Handle auth state changes - FIXED (NO LOOP)
+let lastSessionRefresh = 0;
+let isProcessingAuth = false;
 
-        sb.auth.onAuthStateChange((event, session) => {
-            if (isProcessingAuth) return;
-            isProcessingAuth = true;
+sb.auth.onAuthStateChange((event, session) => {
+    if (isProcessingAuth) return;
+    isProcessingAuth = true;
 
-            if (AppState.isLoggingOut) {
-                isProcessingAuth = false;
-                return;
-            }
+    if (AppState.isLoggingOut) {
+        isProcessingAuth = false;
+        return;
+    }
 
-            const now = Date.now();
-            if (now - lastSessionRefresh < 3000) {
-                isProcessingAuth = false;
-                return;
-            }
-            lastSessionRefresh = now;
+    const now = Date.now();
+    if (now - lastSessionRefresh < 3000) {
+        isProcessingAuth = false;
+        return;
+    }
+    lastSessionRefresh = now;
 
-            if (event === 'SIGNED_IN') {
-                setTimeout(() => { window.location.reload(); }, 500);
-                isProcessingAuth = false;
-                return;
-            }
+    if (event === 'SIGNED_IN') {
+        // ✅ FIX: DON'T reload - just check session
+        console.log('✅ Signed in event received, checking session...');
+        if (!AppState.userId) {
+            checkSession();
+        }
+        isProcessingAuth = false;
+        return;
+    }
 
-            if (event === 'SIGNED_OUT') {
-                if (AppState.userId) {
-                    AppState.isLoggingOut = true;
-                    AppState.userId = null;
-                    AppState.isAdmin = false;
-                    AppState.currentUser = null;
-                    stopRealtime();
-                    clearCache();
-                    localStorage.clear();
-                    sessionStorage.clear();
-                    setTimeout(() => { window.location.reload(); }, 500);
-                }
-                isProcessingAuth = false;
-                return;
-            }
+    if (event === 'SIGNED_OUT') {
+        if (AppState.userId) {
+            AppState.isLoggingOut = true;
+            AppState.userId = null;
+            AppState.isAdmin = false;
+            AppState.currentUser = null;
+            stopRealtime();
+            clearCache();
+            localStorage.clear();
+            sessionStorage.clear();
+            // Only reload on logout
+            setTimeout(() => { window.location.reload(); }, 500);
+        }
+        isProcessingAuth = false;
+        return;
+    }
 
-            if (event === 'TOKEN_REFRESHED') {
-                isProcessingAuth = false;
-                return;
-            }
+    if (event === 'TOKEN_REFRESHED') {
+        isProcessingAuth = false;
+        return;
+    }
 
-            if (event === 'USER_UPDATED') {
-                if (AppState.userId && AppState.currentUser) {
-                    loadUser(true);
-                }
-                isProcessingAuth = false;
-                return;
-            }
+    if (event === 'USER_UPDATED') {
+        if (AppState.userId && AppState.currentUser) {
+            loadUser(true);
+        }
+        isProcessingAuth = false;
+        return;
+    }
 
-            isProcessingAuth = false;
-        });
+    isProcessingAuth = false;
+});
 
         // Handle password reset redirect
         const hashParams = new URLSearchParams(window.location.hash.substring(1));
