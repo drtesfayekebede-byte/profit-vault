@@ -95,73 +95,19 @@
     50% { opacity: 1; width: 25px; }
 }
 
-/* ===== APP CARD GLOW ANIMATIONS ===== */
-@keyframes glowDashboard {
-    0%, 100% { box-shadow: 0 0 15px rgba(255, 215, 0, 0.2); }
-    50% { box-shadow: 0 0 30px rgba(255, 215, 0, 0.5); }
-}
-@keyframes glowMarket {
-    0%, 100% { box-shadow: 0 0 15px rgba(255, 215, 0, 0.2); }
-    50% { box-shadow: 0 0 30px rgba(255, 215, 0, 0.5); }
-}
-@keyframes glowGames {
-    0%, 100% { box-shadow: 0 0 15px rgba(255, 215, 0, 0.2); }
-    50% { box-shadow: 0 0 30px rgba(255, 215, 0, 0.5); }
-}
-@keyframes glowAirtime {
-    0%, 100% { box-shadow: 0 0 15px rgba(255, 215, 0, 0.2); }
-    50% { box-shadow: 0 0 30px rgba(255, 215, 0, 0.5); }
-}
-@keyframes glowLottery {
-    0%, 100% { box-shadow: 0 0 15px rgba(255, 215, 0, 0.2); }
-    50% { box-shadow: 0 0 30px rgba(255, 215, 0, 0.5); }
-}
-@keyframes glowClinic {
-    0%, 100% { box-shadow: 0 0 15px rgba(255, 215, 0, 0.2); }
-    50% { box-shadow: 0 0 30px rgba(255, 215, 0, 0.5); }
-}
-@keyframes glowGuide {
-    0%, 100% { box-shadow: 0 0 15px rgba(255, 215, 0, 0.2); }
-    50% { box-shadow: 0 0 30px rgba(255, 215, 0, 0.5); }
-}
-@keyframes glowWallet {
-    0%, 100% { box-shadow: 0 0 15px rgba(255, 215, 0, 0.3); }
-    50% { box-shadow: 0 0 35px rgba(255, 215, 0, 0.6), 0 0 15px rgba(255, 215, 0, 0.3); }
-}
-@keyframes glowAdmin {
-    0%, 100% { box-shadow: 0 0 15px rgba(255, 215, 0, 0.2); }
-    50% { box-shadow: 0 0 30px rgba(255, 215, 0, 0.5); }
-}
-
-/* ===== COMMON APP GRID WRAPPER BORDER - THICK BLACK + GOLDEN GLOW ===== */
-@keyframes borderGlow {
-    0% { 
-        border-color: rgba(255, 215, 0, 0.5);
-        box-shadow: 0 0 20px rgba(255, 215, 0, 0.3), 0 0 40px rgba(255, 215, 0, 0.15), inset 0 0 20px rgba(255, 215, 0, 0.05);
-    }
-    50% {
-        border-color: rgba(255, 215, 0, 0.9);
-        box-shadow: 0 0 40px rgba(255, 215, 0, 0.6), 0 0 80px rgba(255, 215, 0, 0.3), inset 0 0 30px rgba(255, 215, 0, 0.15);
-    }
-    100% { 
-        border-color: rgba(255, 215, 0, 0.5);
-        box-shadow: 0 0 20px rgba(255, 215, 0, 0.3), 0 0 40px rgba(255, 215, 0, 0.15), inset 0 0 20px rgba(255, 215, 0, 0.05);
-    }
-}
-
-/* ===== GOLDEN GLOW BORDER ON APP CARDS ===== */
-@keyframes cardGoldenGlow {
+/* ===== HOMESCREEN GRID BORDER GLOW - ONLY GLOW IN APP ===== */
+@keyframes homescreenBorderGlow {
     0% { 
         border-color: rgba(255, 215, 0, 0.3);
-        box-shadow: 0 0 10px rgba(255, 215, 0, 0.1);
+        box-shadow: 0 0 15px rgba(255, 215, 0, 0.1);
     }
     50% {
-        border-color: rgba(255, 215, 0, 0.8);
-        box-shadow: 0 0 25px rgba(255, 215, 0, 0.4);
+        border-color: rgba(255, 215, 0, 0.6);
+        box-shadow: 0 0 30px rgba(255, 215, 0, 0.2);
     }
     100% { 
         border-color: rgba(255, 215, 0, 0.3);
-        box-shadow: 0 0 10px rgba(255, 215, 0, 0.1);
+        box-shadow: 0 0 15px rgba(255, 215, 0, 0.1);
     }
 }
 
@@ -187,67 +133,10 @@
     width: 100%;
     height: 100%;
     z-index: -1;
-    background: url('https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/background/profitvault.png') no-repeat center center fixed;
+    background: url('https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/background/last%20background.png') no-repeat center center fixed;
     background-size: cover;
     pointer-events: none;
-}
-
-/* ===== SOLID MIXED OVERLAY OUTSIDE BORDER (ONLY THE BACKGROUND AREA) ===== */
-@keyframes mixedOverlayPulse {
-    0% {
-        background: linear-gradient(135deg, #000000 0%, #0044FF 15%, #FF0044 35%, #FF0080 55%, #FFD700 75%, #000000 100%);
-    }
-    20% {
-        background: linear-gradient(135deg, #000000 0%, #FF0044 15%, #FF0080 35%, #FFD700 55%, #0044FF 75%, #000000 100%);
-    }
-    40% {
-        background: linear-gradient(135deg, #000000 0%, #FF0080 15%, #FFD700 35%, #0044FF 55%, #FF0044 75%, #000000 100%);
-    }
-    60% {
-        background: linear-gradient(135deg, #000000 0%, #FFD700 15%, #0044FF 35%, #FF0044 55%, #FF0080 75%, #000000 100%);
-    }
-    80% {
-        background: linear-gradient(135deg, #000000 0%, #0044FF 15%, #FFD700 35%, #FF0080 55%, #FF0044 75%, #000000 100%);
-    }
-    100% {
-        background: linear-gradient(135deg, #000000 0%, #0044FF 15%, #FF0044 35%, #FF0080 55%, #FFD700 75%, #000000 100%);
-    }
-}
-
-.app-grid-container {
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    top: 76px;
-    left: 0;
-    right: 0;
-    bottom: 76px;
-    padding: 12px 16px 16px 16px;
-    overflow-y: auto;
-    overflow-x: hidden;
-    background: linear-gradient(135deg, #000000 0%, #0044FF 15%, #FF0044 35%, #FF0080 55%, #FFD700 75%, #000000 100%);
-    z-index: 1;
-    animation: mixedOverlayPulse 8s ease-in-out infinite alternate;
-}
-
-/* ===== APP GRID WRAPPER - TRANSPARENT TO SHOW CUSTOM IMAGE INSIDE ===== */
-.app-grid-wrapper {
-    background: transparent;
-    border: 4px solid rgba(255, 215, 0, 0.5);
-    border-radius: 24px;
-    padding: 16px;
-    box-shadow: 0 0 20px rgba(255, 215, 0, 0.2), 0 0 40px rgba(255, 215, 0, 0.1), inset 0 0 20px rgba(255, 215, 0, 0.05);
-    animation: borderGlow 3s ease-in-out infinite;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-    min-height: 300px;
-    margin: 4px 0;
-    position: relative;
-    z-index: 2;
+    display: none;
 }
 
 /* ===== BASE ===== */
@@ -273,8 +162,8 @@ html, body {
     z-index: 100;
     background: rgba(0, 0, 0, 0.92);
     backdrop-filter: blur(15px);
-    border-bottom: 2px solid rgba(255, 215, 0, 0.3);
-    box-shadow: 0 0 40px rgba(255, 215, 0, 0.08);
+    border-bottom: 2px solid rgba(255, 215, 0, 0.15);
+    box-shadow: 0 0 40px rgba(255, 215, 0, 0.05);
     padding: 0 32px;
     height: 76px;
     min-height: 76px;
@@ -326,7 +215,7 @@ html, body {
     min-width: 120px;
     margin: 0 16px;
     background: rgba(0, 0, 0, 0.5);
-    border: 1px solid rgba(255, 215, 0, 0.2);
+    border: 1px solid rgba(255, 215, 0, 0.15);
 }
 
 .header-balance-item {
@@ -529,7 +418,7 @@ html, body {
     z-index: 100000;
     min-width: 170px;
     overflow: hidden;
-    border: 1px solid rgba(255, 215, 0, 0.2);
+    border: 1px solid rgba(255, 215, 0, 0.15);
 }
 
 .dropdown-menu.show {
@@ -550,14 +439,44 @@ html, body {
     background: #334155;
 }
 
-/* ===== APP GRID WRAPPER - THICK GOLDEN GLOW BORDER ===== */
+/* ===== HOMESCREEN APP GRID CONTAINER ===== */
+.app-grid-container {
+    display: none;
+    flex-direction: column;
+    position: fixed;
+    top: 76px;
+    left: 0;
+    right: 0;
+    bottom: 76px;
+    padding: 12px 16px 16px 16px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background: transparent;
+    z-index: 1;
+}
+
+.app-grid-container::-webkit-scrollbar {
+    width: 4px;
+}
+
+.app-grid-container::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+}
+
+.app-grid-container::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #FFD700, #FFD700);
+    border-radius: 4px;
+}
+
+/* ===== HOMESCREEN GRID WRAPPER - ONLY GLOW BORDER IN APP ===== */
 .app-grid-wrapper {
     background: transparent;
-    border: 4px solid rgba(255, 215, 0, 0.5);
+    border: 3px solid rgba(255, 215, 0, 0.3);
     border-radius: 24px;
     padding: 16px;
-    box-shadow: 0 0 20px rgba(255, 215, 0, 0.2), 0 0 40px rgba(255, 215, 0, 0.1), inset 0 0 20px rgba(255, 215, 0, 0.05);
-    animation: borderGlow 3s ease-in-out infinite;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.1);
+    animation: homescreenBorderGlow 3s ease-in-out infinite;
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -571,8 +490,8 @@ html, body {
 }
 
 .app-grid-wrapper:hover {
-    border-color: rgba(255, 215, 0, 0.9);
-    box-shadow: 0 0 50px rgba(255, 215, 0, 0.5), 0 0 80px rgba(255, 215, 0, 0.25);
+    border-color: rgba(255, 215, 0, 0.8);
+    box-shadow: 0 0 40px rgba(255, 215, 0, 0.3);
     animation-play-state: paused;
 }
 
@@ -588,11 +507,11 @@ html, body {
     align-content: center;
 }
 
-/* ===== APP CARDS - GOLDEN GLOWING BORDER ===== */
+/* ===== APP CARDS - NO GLOW, THICK BORDER ===== */
 .app-card {
     background: rgba(0, 0, 0, 0.85) !important;
     backdrop-filter: blur(5px) !important;
-    border: 2px solid rgba(255, 215, 0, 0.3) !important;
+    border: 3px solid rgba(255, 215, 0, 0.2) !important;
     border-radius: 16px !important;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
     padding: 8px !important;
@@ -607,15 +526,13 @@ html, body {
     height: 100%;
     min-height: 60px;
     z-index: 3;
-    animation: cardGoldenGlow 2.5s ease-in-out infinite;
 }
 
 .app-card:hover {
     transform: scale(1.05) translateY(-4px);
     background: rgba(0, 0, 0, 0.95) !important;
-    border-color: rgba(255, 215, 0, 0.8) !important;
-    box-shadow: 0 8px 30px rgba(255, 215, 0, 0.3) !important;
-    animation-play-state: paused;
+    border-color: rgba(255, 215, 0, 0.5) !important;
+    box-shadow: 0 8px 30px rgba(255, 215, 0, 0.15) !important;
 }
 
 .app-card .app-image {
@@ -630,7 +547,7 @@ html, body {
 }
 
 .app-card:hover .app-image {
-    filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.2));
+    filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.15));
     transform: scale(1.03);
 }
 
@@ -648,7 +565,7 @@ html, body {
     text-transform: uppercase;
     letter-spacing: 1.2px;
     font-family: 'Times New Roman', Times, serif;
-    text-shadow: 0 0 20px currentColor, 0 0 40px currentColor, 0 0 60px currentColor;
+    text-shadow: 0 0 20px currentColor, 0 0 40px currentColor;
     position: relative;
     z-index: 2;
     white-space: nowrap;
@@ -702,7 +619,7 @@ html, body {
     text-shadow: 0 0 30px rgba(255, 23, 68, 0.6), 0 0 60px rgba(255, 23, 68, 0.3);
 }
 
-/* ===== TAB CONTENT WRAPPER - FULL DARK ===== */
+/* ===== TAB CONTENT WRAPPER - BLUE-BLACK BACKGROUND ===== */
 .tab-content-wrapper {
     display: none;
     position: fixed;
@@ -712,7 +629,7 @@ html, body {
     bottom: 76px;
     overflow-y: auto;
     padding: 12px 16px 100px 16px;
-    background: linear-gradient(180deg, rgba(0,0,0,0.85) 0%, rgba(10,10,20,0.90) 50%, rgba(0,0,0,0.85) 100%);
+    background: linear-gradient(180deg, #0a0a2a 0%, #0a0a3a 30%, #0a0a2a 60%, #050520 100%);
     z-index: 1;
 }
 
@@ -752,7 +669,7 @@ html, body {
     letter-spacing: 0.8px;
     text-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
     min-height: 48px;
-    box-shadow: 0 0 30px rgba(255, 215, 0, 0.2);
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.15);
     transition: all 0.3s ease;
     position: fixed;
     bottom: 90px;
@@ -767,11 +684,11 @@ html, body {
 .back-button:hover {
     color: #fff;
     background: linear-gradient(135deg, #FF8C00, #FF4500) !important;
-    box-shadow: 0 0 50px rgba(255, 215, 0, 0.4);
-    transform: scale(1.05);
+    box-shadow: 0 0 40px rgba(255, 215, 0, 0.3);
+    transform: scale(1.02);
 }
 
-/* ===== TAB CONTENT BORDERS - THICK GLOWING GOLDEN ===== */
+/* ===== TAB CONTENT BORDERS - NO GLOW, THICK BORDER ===== */
 #dashboard.tab-content,
 #market.tab-content,
 #games.tab-content,
@@ -785,57 +702,45 @@ html, body {
 #contact.tab-content {
     border-radius: 28px !important;
     padding: 20px !important;
-    background: rgba(0, 0, 0, 0.4) !important;
+    background: rgba(10, 10, 42, 0.7) !important;
     backdrop-filter: blur(10px) !important;
     margin-bottom: 20px !important;
-    border: 3px solid rgba(255, 215, 0, 0.4) !important;
-    box-shadow: 0 0 30px rgba(255, 215, 0, 0.1), 0 0 60px rgba(255, 215, 0, 0.05), inset 0 0 20px rgba(255, 215, 0, 0.05) !important;
-    animation: borderGlow 3s ease-in-out infinite !important;
+    border: 3px solid rgba(255, 215, 0, 0.15) !important;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3) !important;
 }
 
 #dashboard.tab-content:hover {
-    border-color: #FFD700 !important;
-    box-shadow: 0 0 50px rgba(255, 215, 0, 0.4) !important;
+    border-color: rgba(255, 215, 0, 0.4) !important;
 }
 #market.tab-content:hover {
-    border-color: #FFD700 !important;
-    box-shadow: 0 0 50px rgba(255, 215, 0, 0.4) !important;
+    border-color: rgba(255, 215, 0, 0.4) !important;
 }
 #games.tab-content:hover {
-    border-color: #FFD700 !important;
-    box-shadow: 0 0 50px rgba(255, 215, 0, 0.4) !important;
+    border-color: rgba(255, 215, 0, 0.4) !important;
 }
 #cards.tab-content:hover {
-    border-color: #FFD700 !important;
-    box-shadow: 0 0 50px rgba(255, 215, 0, 0.4) !important;
+    border-color: rgba(255, 215, 0, 0.4) !important;
 }
 #lottery.tab-content:hover {
-    border-color: #FFD700 !important;
-    box-shadow: 0 0 50px rgba(255, 215, 0, 0.4) !important;
+    border-color: rgba(255, 215, 0, 0.4) !important;
 }
 #clinic.tab-content:hover {
-    border-color: #FFD700 !important;
-    box-shadow: 0 0 50px rgba(255, 215, 0, 0.4) !important;
+    border-color: rgba(255, 215, 0, 0.4) !important;
 }
 #guide.tab-content:hover {
-    border-color: #FFD700 !important;
-    box-shadow: 0 0 50px rgba(255, 215, 0, 0.4) !important;
+    border-color: rgba(255, 215, 0, 0.4) !important;
 }
 #wallet.tab-content:hover {
-    border-color: #FFD700 !important;
-    box-shadow: 0 0 50px rgba(255, 215, 0, 0.4) !important;
+    border-color: rgba(255, 215, 0, 0.4) !important;
 }
 #admin.tab-content:hover {
-    border-color: #FFD700 !important;
-    box-shadow: 0 0 50px rgba(255, 215, 0, 0.4) !important;
+    border-color: rgba(255, 215, 0, 0.4) !important;
 }
 #profile.tab-content:hover {
-    border-color: #FFD700 !important;
-    box-shadow: 0 0 50px rgba(255, 215, 0, 0.4) !important;
+    border-color: rgba(255, 215, 0, 0.4) !important;
 }
 #contact.tab-content:hover {
-    border-color: #FFD700 !important;
-    box-shadow: 0 0 50px rgba(255, 215, 0, 0.4) !important;
+    border-color: rgba(255, 215, 0, 0.4) !important;
 }
 
 /* ===== WALLET TAB - DEEP RED, DEEP GREEN, DEEP YELLOW ===== */
@@ -857,12 +762,12 @@ html, body {
     transition: all 0.3s ease;
     font-weight: 700;
     color: #e2e8f0;
-    border: 2px solid rgba(255, 215, 0, 0.2);
+    border: 2px solid rgba(255, 215, 0, 0.15);
 }
 
 .wallet-balance-card:hover {
     transform: translateY(-4px) scale(1.02);
-    border-color: rgba(255, 215, 0, 0.6);
+    border-color: rgba(255, 215, 0, 0.4);
 }
 
 .wallet-balance-card .balance-emoji {
@@ -940,8 +845,8 @@ html, body {
 }
 
 .wallet-filter-tab {
-    background: rgba(0, 0, 0, 0.4);
-    border: 2px solid rgba(255, 215, 0, 0.2);
+    background: rgba(10, 10, 42, 0.5);
+    border: 2px solid rgba(255, 215, 0, 0.15);
     padding: 10px 20px;
     border-radius: 24px;
     color: #94a3b8;
@@ -951,43 +856,36 @@ html, body {
     transition: all 0.3s ease;
     white-space: nowrap;
     flex-shrink: 0;
-    animation: borderGlow 3s ease-in-out infinite;
 }
 
 .wallet-filter-tab.active {
     background: linear-gradient(135deg, #FFD700, #FF8C00);
     color: #000000;
     border-color: #FFD700 !important;
-    box-shadow: 0 0 30px rgba(255, 215, 0, 0.4);
-    animation-play-state: paused;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.15);
 }
 
 .wallet-filter-tab:hover {
     transform: translateY(-2px);
-    border-color: rgba(255, 215, 0, 0.8);
-    box-shadow: 0 0 30px rgba(255, 215, 0, 0.15);
-    animation-play-state: paused;
+    border-color: rgba(255, 215, 0, 0.4);
 }
 
 /* ===== TRANSACTIONS ===== */
 .wallet-transaction {
-    background: rgba(0, 0, 0, 0.3);
+    background: rgba(10, 10, 42, 0.5);
     backdrop-filter: blur(5px);
     border-radius: 16px;
     padding: 14px;
     margin-bottom: 10px;
-    border: 2px solid rgba(255, 215, 0, 0.2);
+    border: 2px solid rgba(255, 215, 0, 0.1);
     transition: all 0.3s ease;
     font-weight: 600;
     color: #e2e8f0;
-    animation: borderGlow 3s ease-in-out infinite;
 }
 
 .wallet-transaction:hover {
-    border-color: rgba(255, 215, 0, 0.8);
-    box-shadow: 0 0 30px rgba(255, 215, 0, 0.15);
+    border-color: rgba(255, 215, 0, 0.3);
     transform: translateX(4px);
-    animation-play-state: paused;
 }
 
 .wallet-transaction-content {
@@ -1017,7 +915,7 @@ html, body {
 .wallet-transaction-type {
     font-weight: 900;
     font-size: 15px;
-    color: #e2e8f0;
+    color: #FFD700;
 }
 
 .wallet-transaction-date {
@@ -1047,22 +945,21 @@ html, body {
 
 /* ===== CARDS & CONTAINERS ===== */
 .card {
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(10, 10, 42, 0.6);
     backdrop-filter: blur(5px);
     border-radius: 28px;
     padding: 20px;
     margin-bottom: 18px;
-    border: 3px solid rgba(255, 215, 0, 0.25);
+    border: 3px solid rgba(255, 215, 0, 0.15);
     transition: all 0.3s;
-    animation: fadeIn 0.3s ease-out, borderGlow 3s ease-in-out infinite;
+    animation: fadeIn 0.3s ease-out;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
     color: #e2e8f0;
 }
 
 .card:hover {
-    border-color: rgba(255, 215, 0, 0.8);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3), 0 0 30px rgba(255, 215, 0, 0.15);
-    animation-play-state: paused;
+    border-color: rgba(255, 215, 0, 0.4);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
 }
 
 .card h3 {
@@ -1098,21 +995,19 @@ html, body {
     aspect-ratio: 1 / 1;
     width: 100%;
     overflow: hidden;
-    border: 3px solid rgba(255, 215, 0, 0.4);
+    border: 3px solid rgba(255, 215, 0, 0.15);
     border-radius: 20px;
-    background: rgba(0, 0, 0, 0.3);
+    background: rgba(10, 10, 42, 0.5);
     position: relative;
-    box-shadow: 0 10px 20px -5px rgba(0,0,0,0.3), 0 0 20px rgba(255, 215, 0, 0.1);
+    box-shadow: 0 10px 20px -5px rgba(0,0,0,0.3);
     display: flex;
     align-items: center;
     justify-content: center;
-    animation: borderGlow 3s ease-in-out infinite;
 }
 
 .market-image-container:hover {
-    border-color: rgba(255, 215, 0, 0.9);
-    box-shadow: 0 0 40px rgba(255, 215, 0, 0.3);
-    animation-play-state: paused;
+    border-color: rgba(255, 215, 0, 0.4);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.1);
 }
 
 .market-image {
@@ -1130,7 +1025,7 @@ html, body {
     justify-content: center;
     font-size: 72px;
     font-weight: 900;
-    background: rgba(0, 0, 0, 0.2);
+    background: rgba(10, 10, 42, 0.3);
     text-shadow: 0 0 30px rgba(255, 215, 0, 0.1);
 }
 
@@ -1201,7 +1096,7 @@ html, body {
     width: 100%;
     margin-bottom: 10px;
     transition: transform 0.1s, box-shadow 0.2s;
-    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2);
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.15);
 }
 
 .btn:active { transform: scale(0.97); }
@@ -1221,26 +1116,24 @@ html, body {
 
 .game-card {
     aspect-ratio: 1;
-    background: rgba(0, 0, 0, 0.3);
+    background: rgba(10, 10, 42, 0.5);
     border-radius: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: all 0.2s ease;
-    border: 3px solid rgba(255, 215, 0, 0.3);
+    border: 3px solid rgba(255, 215, 0, 0.15);
     font-size: 40px;
     font-weight: 900;
     transform-style: preserve-3d;
-    box-shadow: 0 8px 16px rgba(0,0,0,0.2), 0 0 20px rgba(255, 215, 0, 0.05);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
     color: #e2e8f0;
-    animation: borderGlow 3s ease-in-out infinite;
 }
 
 .game-card:hover {
-    border-color: rgba(255, 215, 0, 0.9);
-    box-shadow: 0 0 40px rgba(255, 215, 0, 0.3);
-    animation-play-state: paused;
+    border-color: rgba(255, 215, 0, 0.4);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.1);
 }
 
 .game-card:active { transform: scale(0.94); }
@@ -1271,7 +1164,7 @@ html, body {
 .modal.active { display: flex; }
 
 .modal-content {
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(10, 10, 42, 0.9);
     backdrop-filter: blur(15px);
     border-radius: 32px;
     padding: 25px;
@@ -1279,10 +1172,9 @@ html, body {
     max-width: 400px;
     max-height: 85vh;
     overflow-y: auto;
-    border: 3px solid rgba(255, 215, 0, 0.3);
-    box-shadow: 0 25px 40px rgba(0,0,0,0.3), 0 0 30px rgba(255, 215, 0, 0.1);
+    border: 3px solid rgba(255, 215, 0, 0.15);
+    box-shadow: 0 25px 40px rgba(0,0,0,0.3);
     color: #e2e8f0;
-    animation: borderGlow 3s ease-in-out infinite;
 }
 .modal.active {
     display: flex;
@@ -1309,7 +1201,7 @@ html, body {
     display: flex;
     align-items: center;
     gap: 12px;
-    background: rgba(0, 0, 0, 0.85);
+    background: rgba(10, 10, 42, 0.9);
     backdrop-filter: blur(10px);
     color: #e2e8f0;
     border-left: 5px solid #10b981;
@@ -1399,14 +1291,14 @@ html, body {
 }
 
 #authModal .modal-content {
-    background: rgba(0, 0, 0, 0.85);
+    background: rgba(10, 10, 42, 0.9);
     backdrop-filter: blur(15px);
     border-radius: 48px;
     padding: 30px 25px;
     width: 90%;
     max-width: 420px;
     box-shadow: 0 25px 40px rgba(0,0,0,0.3);
-    border: 2px solid rgba(255, 215, 0, 0.2);
+    border: 2px solid rgba(255, 215, 0, 0.15);
     color: #e2e8f0;
     animation: slideUpFlicker 0.4s ease-out;
 }
@@ -1451,7 +1343,7 @@ html, body {
 .mode-switch button.active {
     background: linear-gradient(135deg, #FFD700, #FF8C00);
     color: #000000;
-    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.15);
 }
 
 .password-wrapper {
@@ -1467,8 +1359,8 @@ html, body {
     padding-right: 45px !important;
     width: 100% !important;
     box-sizing: border-box !important;
-    background: rgba(0, 0, 0, 0.5);
-    border: 1px solid rgba(255, 215, 0, 0.2);
+    background: rgba(10, 10, 42, 0.5);
+    border: 1px solid rgba(255, 215, 0, 0.15);
     border-radius: 60px;
     padding: 14px 20px;
     color: #e2e8f0;
@@ -1479,7 +1371,7 @@ html, body {
 
 .password-wrapper input:focus {
     border-color: #FFD700;
-    box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.1);
     outline: none;
 }
 
@@ -1503,8 +1395,8 @@ html, body {
 }
 
 #authForm input {
-    background: rgba(0, 0, 0, 0.5);
-    border: 1px solid rgba(255, 215, 0, 0.2);
+    background: rgba(10, 10, 42, 0.5);
+    border: 1px solid rgba(255, 215, 0, 0.15);
     border-radius: 60px;
     padding: 14px 20px;
     color: #e2e8f0;
@@ -1518,7 +1410,7 @@ html, body {
 
 #authForm input:focus {
     border-color: #FFD700;
-    box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.1);
     outline: none;
 }
 
@@ -1537,12 +1429,12 @@ html, body {
     text-align: center !important;
     min-height: 50px !important;
     margin-bottom: 10px !important;
-    box-shadow: 0 4px 20px rgba(255, 215, 0, 0.3) !important;
+    box-shadow: 0 4px 20px rgba(255, 215, 0, 0.15) !important;
 }
 
 #authForm .btn-success:hover {
     transform: scale(1.02) !important;
-    box-shadow: 0 0 40px rgba(255, 215, 0, 0.5) !important;
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.3) !important;
 }
 
 #authForm .btn-google {
@@ -1566,7 +1458,7 @@ html, body {
 
 #authForm .btn-google:hover {
     transform: scale(1.02) !important;
-    box-shadow: 0 0 40px rgba(219, 68, 55, 0.4) !important;
+    box-shadow: 0 0 30px rgba(219, 68, 55, 0.3) !important;
 }
 
 #authForm .btn-google:active {
@@ -1591,8 +1483,8 @@ html, body {
     z-index: 99;
     background: rgba(0, 0, 0, 0.92);
     backdrop-filter: blur(15px);
-    border-top: 2px solid rgba(255, 215, 0, 0.3);
-    box-shadow: 0 -5px 40px rgba(255, 215, 0, 0.08);
+    border-top: 2px solid rgba(255, 215, 0, 0.15);
+    box-shadow: 0 -5px 40px rgba(255, 215, 0, 0.05);
     padding: 10px 24px;
     height: 76px;
     min-height: 76px;
@@ -1666,7 +1558,7 @@ html, body {
 
 .app-footer-tab.active .tab-emoji {
     transform: scale(1.15);
-    text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
 }
 
 .app-footer-tab.active .tab-label {
@@ -1735,11 +1627,11 @@ html, body {
     font-size: 16px;
     cursor: pointer;
     transition: all 0.3s;
-    box-shadow: 0 4px 20px rgba(255, 215, 0, 0.2);
+    box-shadow: 0 4px 20px rgba(255, 215, 0, 0.15);
 }
 .load-more-btn:hover {
     transform: scale(1.02);
-    box-shadow: 0 0 30px rgba(255, 215, 0, 0.4);
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.25);
 }
 .load-more-btn:disabled {
     opacity: 0.5;
@@ -1752,7 +1644,7 @@ html, body {
     display: flex;
     align-items: center;
     gap: 12px;
-    background: rgba(0, 0, 0, 0.3);
+    background: rgba(10, 10, 42, 0.3);
     padding: 8px 12px;
     border-radius: 12px;
     margin-bottom: 8px;
@@ -1781,7 +1673,7 @@ html, body {
 }
 
 .quad-item {
-    background: rgba(0, 0, 0, 0.3);
+    background: rgba(10, 10, 42, 0.3);
     border-radius: 20px;
     padding: 12px;
     margin-bottom: 8px;
@@ -1852,24 +1744,22 @@ html, body {
     margin-top: 15px;
 }
 .investment-card {
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(10, 10, 42, 0.6);
     backdrop-filter: blur(5px);
     border-radius: 28px;
     padding: 20px 15px;
     text-align: center;
-    border: 3px solid rgba(255, 215, 0, 0.3);
+    border: 3px solid rgba(255, 215, 0, 0.15);
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
     color: #e2e8f0;
-    animation: borderGlow 3s ease-in-out infinite;
 }
 
 .investment-card:hover {
-    border-color: rgba(255, 215, 0, 0.9);
+    border-color: rgba(255, 215, 0, 0.4);
     transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.3), 0 0 40px rgba(255, 215, 0, 0.2);
-    animation-play-state: paused;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
 }
 .circle-timer {
     position: relative;
