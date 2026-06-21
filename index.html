@@ -214,17 +214,62 @@
     }
 }
 
-.app-grid-container::before {
-    content: '';
+/* ===== SOLID MIXED OVERLAY OUTSIDE BORDER (ONLY THE BACKGROUND AREA) ===== */
+@keyframes mixedOverlayPulse {
+    0% {
+        background: linear-gradient(135deg, #000000 0%, #0044FF 15%, #FF0044 35%, #FF0080 55%, #FFD700 75%, #000000 100%);
+    }
+    20% {
+        background: linear-gradient(135deg, #000000 0%, #FF0044 15%, #FF0080 35%, #FFD700 55%, #0044FF 75%, #000000 100%);
+    }
+    40% {
+        background: linear-gradient(135deg, #000000 0%, #FF0080 15%, #FFD700 35%, #0044FF 55%, #FF0044 75%, #000000 100%);
+    }
+    60% {
+        background: linear-gradient(135deg, #000000 0%, #FFD700 15%, #0044FF 35%, #FF0044 55%, #FF0080 75%, #000000 100%);
+    }
+    80% {
+        background: linear-gradient(135deg, #000000 0%, #0044FF 15%, #FFD700 35%, #FF0080 55%, #FF0044 75%, #000000 100%);
+    }
+    100% {
+        background: linear-gradient(135deg, #000000 0%, #0044FF 15%, #FF0044 35%, #FF0080 55%, #FFD700 75%, #000000 100%);
+    }
+}
+
+.app-grid-container {
+    display: flex;
+    flex-direction: column;
     position: fixed;
-    top: 0;
+    top: 76px;
     left: 0;
     right: 0;
-    bottom: 0;
-    z-index: 0;
+    bottom: 76px;
+    padding: 12px 16px 16px 16px;
+    overflow-y: auto;
+    overflow-x: hidden;
     background: linear-gradient(135deg, #000000 0%, #0044FF 15%, #FF0044 35%, #FF0080 55%, #FFD700 75%, #000000 100%);
-    pointer-events: none;
+    z-index: 1;
     animation: mixedOverlayPulse 8s ease-in-out infinite alternate;
+}
+
+/* ===== APP GRID WRAPPER - TRANSPARENT TO SHOW CUSTOM IMAGE INSIDE ===== */
+.app-grid-wrapper {
+    background: transparent;
+    border: 4px solid rgba(255, 215, 0, 0.5);
+    border-radius: 24px;
+    padding: 16px;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.2), 0 0 40px rgba(255, 215, 0, 0.1), inset 0 0 20px rgba(255, 215, 0, 0.05);
+    animation: borderGlow 3s ease-in-out infinite;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    min-height: 300px;
+    margin: 4px 0;
+    position: relative;
+    z-index: 2;
 }
 
 /* ===== BASE ===== */
@@ -719,7 +764,7 @@ html, body {
     bottom: 76px;
     overflow-y: auto;
     padding: 12px 16px 100px 16px;
-    background: rgba(0, 0, 0, 0.92);
+    background: linear-gradient(180deg, rgba(0,0,0,0.85) 0%, rgba(10,10,20,0.90) 50%, rgba(0,0,0,0.85) 100%);
     z-index: 1;
 }
 
@@ -948,7 +993,7 @@ html, body {
 
 .wallet-filter-tab {
     background: rgba(0, 0, 0, 0.4);
-    border: 1px solid rgba(255, 215, 0, 0.2);
+    border: 2px solid rgba(255, 215, 0, 0.2);
     padding: 10px 20px;
     border-radius: 24px;
     color: #94a3b8;
@@ -958,18 +1003,22 @@ html, body {
     transition: all 0.3s ease;
     white-space: nowrap;
     flex-shrink: 0;
+    animation: borderGlow 3s ease-in-out infinite;
 }
 
 .wallet-filter-tab.active {
     background: linear-gradient(135deg, #FFD700, #FF8C00);
     color: #000000;
-    border-color: transparent;
-    box-shadow: 0 0 25px rgba(255, 215, 0, 0.3);
+    border-color: #FFD700 !important;
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.4);
+    animation-play-state: paused;
 }
 
 .wallet-filter-tab:hover {
     transform: translateY(-2px);
-    border-color: rgba(255, 215, 0, 0.4);
+    border-color: rgba(255, 215, 0, 0.8);
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.15);
+    animation-play-state: paused;
 }
 
 /* ===== TRANSACTIONS ===== */
@@ -979,15 +1028,18 @@ html, body {
     border-radius: 16px;
     padding: 14px;
     margin-bottom: 10px;
-    border: 1px solid rgba(255, 215, 0, 0.1);
+    border: 2px solid rgba(255, 215, 0, 0.2);
     transition: all 0.3s ease;
     font-weight: 600;
     color: #e2e8f0;
+    animation: borderGlow 3s ease-in-out infinite;
 }
 
 .wallet-transaction:hover {
-    border-color: rgba(255, 215, 0, 0.3);
+    border-color: rgba(255, 215, 0, 0.8);
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.15);
     transform: translateX(4px);
+    animation-play-state: paused;
 }
 
 .wallet-transaction-content {
@@ -1052,16 +1104,17 @@ html, body {
     border-radius: 28px;
     padding: 20px;
     margin-bottom: 18px;
-    border: 2px solid rgba(255, 215, 0, 0.2);
+    border: 3px solid rgba(255, 215, 0, 0.25);
     transition: all 0.3s;
-    animation: fadeIn 0.3s ease-out;
+    animation: fadeIn 0.3s ease-out, borderGlow 3s ease-in-out infinite;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
     color: #e2e8f0;
 }
 
 .card:hover {
-    border-color: rgba(255, 215, 0, 0.5);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 215, 0, 0.1);
+    border-color: rgba(255, 215, 0, 0.8);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3), 0 0 30px rgba(255, 215, 0, 0.15);
+    animation-play-state: paused;
 }
 
 .card h3 {
@@ -1097,19 +1150,21 @@ html, body {
     aspect-ratio: 1 / 1;
     width: 100%;
     overflow: hidden;
-    border: 2px solid rgba(255, 215, 0, 0.3);
+    border: 3px solid rgba(255, 215, 0, 0.4);
     border-radius: 20px;
     background: rgba(0, 0, 0, 0.3);
     position: relative;
-    box-shadow: 0 10px 20px -5px rgba(0,0,0,0.3);
+    box-shadow: 0 10px 20px -5px rgba(0,0,0,0.3), 0 0 20px rgba(255, 215, 0, 0.1);
     display: flex;
     align-items: center;
     justify-content: center;
+    animation: borderGlow 3s ease-in-out infinite;
 }
 
 .market-image-container:hover {
-    border-color: rgba(255, 215, 0, 0.6);
-    box-shadow: 0 0 25px rgba(255, 215, 0, 0.15);
+    border-color: rgba(255, 215, 0, 0.9);
+    box-shadow: 0 0 40px rgba(255, 215, 0, 0.3);
+    animation-play-state: paused;
 }
 
 .market-image {
@@ -1225,17 +1280,19 @@ html, body {
     justify-content: center;
     cursor: pointer;
     transition: all 0.2s ease;
-    border: 2px solid rgba(255, 215, 0, 0.2);
+    border: 3px solid rgba(255, 215, 0, 0.3);
     font-size: 40px;
     font-weight: 900;
     transform-style: preserve-3d;
-    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2), 0 0 20px rgba(255, 215, 0, 0.05);
     color: #e2e8f0;
+    animation: borderGlow 3s ease-in-out infinite;
 }
 
 .game-card:hover {
-    border-color: #FFD700;
-    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+    border-color: rgba(255, 215, 0, 0.9);
+    box-shadow: 0 0 40px rgba(255, 215, 0, 0.3);
+    animation-play-state: paused;
 }
 
 .game-card:active { transform: scale(0.94); }
@@ -1274,11 +1331,11 @@ html, body {
     max-width: 400px;
     max-height: 85vh;
     overflow-y: auto;
-    border: 2px solid rgba(255, 215, 0, 0.3);
+    border: 3px solid rgba(255, 215, 0, 0.3);
     box-shadow: 0 25px 40px rgba(0,0,0,0.3), 0 0 30px rgba(255, 215, 0, 0.1);
     color: #e2e8f0;
+    animation: borderGlow 3s ease-in-out infinite;
 }
-
 .modal.active {
     display: flex;
     animation: fadeScale 0.3s ease-out;
@@ -1852,16 +1909,19 @@ html, body {
     border-radius: 28px;
     padding: 20px 15px;
     text-align: center;
-    border: 2px solid rgba(255, 215, 0, 0.2);
+    border: 3px solid rgba(255, 215, 0, 0.3);
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
     color: #e2e8f0;
+    animation: borderGlow 3s ease-in-out infinite;
 }
+
 .investment-card:hover {
-    border-color: rgba(255, 215, 0, 0.5);
+    border-color: rgba(255, 215, 0, 0.9);
     transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3), 0 0 40px rgba(255, 215, 0, 0.2);
+    animation-play-state: paused;
 }
 .circle-timer {
     position: relative;
