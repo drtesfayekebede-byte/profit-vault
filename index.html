@@ -5868,9 +5868,10 @@
         // ================================================================
 
 async function loadAdminPanel() {
-    const adminDiv = document.getElementById('admin');
+    // Find the admin div in the container
+    const adminDiv = document.querySelector('#tabContentContainer #admin');
     if (!adminDiv) {
-        console.warn('Admin div not found');
+        console.warn('Admin div not found in container');
         return;
     }
 
@@ -7954,21 +7955,33 @@ function openApp(appId) {
                     `;
             });
         }
-
-        function loadAdminContent() {
-            if (!AppState.isAdmin) {
-                showToast('Admin access required', 'error');
-                return;
-            }
-            const container = document.getElementById('tabContentContainer');
-            if (!container) return;
-            showAllBalancesInHeader(false);
-            container.innerHTML = '<div class="loading">Loading admin panel...</div>';
-            // Add a small delay to ensure DOM is ready
-            setTimeout(() => {
-                loadAdminPanel();
-            }, 100);
-        }
+function loadAdminContent() {
+    if (!AppState.isAdmin) {
+        showToast('Admin access required', 'error');
+        return;
+    }
+    
+    const container = document.getElementById('tabContentContainer');
+    if (!container) return;
+    
+    showAllBalancesInHeader(false);
+    
+    // Clone the admin content from the hidden div
+    const adminContent = document.getElementById('admin');
+    if (!adminContent) {
+        container.innerHTML = '<div class="loading" style="color: #ef4444;">Admin content not found.</div>';
+        return;
+    }
+    
+    // Clear container and add cloned content
+    container.innerHTML = '';
+    const clone = adminContent.cloneNode(true);
+    clone.style.display = 'block';
+    container.appendChild(clone);
+    
+    // Load admin data
+    loadAdminPanel();
+}
 
         // ================================================================
         // WALLET CONTENT
