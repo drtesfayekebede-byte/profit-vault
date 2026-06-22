@@ -582,7 +582,7 @@ html, body {
 .app-grid-wrapper {
     position: relative;
     background: transparent;
-    border: 6px solid #000000;
+    border: 6px solid #FFD700;
     border-radius: 24px;
     padding: 16px;
     box-shadow: none;
@@ -609,7 +609,7 @@ html, body {
         }
 
 .app-grid-wrapper:hover {
-    border-color: #000000;
+    border-color: #FFD700;
     box-shadow: none;
     animation-play-state: paused;
 }
@@ -7657,15 +7657,15 @@ async function loadAdminPanel() {
 
 function getAppItems() {
     const baseItems = [
-        // ROW 1: Dashboard, Market, Games
+        // ROW 1: Dashboard, Market, Guide (Guide moved here)
         { id: 'dashboard', image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/dashboard.png', name: 'Dashboard', adminOnly: false },
         { id: 'market', image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/market.png', name: 'Market', adminOnly: false },
-        { id: 'games', image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/games.png', name: 'Games', adminOnly: false },
+        { id: 'guide', image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/guide.png', name: 'Guide', adminOnly: false },
         
-        // ROW 2: Clinic, Airtime, Guide
+        // ROW 2: Clinic, Airtime, Games (Games moved here)
         { id: 'clinic', image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/clinic.png', name: 'Clinic', adminOnly: false },
         { id: 'airtime', image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/airtime.png', name: 'Airtime', adminOnly: false },
-        { id: 'guide', image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/guide.png', name: 'Guide', adminOnly: false },
+        { id: 'games', image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/games.png', name: 'Games', adminOnly: false },
         
         // ROW 3: Lottery, Wallet, Admin/Contact
         { id: 'lottery', image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/lottery.png', name: 'Lottery', adminOnly: false },
