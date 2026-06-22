@@ -116,11 +116,10 @@
             100% { transform: rotate(360deg); }
         }
         
-        @keyframes slideUpFlicker {
-            0% { opacity: 0; transform: translateY(30px); filter: brightness(0.8); }
-            80% { opacity: 0.9; transform: translateY(-5px); }
-            100% { opacity: 1; transform: translateY(0); filter: brightness(1); }
-        }
+@keyframes slideUpFlicker {
+    0% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 1; transform: translateY(0); }
+}
         
         @keyframes textGlow {
             from { text-shadow: 2px 2px 0 #0066aa, 4px 4px 0 #004466, 6px 6px 0 #002233, 0 0 10px #00aaff; }
@@ -200,25 +199,23 @@
             width: 100%;
             height: 100%;
             z-index: -1;
-            background: url('https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/background/green%20back.jpg') no-repeat center center fixed;
+            background: url('https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/background/green.jpg') no-repeat center center fixed;
             background-size: cover;
             pointer-events: none;
             display: none;
         }
 
         /* ===== BASE ===== */
-        html, body {
-            overflow: hidden;
-            height: 100vh;
-            width: 100vw;
-            margin: 0;
-            padding: 0;
-            color: var(--text-light);
-            position: fixed;
-            top: 0;
-            left: 0;
-            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-        }
+html, body {
+    height: 100vh;
+    width: 100vw;
+    margin: 0;
+    padding: 0;
+    color: var(--text-light);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
 
         /* ===== HEADER ===== */
         .header {
@@ -532,20 +529,21 @@
         }
 
         /* ===== HOME SCREEN ===== */
-        .app-grid-container {
-            display: flex;
-            flex-direction: column;
-            position: fixed;
-            top: var(--header-height);
-            left: 0;
-            right: 0;
-            bottom: var(--footer-height);
-            padding: 12px 16px 16px 16px;
-            overflow-y: auto;
-            overflow-x: hidden;
-            background: transparent;
-            z-index: 1;
-        }
+.app-grid-container {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: var(--header-height);
+    left: 0;
+    right: 0;
+    bottom: var(--footer-height);
+    padding: 12px 16px 16px 16px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    background: transparent;
+    z-index: 1;
+}
 
         .app-grid-container::-webkit-scrollbar {
             width: 4px;
@@ -681,44 +679,42 @@
         .app-card:active {
             transform: scale(0.95);
         }
+.app-card .app-image {
+    width: 100%;
+    height: 82%;
+    object-fit: contain;
+    display: block;
+    border-radius: 0;
+    filter: drop-shadow(0 0 10px var(--shadow-gold));
+    position: relative;
+    /* Remove transition for instant appearance */
+}
 
-        .app-card .app-image {
-            width: 100%;
-            height: 82%;
-            object-fit: contain;
-            display: block;
-            border-radius: 0;
-            filter: drop-shadow(0 0 10px var(--shadow-gold));
-            transition: all 0.4s ease;
-            position: relative;
-        }
+.app-card:hover .app-image {
+    filter: drop-shadow(0 0 30px var(--shadow-gold-strong));
+}
 
-        .app-card:hover .app-image {
-            filter: drop-shadow(0 0 30px var(--shadow-gold-strong));
-            transform: scale(1.03);
-        }
-
-        .app-card .app-name {
-            font-size: clamp(12px, 1.6vw, 16px);
-            font-weight: 900;
-            text-align: center;
-            padding: 5px 12px;
-            margin-top: 6px;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
-            border: 1px solid var(--border-gold);
-            border-radius: 8px;
-            text-transform: uppercase;
-            letter-spacing: 1.2px;
-            font-family: var(--font-main);
-            text-shadow: 0 0 20px currentColor, 0 0 40px currentColor;
-            position: relative;
-            z-index: 2;
-            white-space: nowrap;
-            color: #ffffff;
-            transition: all var(--transition-speed) ease;
-        }
+.app-card .app-name {
+    font-size: clamp(16px, 2.5vw, 22px);
+    font-weight: 900;
+    text-align: center;
+    padding: 5px 12px;
+    margin-top: 6px;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border: 1px solid var(--border-gold);
+    border-radius: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-family: var(--font-main);
+    text-shadow: 0 0 20px currentColor, 0 0 40px currentColor;
+    position: relative;
+    z-index: 2;
+    white-space: nowrap;
+    color: #ffffff;
+    transition: all var(--transition-speed) ease;
+}
 
         .app-card:hover .app-name {
             transform: scale(1.05);
@@ -1090,7 +1086,7 @@
             margin-bottom: 18px;
             border: 3px solid var(--border-gold);
             transition: all var(--transition-speed) ease;
-            animation: fadeIn 0.3s ease-out;
+            animation: none;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
             color: var(--text-light);
         }
@@ -2735,7 +2731,7 @@
 
                 <!-- Header Balances -->
                 <div class="header-balances" id="headerBalances">
-                    <div class="header-balance-item balance-coins">
+                    <div class="header-balance-item balance-coins" onclick="openApp('wallet')" style="cursor:pointer;">
                         <span class="balance-icon">🪙</span>
                         <span class="balance-value" id="headerCoins">0</span>
                     </div>
@@ -3778,10 +3774,49 @@
                     updateUserMenu();
                     await loadDepositSettings();
                     await loadAllData();
-                    document.getElementById('loadingOverlay').style.display = 'none';
-                    document.getElementById('appContent').style.display = 'block';
                     renderAppGrid();
                     renderFooterTabs();
+// ✅ WAIT for ALL images to load before hiding spinner
+const images = document.querySelectorAll('.app-card .app-image');
+let imagesLoaded = 0;
+const totalImages = images.length;
+
+if (totalImages === 0) {
+    document.getElementById('loadingOverlay').style.display = 'none';
+    document.getElementById('appContent').style.display = 'block';
+} else {
+    images.forEach(img => {
+        if (img.complete) {
+            imagesLoaded++;
+            if (imagesLoaded === totalImages) {
+                document.getElementById('loadingOverlay').style.display = 'none';
+                document.getElementById('appContent').style.display = 'block';
+            }
+        } else {
+            img.addEventListener('load', () => {
+                imagesLoaded++;
+                if (imagesLoaded === totalImages) {
+                    document.getElementById('loadingOverlay').style.display = 'none';
+                    document.getElementById('appContent').style.display = 'block';
+                }
+            });
+            img.addEventListener('error', () => {
+                imagesLoaded++;
+                if (imagesLoaded === totalImages) {
+                    document.getElementById('loadingOverlay').style.display = 'none';
+                    document.getElementById('appContent').style.display = 'block';
+                }
+            });
+        }
+    });
+    
+    // Fallback: if images take too long, show after 2 seconds
+    setTimeout(() => {
+        document.getElementById('loadingOverlay').style.display = 'none';
+        document.getElementById('appContent').style.display = 'block';
+    }, 2000);
+}
+ 
                     if (AppState.isAdmin) showAdminTab();
 
                     const authModal = document.getElementById('authModal');
@@ -4059,19 +4094,19 @@
             window.location.href = window.location.pathname;
         }
 
-        function updateUserMenu() {
-            const items = document.getElementById('dropdownItems');
-            if (!items) return;
-            if (AppState.userId) {
-                items.innerHTML = `
-                        <div onclick="goToProfile()">👤 Profile</div>
-                        <div onclick="loadContactContent()">📞 Contact</div>
-                        <div onclick="logout()">🚪 Logout</div>
-                    `;
-            } else {
-                items.innerHTML = `<div onclick="showAuthModal()">🔐 Login / Register</div>`;
-            }
-        }
+function updateUserMenu() {
+    const items = document.getElementById('dropdownItems');
+    if (!items) return;
+    if (AppState.userId) {
+        items.innerHTML = `
+                <div onclick="goToProfile()">👤 Profile</div>
+                <div onclick="openContactFromMenu()">📞 Contact</div>
+                <div onclick="logout()">🚪 Logout</div>
+            `;
+    } else {
+        items.innerHTML = `<div onclick="showAuthModal()">🔐 Login / Register</div>`;
+    }
+}
 
         function goToProfile() {
             const menu = document.getElementById('dropdownMenu');
@@ -4088,6 +4123,15 @@
             if (notificationDropdown) notificationDropdown.style.display = 'none';
             if (menu) menu.classList.toggle('show');
         }
+
+function openContactFromMenu() {
+    // Close the dropdown menu
+    const menu = document.getElementById('dropdownMenu');
+    if (menu) menu.classList.remove('show');
+    
+    // Open contact using the existing function
+    openApp('contact');
+}
 
         // Close dropdowns when clicking outside
         document.addEventListener('click', function(e) {
@@ -5943,61 +5987,62 @@ async function loadAdminPanel() {
                             <div class="loading">Click Load More to load withdrawal settings...</div>
                         </div>
                     </div>
+                    <!-- BATCH 6: Notification System -->
+<div class="admin-batch" data-batch="6">
+    <div class="card" style="margin-top: 15px;">
+        <h3>🔔 Send Notifications</h3>
+        <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1);">
+            <p style="font-weight: bold; color: #fbbf24; margin-bottom: 10px;">📢 Send to All Active Users</p>
+            <div style="margin-bottom: 10px;">
+                <input type="text" id="adminBroadcastTitle" placeholder="Title (e.g., Important Update)" 
+                       style="width: 100%; padding: 10px; border-radius: 10px; margin-bottom: 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; font-size: 14px;">
+                <textarea id="adminBroadcastMessage" rows="3" placeholder="Message to all users..." 
+                          style="width: 100%; padding: 10px; border-radius: 10px; margin-bottom: 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; font-size: 14px; resize: vertical;"></textarea>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px;">
+                    <select id="adminBroadcastLink" style="flex: 1; padding: 10px; border-radius: 10px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; font-size: 14px;">
+                        <option value="#dashboard">📊 Dashboard</option>
+                        <option value="#market">🛒 Market</option>
+                        <option value="#games">🎮 Games</option>
+                        <option value="#lottery">🎟️ Lottery</option>
+                        <option value="#cards">🃏 Airtime</option>
+                        <option value="#clinic">🏥 Clinic</option>
+                        <option value="#profile">👤 Profile</option>
+                    </select>
+                </div>
+                <button class="btn btn-success" onclick="adminSendBroadcast(event)" style="width: 100%;">
+                    📤 Send to All Active Users
+                </button>
+            </div>
+        </div>
+        <div>
+            <p style="font-weight: bold; color: #fbbf24; margin-bottom: 10px;">👤 Send to Specific User</p>
+            <div style="margin-bottom: 10px;">
+                <input type="text" id="adminDirectUserId" placeholder="User ID (paste from user list)" 
+                       style="width: 100%; padding: 10px; border-radius: 10px; margin-bottom: 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; font-size: 14px;">
+                <input type="text" id="adminDirectTitle" placeholder="Title" 
+                       style="width: 100%; padding: 10px; border-radius: 10px; margin-bottom: 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; font-size: 14px;">
+                <textarea id="adminDirectMessage" rows="3" placeholder="Message..." 
+                          style="width: 100%; padding: 10px; border-radius: 10px; margin-bottom: 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; font-size: 14px; resize: vertical;"></textarea>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px;">
+                    <select id="adminDirectLink" style="flex: 1; padding: 10px; border-radius: 10px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; font-size: 14px;">
+                        <option value="#dashboard">📊 Dashboard</option>
+                        <option value="#market">🛒 Market</option>
+                        <option value="#games">🎮 Games</option>
+                        <option value="#lottery">🎟️ Lottery</option>
+                        <option value="#cards">🃏 Airtime</option>
+                        <option value="#clinic">🏥 Clinic</option>
+                        <option value="#profile">👤 Profile</option>
+                    </select>
+                </div>
+                <button class="btn btn-info" onclick="adminSendDirectNotification(event)" style="width: 100%;">
+                    📤 Send to User
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
                     
-                    <!-- BATCH 5.5: Notification System -->
-                    <div class="card" style="margin-top: 15px;">
-                        <h3>🔔 Send Notifications</h3>
-                        <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                            <p style="font-weight: bold; color: #fbbf24; margin-bottom: 10px;">📢 Send to All Active Users</p>
-                            <div style="margin-bottom: 10px;">
-                                <input type="text" id="adminBroadcastTitle" placeholder="Title (e.g., Important Update)" 
-                                       style="width: 100%; padding: 10px; border-radius: 10px; margin-bottom: 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; font-size: 14px;">
-                                <textarea id="adminBroadcastMessage" rows="3" placeholder="Message to all users..." 
-                                          style="width: 100%; padding: 10px; border-radius: 10px; margin-bottom: 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; font-size: 14px; resize: vertical;"></textarea>
-                                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px;">
-                                    <select id="adminBroadcastLink" style="flex: 1; padding: 10px; border-radius: 10px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; font-size: 14px;">
-                                        <option value="#dashboard">📊 Dashboard</option>
-                                        <option value="#market">🛒 Market</option>
-                                        <option value="#games">🎮 Games</option>
-                                        <option value="#lottery">🎟️ Lottery</option>
-                                        <option value="#cards">🃏 Airtime</option>
-                                        <option value="#clinic">🏥 Clinic</option>
-                                        <option value="#profile">👤 Profile</option>
-                                    </select>
-                                </div>
-                                <button class="btn btn-success" onclick="adminSendBroadcast(event)" style="width: 100%;">
-                                    📤 Send to All Active Users
-                                </button>
-                            </div>
-                        </div>
-                        <div>
-                            <p style="font-weight: bold; color: #fbbf24; margin-bottom: 10px;">👤 Send to Specific User</p>
-                            <div style="margin-bottom: 10px;">
-                                <input type="text" id="adminDirectUserId" placeholder="User ID (paste from user list)" 
-                                       style="width: 100%; padding: 10px; border-radius: 10px; margin-bottom: 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; font-size: 14px;">
-                                <input type="text" id="adminDirectTitle" placeholder="Title" 
-                                       style="width: 100%; padding: 10px; border-radius: 10px; margin-bottom: 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; font-size: 14px;">
-                                <textarea id="adminDirectMessage" rows="3" placeholder="Message..." 
-                                          style="width: 100%; padding: 10px; border-radius: 10px; margin-bottom: 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; font-size: 14px; resize: vertical;"></textarea>
-                                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px;">
-                                    <select id="adminDirectLink" style="flex: 1; padding: 10px; border-radius: 10px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; font-size: 14px;">
-                                        <option value="#dashboard">📊 Dashboard</option>
-                                        <option value="#market">🛒 Market</option>
-                                        <option value="#games">🎮 Games</option>
-                                        <option value="#lottery">🎟️ Lottery</option>
-                                        <option value="#cards">🃏 Airtime</option>
-                                        <option value="#clinic">🏥 Clinic</option>
-                                        <option value="#profile">👤 Profile</option>
-                                    </select>
-                                </div>
-                                <button class="btn btn-info" onclick="adminSendDirectNotification(event)" style="width: 100%;">
-                                    📤 Send to User
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- BATCH 6: Storage Cleanup -->
+                    <!-- BATCH 7: Storage Cleanup -->
                     <div class="admin-batch" data-batch="6">
                         <div class="card" id="storageCleanupCard">
                             <h3>🧹 Storage Cleanup</h3>
@@ -6005,7 +6050,7 @@ async function loadAdminPanel() {
                         </div>
                     </div>
                     
-                    <!-- BATCH 7: App Profile Picture -->
+                    <!-- BATCH 8: App Profile Picture -->
                     <div class="admin-batch" data-batch="7">
                         <div class="card" id="profilePictureCard">
                             <h3>🖼️ App Profile Picture</h3>
@@ -6013,7 +6058,7 @@ async function loadAdminPanel() {
                         </div>
                     </div>
                     
-                    <!-- BATCH 8: Platform Statistics -->
+                    <!-- BATCH 9: Platform Statistics -->
                     <div class="admin-batch" data-batch="8">
                         <div class="card" id="statsCard">
                             <h3>📊 Platform Statistics</h3>
@@ -6021,7 +6066,7 @@ async function loadAdminPanel() {
                         </div>
                     </div>
                     
-                    <!-- BATCH 9: Contact Settings -->
+                    <!-- BATCH 10: Contact Settings -->
                     <div class="admin-batch" data-batch="9">
                         <div class="card" id="contactSettingsCard">
                             <h3>📞 Contact Settings</h3>
@@ -6035,7 +6080,7 @@ async function loadAdminPanel() {
             `;
 
         window.currentAdminBatch = 1;
-        window.totalAdminBatches = 9;
+        window.totalAdminBatches = 10;
 
     } catch (err) {
         adminDiv.innerHTML = `<div class="loading" style="color: #ef4444;">Error loading admin panel: ${err.message}</div>`;
@@ -6159,10 +6204,11 @@ async function loadAdminPanel() {
                 case 3: await loadMarketEditBatch(); break;
                 case 4: await loadAirtimeAndUsersBatch(); break;
                 case 5: await loadSettingsBatch(); break;
-                case 6: await loadStorageCleanupBatch(); break;
-                case 7: await loadProfilePictureBatch(); break;
-                case 8: await loadStatisticsBatch(); break;
-                case 9: await loadContactSettingsBatch(); break;
+                case 6: break; // Notification section - already loaded in batch 5
+                case 7: await loadStorageCleanupBatch(); break;
+                case 8: await loadProfilePictureBatch(); break;
+                case 9: await loadStatisticsBatch(); break;
+                case 10: await loadContactSettingsBatch(); break;
             }
 
             window.currentAdminBatch = nextBatch;
@@ -8493,6 +8539,41 @@ sb.auth.onAuthStateChange((event, session) => {
 
         // Check session and start app
         checkSession();
+        // ================================================================
+        // PULL-TO-REFRESH FUNCTIONALITY
+        // ================================================================
+
+        let pullStartY = 0;
+        let isPulling = false;
+
+        document.addEventListener('touchstart', function(e) {
+            const container = document.querySelector('.app-grid-container');
+            if (container && container.scrollTop <= 0) {
+                pullStartY = e.touches[0].pageY;
+                isPulling = true;
+            }
+        }, { passive: true });
+
+        document.addEventListener('touchmove', function(e) {
+            if (!isPulling) return;
+            
+            const currentY = e.touches[0].pageY;
+            const pullDistance = currentY - pullStartY;
+            
+            if (pullDistance > 80) {
+                isPulling = false;
+                showToast('Refreshing...', 'info');
+                loadAllData(true);
+                setTimeout(function() {
+                    showToast('Refreshed!', 'success');
+                }, 1000);
+            }
+        }, { passive: true });
+
+        document.addEventListener('touchend', function() {
+            isPulling = false;
+        }, { passive: true });
+
     </script>
 </body>
 </html>
