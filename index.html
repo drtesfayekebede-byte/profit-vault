@@ -8539,49 +8539,6 @@ sb.auth.onAuthStateChange((event, session) => {
 
         // Check session and start app
         checkSession();
-// ================================================================
-// PULL-TO-REFRESH FUNCTIONALITY - FIXED
-// ================================================================
-
-let pullStartY = 0;
-let isPulling = false;
-let isRefreshing = false;
-
-document.addEventListener('touchstart', function(e) {
-    const container = document.querySelector('.app-grid-container');
-    if (!container) return;
-    
-    // Only allow pull-to-refresh when scrolled to the VERY TOP
-    if (container.scrollTop <= 0 && !isRefreshing) {
-        pullStartY = e.touches[0].pageY;
-        isPulling = true;
-    } else {
-        isPulling = false;
-    }
-}, { passive: true });
-
-document.addEventListener('touchmove', function(e) {
-    if (!isPulling || isRefreshing) return;
-    
-    const currentY = e.touches[0].pageY;
-    const pullDistance = currentY - pullStartY;
-    
-    // Only trigger if pulling down significantly (and NOT scrolling up)
-    if (pullDistance > 60) {
-        isRefreshing = true;
-        isPulling = false;
-        showToast('Refreshing...', 'info');
-        loadAllData(true);
-        setTimeout(function() {
-            isRefreshing = false;
-            showToast('Refreshed!', 'success');
-        }, 1500);
-    }
-}, { passive: true });
-
-document.addEventListener('touchend', function() {
-    isPulling = false;
-}, { passive: true });
     </script>
 </body>
 </html>
