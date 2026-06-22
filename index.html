@@ -579,58 +579,40 @@ html, body {
         }
 
         /* ===== APP GRID WRAPPER - FIXED GLOW ===== */
-        .app-grid-wrapper {
-            position: relative;
-            background: transparent;
-            border: 3px solid var(--border-gold);
-            border-radius: 24px;
-            padding: 16px;
-            box-shadow: 0 0 15px var(--shadow-gold);
-            animation: homescreenBorderGlow 3s ease-in-out infinite;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            min-height: 300px;
-            margin: 4px 0;
-            z-index: 2;
-            transition: all var(--transition-speed) ease;
-        }
+.app-grid-wrapper {
+    position: relative;
+    background: transparent;
+    border: 6px solid #000000;
+    border-radius: 24px;
+    padding: 16px;
+    box-shadow: none;
+    animation: none;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    min-height: 300px;
+    margin: 4px 0;
+    z-index: 2;
+    transition: all var(--transition-speed) ease;
+}
 
-        /* Additional glow layer for better visibility */
-        .app-grid-wrapper::before {
-            content: '';
-            position: absolute;
-            inset: -4px;
-            border-radius: 28px;
-            z-index: -1;
-            background: conic-gradient(
-                from 0deg, 
-                transparent, 
-                rgba(255, 215, 0, 0.05), 
-                transparent, 
-                rgba(255, 215, 0, 0.08), 
-                transparent, 
-                rgba(255, 215, 0, 0.05),
-                transparent
-            );
-            animation: spin 8s linear infinite;
-            filter: blur(12px);
-            opacity: 0.6;
-        }
+.app-grid-wrapper::before {
+    display: none;
+}
 
         @keyframes spin {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
 
-        .app-grid-wrapper:hover {
-            border-color: var(--border-gold-hover);
-            box-shadow: 0 0 40px var(--shadow-gold-strong);
-            animation-play-state: paused;
-        }
+.app-grid-wrapper:hover {
+    border-color: #000000;
+    box-shadow: none;
+    animation-play-state: paused;
+}
 
         /* ===== APP GRID ===== */
         .app-grid {
@@ -3743,6 +3725,24 @@ html, body {
                     sessionStorage.clear();
 
                     document.getElementById('loadingOverlay').style.display = 'flex';
+// ✅ PRELOAD images for faster loading
+const iconUrls = [
+    'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/dashboard.png',
+    'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/market.png',
+    'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/games.png',
+    'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/clinic.png',
+    'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/airtime.png',
+    'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/guide.png',
+    'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/lottery.png',
+    'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/wallet.png',
+    'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/admin.png',
+    'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/contact.png'
+];
+
+iconUrls.forEach(url => {
+    const img = new Image();
+    img.src = url;
+});
 
                     const pendingRef = localStorage.getItem('profitvault_referral');
                     if (pendingRef) {
@@ -7655,26 +7655,31 @@ async function loadAdminPanel() {
         // APP NAVIGATION - FIXED ADMIN TAB VISIBILITY
         // ================================================================
 
-        function getAppItems() {
-            const baseItems = [
-                { id: 'dashboard', image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/dashboard.png', name: 'Dashboard', adminOnly: false },
-                { id: 'market', image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/market.png', name: 'Market', adminOnly: false },
-                { id: 'games', image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/games.png', name: 'Games', adminOnly: false },
-                { id: 'airtime', image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/airtime.png', name: 'Airtime', adminOnly: false },
-                { id: 'lottery', image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/lottery.png', name: 'Lottery', adminOnly: false },
-                { id: 'clinic', image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/clinic.png', name: 'Clinic', adminOnly: false },
-                { id: 'guide', image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/guide.png', name: 'Guide', adminOnly: false },
-                { id: 'wallet', image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/wallet.png', name: 'Wallet', adminOnly: false }
-            ];
+function getAppItems() {
+    const baseItems = [
+        // ROW 1: Dashboard, Market, Games
+        { id: 'dashboard', image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/dashboard.png', name: 'Dashboard', adminOnly: false },
+        { id: 'market', image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/market.png', name: 'Market', adminOnly: false },
+        { id: 'games', image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/games.png', name: 'Games', adminOnly: false },
+        
+        // ROW 2: Clinic, Airtime, Guide
+        { id: 'clinic', image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/clinic.png', name: 'Clinic', adminOnly: false },
+        { id: 'airtime', image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/airtime.png', name: 'Airtime', adminOnly: false },
+        { id: 'guide', image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/guide.png', name: 'Guide', adminOnly: false },
+        
+        // ROW 3: Lottery, Wallet, Admin/Contact
+        { id: 'lottery', image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/lottery.png', name: 'Lottery', adminOnly: false },
+        { id: 'wallet', image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/wallet.png', name: 'Wallet', adminOnly: false }
+    ];
 
-            if (AppState.isAdmin) {
-                baseItems.push({ id: 'admin', image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/admin.png', name: 'Admin', adminOnly: true });
-            } else {
-                baseItems.push({ id: 'contact', image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/contact.png', name: 'Contact', adminOnly: false });
-            }
+    if (AppState.isAdmin) {
+        baseItems.push({ id: 'admin', image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/admin.png', name: 'Admin', adminOnly: true });
+    } else {
+        baseItems.push({ id: 'contact', image: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app%20icon/contact.png', name: 'Contact', adminOnly: false });
+    }
 
-            return baseItems;
-        }
+    return baseItems;
+}
 
         function renderAppGrid() {
             const grid = document.getElementById('appGrid');
