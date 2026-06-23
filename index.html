@@ -14,10 +14,10 @@
 :root {
     --gold: #FFD700;
     --gold-dark: #FF8C00;
-    --gold-border: rgba(255, 215, 0, 0.12);
-    --gold-border-light: rgba(255, 215, 0, 0.08);
-    --gold-border-medium: rgba(255, 215, 0, 0.15);
-    --gold-border-strong: rgba(255, 215, 0, 0.22);
+    --gold-border: rgba(255, 215, 0, 0.25);
+    --gold-border-light: rgba(255, 215, 0, 0.20);
+    --gold-border-medium: rgba(255, 215, 0, 0.30);
+    --gold-border-strong: rgba(255, 215, 0, 0.40);
     --bg-dark: #0a0a2a;
     --bg-dark2: #0a0a3a;
     --bg-dark3: #050520;
@@ -182,8 +182,8 @@ html, body {
     background: rgba(0, 0, 0, 0.92);
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
-    border-bottom: 2px solid rgba(255, 215, 0, 0.15);
-    box-shadow: none;
+    border-bottom: 2px solid rgba(255, 215, 0, 0.35);
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.05);
     padding: 0 32px;
     height: var(--header-height);
     min-height: var(--header-height);
@@ -235,7 +235,7 @@ html, body {
     min-width: 120px;
     margin: 0 16px;
     background: rgba(0, 0, 0, 0.5);
-    border: 2px solid rgba(255, 215, 0, 0.12);
+    border: 2px solid rgba(255, 215, 0, 0.25);
     transition: all var(--transition-speed) ease;
 }
 
@@ -330,7 +330,7 @@ html, body {
     overflow: hidden;
     cursor: pointer;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-    border: 2px solid rgba(255, 215, 0, 0.12);
+    border: 2px solid rgba(255, 215, 0, 0.25);
     flex-shrink: 0;
     box-shadow: 0 0 20px rgba(59, 130, 246, 0.15);
 }
@@ -395,7 +395,7 @@ html, body {
     max-width: 350px;
     max-height: 400px;
     overflow: hidden;
-    border: 2px solid rgba(255, 215, 0, 0.12);
+    border: 2px solid rgba(255, 215, 0, 0.25);
 }
 
 .notification-item {
@@ -461,7 +461,7 @@ html, body {
     z-index: 100000;
     min-width: 170px;
     overflow: hidden;
-    border: 2px solid rgba(255, 215, 0, 0.12);
+    border: 2px solid rgba(255, 215, 0, 0.25);
 }
 
 .dropdown-menu.show {
@@ -536,10 +536,10 @@ html, body {
 .app-grid-wrapper {
     position: relative;
     background: transparent;
-    border: 2px solid rgba(255, 215, 0, 0.12);
+    border: 2px solid rgba(255, 215, 0, 0.25);
     border-radius: 24px;
     padding: 16px;
-    box-shadow: none;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.03);
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -557,8 +557,8 @@ html, body {
 }
 
 .app-grid-wrapper:hover {
-    border-color: rgba(255, 215, 0, 0.22);
-    box-shadow: none;
+    border-color: rgba(255, 215, 0, 0.40);
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.06);
 }
 
 /* ===== APP GRID ===== */
@@ -632,7 +632,7 @@ html, body {
     background: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
-    border: 2px solid rgba(255, 215, 0, 0.12);
+    border: 2px solid rgba(255, 215, 0, 0.25);
     border-radius: 8px;
     text-transform: uppercase;
     letter-spacing: 1.5px;
@@ -647,7 +647,7 @@ html, body {
 
 .app-card:hover .app-name {
     transform: scale(1.05);
-    border-color: rgba(255, 215, 0, 0.22);
+    border-color: rgba(255, 215, 0, 0.40);
 }
 
 /* ===== INDIVIDUAL APP COLORS ===== */
@@ -779,8 +779,8 @@ html, body {
     backdrop-filter: blur(10px) !important;
     -webkit-backdrop-filter: blur(10px) !important;
     margin-bottom: 20px !important;
-    border: 2px solid rgba(255, 215, 0, 0.12) !important;
-    box-shadow: none !important;
+    border: 2px solid rgba(255, 215, 0, 0.25) !important;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.02) !important;
     transition: border-color var(--transition-speed) ease;
 }
 
@@ -795,8 +795,8 @@ html, body {
 #admin.tab-content:hover,
 #profile.tab-content:hover,
 #contact.tab-content:hover {
-    border-color: rgba(255, 215, 0, 0.22) !important;
-    box-shadow: none !important;
+    border-color: rgba(255, 215, 0, 0.40) !important;
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.05) !important;
 }
 
 /* ===== WALLET TAB ===== */
@@ -818,12 +818,12 @@ html, body {
     transition: all var(--transition-speed) ease;
     font-weight: 700;
     color: var(--text-light);
-    border: 2px solid rgba(255, 215, 0, 0.12);
+    border: 2px solid rgba(255, 215, 0, 0.25);
 }
 
 .wallet-balance-card:hover {
     transform: translateY(-4px) scale(1.02);
-    border-color: rgba(255, 215, 0, 0.22);
+    border-color: rgba(255, 215, 0, 0.40);
 }
 
 .wallet-balance-card .balance-emoji {
@@ -908,7 +908,7 @@ html, body {
 
 .wallet-filter-tab {
     background: rgba(10, 10, 42, 0.5);
-    border: 2px solid rgba(255, 215, 0, 0.12);
+    border: 2px solid rgba(255, 215, 0, 0.25);
     padding: 10px 20px;
     border-radius: 24px;
     color: var(--text-muted);
@@ -929,7 +929,7 @@ html, body {
 
 .wallet-filter-tab:hover {
     transform: translateY(-2px);
-    border-color: rgba(255, 215, 0, 0.22);
+    border-color: rgba(255, 215, 0, 0.40);
 }
 
 /* ===== TRANSACTIONS ===== */
@@ -940,14 +940,14 @@ html, body {
     border-radius: var(--border-radius-sm);
     padding: 14px;
     margin-bottom: 10px;
-    border: 2px solid rgba(255, 215, 0, 0.12);
+    border: 2px solid rgba(255, 215, 0, 0.25);
     transition: all var(--transition-speed) ease;
     font-weight: 600;
     color: var(--text-light);
 }
 
 .wallet-transaction:hover {
-    border-color: rgba(255, 215, 0, 0.22);
+    border-color: rgba(255, 215, 0, 0.40);
     transform: translateX(4px);
 }
 
@@ -1014,16 +1014,16 @@ html, body {
     border-radius: var(--border-radius-card);
     padding: 20px;
     margin-bottom: 18px;
-    border: 2px solid rgba(255, 215, 0, 0.12);
+    border: 2px solid rgba(255, 215, 0, 0.25);
     transition: all var(--transition-speed) ease;
     animation: none;
-    box-shadow: none;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.02);
     color: var(--text-light);
 }
 
 .card:hover {
-    border-color: rgba(255, 215, 0, 0.22);
-    box-shadow: none;
+    border-color: rgba(255, 215, 0, 0.40);
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.05);
 }
 
 .card h3 {
@@ -1059,19 +1059,19 @@ html, body {
     aspect-ratio: 1 / 1;
     width: 100%;
     overflow: hidden;
-    border: 2px solid rgba(255, 215, 0, 0.12);
+    border: 2px solid rgba(255, 215, 0, 0.25);
     border-radius: 20px;
     background: rgba(10, 10, 42, 0.5);
     position: relative;
-    box-shadow: none;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.02);
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .market-image-container:hover {
-    border-color: rgba(255, 215, 0, 0.22);
-    box-shadow: none;
+    border-color: rgba(255, 215, 0, 0.40);
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.04);
 }
 
 .market-image {
@@ -1161,7 +1161,7 @@ html, body {
     width: 100%;
     margin-bottom: 10px;
     transition: transform 0.1s, box-shadow 0.2s;
-    box-shadow: none;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.03);
 }
 
 .btn:active { transform: scale(0.97); }
@@ -1188,17 +1188,17 @@ html, body {
     justify-content: center;
     cursor: pointer;
     transition: all 0.2s ease;
-    border: 2px solid rgba(255, 215, 0, 0.12);
+    border: 2px solid rgba(255, 215, 0, 0.25);
     font-size: 40px;
     font-weight: 900;
     transform-style: preserve-3d;
-    box-shadow: none;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.02);
     color: var(--text-light);
 }
 
 .game-card:hover {
-    border-color: rgba(255, 215, 0, 0.22);
-    box-shadow: none;
+    border-color: rgba(255, 215, 0, 0.40);
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.04);
 }
 
 .game-card:active { transform: scale(0.94); }
@@ -1255,8 +1255,8 @@ html, body {
     max-width: 400px;
     max-height: 85vh;
     overflow-y: auto;
-    border: 2px solid rgba(255, 215, 0, 0.12);
-    box-shadow: none;
+    border: 2px solid rgba(255, 215, 0, 0.25);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.03);
     color: var(--text-light);
 }
 .modal.active {
@@ -1284,7 +1284,7 @@ html, body {
 .modal-content select,
 .modal-content textarea {
     background: rgba(10, 10, 42, 0.5);
-    border: 2px solid rgba(255, 215, 0, 0.12);
+    border: 2px solid rgba(255, 215, 0, 0.25);
     border-radius: 12px;
     padding: 10px 14px;
     color: var(--text-light);
@@ -1429,7 +1429,7 @@ html, body {
     width: 90%;
     max-width: 420px;
     box-shadow: 0 25px 40px rgba(0,0,0,0.3);
-    border: 2px solid rgba(255, 215, 0, 0.12);
+    border: 2px solid rgba(255, 215, 0, 0.25);
     color: var(--text-light);
     animation: fadeIn 0.3s ease-out;
 }
@@ -1492,7 +1492,7 @@ html, body {
     width: 100% !important;
     box-sizing: border-box !important;
     background: rgba(10, 10, 42, 0.5);
-    border: 2px solid rgba(255, 215, 0, 0.12);
+    border: 2px solid rgba(255, 215, 0, 0.25);
     border-radius: 60px;
     padding: 14px 20px;
     color: var(--text-light);
@@ -1528,7 +1528,7 @@ html, body {
 
 #authForm input {
     background: rgba(10, 10, 42, 0.5);
-    border: 2px solid rgba(255, 215, 0, 0.12);
+    border: 2px solid rgba(255, 215, 0, 0.25);
     border-radius: 60px;
     padding: 14px 20px;
     color: var(--text-light);
@@ -1625,8 +1625,8 @@ html, body {
     background: rgba(0, 0, 0, 0.92);
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
-    border-top: 2px solid rgba(255, 215, 0, 0.15);
-    box-shadow: none;
+    border-top: 2px solid rgba(255, 215, 0, 0.35);
+    box-shadow: 0 -5px 30px rgba(255, 215, 0, 0.03);
     padding: 10px 24px;
     height: var(--footer-height);
     min-height: var(--footer-height);
@@ -1934,7 +1934,7 @@ html, body {
     border-radius: var(--border-radius-card);
     padding: 20px 15px;
     text-align: center;
-    border: 2px solid rgba(255, 215, 0, 0.12);
+    border: 2px solid rgba(255, 215, 0, 0.25);
     transition: all var(--transition-speed) ease;
     position: relative;
     overflow: hidden;
@@ -1942,9 +1942,9 @@ html, body {
 }
 
 .investment-card:hover {
-    border-color: rgba(255, 215, 0, 0.22);
+    border-color: rgba(255, 215, 0, 0.40);
     transform: translateY(-3px);
-    box-shadow: none;
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.05);
 }
 
 .investment-card .asset-emoji {
@@ -2122,7 +2122,7 @@ html, body {
     .app-grid-wrapper {
         padding: 12px;
         border-radius: 18px;
-        border: 2px solid rgba(255, 215, 0, 0.12);
+        border: 2px solid rgba(255, 215, 0, 0.25);
         min-height: 200px;
     }
     .app-grid {
@@ -2291,7 +2291,7 @@ html, body {
     .app-grid-wrapper {
         padding: 8px;
         border-radius: 14px;
-        border: 2px solid rgba(255, 215, 0, 0.12);
+        border: 2px solid rgba(255, 215, 0, 0.25);
         min-height: 150px;
     }
     .app-grid {
@@ -2446,11 +2446,11 @@ html, body {
     border-radius: 16px;
     padding: 16px;
     margin-bottom: 12px;
-    border: 2px solid rgba(255, 215, 0, 0.12);
+    border: 2px solid rgba(255, 215, 0, 0.25);
 }
 
 .lottery-pool:hover {
-    border-color: rgba(255, 215, 0, 0.22);
+    border-color: rgba(255, 215, 0, 0.40);
 }
 
 .lottery-number {
@@ -2480,14 +2480,14 @@ html, body {
     border-radius: 16px;
     text-decoration: none;
     color: var(--text-light);
-    border: 2px solid rgba(255, 215, 0, 0.12);
+    border: 2px solid rgba(255, 215, 0, 0.25);
     transition: all var(--transition-speed) ease;
 }
 
 .contact-link:hover {
-    border-color: rgba(255, 215, 0, 0.22);
+    border-color: rgba(255, 215, 0, 0.40);
     transform: translateX(4px);
-    box-shadow: none;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.05);
 }
 
 .contact-link .contact-icon {
@@ -2515,11 +2515,11 @@ html, body {
     border-radius: 12px;
     padding: 12px;
     margin-bottom: 10px;
-    border: 2px solid rgba(255, 215, 0, 0.12);
+    border: 2px solid rgba(255, 215, 0, 0.25);
 }
 
 .consultation-item:hover {
-    border-color: rgba(255, 215, 0, 0.22);
+    border-color: rgba(255, 215, 0, 0.40);
 }
 
 /* ===== TICKET ITEM ===== */
@@ -2531,7 +2531,7 @@ html, body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border: 2px solid rgba(255, 215, 0, 0.12);
+    border: 2px solid rgba(255, 215, 0, 0.25);
 }
 
 /* ===== SCROLLBAR STYLING ===== */
