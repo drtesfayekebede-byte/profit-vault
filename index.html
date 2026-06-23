@@ -14,10 +14,10 @@
 :root {
     --gold: #FFD700;
     --gold-dark: #FF8C00;
-    --gold-border: rgba(255, 215, 0, 0.12);
-    --gold-border-light: rgba(255, 215, 0, 0.08);
-    --gold-border-medium: rgba(255, 215, 0, 0.15);
-    --gold-border-strong: rgba(255, 215, 0, 0.2);
+    --gold-border: rgba(255, 215, 0, 0.08);
+    --gold-border-light: rgba(255, 215, 0, 0.05);
+    --gold-border-medium: rgba(255, 215, 0, 0.10);
+    --gold-border-strong: rgba(255, 215, 0, 0.15);
     --bg-dark: #0a0a2a;
     --bg-dark2: #0a0a3a;
     --bg-dark3: #050520;
@@ -182,7 +182,7 @@ html, body {
     background: rgba(0, 0, 0, 0.92);
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
-    border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+    border-bottom: 2px solid rgba(255, 215, 0, 0.10);
     box-shadow: none;
     padding: 0 32px;
     height: var(--header-height);
@@ -235,7 +235,7 @@ html, body {
     min-width: 120px;
     margin: 0 16px;
     background: rgba(0, 0, 0, 0.5);
-    border: 1px solid rgba(255, 215, 0, 0.12);
+    border: 2px solid rgba(255, 215, 0, 0.08);
     transition: all var(--transition-speed) ease;
 }
 
@@ -266,7 +266,7 @@ html, body {
 }
 .balance-coins {
     background: rgba(96, 165, 250, 0.12);
-    border: 1px solid rgba(96, 165, 250, 0.2);
+    border: 2px solid rgba(96, 165, 250, 0.2);
     animation: pulseBlue 2s infinite;
 }
 
@@ -300,14 +300,14 @@ html, body {
 }
 .balance-money {
     background: rgba(16, 185, 129, 0.12);
-    border: 1px solid rgba(16, 185, 129, 0.2);
+    border: 2px solid rgba(16, 185, 129, 0.2);
 }
 .balance-bonus .balance-value {
     color: #fbbf24;
 }
 .balance-bonus {
     background: rgba(251, 191, 36, 0.12);
-    border: 1px solid rgba(251, 191, 36, 0.2);
+    border: 2px solid rgba(251, 191, 36, 0.2);
 }
 
 /* ===== PROFILE AREA ===== */
@@ -330,7 +330,7 @@ html, body {
     overflow: hidden;
     cursor: pointer;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-    border: 1px solid rgba(255, 215, 0, 0.12);
+    border: 2px solid rgba(255, 215, 0, 0.08);
     flex-shrink: 0;
     box-shadow: 0 0 20px rgba(59, 130, 246, 0.15);
 }
@@ -395,7 +395,7 @@ html, body {
     max-width: 350px;
     max-height: 400px;
     overflow: hidden;
-    border: 1px solid rgba(255, 215, 0, 0.12);
+    border: 2px solid rgba(255, 215, 0, 0.08);
 }
 
 .notification-item {
@@ -461,7 +461,7 @@ html, body {
     z-index: 100000;
     min-width: 170px;
     overflow: hidden;
-    border: 1px solid rgba(255, 215, 0, 0.12);
+    border: 2px solid rgba(255, 215, 0, 0.08);
 }
 
 .dropdown-menu.show {
@@ -536,7 +536,7 @@ html, body {
 .app-grid-wrapper {
     position: relative;
     background: transparent;
-    border: 1px solid rgba(255, 215, 0, 0.15);
+    border: 2px solid rgba(255, 215, 0, 0.08);
     border-radius: 24px;
     padding: 16px;
     box-shadow: none;
@@ -557,7 +557,7 @@ html, body {
 }
 
 .app-grid-wrapper:hover {
-    border-color: rgba(255, 215, 0, 0.3);
+    border-color: rgba(255, 215, 0, 0.18);
     box-shadow: none;
 }
 
@@ -632,7 +632,7 @@ html, body {
     background: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
-    border: 1px solid rgba(255, 215, 0, 0.12);
+    border: 2px solid rgba(255, 215, 0, 0.08);
     border-radius: 8px;
     text-transform: uppercase;
     letter-spacing: 1.5px;
@@ -647,7 +647,7 @@ html, body {
 
 .app-card:hover .app-name {
     transform: scale(1.05);
-    border-color: rgba(255, 215, 0, 0.3);
+    border-color: rgba(255, 215, 0, 0.18);
 }
 
 /* ===== INDIVIDUAL APP COLORS ===== */
@@ -779,7 +779,7 @@ html, body {
     backdrop-filter: blur(10px) !important;
     -webkit-backdrop-filter: blur(10px) !important;
     margin-bottom: 20px !important;
-    border: 1px solid rgba(255, 215, 0, 0.12) !important;
+    border: 2px solid rgba(255, 215, 0, 0.08) !important;
     box-shadow: none !important;
     transition: border-color var(--transition-speed) ease;
 }
@@ -795,7 +795,7 @@ html, body {
 #admin.tab-content:hover,
 #profile.tab-content:hover,
 #contact.tab-content:hover {
-    border-color: rgba(255, 215, 0, 0.25) !important;
+    border-color: rgba(255, 215, 0, 0.18) !important;
     box-shadow: none !important;
 }
 
@@ -818,12 +818,12 @@ html, body {
     transition: all var(--transition-speed) ease;
     font-weight: 700;
     color: var(--text-light);
-    border: 1px solid rgba(255, 215, 0, 0.12);
+    border: 2px solid rgba(255, 215, 0, 0.08);
 }
 
 .wallet-balance-card:hover {
     transform: translateY(-4px) scale(1.02);
-    border-color: rgba(255, 215, 0, 0.25);
+    border-color: rgba(255, 215, 0, 0.18);
 }
 
 .wallet-balance-card .balance-emoji {
@@ -849,7 +849,7 @@ html, body {
 /* CARD 1: DEEP RED (Balance) */
 .wallet-balance-card:nth-child(1) {
     background: #7f1d1d !important;
-    border: 1px solid #991b1b !important;
+    border: 2px solid #991b1b !important;
     animation: glowRed 2s ease-in-out infinite !important;
     box-shadow: 0 0 30px rgba(139, 0, 0, 0.3) !important;
 }
@@ -864,7 +864,7 @@ html, body {
 /* CARD 2: DEEP GREEN (Bonus) */
 .wallet-balance-card:nth-child(2) {
     background: #14532d !important;
-    border: 1px solid #166534 !important;
+    border: 2px solid #166534 !important;
     animation: glowGreen 2.5s ease-in-out infinite !important;
     box-shadow: 0 0 30px rgba(0, 100, 0, 0.3) !important;
 }
@@ -879,7 +879,7 @@ html, body {
 /* CARD 3: DEEP YELLOW (Coins) */
 .wallet-balance-card:nth-child(3) {
     background: #854d0e !important;
-    border: 1px solid #a16207 !important;
+    border: 2px solid #a16207 !important;
     animation: glowYellow 3s ease-in-out infinite !important;
     box-shadow: 0 0 30px rgba(184, 134, 11, 0.3) !important;
 }
@@ -908,7 +908,7 @@ html, body {
 
 .wallet-filter-tab {
     background: rgba(10, 10, 42, 0.5);
-    border: 1px solid rgba(255, 215, 0, 0.12);
+    border: 2px solid rgba(255, 215, 0, 0.08);
     padding: 10px 20px;
     border-radius: 24px;
     color: var(--text-muted);
@@ -929,7 +929,7 @@ html, body {
 
 .wallet-filter-tab:hover {
     transform: translateY(-2px);
-    border-color: rgba(255, 215, 0, 0.25);
+    border-color: rgba(255, 215, 0, 0.18);
 }
 
 /* ===== TRANSACTIONS ===== */
@@ -940,14 +940,14 @@ html, body {
     border-radius: var(--border-radius-sm);
     padding: 14px;
     margin-bottom: 10px;
-    border: 1px solid rgba(255, 215, 0, 0.12);
+    border: 2px solid rgba(255, 215, 0, 0.08);
     transition: all var(--transition-speed) ease;
     font-weight: 600;
     color: var(--text-light);
 }
 
 .wallet-transaction:hover {
-    border-color: rgba(255, 215, 0, 0.25);
+    border-color: rgba(255, 215, 0, 0.18);
     transform: translateX(4px);
 }
 
@@ -1014,7 +1014,7 @@ html, body {
     border-radius: var(--border-radius-card);
     padding: 20px;
     margin-bottom: 18px;
-    border: 1px solid rgba(255, 215, 0, 0.12);
+    border: 2px solid rgba(255, 215, 0, 0.08);
     transition: all var(--transition-speed) ease;
     animation: none;
     box-shadow: none;
@@ -1022,7 +1022,7 @@ html, body {
 }
 
 .card:hover {
-    border-color: rgba(255, 215, 0, 0.25);
+    border-color: rgba(255, 215, 0, 0.18);
     box-shadow: none;
 }
 
@@ -1059,7 +1059,7 @@ html, body {
     aspect-ratio: 1 / 1;
     width: 100%;
     overflow: hidden;
-    border: 1px solid rgba(255, 215, 0, 0.12);
+    border: 2px solid rgba(255, 215, 0, 0.08);
     border-radius: 20px;
     background: rgba(10, 10, 42, 0.5);
     position: relative;
@@ -1070,7 +1070,7 @@ html, body {
 }
 
 .market-image-container:hover {
-    border-color: rgba(255, 215, 0, 0.25);
+    border-color: rgba(255, 215, 0, 0.18);
     box-shadow: none;
 }
 
@@ -1188,7 +1188,7 @@ html, body {
     justify-content: center;
     cursor: pointer;
     transition: all 0.2s ease;
-    border: 1px solid rgba(255, 215, 0, 0.12);
+    border: 2px solid rgba(255, 215, 0, 0.08);
     font-size: 40px;
     font-weight: 900;
     transform-style: preserve-3d;
@@ -1197,7 +1197,7 @@ html, body {
 }
 
 .game-card:hover {
-    border-color: rgba(255, 215, 0, 0.25);
+    border-color: rgba(255, 215, 0, 0.18);
     box-shadow: none;
 }
 
@@ -1255,7 +1255,7 @@ html, body {
     max-width: 400px;
     max-height: 85vh;
     overflow-y: auto;
-    border: 1px solid rgba(255, 215, 0, 0.12);
+    border: 2px solid rgba(255, 215, 0, 0.08);
     box-shadow: none;
     color: var(--text-light);
 }
@@ -1284,7 +1284,7 @@ html, body {
 .modal-content select,
 .modal-content textarea {
     background: rgba(10, 10, 42, 0.5);
-    border: 1px solid rgba(255, 215, 0, 0.12);
+    border: 2px solid rgba(255, 215, 0, 0.08);
     border-radius: 12px;
     padding: 10px 14px;
     color: var(--text-light);
@@ -1429,7 +1429,7 @@ html, body {
     width: 90%;
     max-width: 420px;
     box-shadow: 0 25px 40px rgba(0,0,0,0.3);
-    border: 1px solid rgba(255, 215, 0, 0.12);
+    border: 2px solid rgba(255, 215, 0, 0.08);
     color: var(--text-light);
     animation: fadeIn 0.3s ease-out;
 }
@@ -1462,7 +1462,7 @@ html, body {
 
 .mode-switch button {
     background: transparent;
-    border: 1px solid var(--gold);
+    border: 2px solid var(--gold);
     border-radius: 60px;
     padding: 10px 28px;
     font-weight: 700;
@@ -1492,7 +1492,7 @@ html, body {
     width: 100% !important;
     box-sizing: border-box !important;
     background: rgba(10, 10, 42, 0.5);
-    border: 1px solid rgba(255, 215, 0, 0.12);
+    border: 2px solid rgba(255, 215, 0, 0.08);
     border-radius: 60px;
     padding: 14px 20px;
     color: var(--text-light);
@@ -1528,7 +1528,7 @@ html, body {
 
 #authForm input {
     background: rgba(10, 10, 42, 0.5);
-    border: 1px solid rgba(255, 215, 0, 0.12);
+    border: 2px solid rgba(255, 215, 0, 0.08);
     border-radius: 60px;
     padding: 14px 20px;
     color: var(--text-light);
@@ -1625,7 +1625,7 @@ html, body {
     background: rgba(0, 0, 0, 0.92);
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
-    border-top: 1px solid rgba(255, 215, 0, 0.2);
+    border-top: 2px solid rgba(255, 215, 0, 0.10);
     box-shadow: none;
     padding: 10px 24px;
     height: var(--footer-height);
@@ -1934,7 +1934,7 @@ html, body {
     border-radius: var(--border-radius-card);
     padding: 20px 15px;
     text-align: center;
-    border: 1px solid rgba(255, 215, 0, 0.12);
+    border: 2px solid rgba(255, 215, 0, 0.08);
     transition: all var(--transition-speed) ease;
     position: relative;
     overflow: hidden;
@@ -1942,7 +1942,7 @@ html, body {
 }
 
 .investment-card:hover {
-    border-color: rgba(255, 215, 0, 0.25);
+    border-color: rgba(255, 215, 0, 0.18);
     transform: translateY(-3px);
     box-shadow: none;
 }
@@ -2122,7 +2122,7 @@ html, body {
     .app-grid-wrapper {
         padding: 12px;
         border-radius: 18px;
-        border: 1px solid rgba(255, 215, 0, 0.15);
+        border: 2px solid rgba(255, 215, 0, 0.08);
         min-height: 200px;
     }
     .app-grid {
@@ -2131,12 +2131,13 @@ html, body {
     .app-card {
         min-height: 50px;
         padding: 6px !important;
+        border: none !important;
     }
     .app-card .app-image {
         height: 76%;
     }
     .app-card .app-name {
-        font-size: clamp(10px, 2vw, 13px);
+        font-size: clamp(12px, 2.5vw, 16px);
         padding: 3px 8px;
         margin-top: 3px;
         letter-spacing: 0.8px;
@@ -2290,7 +2291,7 @@ html, body {
     .app-grid-wrapper {
         padding: 8px;
         border-radius: 14px;
-        border: 1px solid rgba(255, 215, 0, 0.15);
+        border: 2px solid rgba(255, 215, 0, 0.08);
         min-height: 150px;
     }
     .app-grid {
@@ -2299,12 +2300,13 @@ html, body {
     .app-card {
         min-height: 40px;
         padding: 4px !important;
+        border: none !important;
     }
     .app-card .app-image {
         height: 70%;
     }
     .app-card .app-name {
-        font-size: clamp(8px, 1.8vw, 11px);
+        font-size: clamp(10px, 2.5vw, 14px);
         padding: 2px 6px;
         margin-top: 2px;
         letter-spacing: 0.5px;
@@ -2396,7 +2398,7 @@ html, body {
         height: 80%;
     }
     .app-card .app-name {
-        font-size: clamp(12px, 1.6vw, 16px);
+        font-size: clamp(14px, 2.5vw, 18px);
     }
 }
 
@@ -2408,7 +2410,7 @@ html, body {
         height: 85%;
     }
     .app-card .app-name {
-        font-size: clamp(14px, 1.6vw, 18px);
+        font-size: clamp(16px, 2.5vw, 22px);
     }
 
     .container {
@@ -2444,11 +2446,11 @@ html, body {
     border-radius: 16px;
     padding: 16px;
     margin-bottom: 12px;
-    border: 1px solid rgba(255, 215, 0, 0.12);
+    border: 2px solid rgba(255, 215, 0, 0.08);
 }
 
 .lottery-pool:hover {
-    border-color: rgba(255, 215, 0, 0.25);
+    border-color: rgba(255, 215, 0, 0.18);
 }
 
 .lottery-number {
@@ -2478,12 +2480,12 @@ html, body {
     border-radius: 16px;
     text-decoration: none;
     color: var(--text-light);
-    border: 1px solid rgba(255, 215, 0, 0.12);
+    border: 2px solid rgba(255, 215, 0, 0.08);
     transition: all var(--transition-speed) ease;
 }
 
 .contact-link:hover {
-    border-color: rgba(255, 215, 0, 0.25);
+    border-color: rgba(255, 215, 0, 0.18);
     transform: translateX(4px);
     box-shadow: none;
 }
@@ -2513,11 +2515,11 @@ html, body {
     border-radius: 12px;
     padding: 12px;
     margin-bottom: 10px;
-    border: 1px solid rgba(255, 215, 0, 0.12);
+    border: 2px solid rgba(255, 215, 0, 0.08);
 }
 
 .consultation-item:hover {
-    border-color: rgba(255, 215, 0, 0.25);
+    border-color: rgba(255, 215, 0, 0.18);
 }
 
 /* ===== TICKET ITEM ===== */
@@ -2529,7 +2531,7 @@ html, body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border: 1px solid rgba(255, 215, 0, 0.12);
+    border: 2px solid rgba(255, 215, 0, 0.08);
 }
 
 /* ===== SCROLLBAR STYLING ===== */
