@@ -14,10 +14,10 @@
 :root {
     --gold: #FFD700;
     --gold-dark: #FF8C00;
-    --gold-border: rgba(255, 215, 0, 0.08);
-    --gold-border-light: rgba(255, 215, 0, 0.05);
-    --gold-border-medium: rgba(255, 215, 0, 0.10);
-    --gold-border-strong: rgba(255, 215, 0, 0.15);
+    --gold-border: rgba(255, 215, 0, 0.12);
+    --gold-border-light: rgba(255, 215, 0, 0.08);
+    --gold-border-medium: rgba(255, 215, 0, 0.15);
+    --gold-border-strong: rgba(255, 215, 0, 0.22);
     --bg-dark: #0a0a2a;
     --bg-dark2: #0a0a3a;
     --bg-dark3: #050520;
@@ -182,7 +182,7 @@ html, body {
     background: rgba(0, 0, 0, 0.92);
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
-    border-bottom: 2px solid rgba(255, 215, 0, 0.10);
+    border-bottom: 2px solid rgba(255, 215, 0, 0.15);
     box-shadow: none;
     padding: 0 32px;
     height: var(--header-height);
@@ -235,7 +235,7 @@ html, body {
     min-width: 120px;
     margin: 0 16px;
     background: rgba(0, 0, 0, 0.5);
-    border: 2px solid rgba(255, 215, 0, 0.08);
+    border: 2px solid rgba(255, 215, 0, 0.12);
     transition: all var(--transition-speed) ease;
 }
 
@@ -330,7 +330,7 @@ html, body {
     overflow: hidden;
     cursor: pointer;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-    border: 2px solid rgba(255, 215, 0, 0.08);
+    border: 2px solid rgba(255, 215, 0, 0.12);
     flex-shrink: 0;
     box-shadow: 0 0 20px rgba(59, 130, 246, 0.15);
 }
@@ -395,7 +395,7 @@ html, body {
     max-width: 350px;
     max-height: 400px;
     overflow: hidden;
-    border: 2px solid rgba(255, 215, 0, 0.08);
+    border: 2px solid rgba(255, 215, 0, 0.12);
 }
 
 .notification-item {
@@ -461,7 +461,7 @@ html, body {
     z-index: 100000;
     min-width: 170px;
     overflow: hidden;
-    border: 2px solid rgba(255, 215, 0, 0.08);
+    border: 2px solid rgba(255, 215, 0, 0.12);
 }
 
 .dropdown-menu.show {
@@ -536,7 +536,7 @@ html, body {
 .app-grid-wrapper {
     position: relative;
     background: transparent;
-    border: 2px solid rgba(255, 215, 0, 0.08);
+    border: 2px solid rgba(255, 215, 0, 0.12);
     border-radius: 24px;
     padding: 16px;
     box-shadow: none;
@@ -557,7 +557,7 @@ html, body {
 }
 
 .app-grid-wrapper:hover {
-    border-color: rgba(255, 215, 0, 0.18);
+    border-color: rgba(255, 215, 0, 0.22);
     box-shadow: none;
 }
 
@@ -632,7 +632,7 @@ html, body {
     background: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
-    border: 2px solid rgba(255, 215, 0, 0.08);
+    border: 2px solid rgba(255, 215, 0, 0.12);
     border-radius: 8px;
     text-transform: uppercase;
     letter-spacing: 1.5px;
@@ -647,7 +647,7 @@ html, body {
 
 .app-card:hover .app-name {
     transform: scale(1.05);
-    border-color: rgba(255, 215, 0, 0.18);
+    border-color: rgba(255, 215, 0, 0.22);
 }
 
 /* ===== INDIVIDUAL APP COLORS ===== */
@@ -779,7 +779,7 @@ html, body {
     backdrop-filter: blur(10px) !important;
     -webkit-backdrop-filter: blur(10px) !important;
     margin-bottom: 20px !important;
-    border: 2px solid rgba(255, 215, 0, 0.08) !important;
+    border: 2px solid rgba(255, 215, 0, 0.12) !important;
     box-shadow: none !important;
     transition: border-color var(--transition-speed) ease;
 }
@@ -795,7 +795,7 @@ html, body {
 #admin.tab-content:hover,
 #profile.tab-content:hover,
 #contact.tab-content:hover {
-    border-color: rgba(255, 215, 0, 0.18) !important;
+    border-color: rgba(255, 215, 0, 0.22) !important;
     box-shadow: none !important;
 }
 
@@ -818,12 +818,12 @@ html, body {
     transition: all var(--transition-speed) ease;
     font-weight: 700;
     color: var(--text-light);
-    border: 2px solid rgba(255, 215, 0, 0.08);
+    border: 2px solid rgba(255, 215, 0, 0.12);
 }
 
 .wallet-balance-card:hover {
     transform: translateY(-4px) scale(1.02);
-    border-color: rgba(255, 215, 0, 0.18);
+    border-color: rgba(255, 215, 0, 0.22);
 }
 
 .wallet-balance-card .balance-emoji {
@@ -908,7 +908,7 @@ html, body {
 
 .wallet-filter-tab {
     background: rgba(10, 10, 42, 0.5);
-    border: 2px solid rgba(255, 215, 0, 0.08);
+    border: 2px solid rgba(255, 215, 0, 0.12);
     padding: 10px 20px;
     border-radius: 24px;
     color: var(--text-muted);
@@ -929,7 +929,7 @@ html, body {
 
 .wallet-filter-tab:hover {
     transform: translateY(-2px);
-    border-color: rgba(255, 215, 0, 0.18);
+    border-color: rgba(255, 215, 0, 0.22);
 }
 
 /* ===== TRANSACTIONS ===== */
@@ -940,14 +940,14 @@ html, body {
     border-radius: var(--border-radius-sm);
     padding: 14px;
     margin-bottom: 10px;
-    border: 2px solid rgba(255, 215, 0, 0.08);
+    border: 2px solid rgba(255, 215, 0, 0.12);
     transition: all var(--transition-speed) ease;
     font-weight: 600;
     color: var(--text-light);
 }
 
 .wallet-transaction:hover {
-    border-color: rgba(255, 215, 0, 0.18);
+    border-color: rgba(255, 215, 0, 0.22);
     transform: translateX(4px);
 }
 
@@ -1014,7 +1014,7 @@ html, body {
     border-radius: var(--border-radius-card);
     padding: 20px;
     margin-bottom: 18px;
-    border: 2px solid rgba(255, 215, 0, 0.08);
+    border: 2px solid rgba(255, 215, 0, 0.12);
     transition: all var(--transition-speed) ease;
     animation: none;
     box-shadow: none;
@@ -1022,7 +1022,7 @@ html, body {
 }
 
 .card:hover {
-    border-color: rgba(255, 215, 0, 0.18);
+    border-color: rgba(255, 215, 0, 0.22);
     box-shadow: none;
 }
 
@@ -1059,7 +1059,7 @@ html, body {
     aspect-ratio: 1 / 1;
     width: 100%;
     overflow: hidden;
-    border: 2px solid rgba(255, 215, 0, 0.08);
+    border: 2px solid rgba(255, 215, 0, 0.12);
     border-radius: 20px;
     background: rgba(10, 10, 42, 0.5);
     position: relative;
@@ -1070,7 +1070,7 @@ html, body {
 }
 
 .market-image-container:hover {
-    border-color: rgba(255, 215, 0, 0.18);
+    border-color: rgba(255, 215, 0, 0.22);
     box-shadow: none;
 }
 
@@ -1188,7 +1188,7 @@ html, body {
     justify-content: center;
     cursor: pointer;
     transition: all 0.2s ease;
-    border: 2px solid rgba(255, 215, 0, 0.08);
+    border: 2px solid rgba(255, 215, 0, 0.12);
     font-size: 40px;
     font-weight: 900;
     transform-style: preserve-3d;
@@ -1197,7 +1197,7 @@ html, body {
 }
 
 .game-card:hover {
-    border-color: rgba(255, 215, 0, 0.18);
+    border-color: rgba(255, 215, 0, 0.22);
     box-shadow: none;
 }
 
@@ -1255,7 +1255,7 @@ html, body {
     max-width: 400px;
     max-height: 85vh;
     overflow-y: auto;
-    border: 2px solid rgba(255, 215, 0, 0.08);
+    border: 2px solid rgba(255, 215, 0, 0.12);
     box-shadow: none;
     color: var(--text-light);
 }
@@ -1284,7 +1284,7 @@ html, body {
 .modal-content select,
 .modal-content textarea {
     background: rgba(10, 10, 42, 0.5);
-    border: 2px solid rgba(255, 215, 0, 0.08);
+    border: 2px solid rgba(255, 215, 0, 0.12);
     border-radius: 12px;
     padding: 10px 14px;
     color: var(--text-light);
@@ -1429,7 +1429,7 @@ html, body {
     width: 90%;
     max-width: 420px;
     box-shadow: 0 25px 40px rgba(0,0,0,0.3);
-    border: 2px solid rgba(255, 215, 0, 0.08);
+    border: 2px solid rgba(255, 215, 0, 0.12);
     color: var(--text-light);
     animation: fadeIn 0.3s ease-out;
 }
@@ -1492,7 +1492,7 @@ html, body {
     width: 100% !important;
     box-sizing: border-box !important;
     background: rgba(10, 10, 42, 0.5);
-    border: 2px solid rgba(255, 215, 0, 0.08);
+    border: 2px solid rgba(255, 215, 0, 0.12);
     border-radius: 60px;
     padding: 14px 20px;
     color: var(--text-light);
@@ -1528,7 +1528,7 @@ html, body {
 
 #authForm input {
     background: rgba(10, 10, 42, 0.5);
-    border: 2px solid rgba(255, 215, 0, 0.08);
+    border: 2px solid rgba(255, 215, 0, 0.12);
     border-radius: 60px;
     padding: 14px 20px;
     color: var(--text-light);
@@ -1625,7 +1625,7 @@ html, body {
     background: rgba(0, 0, 0, 0.92);
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
-    border-top: 2px solid rgba(255, 215, 0, 0.10);
+    border-top: 2px solid rgba(255, 215, 0, 0.15);
     box-shadow: none;
     padding: 10px 24px;
     height: var(--footer-height);
@@ -1934,7 +1934,7 @@ html, body {
     border-radius: var(--border-radius-card);
     padding: 20px 15px;
     text-align: center;
-    border: 2px solid rgba(255, 215, 0, 0.08);
+    border: 2px solid rgba(255, 215, 0, 0.12);
     transition: all var(--transition-speed) ease;
     position: relative;
     overflow: hidden;
@@ -1942,7 +1942,7 @@ html, body {
 }
 
 .investment-card:hover {
-    border-color: rgba(255, 215, 0, 0.18);
+    border-color: rgba(255, 215, 0, 0.22);
     transform: translateY(-3px);
     box-shadow: none;
 }
@@ -2122,7 +2122,7 @@ html, body {
     .app-grid-wrapper {
         padding: 12px;
         border-radius: 18px;
-        border: 2px solid rgba(255, 215, 0, 0.08);
+        border: 2px solid rgba(255, 215, 0, 0.12);
         min-height: 200px;
     }
     .app-grid {
@@ -2291,7 +2291,7 @@ html, body {
     .app-grid-wrapper {
         padding: 8px;
         border-radius: 14px;
-        border: 2px solid rgba(255, 215, 0, 0.08);
+        border: 2px solid rgba(255, 215, 0, 0.12);
         min-height: 150px;
     }
     .app-grid {
@@ -2446,11 +2446,11 @@ html, body {
     border-radius: 16px;
     padding: 16px;
     margin-bottom: 12px;
-    border: 2px solid rgba(255, 215, 0, 0.08);
+    border: 2px solid rgba(255, 215, 0, 0.12);
 }
 
 .lottery-pool:hover {
-    border-color: rgba(255, 215, 0, 0.18);
+    border-color: rgba(255, 215, 0, 0.22);
 }
 
 .lottery-number {
@@ -2480,12 +2480,12 @@ html, body {
     border-radius: 16px;
     text-decoration: none;
     color: var(--text-light);
-    border: 2px solid rgba(255, 215, 0, 0.08);
+    border: 2px solid rgba(255, 215, 0, 0.12);
     transition: all var(--transition-speed) ease;
 }
 
 .contact-link:hover {
-    border-color: rgba(255, 215, 0, 0.18);
+    border-color: rgba(255, 215, 0, 0.22);
     transform: translateX(4px);
     box-shadow: none;
 }
@@ -2515,11 +2515,11 @@ html, body {
     border-radius: 12px;
     padding: 12px;
     margin-bottom: 10px;
-    border: 2px solid rgba(255, 215, 0, 0.08);
+    border: 2px solid rgba(255, 215, 0, 0.12);
 }
 
 .consultation-item:hover {
-    border-color: rgba(255, 215, 0, 0.18);
+    border-color: rgba(255, 215, 0, 0.22);
 }
 
 /* ===== TICKET ITEM ===== */
@@ -2531,7 +2531,7 @@ html, body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border: 2px solid rgba(255, 215, 0, 0.08);
+    border: 2px solid rgba(255, 215, 0, 0.12);
 }
 
 /* ===== SCROLLBAR STYLING ===== */
@@ -3402,36 +3402,50 @@ html, body {
         // ================================================================
 
         let unreadCount = 0;
-
-        async function fetchUnreadCount() {
-            if (!AppState.userId) return;
-            const { data, error } = await sb
-                .from('notifications')
-                .select('id', { count: 'exact', head: true })
-                .eq('user_id', AppState.userId)
-                .eq('is_read', false);
-            if (!error) {
-                unreadCount = data?.length || 0;
-                updateBadge();
-            }
+async function fetchUnreadCount() {
+    if (!AppState.userId) return;
+    
+    try {
+        const { data, error, count } = await sb
+            .from('notifications')
+            .select('id', { count: 'exact', head: true })
+            .eq('user_id', AppState.userId)
+            .eq('is_read', false);
+            
+        if (!error) {
+            unreadCount = count || 0;
+            updateBadge();
+            console.log(`📬 Unread notifications: ${unreadCount}`);
         }
+    } catch (err) {
+        console.error('Error fetching unread count:', err);
+    }
+}
 
-        function updateBadge() {
-            const badge = document.getElementById('notificationBadge');
-            const bellWrapper = document.getElementById('notificationBellWrapper');
-            if (!badge) return;
-            if (AppState.userId && bellWrapper) {
-                bellWrapper.style.display = 'flex';
-            }
-            if (unreadCount > 0) {
-                badge.style.display = 'block';
-                badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
-                badge.classList.add('has-notifications');
-            } else {
-                badge.style.display = 'none';
-                badge.classList.remove('has-notifications');
-            }
-        }
+function updateBadge() {
+    const badge = document.getElementById('notificationBadge');
+    const bellWrapper = document.getElementById('notificationBellWrapper');
+    
+    if (!badge) return;
+    
+    // Always show bell if user is logged in
+    if (AppState.userId && bellWrapper) {
+        bellWrapper.style.display = 'flex';
+    }
+    
+    // Show badge with count if there are unread notifications
+    if (unreadCount > 0) {
+        badge.style.display = 'block';
+        badge.textContent = unreadCount > 99 ? '99+' : unreadCount;
+        badge.classList.add('has-notifications');
+        // Make it red and visible
+        badge.style.backgroundColor = '#ef4444';
+        badge.style.color = 'white';
+    } else {
+        badge.style.display = 'none';
+        badge.classList.remove('has-notifications');
+    }
+}
 
         async function toggleNotificationDropdown(event) {
             if (event) event.stopPropagation();
@@ -3508,29 +3522,37 @@ html, body {
             }
         }
 
-        function startNotificationListener() {
-            if (notificationChannel) {
-                sb.removeChannel(notificationChannel);
+function startNotificationListener() {
+    if (notificationChannel) {
+        sb.removeChannel(notificationChannel);
+    }
+    if (!AppState.userId) return;
+    
+    notificationChannel = sb.channel(`notifications-${AppState.userId}`)
+        .on('postgres_changes', {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'notifications',
+            filter: `user_id=eq.${AppState.userId}`
+        }, (payload) => {
+            // Increment unread count
+            unreadCount++;
+            
+            // Update badge immediately
+            updateBadge();
+            
+            // Show toast notification
+            const title = payload.new.title || 'New notification';
+            const message = payload.new.message || '';
+            showToast(`🔔 ${title}: ${message}`, 'info');
+            
+            // Refresh notification list if dropdown is open
+            if (document.getElementById('notificationDropdown').style.display === 'block') {
+                loadNotifications();
             }
-            if (!AppState.userId) return;
-            notificationChannel = sb.channel(`notifications-${AppState.userId}`)
-                .on('postgres_changes', {
-                    event: 'INSERT',
-                    schema: 'public',
-                    table: 'notifications',
-                    filter: `user_id=eq.${AppState.userId}`
-                }, (payload) => {
-                    unreadCount++;
-                    updateBadge();
-                    const title = payload.new.title || 'New notification';
-                    const message = payload.new.message || '';
-                    showToast(`🔔 ${title}: ${message}`, 'info');
-                    if (document.getElementById('notificationDropdown').style.display === 'block') {
-                        loadNotifications();
-                    }
-                })
-                .subscribe();
-        }
+        })
+        .subscribe();
+}
 
         function stopNotificationListener() {
             if (notificationChannel) {
@@ -3766,7 +3788,14 @@ if (totalImages === 0) {
 }
  
                     if (AppState.isAdmin) showAdminTab();
+// 🔥 ADD NOTIFICATION CODE HERE - THIS IS THE CORRECT PLACE 🔥
+fetchUnreadCount();
+updateBadge();
 
+const bellWrapper = document.getElementById('notificationBellWrapper');
+if (bellWrapper) {
+    bellWrapper.style.display = 'flex';
+}
                     const authModal = document.getElementById('authModal');
                     if (authModal) authModal.remove();
                     if (bgWrapper) bgWrapper.style.display = 'block';
@@ -7156,77 +7185,82 @@ async function loadAdminPanel() {
         // ADMIN NOTIFICATIONS
         // ================================================================
 
-        async function adminSendBroadcast(event) {
-            if (event) event.preventDefault();
+async function adminSendBroadcast(event) {
+    if (event) event.preventDefault();
 
-            const title = document.getElementById('adminBroadcastTitle')?.value?.trim();
-            const message = document.getElementById('adminBroadcastMessage')?.value?.trim();
-            const linkSelect = document.getElementById('adminBroadcastLink');
-            const link = linkSelect ? linkSelect.value : '#dashboard';
+    const title = document.getElementById('adminBroadcastTitle')?.value?.trim();
+    const message = document.getElementById('adminBroadcastMessage')?.value?.trim();
+    const linkSelect = document.getElementById('adminBroadcastLink');
+    const link = linkSelect ? linkSelect.value : '#dashboard';
 
-            if (!title || !message) {
-                showToast('Please enter both title and message', 'error');
-                return;
-            }
+    if (!title || !message) {
+        showToast('Please enter both title and message', 'error');
+        return;
+    }
 
-            if (AppState.processing.adminAction) {
-                showToast('Please wait, processing...', 'info');
-                return;
-            }
+    if (AppState.processing.adminAction) {
+        showToast('Please wait, processing...', 'info');
+        return;
+    }
 
-            AppState.processing.adminAction = true;
+    AppState.processing.adminAction = true;
 
-            try {
-                const { data: { user } } = await sb.auth.getUser();
-                if (!user) {
-                    showToast('Please login as admin', 'error');
-                    return;
-                }
+    try {
+        const { data: { user } } = await sb.auth.getUser();
+        if (!user) {
+            showToast('Please login as admin', 'error');
+            return;
+        }
 
-                const { data: users, error: usersError } = await sb
-                    .from('users')
-                    .select('user_id')
-                    .eq('is_banned', false);
+        const { data: users, error: usersError } = await sb
+            .from('users')
+            .select('user_id')
+            .eq('is_banned', false);
 
-                if (usersError) throw usersError;
+        if (usersError) throw usersError;
 
-                if (!users || users.length === 0) {
-                    showToast('No active users found', 'info');
-                    return;
-                }
+        if (!users || users.length === 0) {
+            showToast('No active users found', 'info');
+            return;
+        }
 
-                const notifications = users.map(u => ({
-                    user_id: u.user_id,
-                    type: 'broadcast',
-                    title: title,
-                    message: message,
-                    link: link,
-                    is_read: false,
-                    created_at: new Date().toISOString()
-                }));
+        const notifications = users.map(u => ({
+            user_id: u.user_id,
+            type: 'broadcast',
+            title: title,
+            message: message,
+            link: link,
+            is_read: false,
+            created_at: new Date().toISOString()
+        }));
 
-                const { error: insertError } = await sb
-                    .from('notifications')
-                    .insert(notifications);
+        const { error: insertError } = await sb
+            .from('notifications')
+            .insert(notifications);
 
-                if (insertError) throw insertError;
+        if (insertError) throw insertError;
 
-                showToast(`Broadcast sent to ${users.length} users!`, 'success');
+        showToast(`Broadcast sent to ${users.length} users!`, 'success');
 
-                document.getElementById('adminBroadcastTitle').value = '';
-                document.getElementById('adminBroadcastMessage').value = '';
+        // Clear form
+        document.getElementById('adminBroadcastTitle').value = '';
+        document.getElementById('adminBroadcastMessage').value = '';
 
-                fetchUnreadCount();
-                if (document.getElementById('notificationDropdown').style.display === 'block') {
-                    loadNotifications();
-                }
-
-            } catch (error) {
-                showToast('Failed to send broadcast: ' + error.message, 'error');
-            } finally {
-                AppState.processing.adminAction = false;
+        // Force refresh unread count for current user (if they're an admin, they also get the notification)
+        if (AppState.userId) {
+            await fetchUnreadCount();
+            updateBadge();
+            if (document.getElementById('notificationDropdown').style.display === 'block') {
+                loadNotifications();
             }
         }
+
+    } catch (error) {
+        showToast('Failed to send broadcast: ' + error.message, 'error');
+    } finally {
+        AppState.processing.adminAction = false;
+    }
+}
 
         async function adminSendDirectNotification(event) {
             if (event) event.preventDefault();
