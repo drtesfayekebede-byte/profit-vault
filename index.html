@@ -16,11 +16,13 @@
     --gold-dark: #FF8C00;
     --gold-glow: rgba(255, 215, 0, 0.15);
     --gold-glow-strong: rgba(255, 215, 0, 0.3);
-    --dark-pink: #1a0a0e;
-    --dark-pink2: #2d121a;
-    --dark-pink3: #0f0508;
-    --text-light: #f0e0e6;
-    --text-muted: #b895a3;
+    --deep-pink: #1a0a0e;
+    --deep-pink2: #2d121a;
+    --deep-pink3: #0f0508;
+    --deep-green: #0a1a0a;
+    --deep-green2: #0f240f;
+    --text-light: #f5e6ec;
+    --text-muted: #d4b8c4;
     --green: #10b981;
     --red: #ef4444;
     --blue: #60a5fa;
@@ -58,11 +60,6 @@
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes shimmer {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
 }
 
 @keyframes neonGlow {
@@ -122,9 +119,11 @@
     50% { opacity: 1; width: 25px; }
 }
 
-@keyframes glowPink {
-    0%, 100% { box-shadow: 0 0 10px rgba(255, 215, 0, 0.05); }
-    50% { box-shadow: 0 0 30px rgba(255, 215, 0, 0.15); }
+@keyframes homescreenGlow {
+    0% { opacity: 0.2; }
+    33% { opacity: 0.5; }
+    66% { opacity: 0.3; }
+    100% { opacity: 0.2; }
 }
 
 /* ===== WALLET BALANCE CARD GLOW ANIMATIONS ===== */
@@ -141,7 +140,7 @@
     50% { box-shadow: 0 0 30px rgba(184, 134, 11, 0.6); }
 }
 
-/* ===== BACKGROUND ===== */
+/* ===== BACKGROUND - CUSTOM IMAGE ===== */
 .background-wrapper {
     position: fixed;
     top: 0;
@@ -149,9 +148,22 @@
     width: 100%;
     height: 100%;
     z-index: -1;
-    background: #1a0a0e;
+    background: url('https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/background/green.jpg') no-repeat center center fixed;
+    background-size: cover;
     pointer-events: none;
-    display: none;
+    display: block;
+}
+
+/* Dark pink overlay on background */
+.background-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(26, 10, 14, 0.7);
+    pointer-events: none;
 }
 
 /* ===== BASE ===== */
@@ -164,10 +176,10 @@ html, body {
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-    background: #1a0a0e;
+    background: var(--deep-pink);
 }
 
-/* ===== HEADER ===== */
+/* ===== HEADER - DEEP GREEN ===== */
 .header {
     position: fixed;
     top: 0;
@@ -175,10 +187,10 @@ html, body {
     right: 0;
     width: 100%;
     z-index: 100;
-    background: #1a0a0e;
+    background: var(--deep-green);
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
-    border-bottom: 2px solid rgba(255, 215, 0, 0.15);
+    border-bottom: 2px solid #ff1493;
     box-shadow: 0 0 20px rgba(255, 215, 0, 0.05);
     padding: 0 32px;
     height: var(--header-height);
@@ -212,7 +224,7 @@ html, body {
     font-family: var(--font-main);
     font-style: italic;
     color: var(--gold);
-    text-shadow: 0 0 20px rgba(255, 215, 0, 0.15);
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
 }
 
 .logo-icon {
@@ -231,7 +243,7 @@ html, body {
     min-width: 120px;
     margin: 0 16px;
     background: rgba(0, 0, 0, 0.3);
-    border: 2px solid rgba(255, 215, 0, 0.1);
+    border: 2px solid #ff1493;
     box-shadow: 0 0 15px rgba(255, 215, 0, 0.03);
     transition: all var(--transition-speed) ease;
 }
@@ -243,7 +255,7 @@ html, body {
     padding: 4px 10px;
     border-radius: 14px;
     font-size: 14px;
-    font-weight: 700;
+    font-weight: 900;
     color: var(--text-light);
 }
 
@@ -327,7 +339,7 @@ html, body {
     overflow: hidden;
     cursor: pointer;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-    border: 2px solid rgba(255, 215, 0, 0.1);
+    border: 2px solid #ff1493;
     flex-shrink: 0;
     box-shadow: 0 0 20px rgba(255, 215, 0, 0.05);
 }
@@ -384,7 +396,7 @@ html, body {
     position: absolute;
     right: -10px;
     top: 40px;
-    background: #2d121a;
+    background: var(--deep-pink2);
     border-radius: 12px;
     box-shadow: 0 8px 32px rgba(0,0,0,0.5);
     z-index: 100001;
@@ -392,7 +404,7 @@ html, body {
     max-width: 350px;
     max-height: 400px;
     overflow: hidden;
-    border: 2px solid rgba(255, 215, 0, 0.1);
+    border: 2px solid #ff1493;
 }
 
 .notification-item {
@@ -405,11 +417,11 @@ html, body {
 }
 
 .notification-item:hover {
-    background: rgba(255, 215, 0, 0.05);
+    background: rgba(255, 20, 147, 0.1);
 }
 
 .notification-item.unread {
-    background: rgba(255, 215, 0, 0.08);
+    background: rgba(255, 20, 147, 0.08);
     border-left: 3px solid var(--gold);
 }
 
@@ -426,7 +438,7 @@ html, body {
 
 .notification-item .notif-message {
     font-size: 13px !important;
-    font-weight: 600 !important;
+    font-weight: 700 !important;
     color: var(--text-light) !important;
     text-align: center !important;
     margin-top: 4px !important;
@@ -434,7 +446,7 @@ html, body {
 
 .notification-item .notif-time {
     font-size: 11px !important;
-    font-weight: 500 !important;
+    font-weight: 600 !important;
     color: var(--text-muted) !important;
     text-align: center !important;
     margin-top: 4px !important;
@@ -444,6 +456,7 @@ html, body {
     padding: 30px 20px;
     text-align: center;
     color: var(--text-muted);
+    font-weight: 700;
 }
 
 /* ===== DROPDOWN MENU ===== */
@@ -452,13 +465,13 @@ html, body {
     position: absolute;
     right: 10px;
     top: 54px;
-    background: #2d121a;
+    background: var(--deep-pink2);
     border-radius: 16px;
     box-shadow: 0 8px 32px rgba(0,0,0,0.6);
     z-index: 100000;
     min-width: 170px;
     overflow: hidden;
-    border: 2px solid rgba(255, 215, 0, 0.1);
+    border: 2px solid #ff1493;
 }
 
 .dropdown-menu.show {
@@ -472,7 +485,7 @@ html, body {
     cursor: pointer;
     transition: background 0.2s ease;
     font-size: 15px;
-    font-weight: 600;
+    font-weight: 900;
 }
 
 .dropdown-menu div:hover {
@@ -492,7 +505,7 @@ html, body {
     overflow-y: auto;
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
-    background: #1a0a0e;
+    background: transparent;
     z-index: 1;
 }
 
@@ -526,14 +539,14 @@ html, body {
         radial-gradient(circle at 20% 80%, rgba(255, 215, 0, 0.03), transparent 35%),
         radial-gradient(circle at 80% 70%, rgba(255, 215, 0, 0.04), transparent 35%),
         radial-gradient(circle at 45% 45%, rgba(255, 215, 0, 0.02), transparent 30%);
-    animation: glowPink 6s ease-in-out infinite alternate;
+    animation: homescreenGlow 6s ease-in-out infinite alternate;
 }
 
 /* ===== APP GRID WRAPPER ===== */
 .app-grid-wrapper {
     position: relative;
     background: transparent;
-    border: 2px solid rgba(255, 215, 0, 0.1);
+    border: 2px solid #ff1493;
     border-radius: 24px;
     padding: 16px;
     box-shadow: 0 0 30px rgba(255, 215, 0, 0.03);
@@ -554,7 +567,7 @@ html, body {
 }
 
 .app-grid-wrapper:hover {
-    border-color: rgba(255, 215, 0, 0.2);
+    border-color: #ff69b4;
     box-shadow: 0 0 40px rgba(255, 215, 0, 0.06);
 }
 
@@ -629,7 +642,7 @@ html, body {
     background: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
-    border: 2px solid rgba(255, 215, 0, 0.08);
+    border: 2px solid #ff1493;
     border-radius: 8px;
     text-transform: uppercase;
     letter-spacing: 1.5px;
@@ -644,7 +657,7 @@ html, body {
 
 .app-card:hover .app-name {
     transform: scale(1.05);
-    border-color: rgba(255, 215, 0, 0.2);
+    border-color: #ff69b4;
 }
 
 /* ===== INDIVIDUAL APP COLORS ===== */
@@ -699,7 +712,7 @@ html, body {
     bottom: var(--footer-height);
     overflow-y: auto;
     padding: 12px 16px 100px 16px;
-    background: #1a0a0e;
+    background: var(--deep-pink);
     z-index: 1;
 }
 
@@ -730,7 +743,7 @@ html, body {
     padding: 12px 20px;
     cursor: pointer;
     background: linear-gradient(135deg, var(--gold), var(--gold-dark)) !important;
-    border: none;
+    border: 2px solid #ff1493;
     border-radius: 12px;
     align-items: center;
     gap: 10px;
@@ -758,7 +771,7 @@ html, body {
     transform: scale(1.02);
 }
 
-/* ===== TAB CONTENT STYLES ===== */
+/* ===== TAB CONTENT STYLES - DEEP PINK BACKGROUND ===== */
 #dashboard.tab-content,
 #market.tab-content,
 #games.tab-content,
@@ -772,11 +785,11 @@ html, body {
 #contact.tab-content {
     border-radius: var(--border-radius-card) !important;
     padding: 20px !important;
-    background: rgba(26, 10, 14, 0.9) !important;
+    background: var(--deep-pink) !important;
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
     margin-bottom: 20px !important;
-    border: 2px solid rgba(255, 215, 0, 0.08) !important;
+    border: 2px solid #ff1493 !important;
     box-shadow: 0 0 20px rgba(255, 215, 0, 0.03) !important;
     transition: border-color var(--transition-speed) ease;
 }
@@ -792,8 +805,40 @@ html, body {
 #admin.tab-content:hover,
 #profile.tab-content:hover,
 #contact.tab-content:hover {
-    border-color: rgba(255, 215, 0, 0.18) !important;
+    border-color: #ff69b4 !important;
     box-shadow: 0 0 30px rgba(255, 215, 0, 0.06) !important;
+}
+
+/* ===== ALL TEXT BOLD AND HIGH CONTRAST ===== */
+.card h3,
+.card p,
+.card div,
+.card span,
+.card label,
+.wallet-balance-card,
+.wallet-transaction,
+.transaction-item,
+.quad-item,
+.market-name,
+.market-price,
+.market-roi,
+.lottery-pool,
+.ticket-item,
+.consultation-item,
+.btn,
+.loading,
+.progress-text,
+.badge,
+.modal-content *,
+.notification-item *,
+.dropdown-menu div,
+.auth-header *,
+#authForm * {
+    font-weight: 700 !important;
+}
+
+.card h3 {
+    font-weight: 900 !important;
 }
 
 /* ===== WALLET TAB ===== */
@@ -813,14 +858,14 @@ html, body {
     padding: 16px 8px;
     text-align: center;
     transition: all var(--transition-speed) ease;
-    font-weight: 700;
+    font-weight: 900 !important;
     color: var(--text-light);
-    border: 2px solid rgba(255, 215, 0, 0.08);
+    border: 2px solid #ff1493;
 }
 
 .wallet-balance-card:hover {
     transform: translateY(-4px) scale(1.02);
-    border-color: rgba(255, 215, 0, 0.18);
+    border-color: #ff69b4;
 }
 
 .wallet-balance-card .balance-emoji {
@@ -838,54 +883,9 @@ html, body {
 
 .wallet-balance-card .balance-label {
     font-size: 12px;
-    font-weight: 700;
+    font-weight: 900;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-}
-
-/* CARD 1: DEEP RED (Balance) */
-.wallet-balance-card:nth-child(1) {
-    background: #7f1d1d !important;
-    border: 2px solid #991b1b !important;
-    animation: glowRed 2s ease-in-out infinite !important;
-    box-shadow: 0 0 30px rgba(139, 0, 0, 0.3) !important;
-}
-.wallet-balance-card:nth-child(1) .balance-amount {
-    color: #fca5a5 !important;
-    text-shadow: 0 0 20px rgba(252, 165, 165, 0.3) !important;
-}
-.wallet-balance-card:nth-child(1) .balance-label {
-    color: #fca5a5 !important;
-}
-
-/* CARD 2: DEEP GREEN (Bonus) */
-.wallet-balance-card:nth-child(2) {
-    background: #14532d !important;
-    border: 2px solid #166534 !important;
-    animation: glowGreen 2.5s ease-in-out infinite !important;
-    box-shadow: 0 0 30px rgba(0, 100, 0, 0.3) !important;
-}
-.wallet-balance-card:nth-child(2) .balance-amount {
-    color: #86efac !important;
-    text-shadow: 0 0 20px rgba(134, 239, 172, 0.3) !important;
-}
-.wallet-balance-card:nth-child(2) .balance-label {
-    color: #86efac !important;
-}
-
-/* CARD 3: DEEP YELLOW (Coins) */
-.wallet-balance-card:nth-child(3) {
-    background: #854d0e !important;
-    border: 2px solid #a16207 !important;
-    animation: glowYellow 3s ease-in-out infinite !important;
-    box-shadow: 0 0 30px rgba(184, 134, 11, 0.3) !important;
-}
-.wallet-balance-card:nth-child(3) .balance-amount {
-    color: #fde047 !important;
-    text-shadow: 0 0 20px rgba(253, 224, 71, 0.3) !important;
-}
-.wallet-balance-card:nth-child(3) .balance-label {
-    color: #fde047 !important;
 }
 
 /* ===== WALLET FILTER TABS ===== */
@@ -905,12 +905,12 @@ html, body {
 
 .wallet-filter-tab {
     background: rgba(26, 10, 14, 0.5);
-    border: 2px solid rgba(255, 215, 0, 0.08);
+    border: 2px solid #ff1493;
     padding: 10px 20px;
     border-radius: 24px;
     color: var(--text-muted);
     font-size: 14px;
-    font-weight: 700;
+    font-weight: 900;
     cursor: pointer;
     transition: all var(--transition-speed) ease;
     white-space: nowrap;
@@ -926,7 +926,7 @@ html, body {
 
 .wallet-filter-tab:hover {
     transform: translateY(-2px);
-    border-color: rgba(255, 215, 0, 0.18);
+    border-color: #ff69b4;
 }
 
 /* ===== TRANSACTIONS ===== */
@@ -937,81 +937,26 @@ html, body {
     border-radius: var(--border-radius-sm);
     padding: 14px;
     margin-bottom: 10px;
-    border: 2px solid rgba(255, 215, 0, 0.08);
+    border: 2px solid #ff1493;
     transition: all var(--transition-speed) ease;
-    font-weight: 600;
+    font-weight: 700 !important;
     color: var(--text-light);
 }
 
 .wallet-transaction:hover {
-    border-color: rgba(255, 215, 0, 0.18);
+    border-color: #ff69b4;
     transform: translateX(4px);
 }
 
-.wallet-transaction-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.wallet-transaction-left {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex: 1;
-    min-width: 0;
-}
-
-.wallet-transaction-emoji {
-    font-size: 26px;
-    flex-shrink: 0;
-}
-
-.wallet-transaction-info {
-    flex: 1;
-    min-width: 0;
-}
-
-.wallet-transaction-type {
-    font-weight: 900;
-    font-size: 15px;
-    color: var(--gold);
-}
-
-.wallet-transaction-date {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--text-muted);
-}
-
-.wallet-transaction-right {
-    text-align: right;
-    flex-shrink: 0;
-}
-
-.wallet-transaction-amount {
-    font-weight: 900;
-    font-size: 17px;
-}
-.wallet-transaction-amount.positive { color: var(--green); }
-.wallet-transaction-amount.negative { color: var(--red); }
-
-.wallet-transaction-status {
-    font-size: 12px;
-    font-weight: 700;
-}
-.wallet-transaction-status.completed { color: var(--green); }
-.wallet-transaction-status.pending { color: #f59e0b; }
-
 /* ===== CARDS & CONTAINERS ===== */
 .card {
-    background: rgba(26, 10, 14, 0.6);
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
+    background: var(--deep-pink) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
     border-radius: var(--border-radius-card);
     padding: 20px;
     margin-bottom: 18px;
-    border: 2px solid rgba(255, 215, 0, 0.08);
+    border: 2px solid #ff1493 !important;
     transition: all var(--transition-speed) ease;
     animation: none;
     box-shadow: 0 0 20px rgba(255, 215, 0, 0.02);
@@ -1019,7 +964,7 @@ html, body {
 }
 
 .card:hover {
-    border-color: rgba(255, 215, 0, 0.18);
+    border-color: #ff69b4 !important;
     box-shadow: 0 0 30px rgba(255, 215, 0, 0.05);
 }
 
@@ -1056,7 +1001,7 @@ html, body {
     aspect-ratio: 1 / 1;
     width: 100%;
     overflow: hidden;
-    border: 2px solid rgba(255, 215, 0, 0.08);
+    border: 2px solid #ff1493;
     border-radius: 20px;
     background: rgba(26, 10, 14, 0.5);
     position: relative;
@@ -1067,7 +1012,7 @@ html, body {
 }
 
 .market-image-container:hover {
-    border-color: rgba(255, 215, 0, 0.18);
+    border-color: #ff69b4;
     box-shadow: 0 0 25px rgba(255, 215, 0, 0.05);
 }
 
@@ -1148,7 +1093,7 @@ html, body {
 /* ===== BUTTONS ===== */
 .btn {
     background: linear-gradient(135deg, var(--gold), var(--gold-dark));
-    border: none;
+    border: 2px solid #ff1493;
     padding: 14px 20px;
     border-radius: 40px;
     color: #000000;
@@ -1166,7 +1111,7 @@ html, body {
 .btn-warning { background: linear-gradient(135deg, #fbbf24, #d97706); color: #1a1a2e; }
 .btn-danger { background: linear-gradient(135deg, var(--red), #dc2626); color: #ffffff; }
 .btn-info { background: linear-gradient(135deg, #00bfff, #0066ff); color: #ffffff; }
-.btn-sm { padding: 10px 16px; font-size: 13px; font-weight: 700; width: auto; display: inline-block; margin: 3px; }
+.btn-sm { padding: 10px 16px; font-size: 13px; font-weight: 900; width: auto; display: inline-block; margin: 3px; }
 
 /* ===== GAME GRID ===== */
 .game-grid {
@@ -1185,7 +1130,7 @@ html, body {
     justify-content: center;
     cursor: pointer;
     transition: all 0.2s ease;
-    border: 2px solid rgba(255, 215, 0, 0.08);
+    border: 2px solid #ff1493;
     font-size: 40px;
     font-weight: 900;
     transform-style: preserve-3d;
@@ -1194,7 +1139,7 @@ html, body {
 }
 
 .game-card:hover {
-    border-color: rgba(255, 215, 0, 0.18);
+    border-color: #ff69b4;
     box-shadow: 0 0 25px rgba(255, 215, 0, 0.05);
 }
 
@@ -1211,6 +1156,7 @@ html, body {
 .game-cost {
     margin-top: 12px;
     text-align: center;
+    font-weight: 700;
 }
 
 .game-result {
@@ -1243,7 +1189,7 @@ html, body {
 .modal.active { display: flex; }
 
 .modal-content {
-    background: rgba(26, 10, 14, 0.95);
+    background: var(--deep-pink);
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
     border-radius: 32px;
@@ -1252,7 +1198,7 @@ html, body {
     max-width: 400px;
     max-height: 85vh;
     overflow-y: auto;
-    border: 2px solid rgba(255, 215, 0, 0.08);
+    border: 2px solid #ff1493;
     box-shadow: 0 0 30px rgba(255, 215, 0, 0.05);
     color: var(--text-light);
 }
@@ -1275,18 +1221,19 @@ html, body {
 .modal-content h3 {
     color: var(--gold);
     margin-bottom: 15px;
+    font-weight: 900;
 }
 
 .modal-content input,
 .modal-content select,
 .modal-content textarea {
     background: rgba(26, 10, 14, 0.5);
-    border: 2px solid rgba(255, 215, 0, 0.08);
+    border: 2px solid #ff1493;
     border-radius: 12px;
     padding: 10px 14px;
     color: var(--text-light);
     font-size: 15px;
-    font-weight: 600;
+    font-weight: 700;
     width: 100%;
     margin-bottom: 12px;
     transition: border-color 0.2s ease;
@@ -1313,8 +1260,15 @@ html, body {
 }
 
 .modal-content select option {
-    background: #2d121a;
+    background: var(--deep-pink2);
     color: var(--text-light);
+    font-weight: 700;
+}
+
+.modal-content p,
+.modal-content label,
+.modal-content div {
+    font-weight: 700;
 }
 
 /* ===== TOAST ===== */
@@ -1326,7 +1280,7 @@ html, body {
     display: flex;
     align-items: center;
     gap: 12px;
-    background: rgba(26, 10, 14, 0.95);
+    background: var(--deep-pink);
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
     color: var(--text-light);
@@ -1339,6 +1293,7 @@ html, body {
     white-space: nowrap;
     font-size: 15px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    border: 2px solid #ff1493;
 }
 
 .toast.show { display: flex; animation: fadeIn 0.2s; }
@@ -1358,30 +1313,7 @@ html, body {
     padding: 30px;
     opacity: 0.7;
     color: var(--text-muted);
-    font-weight: 600;
-}
-
-.loading-sparkle {
-    font-size: 64px;
-    animation: sparkle 1.2s ease-in-out infinite;
-    display: inline-block;
-}
-
-.loading-particle {
-    position: absolute;
-    width: 8px;
-    height: 8px;
-    background: radial-gradient(circle, var(--gold), #FF6347);
-    border-radius: 50%;
-    pointer-events: none;
-    animation: particle-burst 1s ease-out infinite;
-}
-
-.loading-coin {
-    display: inline-block;
-    font-size: 32px;
-    animation: spin-coin 1s linear infinite;
-    margin: 0 5px;
+    font-weight: 700;
 }
 
 /* ===== NETWORK STATUS ===== */
@@ -1408,7 +1340,7 @@ html, body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: #1a0a0e;
+    background: var(--deep-pink);
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
     display: flex;
@@ -1418,7 +1350,7 @@ html, body {
 }
 
 #authModal .modal-content {
-    background: rgba(26, 10, 14, 0.95);
+    background: var(--deep-pink);
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
     border-radius: 48px;
@@ -1426,7 +1358,7 @@ html, body {
     width: 90%;
     max-width: 420px;
     box-shadow: 0 25px 40px rgba(0,0,0,0.3);
-    border: 2px solid rgba(255, 215, 0, 0.08);
+    border: 2px solid #ff1493;
     color: var(--text-light);
     animation: fadeIn 0.3s ease-out;
 }
@@ -1445,7 +1377,7 @@ html, body {
 .auth-header p {
     color: var(--text-muted);
     font-size: 15px;
-    font-weight: 600;
+    font-weight: 700;
     margin-bottom: 20px;
     text-align: center;
 }
@@ -1462,7 +1394,7 @@ html, body {
     border: 2px solid var(--gold);
     border-radius: 60px;
     padding: 10px 28px;
-    font-weight: 700;
+    font-weight: 900;
     color: var(--gold);
     transition: all 0.2s ease;
     cursor: pointer;
@@ -1489,12 +1421,12 @@ html, body {
     width: 100% !important;
     box-sizing: border-box !important;
     background: rgba(26, 10, 14, 0.5);
-    border: 2px solid rgba(255, 215, 0, 0.08);
+    border: 2px solid #ff1493;
     border-radius: 60px;
     padding: 14px 20px;
     color: var(--text-light);
     font-size: 16px;
-    font-weight: 600;
+    font-weight: 700;
     transition: border-color 0.2s ease;
 }
 
@@ -1525,12 +1457,12 @@ html, body {
 
 #authForm input {
     background: rgba(26, 10, 14, 0.5);
-    border: 2px solid rgba(255, 215, 0, 0.08);
+    border: 2px solid #ff1493;
     border-radius: 60px;
     padding: 14px 20px;
     color: var(--text-light);
     font-size: 16px;
-    font-weight: 600;
+    font-weight: 700;
     margin-bottom: 16px;
     transition: border-color 0.2s ease;
     width: 100%;
@@ -1545,7 +1477,7 @@ html, body {
 
 #authForm .btn-success {
     background: linear-gradient(135deg, var(--gold), var(--gold-dark)) !important;
-    border: none !important;
+    border: 2px solid #ff1493 !important;
     border-radius: 60px !important;
     padding: 14px 20px !important;
     font-weight: 900 !important;
@@ -1569,7 +1501,7 @@ html, body {
 #authForm .btn-google {
     background: #db4437 !important;
     color: white !important;
-    border: none !important;
+    border: 2px solid #ff1493 !important;
     border-radius: 60px !important;
     padding: 14px 20px !important;
     font-weight: 900 !important;
@@ -1599,7 +1531,7 @@ html, body {
     margin: 8px 0;
     color: var(--text-muted);
     font-size: 14px;
-    font-weight: 600;
+    font-weight: 700;
 }
 
 .auth-warning {
@@ -1609,9 +1541,10 @@ html, body {
     margin-top: 12px;
     border-radius: 8px;
     font-size: 12px;
+    font-weight: 700;
 }
 
-/* ===== FOOTER ===== */
+/* ===== FOOTER - DEEP GREEN ===== */
 .app-footer {
     position: fixed;
     bottom: 0;
@@ -1619,10 +1552,10 @@ html, body {
     right: 0;
     width: 100%;
     z-index: 99;
-    background: #1a0a0e;
+    background: var(--deep-green);
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
-    border-top: 2px solid rgba(255, 215, 0, 0.15);
+    border-top: 2px solid #ff1493;
     box-shadow: 0 -5px 20px rgba(255, 215, 0, 0.03);
     padding: 10px 24px;
     height: var(--footer-height);
@@ -1660,7 +1593,7 @@ html, body {
     border: none;
     color: var(--text-muted);
     font-size: 11px;
-    font-weight: 700;
+    font-weight: 900;
     padding: 4px 10px;
     cursor: pointer;
     transition: all var(--transition-speed) ease;
@@ -1685,7 +1618,7 @@ html, body {
 .app-footer-tab .tab-label {
     font-size: 8px;
     margin-top: 1px;
-    font-weight: 800;
+    font-weight: 900;
     transition: all var(--transition-speed) ease;
     pointer-events: none;
     white-space: nowrap;
@@ -1758,7 +1691,7 @@ html, body {
 }
 .load-more-btn {
     background: linear-gradient(135deg, var(--gold), var(--gold-dark));
-    border: none;
+    border: 2px solid #ff1493;
     padding: 12px 30px;
     border-radius: 40px;
     color: #000000;
@@ -1787,9 +1720,10 @@ html, body {
     padding: 8px 12px;
     border-radius: 12px;
     margin-bottom: 8px;
-    font-weight: 600;
+    font-weight: 700;
     color: var(--text-light);
     flex-wrap: wrap;
+    border: 2px solid #ff1493;
 }
 .transaction-item input {
     margin-right: 8px;
@@ -1799,11 +1733,13 @@ html, body {
 .transaction-item .txn-type {
     flex: 2;
     min-width: 80px;
+    font-weight: 700;
 }
 .transaction-item .txn-amount {
     flex: 1;
     text-align: right;
     min-width: 60px;
+    font-weight: 700;
 }
 .transaction-item .txn-amount.positive { color: var(--green); }
 .transaction-item .txn-amount.negative { color: var(--red); }
@@ -1813,6 +1749,7 @@ html, body {
     text-align: right;
     min-width: 60px;
     color: var(--text-muted);
+    font-weight: 700;
 }
 .transaction-item .txn-status {
     flex: 1;
@@ -1852,6 +1789,7 @@ html, body {
     color: var(--text-light);
     flex-wrap: wrap;
     gap: 8px;
+    border: 2px solid #ff1493;
 }
 .quad-item.unlocked { border-left: 4px solid var(--green); }
 .quad-item.locked { border-left: 4px solid var(--red); }
@@ -1870,7 +1808,7 @@ html, body {
 .progress-text {
     text-align: center;
     margin-top: 6px;
-    font-weight: 700;
+    font-weight: 900;
     font-size: 14px;
     color: var(--gold);
 }
@@ -1925,13 +1863,13 @@ html, body {
     margin-top: 15px;
 }
 .investment-card {
-    background: rgba(26, 10, 14, 0.6);
+    background: var(--deep-pink);
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
     border-radius: var(--border-radius-card);
     padding: 20px 15px;
     text-align: center;
-    border: 2px solid rgba(255, 215, 0, 0.08);
+    border: 2px solid #ff1493;
     transition: all var(--transition-speed) ease;
     position: relative;
     overflow: hidden;
@@ -1939,7 +1877,7 @@ html, body {
 }
 
 .investment-card:hover {
-    border-color: rgba(255, 215, 0, 0.18);
+    border-color: #ff69b4;
     transform: translateY(-3px);
     box-shadow: 0 0 30px rgba(255, 215, 0, 0.05);
 }
@@ -1964,7 +1902,7 @@ html, body {
     justify-content: space-between;
     margin-bottom: 8px;
     font-size: 14px;
-    font-weight: 600;
+    font-weight: 700;
     color: var(--text-light);
 }
 .investment-card .detail-label {
@@ -2044,6 +1982,7 @@ html, body {
     background: linear-gradient(135deg, var(--green), #059669);
     animation: pulse-green 1.5s infinite;
     font-weight: 900;
+    border: 2px solid #ff1493;
 }
 .sell-button:active {
     transform: scale(0.96);
@@ -2054,6 +1993,7 @@ html, body {
     background: rgba(100, 100, 100, 0.3);
     cursor: not-allowed;
     font-weight: 700;
+    border: 2px solid #ff1493;
 }
 
 /* ===== RESPONSIVE ===== */
@@ -2119,7 +2059,7 @@ html, body {
     .app-grid-wrapper {
         padding: 12px;
         border-radius: 18px;
-        border: 2px solid rgba(255, 215, 0, 0.08);
+        border: 2px solid #ff1493;
         min-height: 200px;
     }
     .app-grid {
@@ -2288,7 +2228,7 @@ html, body {
     .app-grid-wrapper {
         padding: 8px;
         border-radius: 14px;
-        border: 2px solid rgba(255, 215, 0, 0.08);
+        border: 2px solid #ff1493;
         min-height: 150px;
     }
     .app-grid {
@@ -2425,6 +2365,8 @@ html, body {
     cursor: pointer;
     transition: all 0.2s ease;
     border-left: 4px solid var(--green);
+    border: 2px solid #ff1493;
+    font-weight: 700;
 }
 
 .admin-user-row:hover {
@@ -2443,11 +2385,11 @@ html, body {
     border-radius: 16px;
     padding: 16px;
     margin-bottom: 12px;
-    border: 2px solid rgba(255, 215, 0, 0.08);
+    border: 2px solid #ff1493;
 }
 
 .lottery-pool:hover {
-    border-color: rgba(255, 215, 0, 0.18);
+    border-color: #ff69b4;
 }
 
 .lottery-number {
@@ -2477,12 +2419,12 @@ html, body {
     border-radius: 16px;
     text-decoration: none;
     color: var(--text-light);
-    border: 2px solid rgba(255, 215, 0, 0.08);
+    border: 2px solid #ff1493;
     transition: all var(--transition-speed) ease;
 }
 
 .contact-link:hover {
-    border-color: rgba(255, 215, 0, 0.18);
+    border-color: #ff69b4;
     transform: translateX(4px);
     box-shadow: 0 0 20px rgba(255, 215, 0, 0.05);
 }
@@ -2512,11 +2454,11 @@ html, body {
     border-radius: 12px;
     padding: 12px;
     margin-bottom: 10px;
-    border: 2px solid rgba(255, 215, 0, 0.08);
+    border: 2px solid #ff1493;
 }
 
 .consultation-item:hover {
-    border-color: rgba(255, 215, 0, 0.18);
+    border-color: #ff69b4;
 }
 
 /* ===== TICKET ITEM ===== */
@@ -2528,7 +2470,8 @@ html, body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border: 2px solid rgba(255, 215, 0, 0.08);
+    border: 2px solid #ff1493;
+    font-weight: 700;
 }
 
 /* ===== SCROLLBAR STYLING ===== */
@@ -2555,7 +2498,7 @@ html, body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: #1a0a0e;
+    background: var(--deep-pink);
     z-index: 10000;
     justify-content: center;
     align-items: center;
@@ -2582,7 +2525,7 @@ html, body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: #1a0a0e;
+    background: var(--deep-pink);
     z-index: 20000;
     display: none;
     justify-content: center;
