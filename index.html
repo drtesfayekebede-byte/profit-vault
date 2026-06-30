@@ -147,16 +147,7 @@
 
 /* ===== BACKGROUND ===== */
 .background-wrapper {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    background: url('https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/background/deep%20blue.jpg') no-repeat center center fixed;
-    background-size: cover;
-    pointer-events: none;
-    display: none;
+    display: none; /* we use white background instead */
 }
 
 /* ===== BASE ===== */
@@ -165,7 +156,8 @@ html, body {
     width: 100vw;
     margin: 0;
     padding: 0;
-    color: var(--text-light);
+    background: #ffffff; /* white background for entire app */
+    color: #0a0a2a; /* dark text on white */
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
@@ -179,7 +171,7 @@ html, body {
     right: 0;
     width: 100%;
     z-index: 100;
-    background: rgba(0, 0, 0, 0.92);
+    background: #0a0a2a; /* deep blue black */
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
     border-bottom: 2px solid rgba(255, 215, 0, 0.15);
@@ -217,6 +209,9 @@ html, body {
     font-style: italic;
     color: var(--gold);
     text-shadow: 0 0 20px rgba(255, 215, 0, 0.15);
+    background: rgba(0,0,0,0.3);
+    padding: 4px 12px;
+    border-radius: 8px;
 }
 
 .logo-icon {
@@ -246,7 +241,7 @@ html, body {
     padding: 4px 10px;
     border-radius: 14px;
     font-size: 14px;
-    font-weight: 700;
+    font-weight: 900; /* bold */
     color: var(--text-light);
 }
 
@@ -259,6 +254,9 @@ html, body {
     font-weight: 900;
     min-width: 30px;
     text-align: center;
+    background: rgba(0,0,0,0.3);
+    padding: 2px 6px;
+    border-radius: 6px;
 }
 
 .balance-coins .balance-value {
@@ -495,7 +493,7 @@ html, body {
     overflow-y: auto;
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
-    background: transparent;
+    background: #ffffff; /* white background */
     z-index: 1;
 }
 
@@ -504,32 +502,18 @@ html, body {
 }
 
 .app-grid-container::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(0, 0, 0, 0.05);
     border-radius: 4px;
 }
 
 .app-grid-container::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, var(--gold), var(--gold));
+    background: var(--gold);
     border-radius: 4px;
 }
 
-/* ===== HOMESCREEN GLOW OVERLAY ===== */
+/* ===== HOMESCREEN GLOW OVERLAY (removed because white background) ===== */
 .homescreen-glow-overlay {
-    position: fixed;
-    top: var(--header-height);
-    left: 0;
-    right: 0;
-    bottom: var(--footer-height);
-    z-index: 0;
-    pointer-events: none;
-    background: 
-        radial-gradient(circle at 15% 25%, rgba(255, 0, 128, 0.12), transparent 45%),
-        radial-gradient(circle at 85% 30%, rgba(0, 200, 255, 0.10), transparent 40%),
-        radial-gradient(circle at 50% 85%, rgba(255, 215, 0, 0.12), transparent 40%),
-        radial-gradient(circle at 20% 80%, rgba(255, 0, 200, 0.06), transparent 35%),
-        radial-gradient(circle at 80% 70%, rgba(255, 215, 0, 0.08), transparent 35%),
-        radial-gradient(circle at 45% 45%, rgba(0, 255, 200, 0.04), transparent 30%);
-    animation: homescreenGlow 6s ease-in-out infinite alternate;
+    display: none;
 }
 
 /* ===== APP GRID WRAPPER ===== */
@@ -552,13 +536,8 @@ html, body {
     transition: all var(--transition-speed) ease;
 }
 
-.app-grid-wrapper::before {
-    display: none;
-}
-
 .app-grid-wrapper:hover {
     border-color: rgba(255, 215, 0, 0.22);
-    box-shadow: none;
 }
 
 /* ===== APP GRID ===== */
@@ -578,12 +557,10 @@ html, body {
 /* ===== APP CARDS ===== */
 .app-card {
     background: transparent !important;
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
     border: none !important;
     border-radius: var(--border-radius-sm) !important;
     box-shadow: none !important;
-    padding: 8px !important;
+    padding: 4px !important;
     transition: all var(--transition-speed) ease;
     position: relative;
     overflow: visible;
@@ -596,100 +573,154 @@ html, body {
     min-height: 60px;
     z-index: 3;
     cursor: pointer;
+    gap: 6px;
 }
 
 .app-card:hover {
     transform: scale(1.05) translateY(-4px);
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
 }
 
 .app-card:active {
     transform: scale(0.95);
 }
 
+/* Colored tile (replaces image) */
 .app-card .app-image {
     width: 100%;
-    height: 82%;
-    object-fit: contain;
-    display: block;
-    border-radius: 0;
-    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.1));
+    aspect-ratio: 1 / 1;
+    background-color: #ccc; /* fallback */
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0; /* hide any text */
+    border: 2px solid rgba(255, 215, 0, 0.12);
+    transition: all var(--transition-speed) ease;
     position: relative;
 }
 
-.app-card:hover .app-image {
-    filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.3));
+.app-card .app-image img {
+    display: none; /* hide the actual image */
 }
 
+/* App name underneath */
 .app-card .app-name {
-    font-size: clamp(16px, 2.5vw, 22px);
+    font-size: clamp(14px, 2.5vw, 20px);
     font-weight: 900;
     text-align: center;
-    padding: 5px 12px;
-    margin-top: 6px;
-    background: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
-    border: 2px solid rgba(255, 215, 0, 0.12);
+    padding: 6px 12px;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
     border-radius: 8px;
     text-transform: uppercase;
     letter-spacing: 1.5px;
     font-family: var(--font-main);
-    text-shadow: 0 0 20px currentColor, 0 0 40px currentColor;
-    position: relative;
-    z-index: 2;
-    white-space: nowrap;
-    color: #ffffff;
+    text-shadow: 0 0 10px currentColor;
+    color: #ffffff; /* fallback, will be overridden per app */
+    border: 1px solid rgba(255, 215, 0, 0.1);
     transition: all var(--transition-speed) ease;
+    width: 100%;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .app-card:hover .app-name {
-    transform: scale(1.05);
-    border-color: rgba(255, 215, 0, 0.22);
+    transform: scale(1.02);
+    border-color: rgba(255, 215, 0, 0.2);
 }
 
 /* ===== INDIVIDUAL APP COLORS ===== */
+/* Dashboard – Gold */
+.app-card[data-app="dashboard"] .app-image {
+    background-color: #D4A017;
+}
 .app-card[data-app="dashboard"] .app-name {
-    color: var(--gold);
-    text-shadow: 0 0 30px rgba(255, 215, 0, 0.6), 0 0 60px rgba(255, 215, 0, 0.3);
+    color: #D4A017;
+    text-shadow: 0 0 20px rgba(212, 160, 23, 0.8);
+}
+
+/* Market – Cyan */
+.app-card[data-app="market"] .app-image {
+    background-color: #00838F;
 }
 .app-card[data-app="market"] .app-name {
-    color: #00ffff;
-    text-shadow: 0 0 30px rgba(0, 255, 255, 0.6), 0 0 60px rgba(0, 255, 255, 0.3);
+    color: #00E5FF;
+    text-shadow: 0 0 20px rgba(0, 229, 255, 0.8);
+}
+
+/* Games – Purple */
+.app-card[data-app="games"] .app-image {
+    background-color: #6A1B9A;
 }
 .app-card[data-app="games"] .app-name {
-    color: #b388ff;
-    text-shadow: 0 0 30px rgba(179, 136, 255, 0.6), 0 0 60px rgba(179, 136, 255, 0.3);
+    color: #B388FF;
+    text-shadow: 0 0 20px rgba(179, 136, 255, 0.8);
+}
+
+/* Airtime – Green */
+.app-card[data-app="airtime"] .app-image {
+    background-color: #2E7D32;
 }
 .app-card[data-app="airtime"] .app-name {
-    color: #00ffaa;
-    text-shadow: 0 0 30px rgba(0, 255, 170, 0.6), 0 0 60px rgba(0, 255, 170, 0.3);
+    color: #00FFAA;
+    text-shadow: 0 0 20px rgba(0, 255, 170, 0.8);
+}
+
+/* Lottery – Red */
+.app-card[data-app="lottery"] .app-image {
+    background-color: #C62828;
 }
 .app-card[data-app="lottery"] .app-name {
-    color: #ff6b6b;
-    text-shadow: 0 0 30px rgba(255, 107, 107, 0.6), 0 0 60px rgba(255, 107, 107, 0.3);
+    color: #FF6B6B;
+    text-shadow: 0 0 20px rgba(255, 107, 107, 0.8);
+}
+
+/* Clinic – Teal */
+.app-card[data-app="clinic"] .app-image {
+    background-color: #00695C;
 }
 .app-card[data-app="clinic"] .app-name {
-    color: #00f5ff;
-    text-shadow: 0 0 30px rgba(0, 245, 255, 0.6), 0 0 60px rgba(0, 245, 255, 0.3);
+    color: #00F5FF;
+    text-shadow: 0 0 20px rgba(0, 245, 255, 0.8);
+}
+
+/* Guide – Orange */
+.app-card[data-app="guide"] .app-image {
+    background-color: #E65100;
 }
 .app-card[data-app="guide"] .app-name {
-    color: #ff8c00;
-    text-shadow: 0 0 30px rgba(255, 140, 0, 0.6), 0 0 60px rgba(255, 140, 0, 0.3);
+    color: #FF8C00;
+    text-shadow: 0 0 20px rgba(255, 140, 0, 0.8);
+}
+
+/* Wallet – Blue */
+.app-card[data-app="wallet"] .app-image {
+    background-color: #0D47A1;
 }
 .app-card[data-app="wallet"] .app-name {
     color: #00E5FF;
-    text-shadow: 0 0 30px rgba(0, 229, 255, 0.6), 0 0 60px rgba(0, 229, 255, 0.3);
+    text-shadow: 0 0 20px rgba(0, 229, 255, 0.8);
+}
+
+/* Contact – Magenta */
+.app-card[data-app="contact"] .app-image {
+    background-color: #880E4F;
 }
 .app-card[data-app="contact"] .app-name {
-    color: #ff00ff;
-    text-shadow: 0 0 30px rgba(255, 0, 255, 0.6), 0 0 60px rgba(255, 0, 255, 0.3);
+    color: #FF00FF;
+    text-shadow: 0 0 20px rgba(255, 0, 255, 0.8);
+}
+
+/* Admin – Crimson */
+.app-card[data-app="admin"] .app-image {
+    background-color: #B71C1C;
 }
 .app-card[data-app="admin"] .app-name {
-    color: #ff1744;
-    text-shadow: 0 0 30px rgba(255, 23, 68, 0.6), 0 0 60px rgba(255, 23, 68, 0.3);
+    color: #FF1744;
+    text-shadow: 0 0 20px rgba(255, 23, 68, 0.8);
 }
 
 /* ===== TAB CONTENT WRAPPER ===== */
@@ -702,7 +733,7 @@ html, body {
     bottom: var(--footer-height);
     overflow-y: auto;
     padding: 12px 16px 100px 16px;
-    background: linear-gradient(180deg, var(--bg-dark) 0%, var(--bg-dark2) 30%, var(--bg-dark) 60%, var(--bg-dark3) 100%);
+    background: #ffffff; /* white background for tab content */
     z-index: 1;
 }
 
@@ -715,12 +746,12 @@ html, body {
 }
 
 .tab-content-wrapper::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(0, 0, 0, 0.05);
     border-radius: 4px;
 }
 
 .tab-content-wrapper::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, var(--gold), var(--gold));
+    background: var(--gold);
     border-radius: 4px;
 }
 
@@ -775,13 +806,14 @@ html, body {
 #contact.tab-content {
     border-radius: var(--border-radius-card) !important;
     padding: 20px !important;
-    background: rgba(10, 10, 42, 0.7) !important;
-    backdrop-filter: blur(10px) !important;
-    -webkit-backdrop-filter: blur(10px) !important;
+    background: rgba(255, 255, 255, 0.85) !important; /* semi-transparent white for card effect */
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
     margin-bottom: 20px !important;
     border: 2px solid rgba(255, 215, 0, 0.12) !important;
-    box-shadow: none !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05) !important;
     transition: border-color var(--transition-speed) ease;
+    color: #0a0a2a; /* dark text on white */
 }
 
 #dashboard.tab-content:hover,
@@ -796,7 +828,6 @@ html, body {
 #profile.tab-content:hover,
 #contact.tab-content:hover {
     border-color: rgba(255, 215, 0, 0.22) !important;
-    box-shadow: none !important;
 }
 
 /* ===== WALLET TAB ===== */
@@ -837,6 +868,10 @@ html, body {
     font-weight: 900;
     display: block;
     margin-bottom: 4px;
+    background: rgba(0,0,0,0.3);
+    padding: 2px 8px;
+    border-radius: 8px;
+    display: inline-block;
 }
 
 .wallet-balance-card .balance-label {
@@ -907,13 +942,13 @@ html, body {
 }
 
 .wallet-filter-tab {
-    background: rgba(10, 10, 42, 0.5);
+    background: rgba(10, 10, 42, 0.05);
     border: 2px solid rgba(255, 215, 0, 0.12);
     padding: 10px 20px;
     border-radius: 24px;
-    color: var(--text-muted);
+    color: #0a0a2a;
     font-size: 14px;
-    font-weight: 700;
+    font-weight: 900;
     cursor: pointer;
     transition: all var(--transition-speed) ease;
     white-space: nowrap;
@@ -934,7 +969,7 @@ html, body {
 
 /* ===== TRANSACTIONS ===== */
 .wallet-transaction {
-    background: rgba(10, 10, 42, 0.5);
+    background: rgba(10, 10, 42, 0.05);
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
     border-radius: var(--border-radius-sm);
@@ -943,7 +978,7 @@ html, body {
     border: 2px solid rgba(255, 215, 0, 0.12);
     transition: all var(--transition-speed) ease;
     font-weight: 600;
-    color: var(--text-light);
+    color: #0a0a2a;
 }
 
 .wallet-transaction:hover {
@@ -978,7 +1013,11 @@ html, body {
 .wallet-transaction-type {
     font-weight: 900;
     font-size: 15px;
-    color: var(--gold);
+    color: #D4A017; /* gold theme */
+    background: rgba(0,0,0,0.1);
+    padding: 2px 8px;
+    border-radius: 4px;
+    display: inline-block;
 }
 
 .wallet-transaction-date {
@@ -995,6 +1034,9 @@ html, body {
 .wallet-transaction-amount {
     font-weight: 900;
     font-size: 17px;
+    background: rgba(0,0,0,0.05);
+    padding: 2px 8px;
+    border-radius: 4px;
 }
 .wallet-transaction-amount.positive { color: var(--green); }
 .wallet-transaction-amount.negative { color: var(--red); }
@@ -1008,7 +1050,7 @@ html, body {
 
 /* ===== CARDS & CONTAINERS ===== */
 .card {
-    background: rgba(10, 10, 42, 0.6);
+    background: rgba(255, 255, 255, 0.85);
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
     border-radius: var(--border-radius-card);
@@ -1017,13 +1059,13 @@ html, body {
     border: 2px solid rgba(255, 215, 0, 0.12);
     transition: all var(--transition-speed) ease;
     animation: none;
-    box-shadow: none;
-    color: var(--text-light);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    color: #0a0a2a;
 }
 
 .card:hover {
     border-color: rgba(255, 215, 0, 0.22);
-    box-shadow: none;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
 }
 
 .card h3 {
@@ -1032,8 +1074,12 @@ html, body {
     font-weight: 900;
     border-left: 4px solid var(--gold);
     padding-left: 12px;
-    color: var(--gold);
-    text-shadow: 0 0 20px rgba(255, 215, 0, 0.05);
+    color: #D4A017; /* gold */
+    text-shadow: 0 0 10px rgba(212, 160, 23, 0.2);
+    background: rgba(0,0,0,0.05);
+    padding: 4px 12px;
+    border-radius: 6px;
+    display: inline-block;
 }
 
 /* ===== MARKET GRID ===== */
@@ -1061,7 +1107,7 @@ html, body {
     overflow: hidden;
     border: 2px solid rgba(255, 215, 0, 0.12);
     border-radius: 20px;
-    background: rgba(10, 10, 42, 0.5);
+    background: #ccc; /* fallback, will be overridden per item */
     position: relative;
     box-shadow: none;
     display: flex;
@@ -1071,16 +1117,14 @@ html, body {
 
 .market-image-container:hover {
     border-color: rgba(255, 215, 0, 0.22);
-    box-shadow: none;
 }
 
+/* Hide actual image if any */
 .market-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
+    display: none;
 }
 
+/* Emoji display */
 .market-emoji {
     width: 100%;
     height: 100%;
@@ -1089,7 +1133,6 @@ html, body {
     justify-content: center;
     font-size: 96px;
     font-weight: 900;
-    background: rgba(10, 10, 42, 0.3);
     text-shadow: 0 0 30px rgba(255, 215, 0, 0.1);
 }
 
@@ -1127,19 +1170,31 @@ html, body {
 .market-name {
     font-weight: 900;
     font-size: 14px;
-    color: var(--text-light);
+    color: #0a0a2a; /* dark on white background */
+    background: rgba(0,0,0,0.1);
+    padding: 2px 10px;
+    border-radius: 6px;
+    font-family: var(--font-main);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
 }
 
 .market-price {
     font-size: 13px;
     font-weight: 900;
-    color: var(--gold);
+    color: #D4A017;
+    background: rgba(0,0,0,0.1);
+    padding: 2px 8px;
+    border-radius: 6px;
 }
 
 .market-roi {
     font-size: 12px;
     font-weight: 700;
     color: var(--text-muted);
+    background: rgba(0,0,0,0.05);
+    padding: 2px 8px;
+    border-radius: 6px;
 }
 
 .market-item.owned {
@@ -1147,6 +1202,20 @@ html, body {
     filter: grayscale(0.2);
     cursor: not-allowed;
 }
+
+/* ===== 12 MARKET ASSET COLORS (using nth-child) ===== */
+.market-item:nth-child(1) .market-image-container { background-color: #E91E63; } /* Flower */
+.market-item:nth-child(2) .market-image-container { background-color: #4CAF50; } /* Watermelon */
+.market-item:nth-child(3) .market-image-container { background-color: #F44336; } /* Apple */
+.market-item:nth-child(4) .market-image-container { background-color: #8BC34A; } /* Avocado */
+.market-item:nth-child(5) .market-image-container { background-color: #9E9E9E; } /* Sheep */
+.market-item:nth-child(6) .market-image-container { background-color: #FF5722; } /* Motorcycle */
+.market-item:nth-child(7) .market-image-container { background-color: #D4A574; } /* Camel */
+.market-item:nth-child(8) .market-image-container { background-color: #795548; } /* Milk Cow */
+.market-item:nth-child(9) .market-image-container { background-color: #2196F3; } /* Car */
+.market-item:nth-child(10) .market-image-container { background-color: #FF9800; } /* House */
+.market-item:nth-child(11) .market-image-container { background-color: #00BCD4; } /* Airplane */
+.market-item:nth-child(12) .market-image-container { background-color: #4CAF50; } /* Earth (green) */
 
 /* ===== BUTTONS ===== */
 .btn {
@@ -1181,7 +1250,7 @@ html, body {
 
 .game-card {
     aspect-ratio: 1;
-    background: rgba(10, 10, 42, 0.5);
+    background: rgba(10, 10, 42, 0.1);
     border-radius: 20px;
     display: flex;
     align-items: center;
@@ -1193,12 +1262,11 @@ html, body {
     font-weight: 900;
     transform-style: preserve-3d;
     box-shadow: none;
-    color: var(--text-light);
+    color: #0a0a2a;
 }
 
 .game-card:hover {
     border-color: rgba(255, 215, 0, 0.22);
-    box-shadow: none;
 }
 
 .game-card:active { transform: scale(0.94); }
@@ -1246,7 +1314,7 @@ html, body {
 .modal.active { display: flex; }
 
 .modal-content {
-    background: rgba(10, 10, 42, 0.9);
+    background: #ffffff;
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
     border-radius: 32px;
@@ -1256,8 +1324,8 @@ html, body {
     max-height: 85vh;
     overflow-y: auto;
     border: 2px solid rgba(255, 215, 0, 0.12);
-    box-shadow: none;
-    color: var(--text-light);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    color: #0a0a2a;
 }
 .modal.active {
     display: flex;
@@ -1276,18 +1344,19 @@ html, body {
 .close:hover { color: #ff8888; }
 
 .modal-content h3 {
-    color: var(--gold);
+    color: #D4A017;
     margin-bottom: 15px;
+    font-weight: 900;
 }
 
 .modal-content input,
 .modal-content select,
 .modal-content textarea {
-    background: rgba(10, 10, 42, 0.5);
+    background: rgba(10, 10, 42, 0.05);
     border: 2px solid rgba(255, 215, 0, 0.12);
     border-radius: 12px;
     padding: 10px 14px;
-    color: var(--text-light);
+    color: #0a0a2a;
     font-size: 15px;
     font-weight: 600;
     width: 100%;
@@ -1312,12 +1381,12 @@ html, body {
 
 .modal-content select {
     appearance: auto;
-    background: rgba(10, 10, 42, 0.5);
+    background: rgba(10, 10, 42, 0.05);
 }
 
 .modal-content select option {
-    background: #1e293b;
-    color: var(--text-light);
+    background: #ffffff;
+    color: #0a0a2a;
 }
 
 /* ===== TOAST ===== */
@@ -1329,7 +1398,7 @@ html, body {
     display: flex;
     align-items: center;
     gap: 12px;
-    background: rgba(10, 10, 42, 0.9);
+    background: #0a0a2a;
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     color: var(--text-light);
@@ -1421,7 +1490,7 @@ html, body {
 }
 
 #authModal .modal-content {
-    background: rgba(10, 10, 42, 0.9);
+    background: #ffffff;
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
     border-radius: 48px;
@@ -1430,7 +1499,7 @@ html, body {
     max-width: 420px;
     box-shadow: 0 25px 40px rgba(0,0,0,0.3);
     border: 2px solid rgba(255, 215, 0, 0.12);
-    color: var(--text-light);
+    color: #0a0a2a;
     animation: fadeIn 0.3s ease-out;
 }
 
@@ -1438,7 +1507,7 @@ html, body {
     font-size: 42px;
     font-weight: 900;
     font-style: italic;
-    color: var(--gold);
+    color: #D4A017;
     text-shadow: 0 0 20px rgba(255, 215, 0, 0.1);
     letter-spacing: 2px;
     margin-bottom: 8px;
@@ -1462,11 +1531,11 @@ html, body {
 
 .mode-switch button {
     background: transparent;
-    border: 2px solid var(--gold);
+    border: 2px solid #D4A017;
     border-radius: 60px;
     padding: 10px 28px;
     font-weight: 700;
-    color: var(--gold);
+    color: #D4A017;
     transition: all 0.2s ease;
     cursor: pointer;
     font-size: 15px;
@@ -1491,11 +1560,11 @@ html, body {
     padding-right: 45px !important;
     width: 100% !important;
     box-sizing: border-box !important;
-    background: rgba(10, 10, 42, 0.5);
+    background: rgba(10, 10, 42, 0.05);
     border: 2px solid rgba(255, 215, 0, 0.12);
     border-radius: 60px;
     padding: 14px 20px;
-    color: var(--text-light);
+    color: #0a0a2a;
     font-size: 16px;
     font-weight: 600;
     transition: border-color 0.2s ease;
@@ -1514,7 +1583,7 @@ html, body {
     transform: translateY(-50%);
     background: none;
     border: none;
-    color: var(--gold);
+    color: #D4A017;
     font-size: 20px;
     cursor: pointer;
     z-index: 10;
@@ -1527,11 +1596,11 @@ html, body {
 }
 
 #authForm input {
-    background: rgba(10, 10, 42, 0.5);
+    background: rgba(10, 10, 42, 0.05);
     border: 2px solid rgba(255, 215, 0, 0.12);
     border-radius: 60px;
     padding: 14px 20px;
-    color: var(--text-light);
+    color: #0a0a2a;
     font-size: 16px;
     font-weight: 600;
     margin-bottom: 16px;
@@ -1622,7 +1691,7 @@ html, body {
     right: 0;
     width: 100%;
     z-index: 99;
-    background: rgba(0, 0, 0, 0.92);
+    background: #0a0a2a; /* deep blue black */
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
     border-top: 2px solid rgba(255, 215, 0, 0.15);
@@ -1786,12 +1855,12 @@ html, body {
     display: flex;
     align-items: center;
     gap: 12px;
-    background: rgba(10, 10, 42, 0.3);
+    background: rgba(10, 10, 42, 0.05);
     padding: 8px 12px;
     border-radius: 12px;
     margin-bottom: 8px;
     font-weight: 600;
-    color: var(--text-light);
+    color: #0a0a2a;
     flex-wrap: wrap;
 }
 .transaction-item input {
@@ -1844,7 +1913,7 @@ html, body {
 }
 
 .quad-item {
-    background: rgba(10, 10, 42, 0.3);
+    background: rgba(10, 10, 42, 0.05);
     border-radius: 20px;
     padding: 12px;
     margin-bottom: 8px;
@@ -1852,7 +1921,7 @@ html, body {
     justify-content: space-between;
     align-items: center;
     font-weight: 700;
-    color: var(--text-light);
+    color: #0a0a2a;
     flex-wrap: wrap;
     gap: 8px;
 }
@@ -1860,7 +1929,7 @@ html, body {
 .quad-item.locked { border-left: 4px solid var(--red); }
 
 .progress-bar {
-    background: rgba(255,255,255,0.1);
+    background: rgba(0,0,0,0.1);
     border-radius: 20px;
     height: 12px;
     overflow: hidden;
@@ -1875,7 +1944,7 @@ html, body {
     margin-top: 6px;
     font-weight: 700;
     font-size: 14px;
-    color: var(--gold);
+    color: #D4A017;
 }
 
 .toggle-switch {
@@ -1893,7 +1962,7 @@ html, body {
     align-items: center;
     margin-top: 15px;
     font-weight: 700;
-    color: var(--text-light);
+    color: #0a0a2a;
 }
 #toggleKnob {
     width: 20px;
@@ -1913,7 +1982,7 @@ html, body {
     margin-top: 20px;
     align-items: center;
     font-weight: 700;
-    color: var(--text-light);
+    color: #0a0a2a;
 }
 
 .pagination-controls .btn-sm {
@@ -1928,7 +1997,7 @@ html, body {
     margin-top: 15px;
 }
 .investment-card {
-    background: rgba(10, 10, 42, 0.6);
+    background: rgba(255, 255, 255, 0.85);
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
     border-radius: var(--border-radius-card);
@@ -1938,13 +2007,13 @@ html, body {
     transition: all var(--transition-speed) ease;
     position: relative;
     overflow: hidden;
-    color: var(--text-light);
+    color: #0a0a2a;
 }
 
 .investment-card:hover {
     border-color: rgba(255, 215, 0, 0.22);
     transform: translateY(-3px);
-    box-shadow: none;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
 }
 
 .investment-card .asset-emoji {
@@ -1954,13 +2023,17 @@ html, body {
 .investment-card .asset-name {
     font-size: 20px;
     font-weight: 900;
-    color: var(--gold);
+    color: #D4A017;
     margin-bottom: 10px;
+    background: rgba(0,0,0,0.05);
+    padding: 4px 12px;
+    border-radius: 8px;
+    display: inline-block;
 }
 .investment-card .investment-details {
     margin-top: 10px;
     padding-top: 10px;
-    border-top: 1px solid rgba(255,255,255,0.1);
+    border-top: 1px solid rgba(0,0,0,0.1);
 }
 .investment-card .detail-row {
     display: flex;
@@ -1968,13 +2041,13 @@ html, body {
     margin-bottom: 8px;
     font-size: 14px;
     font-weight: 600;
-    color: var(--text-light);
+    color: #0a0a2a;
 }
 .investment-card .detail-label {
     color: var(--text-muted);
 }
 .investment-card .detail-value {
-    color: var(--gold);
+    color: #D4A017;
     font-weight: 900;
 }
 
@@ -1992,7 +2065,7 @@ html, body {
     transform: rotate(-90deg);
 }
 .circle-bg {
-    stroke: rgba(255, 255, 255, 0.1);
+    stroke: rgba(0, 0, 0, 0.1);
     stroke-width: 8;
 }
 .circle-fill {
@@ -2028,7 +2101,7 @@ html, body {
 .circle-progress-bar {
     width: 80%;
     height: 4px;
-    background: rgba(255,255,255,0.1);
+    background: rgba(0,0,0,0.1);
     border-radius: 2px;
     margin: 8px auto 0;
     overflow: hidden;
@@ -2130,17 +2203,14 @@ html, body {
     }
     .app-card {
         min-height: 50px;
-        padding: 6px !important;
-        border: none !important;
+        padding: 4px !important;
     }
     .app-card .app-image {
-        height: 76%;
+        border-radius: 12px;
     }
     .app-card .app-name {
         font-size: clamp(12px, 2.5vw, 16px);
-        padding: 3px 8px;
-        margin-top: 3px;
-        letter-spacing: 0.8px;
+        padding: 4px 8px;
     }
     
     .app-footer {
@@ -2299,17 +2369,14 @@ html, body {
     }
     .app-card {
         min-height: 40px;
-        padding: 4px !important;
-        border: none !important;
+        padding: 3px !important;
     }
     .app-card .app-image {
-        height: 70%;
+        border-radius: 10px;
     }
     .app-card .app-name {
         font-size: clamp(10px, 2.5vw, 14px);
         padding: 2px 6px;
-        margin-top: 2px;
-        letter-spacing: 0.5px;
     }
     
     .app-footer {
@@ -2395,7 +2462,7 @@ html, body {
         gap: 14px;
     }
     .app-card .app-image {
-        height: 80%;
+        border-radius: 16px;
     }
     .app-card .app-name {
         font-size: clamp(14px, 2.5vw, 18px);
@@ -2407,7 +2474,7 @@ html, body {
         gap: 18px;
     }
     .app-card .app-image {
-        height: 85%;
+        border-radius: 20px;
     }
     .app-card .app-name {
         font-size: clamp(16px, 2.5vw, 22px);
@@ -2421,7 +2488,7 @@ html, body {
 
 /* ===== ADMIN USER ROW ===== */
 .admin-user-row {
-    background: rgba(0,0,0,0.3);
+    background: rgba(0,0,0,0.03);
     border-radius: 16px;
     padding: 12px;
     margin-bottom: 10px;
@@ -2431,18 +2498,18 @@ html, body {
 }
 
 .admin-user-row:hover {
-    background: rgba(0,0,0,0.5);
+    background: rgba(0,0,0,0.08);
     transform: translateX(4px);
 }
 
 .admin-user-row.banned {
     border-left-color: var(--red);
-    background: rgba(239, 68, 68, 0.2);
+    background: rgba(239, 68, 68, 0.1);
 }
 
 /* ===== LOTTERY POOL ===== */
 .lottery-pool {
-    background: rgba(10, 10, 42, 0.3);
+    background: rgba(255, 255, 255, 0.85);
     border-radius: 16px;
     padding: 16px;
     margin-bottom: 12px;
@@ -2475,11 +2542,11 @@ html, body {
     display: flex;
     align-items: center;
     gap: 12px;
-    background: rgba(0,0,0,0.3);
+    background: rgba(255, 255, 255, 0.85);
     padding: 15px;
     border-radius: 16px;
     text-decoration: none;
-    color: var(--text-light);
+    color: #0a0a2a;
     border: 2px solid rgba(255, 215, 0, 0.12);
     transition: all var(--transition-speed) ease;
 }
@@ -2487,7 +2554,6 @@ html, body {
 .contact-link:hover {
     border-color: rgba(255, 215, 0, 0.22);
     transform: translateX(4px);
-    box-shadow: none;
 }
 
 .contact-link .contact-icon {
@@ -2506,12 +2572,12 @@ html, body {
 
 .contact-link .contact-arrow {
     margin-left: auto;
-    color: var(--gold);
+    color: #D4A017;
 }
 
 /* ===== CONSULTATION ITEM ===== */
 .consultation-item {
-    background: rgba(10, 10, 42, 0.3);
+    background: rgba(255, 255, 255, 0.85);
     border-radius: 12px;
     padding: 12px;
     margin-bottom: 10px;
@@ -2524,7 +2590,7 @@ html, body {
 
 /* ===== TICKET ITEM ===== */
 .ticket-item {
-    background: rgba(10, 10, 42, 0.3);
+    background: rgba(255, 255, 255, 0.85);
     border-radius: 12px;
     padding: 10px 14px;
     margin-bottom: 8px;
@@ -2541,12 +2607,12 @@ html, body {
 }
 
 ::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(0, 0, 0, 0.05);
     border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, var(--gold), var(--gold));
+    background: var(--gold);
     border-radius: 4px;
 }
 
