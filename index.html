@@ -575,7 +575,7 @@ html, body {
     z-index: 3;
 }
 
-/* ===== APP CARDS - UPDATED WITH SOLID COLORS ===== */
+/* ===== APP CARDS ===== */
 .app-card {
     background: transparent !important;
     backdrop-filter: none !important;
@@ -583,7 +583,7 @@ html, body {
     border: none !important;
     border-radius: var(--border-radius-sm) !important;
     box-shadow: none !important;
-    padding: 4px !important;
+    padding: 8px !important;
     transition: all var(--transition-speed) ease;
     position: relative;
     overflow: visible;
@@ -596,7 +596,6 @@ html, body {
     min-height: 60px;
     z-index: 3;
     cursor: pointer;
-    gap: 6px;
 }
 
 .app-card:hover {
@@ -610,39 +609,26 @@ html, body {
     transform: scale(0.95);
 }
 
-/* Colored tile (replaces image) */
 .app-card .app-image {
     width: 100%;
-    aspect-ratio: 1 / 1;
-    background-color: #ccc;
-    border-radius: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0;
-    border: 2px solid rgba(255, 215, 0, 0.12);
-    transition: all var(--transition-speed) ease;
+    height: 82%;
+    object-fit: contain;
+    display: block;
+    border-radius: 0;
+    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.1));
     position: relative;
-    height: auto;
-    filter: none;
-}
-
-.app-card .app-image img {
-    display: none;
 }
 
 .app-card:hover .app-image {
-    filter: none;
-    border-color: rgba(255, 215, 0, 0.22);
+    filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.3));
 }
 
-/* App name underneath */
 .app-card .app-name {
-    font-size: clamp(14px, 2.5vw, 20px);
+    font-size: clamp(16px, 2.5vw, 22px);
     font-weight: 900;
     text-align: center;
-    padding: 6px 12px;
-    margin-top: 4px;
+    padding: 5px 12px;
+    margin-top: 6px;
     background: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
@@ -657,95 +643,52 @@ html, body {
     white-space: nowrap;
     color: #ffffff;
     transition: all var(--transition-speed) ease;
-    width: 100%;
-    max-width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 .app-card:hover .app-name {
-    transform: scale(1.02);
+    transform: scale(1.05);
     border-color: rgba(255, 215, 0, 0.22);
 }
 
-/* ===== INDIVIDUAL APP COLORS (Solid tiles) ===== */
-.app-card[data-app="dashboard"] .app-image {
-    background-color: #D4A017;
-}
+/* ===== INDIVIDUAL APP COLORS ===== */
 .app-card[data-app="dashboard"] .app-name {
-    color: #D4A017;
-    text-shadow: 0 0 30px rgba(212, 160, 23, 0.6), 0 0 60px rgba(212, 160, 23, 0.3);
-}
-
-.app-card[data-app="market"] .app-image {
-    background-color: #00838F;
+    color: var(--gold);
+    text-shadow: 0 0 30px rgba(255, 215, 0, 0.6), 0 0 60px rgba(255, 215, 0, 0.3);
 }
 .app-card[data-app="market"] .app-name {
-    color: #00E5FF;
-    text-shadow: 0 0 30px rgba(0, 229, 255, 0.6), 0 0 60px rgba(0, 229, 255, 0.3);
-}
-
-.app-card[data-app="games"] .app-image {
-    background-color: #6A1B9A;
+    color: #00ffff;
+    text-shadow: 0 0 30px rgba(0, 255, 255, 0.6), 0 0 60px rgba(0, 255, 255, 0.3);
 }
 .app-card[data-app="games"] .app-name {
-    color: #B388FF;
+    color: #b388ff;
     text-shadow: 0 0 30px rgba(179, 136, 255, 0.6), 0 0 60px rgba(179, 136, 255, 0.3);
 }
-
-.app-card[data-app="airtime"] .app-image {
-    background-color: #2E7D32;
-}
 .app-card[data-app="airtime"] .app-name {
-    color: #00FFAA;
+    color: #00ffaa;
     text-shadow: 0 0 30px rgba(0, 255, 170, 0.6), 0 0 60px rgba(0, 255, 170, 0.3);
 }
-
-.app-card[data-app="lottery"] .app-image {
-    background-color: #C62828;
-}
 .app-card[data-app="lottery"] .app-name {
-    color: #FF6B6B;
+    color: #ff6b6b;
     text-shadow: 0 0 30px rgba(255, 107, 107, 0.6), 0 0 60px rgba(255, 107, 107, 0.3);
 }
-
-.app-card[data-app="clinic"] .app-image {
-    background-color: #00695C;
-}
 .app-card[data-app="clinic"] .app-name {
-    color: #00F5FF;
+    color: #00f5ff;
     text-shadow: 0 0 30px rgba(0, 245, 255, 0.6), 0 0 60px rgba(0, 245, 255, 0.3);
 }
-
-.app-card[data-app="guide"] .app-image {
-    background-color: #E65100;
-}
 .app-card[data-app="guide"] .app-name {
-    color: #FF8C00;
+    color: #ff8c00;
     text-shadow: 0 0 30px rgba(255, 140, 0, 0.6), 0 0 60px rgba(255, 140, 0, 0.3);
-}
-
-.app-card[data-app="wallet"] .app-image {
-    background-color: #0D47A1;
 }
 .app-card[data-app="wallet"] .app-name {
     color: #00E5FF;
     text-shadow: 0 0 30px rgba(0, 229, 255, 0.6), 0 0 60px rgba(0, 229, 255, 0.3);
 }
-
-.app-card[data-app="contact"] .app-image {
-    background-color: #880E4F;
-}
 .app-card[data-app="contact"] .app-name {
-    color: #FF00FF;
+    color: #ff00ff;
     text-shadow: 0 0 30px rgba(255, 0, 255, 0.6), 0 0 60px rgba(255, 0, 255, 0.3);
 }
-
-.app-card[data-app="admin"] .app-image {
-    background-color: #B71C1C;
-}
 .app-card[data-app="admin"] .app-name {
-    color: #FF1744;
+    color: #ff1744;
     text-shadow: 0 0 30px rgba(255, 23, 68, 0.6), 0 0 60px rgba(255, 23, 68, 0.3);
 }
 
@@ -1093,7 +1036,7 @@ html, body {
     text-shadow: 0 0 20px rgba(255, 215, 0, 0.05);
 }
 
-/* ===== MARKET GRID - UPDATED WITH 12 COLORS ===== */
+/* ===== MARKET GRID ===== */
 .market-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -1118,7 +1061,7 @@ html, body {
     overflow: hidden;
     border: 2px solid rgba(255, 215, 0, 0.12);
     border-radius: 20px;
-    background: #ccc;
+    background: rgba(10, 10, 42, 0.5);
     position: relative;
     box-shadow: none;
     display: flex;
@@ -1128,10 +1071,14 @@ html, body {
 
 .market-image-container:hover {
     border-color: rgba(255, 215, 0, 0.22);
+    box-shadow: none;
 }
 
 .market-image {
-    display: none;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
 }
 
 .market-emoji {
@@ -1200,20 +1147,6 @@ html, body {
     filter: grayscale(0.2);
     cursor: not-allowed;
 }
-
-/* ===== 12 MARKET ASSET COLORS (using nth-child) ===== */
-.market-item:nth-child(1) .market-image-container { background-color: #E91E63; } /* Flower */
-.market-item:nth-child(2) .market-image-container { background-color: #4CAF50; } /* Watermelon */
-.market-item:nth-child(3) .market-image-container { background-color: #F44336; } /* Apple */
-.market-item:nth-child(4) .market-image-container { background-color: #8BC34A; } /* Avocado */
-.market-item:nth-child(5) .market-image-container { background-color: #9E9E9E; } /* Sheep */
-.market-item:nth-child(6) .market-image-container { background-color: #FF5722; } /* Motorcycle */
-.market-item:nth-child(7) .market-image-container { background-color: #D4A574; } /* Camel */
-.market-item:nth-child(8) .market-image-container { background-color: #795548; } /* Milk Cow */
-.market-item:nth-child(9) .market-image-container { background-color: #2196F3; } /* Car */
-.market-item:nth-child(10) .market-image-container { background-color: #FF9800; } /* House */
-.market-item:nth-child(11) .market-image-container { background-color: #00BCD4; } /* Airplane */
-.market-item:nth-child(12) .market-image-container { background-color: #4CAF50; } /* Earth */
 
 /* ===== BUTTONS ===== */
 .btn {
@@ -2197,15 +2130,17 @@ html, body {
     }
     .app-card {
         min-height: 50px;
-        padding: 4px !important;
+        padding: 6px !important;
         border: none !important;
     }
     .app-card .app-image {
-        border-radius: 12px;
+        height: 76%;
     }
     .app-card .app-name {
         font-size: clamp(12px, 2.5vw, 16px);
-        padding: 4px 8px;
+        padding: 3px 8px;
+        margin-top: 3px;
+        letter-spacing: 0.8px;
     }
     
     .app-footer {
@@ -2364,15 +2299,17 @@ html, body {
     }
     .app-card {
         min-height: 40px;
-        padding: 3px !important;
+        padding: 4px !important;
         border: none !important;
     }
     .app-card .app-image {
-        border-radius: 10px;
+        height: 70%;
     }
     .app-card .app-name {
         font-size: clamp(10px, 2.5vw, 14px);
         padding: 2px 6px;
+        margin-top: 2px;
+        letter-spacing: 0.5px;
     }
     
     .app-footer {
@@ -2457,6 +2394,9 @@ html, body {
     .app-grid {
         gap: 14px;
     }
+    .app-card .app-image {
+        height: 80%;
+    }
     .app-card .app-name {
         font-size: clamp(14px, 2.5vw, 18px);
     }
@@ -2465,6 +2405,9 @@ html, body {
 @media (min-width: 1025px) {
     .app-grid {
         gap: 18px;
+    }
+    .app-card .app-image {
+        height: 85%;
     }
     .app-card .app-name {
         font-size: clamp(16px, 2.5vw, 22px);
