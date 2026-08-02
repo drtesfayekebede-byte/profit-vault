@@ -147,6 +147,28 @@ body {
     font-weight: 900;
 }
 
+/* ===== SEARCH BAR ===== */
+.search-container {
+    flex: 1;
+    margin: 0 16px;
+    max-width: 500px;
+    display: flex;
+}
+.search-container input {
+    width: 100%;
+    padding: 10px 16px;
+    border-radius: 40px;
+    border: 2px solid var(--border-light);
+    background: var(--bg-light);
+    font-size: 14px;
+    outline: none;
+    transition: border 0.2s;
+    color: var(--text-dark);
+}
+.search-container input:focus {
+    border-color: var(--teal);
+}
+
 /* ===== PROFILE AREA ===== */
 .profile-area {
     display: flex;
@@ -726,13 +748,6 @@ body {
 #authForm .or-divider { text-align: center; margin: 8px 0; color: var(--text-muted); font-size: 14px; font-weight: 600; }
 .auth-warning { background: rgba(239, 68, 68, 0.1); border-left: 3px solid var(--red); padding: 8px; margin-top: 12px; border-radius: 8px; font-size: 12px; color: var(--text-dark); }
 
-/* ===== ADMIN PANEL DARK THEME ===== */
-.admin-batch.active { display: block; }
-.admin-batch { display: none; }
-.load-more-container { text-align: center; margin-top: 20px; padding: 15px; }
-.load-more-btn { background: var(--teal); border: none; padding: 12px 30px; border-radius: 40px; color: white; font-weight: 700; font-size: 16px; cursor: pointer; transition: all var(--transition-speed) ease; }
-.load-more-btn:hover { transform: scale(1.02); }
-
 /* ===== RESPONSIVE ===== */
 @media (max-width: 600px) {
     .app-logo h1 { font-size: 20px; }
@@ -741,6 +756,8 @@ body {
     .header { padding: 0 12px; }
     .profile-avatar { width: 36px; height: 36px; }
     .bell-icon { font-size: 20px; }
+    .search-container { margin: 0 8px; max-width: 200px; }
+    .search-container input { font-size: 12px; padding: 8px 12px; }
     
     .app-grid-container { padding: 12px 10px; }
     .app-grid-wrapper { padding: 16px; border-radius: 20px; min-height: 200px; }
@@ -771,6 +788,8 @@ body {
 @media (max-width: 400px) {
     .app-logo h1 { font-size: 17px; }
     .logo-icon { font-size: 20px; }
+    .search-container { max-width: 120px; }
+    .search-container input { font-size: 10px; padding: 6px 10px; }
     .app-grid-container { padding: 8px 6px; }
     .app-grid-wrapper { padding: 12px; border-radius: 16px; }
     .app-grid { gap: 8px; }
@@ -779,6 +798,11 @@ body {
     .app-card .app-name { font-size: 14px; }
     .app-footer-tab .tab-emoji { font-size: 15px; }
     .app-footer-tab .tab-label { font-size: 7px; }
+}
+
+@media (min-width: 601px) {
+    .action-row { grid-template-columns: 1fr 1fr; }
+    .app-grid { grid-template-columns: repeat(2, 1fr); }
 }
     </style>
 </head>
@@ -800,6 +824,12 @@ body {
                     <span class="logo-icon">📶</span>
                     <h1>T-Hub</h1>
                 </div>
+
+                <!-- SEARCH BAR -->
+                <div class="search-container">
+                    <input type="text" id="globalSearch" placeholder="Search exams, health guides, doctors..." onkeyup="handleSearch(event)">
+                </div>
+
                 <div class="profile-area" id="profileArea">
                     <div class="notification-bell-wrapper" id="notificationBellWrapper" onclick="toggleNotificationDropdown(event)">
                         <span class="bell-icon">🔔</span>
@@ -828,7 +858,7 @@ body {
         <div id="appHomeScreen" class="app-grid-container">
             <div class="app-grid-wrapper">
                 
-                <!-- Action Row (Consult a Doctor & Public Health) -->
+                <!-- Action Row -->
                 <div class="action-row">
                     <div class="action-card doctor" onclick="openTabContent('consult')">
                         <span class="action-icon">👨‍⚕️</span>
@@ -891,17 +921,18 @@ body {
 
         <!-- ===== HIDDEN TAB CONTENT TEMPLATES ===== -->
         <div style="display: none;">
+            <!-- DASHBOARD -->
             <div id="dashboard">
                 <div class="card"><h3>⚡ Quick Actions</h3>
                     <button class="btn btn-success" onclick="showModal('depositModal')">💰 Upgrade to Premium</button>
                     <button class="btn btn-warning" onclick="showModal('contactModal')">📞 Contact Admin</button>
                 </div>
                 <div class="card"><h3>📈 Your Progress</h3>
-                    <div id="progressArea">Start your journey by exploring our resources!</div>
+                    <div id="progressArea" style="color:var(--text-muted);">Start your journey by exploring our resources!</div>
                 </div>
             </div>
 
-            <!-- EXAM CONTENT PLACEHOLDERS -->
+            <!-- EXIT EXAM -->
             <div id="exit-exam">
                 <div class="card"><h3>🎓 Exit Exam Library</h3>
                     <p style="color:var(--text-muted); margin-bottom:15px;">Previous exams and reading materials for Ethiopian University Exit Exams.</p>
@@ -918,6 +949,7 @@ body {
                 </div>
             </div>
 
+            <!-- NGAT EXAM -->
             <div id="ngat-exam">
                 <div class="card"><h3>📘 NGAT Prep</h3>
                     <p style="color:var(--text-muted); margin-bottom:15px;">Comprehensive materials and previous exams for the NGAT.</p>
@@ -930,6 +962,7 @@ body {
                 </div>
             </div>
 
+            <!-- ERMP EXAM -->
             <div id="ermp-exam">
                 <div class="card"><h3>🏆 ERMP Exam Prep</h3>
                     <p style="color:var(--text-muted); margin-bottom:15px;">Dedicated resources for the Ethiopian Residency Match Program.</p>
@@ -942,6 +975,7 @@ body {
                 </div>
             </div>
 
+            <!-- MEDICAL RESOURCE -->
             <div id="medical-resource">
                 <div class="card"><h3>🩺 Medical Resource Vault</h3>
                     <p style="color:var(--text-muted); margin-bottom:15px;">All essential reading materials for medical school, from freshman year to residency.</p>
@@ -962,6 +996,7 @@ body {
                 </div>
             </div>
 
+            <!-- PUBLIC HEALTH -->
             <div id="public-health">
                 <div class="card"><h3>📖 Public Health Guides</h3>
                     <p style="color:var(--text-muted); margin-bottom:15px;">Simple, easy-to-understand PDFs on common diseases and their management.</p>
@@ -982,6 +1017,7 @@ body {
                 </div>
             </div>
 
+            <!-- CONSULT A DOCTOR -->
             <div id="consult">
                 <div class="card"><h3>👨‍⚕️ Consult a Doctor</h3>
                     <p style="color:var(--text-muted); margin-bottom:15px;">Book a session with our health professionals for personalized advice.</p>
@@ -994,14 +1030,39 @@ body {
                 </div>
             </div>
 
-            <!-- ADMIN CONTENT -->
+            <!-- LIBRARY (Master Menu) -->
+            <div id="library-main">
+                <div class="card"><h3>📚 Resource Library</h3>
+                    <p style="color:var(--text-muted); margin-bottom:15px;">Choose a category to access all study materials.</p>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                        <div class="app-card exit" onclick="openTabContent('exit')" style="min-height:80px; cursor:pointer;">
+                            <span class="app-icon" style="font-size:28px;">🎓</span>
+                            <span class="app-name" style="font-size:16px;">Exit Exam</span>
+                        </div>
+                        <div class="app-card ngat" onclick="openTabContent('ngat')" style="min-height:80px; cursor:pointer;">
+                            <span class="app-icon" style="font-size:28px;">📘</span>
+                            <span class="app-name" style="font-size:16px;">NGAT Exam</span>
+                        </div>
+                        <div class="app-card ermp" onclick="openTabContent('ermp')" style="min-height:80px; cursor:pointer;">
+                            <span class="app-icon" style="font-size:28px;">🏆</span>
+                            <span class="app-name" style="font-size:16px;">ERMP Exam</span>
+                        </div>
+                        <div class="app-card medical" onclick="openTabContent('medical')" style="min-height:80px; cursor:pointer;">
+                            <span class="app-icon" style="font-size:28px;">🩺</span>
+                            <span class="app-name" style="font-size:16px;">Medical Resource</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ADMIN PANEL -->
             <div id="admin">
                 <div class="loading" style="color:var(--text-muted);">Loading admin panel...</div>
             </div>
 
-            <!-- CONTACT CONTENT -->
+            <!-- CONTACT SUPPORT -->
             <div id="contact">
-                <div class="card"><h3>📞 Contact Admin</h3>
+                <div class="card"><h3>📞 Contact Support</h3>
                     <div style="background:var(--bg-light); padding:20px; border-radius:12px;">
                         <p style="margin-bottom:15px;">For support, questions, or technical help.</p>
                         <button class="btn btn-info" onclick="window.open('https://t.me/youradmin', '_blank')">📱 Message on Telegram</button>
@@ -1106,6 +1167,25 @@ body {
         }
 
         function escapeHTML(str) { if (!str) return ''; return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+        // ================================================================
+        // SEARCH FUNCTIONALITY
+        // ================================================================
+        function handleSearch(event) {
+            if(event.key === 'Enter') {
+                const query = document.getElementById('globalSearch').value.toLowerCase().trim();
+                if(!query) return showToast('Please type something to search.', 'info');
+                showToast(`Searching for "${query}"...`, 'info');
+                
+                if(query.includes('exit') || query.includes('exam')) openTabContent('exit');
+                else if(query.includes('ngat')) openTabContent('ngat');
+                else if(query.includes('ermp')) openTabContent('ermp');
+                else if(query.includes('medical') || query.includes('med') || query.includes('doctor')) openTabContent('medical');
+                else if(query.includes('health') || query.includes('disease') || query.includes('guide')) openTabContent('publichealth');
+                else if(query.includes('consult') || query.includes('doctor')) openTabContent('consult');
+                else showToast('No direct match found. Showing Library.', 'info');
+            }
+        }
 
         // ================================================================
         // AUTHENTICATION
@@ -1274,6 +1354,24 @@ body {
             `).join('');
         }
 
+        function toggleNotificationDropdown(event) {
+            if (event) event.stopPropagation();
+            const dropdown = document.getElementById('notificationDropdown');
+            if(dropdown.style.display === 'block') {
+                dropdown.style.display = 'none';
+            } else {
+                dropdown.style.display = 'block';
+                loadNotifications();
+            }
+        }
+        document.addEventListener('click', function(e) {
+            const wrapper = document.getElementById('notificationBellWrapper');
+            const dropdown = document.getElementById('notificationDropdown');
+            if (wrapper && dropdown && !wrapper.contains(e.target) && !dropdown.contains(e.target)) {
+                dropdown.style.display = 'none';
+            }
+        });
+
         // ================================================================
         // NAVIGATION
         // ================================================================
@@ -1315,13 +1413,13 @@ body {
             if (btn) btn.classList.add('active');
 
             if (tabId === 'home') return goToHome();
-            if (tabId === 'library') return openTabContent('exit'); // Opens the first educational tab
+            if (tabId === 'library') return openTabContent('library-main'); // Opens the master library menu
             if (tabId === 'contact') return openTabContent('contact');
             if (tabId === 'admin') return openTabContent('admin');
         }
 
         // ================================================================
-        // ADMIN PANEL (Secret Control Center)
+        // ADMIN PANEL (Interactive!)
         // ================================================================
         async function loadAdminPanel() {
             const container = document.getElementById('tabContentContainer');
@@ -1336,17 +1434,17 @@ body {
                 </div>
 
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-bottom:20px;">
-                    <div class="card" style="cursor:pointer; text-align:center;" onclick="showToast('File uploader opening...', 'info')">
+                    <div class="card" style="cursor:pointer; text-align:center;" onclick="adminAction('📂 Upload Files', 'Upload new PDFs for Exit, NGAT, ERMP, and Medical Resources.')">
                         <div style="font-size:32px;">📂</div>
                         <h4>Upload Files</h4>
                         <p style="font-size:13px; color:var(--text-muted);">Add new PDF exams & resources</p>
                     </div>
-                    <div class="card" style="cursor:pointer; text-align:center;" onclick="showToast('Video manager opening...', 'info')">
+                    <div class="card" style="cursor:pointer; text-align:center;" onclick="adminAction('🎥 Add Videos', 'Paste YouTube or Vimeo links to embed educational and health videos.')">
                         <div style="font-size:32px;">🎥</div>
                         <h4>Add Videos</h4>
                         <p style="font-size:13px; color:var(--text-muted);">Embed educational & health videos</p>
                     </div>
-                    <div class="card" style="cursor:pointer; text-align:center;" onclick="showToast('Link manager opening...', 'info')">
+                    <div class="card" style="cursor:pointer; text-align:center;" onclick="adminAction('🔗 Manage Links', 'Add external resource links and references for students.')">
                         <div style="font-size:32px;">🔗</div>
                         <h4>Manage Links</h4>
                         <p style="font-size:13px; color:var(--text-muted);">External resources & references</p>
@@ -1356,18 +1454,38 @@ body {
                         <h4>Payment Methods</h4>
                         <p style="font-size:13px; color:var(--text-muted);">Manage subscriptions & pricing</p>
                     </div>
-                    <div class="card" style="cursor:pointer; text-align:center;" onclick="showToast('Feature toggles opening...', 'info')">
+                    <div class="card" style="cursor:pointer; text-align:center;" onclick="adminAction('⚙️ Feature Toggles', 'Turn specific app features on or off without redeploying the code.')">
                         <div style="font-size:32px;">⚙️</div>
                         <h4>Feature Toggles</h4>
                         <p style="font-size:13px; color:var(--text-muted);">Enable/Disable app features</p>
                     </div>
-                    <div class="card" style="cursor:pointer; text-align:center;" onclick="showToast('Analytics dashboard opening...', 'info')">
+                    <div class="card" style="cursor:pointer; text-align:center;" onclick="adminAction('📊 Analytics', 'View user count, top downloaded exams, and premium subscribers.')">
                         <div style="font-size:32px;">📊</div>
                         <h4>Analytics</h4>
                         <p style="font-size:13px; color:var(--text-muted);">Track users & platform growth</p>
                     </div>
                 </div>
             `;
+        }
+
+        // Function to handle admin button clicks properly with a nice popup
+        function adminAction(title, description) {
+            const modal = document.createElement('div');
+            modal.className = 'modal active';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <span class="close" onclick="this.closest('.modal').remove()">&times;</span>
+                    <h3>⚙️ ${title}</h3>
+                    <p style="color:var(--text-muted); margin-bottom: 20px;">${description}</p>
+                    <div style="background:var(--bg-light); padding:20px; border-radius:12px; text-align:center;">
+                        <div style="font-size:24px; margin-bottom:10px;">🚧</div>
+                        <p><strong>Feature Coming Soon!</strong></p>
+                        <p style="font-size:13px; color:var(--text-muted);">This admin tool is currently under development for T-Hub.</p>
+                    </div>
+                    <button class="btn" onclick="this.closest('.modal').remove()">Close</button>
+                </div>
+            `;
+            document.body.appendChild(modal);
         }
 
         // ================================================================
