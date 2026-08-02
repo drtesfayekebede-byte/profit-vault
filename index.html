@@ -12,7 +12,6 @@
     <style>
 /* ===== CSS CUSTOM PROPERTIES ===== */
 :root {
-    /* T-Hub New Color Palette */
     --teal: #008080;
     --teal-light: #20b2aa;
     --teal-dark: #005757;
@@ -167,6 +166,24 @@ body {
 }
 .search-container input:focus {
     border-color: var(--teal);
+}
+
+/* ===== LANGUAGE TOGGLE ===== */
+.lang-toggle {
+    background: var(--bg-light);
+    border: 1px solid var(--border-light);
+    border-radius: 30px;
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: 0.2s;
+    margin-right: 6px;
+}
+.lang-toggle:hover {
+    border-color: var(--teal);
+    color: var(--teal);
 }
 
 /* ===== PROFILE AREA ===== */
@@ -449,10 +466,10 @@ body {
 .app-card.ermp { border-top: 4px solid var(--orange); }
 .app-card.medical { border-top: 4px solid var(--green); background: linear-gradient(135deg, #ffffff, #f0fdf4); }
 
-/* ===== PUBLIC HEALTH BANNER ===== */
-.public-health-banner {
+/* ===== SMART MEDICAL NOTES BANNER (Replaced Public Health Banner) ===== */
+.smart-notes-banner {
     margin-top: 24px;
-    background: linear-gradient(135deg, var(--teal), var(--teal-dark));
+    background: linear-gradient(135deg, #0a192f, #1a365d);
     border-radius: var(--border-radius-card);
     padding: 24px 20px;
     display: flex;
@@ -461,27 +478,35 @@ body {
     cursor: pointer;
     transition: all var(--transition-speed) ease;
     border: 1px solid rgba(255,255,255,0.1);
-    box-shadow: 0 4px 15px rgba(0, 128, 128, 0.2);
+    box-shadow: 0 4px 15px rgba(10, 25, 47, 0.3);
 }
-.public-health-banner:hover {
+.smart-notes-banner:hover {
     transform: scale(1.01);
-    box-shadow: 0 8px 30px rgba(0, 128, 128, 0.3);
+    box-shadow: 0 8px 30px rgba(10, 25, 47, 0.4);
 }
-.public-health-banner .banner-text h3 {
+.smart-notes-banner .banner-text h3 {
     color: white;
     font-size: 18px;
     font-weight: 800;
 }
-.public-health-banner .banner-text p {
+.smart-notes-banner .banner-text p {
     color: rgba(255,255,255,0.8);
     font-size: 14px;
     margin-top: 4px;
 }
-.public-health-banner .banner-icon {
+.smart-notes-banner .banner-icon {
     font-size: 40px;
     background: rgba(255,255,255,0.15);
     padding: 12px;
     border-radius: 50%;
+}
+.smart-notes-banner .lock {
+    background: var(--orange);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 30px;
 }
 
 /* ===== FOOTER ===== */
@@ -758,6 +783,7 @@ body {
     .bell-icon { font-size: 20px; }
     .search-container { margin: 0 8px; max-width: 200px; }
     .search-container input { font-size: 12px; padding: 8px 12px; }
+    .lang-toggle { font-size: 10px; padding: 2px 8px; }
     
     .app-grid-container { padding: 12px 10px; }
     .app-grid-wrapper { padding: 16px; border-radius: 20px; min-height: 200px; }
@@ -772,9 +798,9 @@ body {
     .action-card .action-icon { font-size: 24px; }
     .action-card .action-title { font-size: 14px; }
     
-    .public-health-banner { padding: 16px; }
-    .public-health-banner .banner-text h3 { font-size: 16px; }
-    .public-health-banner .banner-icon { font-size: 30px; padding: 8px; }
+    .smart-notes-banner { padding: 16px; }
+    .smart-notes-banner .banner-text h3 { font-size: 16px; }
+    .smart-notes-banner .banner-icon { font-size: 30px; padding: 8px; }
     
     .app-footer { padding: 6px 12px; }
     .app-footer-tab { padding: 3px 8px; min-width: 36px; font-size: 9px; }
@@ -790,6 +816,7 @@ body {
     .logo-icon { font-size: 20px; }
     .search-container { max-width: 120px; }
     .search-container input { font-size: 10px; padding: 6px 10px; }
+    .lang-toggle { font-size: 8px; }
     .app-grid-container { padding: 8px 6px; }
     .app-grid-wrapper { padding: 12px; border-radius: 16px; }
     .app-grid { gap: 8px; }
@@ -831,6 +858,9 @@ body {
                 </div>
 
                 <div class="profile-area" id="profileArea">
+                    <!-- LANGUAGE TOGGLE (ADDED) -->
+                    <button class="lang-toggle" id="langToggle" onclick="toggleLanguage()">🇬🇧 EN</button>
+
                     <div class="notification-bell-wrapper" id="notificationBellWrapper" onclick="toggleNotificationDropdown(event)">
                         <span class="bell-icon">🔔</span>
                         <span id="notificationBadge" class="notification-badge">0</span>
@@ -862,13 +892,13 @@ body {
                 <div class="action-row">
                     <div class="action-card doctor" onclick="openTabContent('consult')">
                         <span class="action-icon">👨‍⚕️</span>
-                        <div class="action-title">Consult a Doctor</div>
-                        <div class="action-sub">Premium - Book now</div>
+                        <div class="action-title" data-key="consult_doctor">Consult a Doctor</div>
+                        <div class="action-sub" data-key="premium_feature">Premium - Book now</div>
                     </div>
                     <div class="action-card public" onclick="openTabContent('publichealth')">
                         <span class="action-icon">📖</span>
-                        <div class="action-title">Public Health Guides</div>
-                        <div class="action-sub">Free - Simple disease info</div>
+                        <div class="action-title" data-key="public_health">Public Health Guides</div>
+                        <div class="action-sub" data-key="free_access">Free - Simple disease info</div>
                     </div>
                 </div>
 
@@ -876,37 +906,40 @@ body {
                 <div class="app-grid" id="appGrid">
                     <div class="app-card exit" onclick="openTabContent('exit')">
                         <span class="app-icon">🎓</span>
-                        <span class="app-name">Exit Exam</span>
-                        <span class="app-desc">University exit prep</span>
+                        <span class="app-name" data-key="exit_exam">Exit Exam</span>
+                        <span class="app-desc" data-key="exit_desc">University exit prep</span>
                         <span class="premium-lock">🔒 Premium</span>
                     </div>
                     <div class="app-card ngat" onclick="openTabContent('ngat')">
                         <span class="app-icon">📘</span>
-                        <span class="app-name">NGAT Exam</span>
-                        <span class="app-desc">Past papers & answers</span>
+                        <span class="app-name" data-key="ngat_exam">NGAT Exam</span>
+                        <span class="app-desc" data-key="ngat_desc">Past papers & answers</span>
                         <span class="premium-lock">🔒 Premium</span>
                     </div>
                     <div class="app-card ermp" onclick="openTabContent('ermp')">
                         <span class="app-icon">🏆</span>
-                        <span class="app-name">ERMP Exam</span>
-                        <span class="app-desc">Residency match prep</span>
+                        <span class="app-name" data-key="ermp_exam">ERMP Exam</span>
+                        <span class="app-desc" data-key="ermp_desc">Residency match prep</span>
                         <span class="premium-lock">🔒 Premium</span>
                     </div>
                     <div class="app-card medical" onclick="openTabContent('medical')">
                         <span class="app-icon">🩺</span>
-                        <span class="app-name">Medical Resource</span>
-                        <span class="app-desc">Freshman to Residency</span>
+                        <span class="app-name" data-key="medical_vault">Medical Resource</span>
+                        <span class="app-desc" data-key="medical_desc">Freshman to Residency</span>
                         <span class="premium-lock">🔒 Premium</span>
                     </div>
                 </div>
 
-                <!-- Footer Banner -->
-                <div class="public-health-banner" onclick="openTabContent('publichealth')">
+                <!-- Footer Banner (Replaced with Smart Medical Notes) -->
+                <div class="smart-notes-banner" onclick="openTabContent('smartnotes')">
                     <div class="banner-text">
-                        <h3>📖 Public Health Library</h3>
-                        <p>Simple guides on disease management & prevention</p>
+                        <h3 data-key="smart_notes">🧠 Smart Medical Notes</h3>
+                        <p data-key="smart_desc">Brief, clear notes for residents & doctors</p>
                     </div>
-                    <div class="banner-icon">📚</div>
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <span class="lock">🔒 PREMIUM</span>
+                        <span class="banner-icon">📝</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -923,133 +956,93 @@ body {
         <div style="display: none;">
             <!-- DASHBOARD -->
             <div id="dashboard">
-                <div class="card"><h3>⚡ Quick Actions</h3>
-                    <button class="btn btn-success" onclick="showModal('depositModal')">💰 Upgrade to Premium</button>
-                    <button class="btn btn-warning" onclick="showModal('contactModal')">📞 Contact Admin</button>
-                </div>
-                <div class="card"><h3>📈 Your Progress</h3>
-                    <div id="progressArea" style="color:var(--text-muted);">Start your journey by exploring our resources!</div>
+                <div class="card"><h3 data-key="quick_actions">⚡ Quick Actions</h3>
+                    <button class="btn btn-success" onclick="showModal('depositModal')">💰 <span data-key="upgrade">Upgrade to Premium</span></button>
+                    <button class="btn btn-warning" onclick="showModal('contactModal')">📞 <span data-key="contact">Contact Admin</span></button>
                 </div>
             </div>
 
             <!-- EXIT EXAM -->
             <div id="exit-exam">
-                <div class="card"><h3>🎓 Exit Exam Library</h3>
-                    <p style="color:var(--text-muted); margin-bottom:15px;">Previous exams and reading materials for Ethiopian University Exit Exams.</p>
-                    <div id="exitExamFiles">
-                        <div style="background:var(--bg-light); padding:15px; border-radius:12px; margin-bottom:10px; display:flex; justify-content:space-between;">
-                            <div><strong>📄 Exit Exam 2023</strong><br><span style="font-size:12px; color:var(--text-muted);">With complete answers</span></div>
-                            <button class="btn-sm btn-warning" onclick="showToast('Upgrade to Premium to download!', 'info')">🔒 Download</button>
-                        </div>
-                        <div style="background:var(--bg-light); padding:15px; border-radius:12px; margin-bottom:10px; display:flex; justify-content:space-between;">
-                            <div><strong>📄 Exit Exam 2022</strong><br><span style="font-size:12px; color:var(--text-muted);">With complete answers</span></div>
-                            <button class="btn-sm btn-warning" onclick="showToast('Upgrade to Premium to download!', 'info')">🔒 Download</button>
-                        </div>
-                    </div>
+                <div class="card"><h3 data-key="exit_exam">🎓 Exit Exam Library</h3>
+                    <p style="color:var(--text-muted); margin-bottom:15px;" data-key="exit_desc">Previous exams and reading materials.</p>
+                    <div id="exitExamFiles"></div>
                 </div>
             </div>
 
             <!-- NGAT EXAM -->
             <div id="ngat-exam">
-                <div class="card"><h3>📘 NGAT Prep</h3>
-                    <p style="color:var(--text-muted); margin-bottom:15px;">Comprehensive materials and previous exams for the NGAT.</p>
-                    <div id="ngatFiles">
-                        <div style="background:var(--bg-light); padding:15px; border-radius:12px; margin-bottom:10px; display:flex; justify-content:space-between;">
-                            <div><strong>📄 NGAT Practice Set 1</strong><br><span style="font-size:12px; color:var(--text-muted);">300+ Questions</span></div>
-                            <button class="btn-sm btn-warning" onclick="showToast('Upgrade to Premium to download!', 'info')">🔒 Download</button>
-                        </div>
-                    </div>
+                <div class="card"><h3 data-key="ngat_exam">📘 NGAT Prep</h3>
+                    <p style="color:var(--text-muted); margin-bottom:15px;" data-key="ngat_desc">Materials and previous exams.</p>
+                    <div id="ngatFiles"></div>
                 </div>
             </div>
 
             <!-- ERMP EXAM -->
             <div id="ermp-exam">
-                <div class="card"><h3>🏆 ERMP Exam Prep</h3>
-                    <p style="color:var(--text-muted); margin-bottom:15px;">Dedicated resources for the Ethiopian Residency Match Program.</p>
-                    <div id="ermpFiles">
-                        <div style="background:var(--bg-light); padding:15px; border-radius:12px; margin-bottom:10px; display:flex; justify-content:space-between;">
-                            <div><strong>📄 ERMP Past Papers 2023</strong></div>
-                            <button class="btn-sm btn-warning" onclick="showToast('Upgrade to Premium to download!', 'info')">🔒 Download</button>
-                        </div>
-                    </div>
+                <div class="card"><h3 data-key="ermp_exam">🏆 ERMP Exam Prep</h3>
+                    <p style="color:var(--text-muted); margin-bottom:15px;" data-key="ermp_desc">Resources for the Residency Match.</p>
+                    <div id="ermpFiles"></div>
                 </div>
             </div>
 
             <!-- MEDICAL RESOURCE -->
             <div id="medical-resource">
-                <div class="card"><h3>🩺 Medical Resource Vault</h3>
-                    <p style="color:var(--text-muted); margin-bottom:15px;">All essential reading materials for medical school, from freshman year to residency.</p>
-                    <div id="medFiles">
-                        <div style="background:var(--bg-light); padding:15px; border-radius:12px; margin-bottom:10px; display:flex; justify-content:space-between;">
-                            <div><strong>📄 Anatomy Textbook (PDF)</strong></div>
-                            <button class="btn-sm btn-warning" onclick="showToast('Upgrade to Premium to download!', 'info')">🔒 Download</button>
-                        </div>
-                        <div style="background:var(--bg-light); padding:15px; border-radius:12px; margin-bottom:10px; display:flex; justify-content:space-between;">
-                            <div><strong>📄 Internal Medicine Notes</strong></div>
-                            <button class="btn-sm btn-warning" onclick="showToast('Upgrade to Premium to download!', 'info')">🔒 Download</button>
-                        </div>
-                        <div style="background:var(--bg-light); padding:15px; border-radius:12px; margin-bottom:10px; display:flex; justify-content:space-between;">
-                            <div><strong>📄 Residency Prep Guide</strong></div>
-                            <button class="btn-sm btn-warning" onclick="showToast('Upgrade to Premium to download!', 'info')">🔒 Download</button>
-                        </div>
-                    </div>
+                <div class="card"><h3 data-key="medical_vault">🩺 Medical Resource Vault</h3>
+                    <p style="color:var(--text-muted); margin-bottom:15px;" data-key="medical_desc">All essential materials from freshman to residency.</p>
+                    <div id="medFiles"></div>
+                </div>
+            </div>
+
+            <!-- SMART MEDICAL NOTES -->
+            <div id="smart-notes">
+                <div class="card"><h3 data-key="smart_notes">🧠 Smart Medical Notes</h3>
+                    <p style="color:var(--text-muted); margin-bottom:15px;" data-key="smart_desc">Brief, clear notes for residents & doctors.</p>
+                    <div id="smartNotesFiles"></div>
                 </div>
             </div>
 
             <!-- PUBLIC HEALTH -->
             <div id="public-health">
-                <div class="card"><h3>📖 Public Health Guides</h3>
-                    <p style="color:var(--text-muted); margin-bottom:15px;">Simple, easy-to-understand PDFs on common diseases and their management.</p>
-                    <div id="phFiles" style="display:flex; flex-direction:column; gap:10px;">
-                        <div style="background:var(--bg-light); padding:15px; border-radius:12px; display:flex; justify-content:space-between;">
-                            <div><strong>🩺 Understanding Malaria</strong><br><span style="font-size:12px; color:var(--text-muted);">Symptoms, prevention, and treatment</span></div>
-                            <button class="btn-sm" onclick="showToast('Opening PDF...', 'success')">📖 Read</button>
-                        </div>
-                        <div style="background:var(--bg-light); padding:15px; border-radius:12px; display:flex; justify-content:space-between;">
-                            <div><strong>🩺 Diabetes Management</strong><br><span style="font-size:12px; color:var(--text-muted);">Simple dietary and lifestyle guides</span></div>
-                            <button class="btn-sm" onclick="showToast('Opening PDF...', 'success')">📖 Read</button>
-                        </div>
-                        <div style="background:var(--bg-light); padding:15px; border-radius:12px; display:flex; justify-content:space-between;">
-                            <div><strong>🩺 First Aid Basics</strong><br><span style="font-size:12px; color:var(--text-muted);">Emergency care for families</span></div>
-                            <button class="btn-sm" onclick="showToast('Opening PDF...', 'success')">📖 Read</button>
-                        </div>
-                    </div>
+                <div class="card"><h3 data-key="public_health">📖 Public Health Guides</h3>
+                    <p style="color:var(--text-muted); margin-bottom:15px;" data-key="free_access">Simple, easy-to-understand info.</p>
+                    <div id="phFiles" style="display:flex; flex-direction:column; gap:10px;"></div>
                 </div>
             </div>
 
             <!-- CONSULT A DOCTOR -->
             <div id="consult">
-                <div class="card"><h3>👨‍⚕️ Consult a Doctor</h3>
-                    <p style="color:var(--text-muted); margin-bottom:15px;">Book a session with our health professionals for personalized advice.</p>
+                <div class="card"><h3 data-key="consult_doctor">👨‍⚕️ Consult a Doctor</h3>
+                    <p style="color:var(--text-muted); margin-bottom:15px;" data-key="premium_feature">Book a session with our health professionals.</p>
                     <div style="background:var(--bg-light); padding:20px; border-radius:12px; text-align:center;">
                         <div style="font-size:48px; margin-bottom:10px;">📅</div>
-                        <h4 style="margin-bottom:5px;">Premium Feature</h4>
-                        <p style="font-size:14px; color:var(--text-muted); margin-bottom:15px;">Upgrade to T-Hub Premium to book consultations and health checkups.</p>
-                        <button class="btn btn-warning" onclick="showToast('Redirecting to payment...', 'info')">🔓 Unlock Premium</button>
+                        <h4 style="margin-bottom:5px;" data-key="premium_feature">Premium Feature</h4>
+                        <p style="font-size:14px; color:var(--text-muted); margin-bottom:15px;" data-key="upgrade_desc">Upgrade to T-Hub Premium to book consultations.</p>
+                        <button class="btn btn-warning" onclick="showModal('depositModal')">🔓 <span data-key="upgrade">Unlock Premium</span></button>
                     </div>
                 </div>
             </div>
 
             <!-- LIBRARY (Master Menu) -->
             <div id="library-main">
-                <div class="card"><h3>📚 Resource Library</h3>
-                    <p style="color:var(--text-muted); margin-bottom:15px;">Choose a category to access all study materials.</p>
+                <div class="card"><h3 data-key="library">📚 Resource Library</h3>
+                    <p style="color:var(--text-muted); margin-bottom:15px;" data-key="choose_category">Choose a category.</p>
                     <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
                         <div class="app-card exit" onclick="openTabContent('exit')" style="min-height:80px; cursor:pointer;">
                             <span class="app-icon" style="font-size:28px;">🎓</span>
-                            <span class="app-name" style="font-size:16px;">Exit Exam</span>
+                            <span class="app-name" style="font-size:16px;" data-key="exit_exam">Exit Exam</span>
                         </div>
                         <div class="app-card ngat" onclick="openTabContent('ngat')" style="min-height:80px; cursor:pointer;">
                             <span class="app-icon" style="font-size:28px;">📘</span>
-                            <span class="app-name" style="font-size:16px;">NGAT Exam</span>
+                            <span class="app-name" style="font-size:16px;" data-key="ngat_exam">NGAT Exam</span>
                         </div>
                         <div class="app-card ermp" onclick="openTabContent('ermp')" style="min-height:80px; cursor:pointer;">
                             <span class="app-icon" style="font-size:28px;">🏆</span>
-                            <span class="app-name" style="font-size:16px;">ERMP Exam</span>
+                            <span class="app-name" style="font-size:16px;" data-key="ermp_exam">ERMP Exam</span>
                         </div>
                         <div class="app-card medical" onclick="openTabContent('medical')" style="min-height:80px; cursor:pointer;">
                             <span class="app-icon" style="font-size:28px;">🩺</span>
-                            <span class="app-name" style="font-size:16px;">Medical Resource</span>
+                            <span class="app-name" style="font-size:16px;" data-key="medical_vault">Medical Resource</span>
                         </div>
                     </div>
                 </div>
@@ -1062,37 +1055,70 @@ body {
 
             <!-- CONTACT SUPPORT -->
             <div id="contact">
-                <div class="card"><h3>📞 Contact Support</h3>
+                <div class="card"><h3 data-key="support">📞 Contact Support</h3>
                     <div style="background:var(--bg-light); padding:20px; border-radius:12px;">
-                        <p style="margin-bottom:15px;">For support, questions, or technical help.</p>
-                        <button class="btn btn-info" onclick="window.open('https://t.me/youradmin', '_blank')">📱 Message on Telegram</button>
+                        <p style="margin-bottom:15px;" data-key="support_desc">For support, questions, or technical help.</p>
+                        <button class="btn btn-info" onclick="window.open('https://t.me/youradmin', '_blank')">📱 <span data-key="message">Message on Telegram</span></button>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- ===== MODALS ===== -->
+        <!-- Premium Upgrade Modal -->
         <div id="depositModal" class="modal">
             <div class="modal-content">
                 <span class="close" onclick="closeModal('depositModal')">&times;</span>
-                <h3>🔓 Upgrade to Premium</h3>
-                <p style="margin-bottom:15px; color:var(--text-muted);">Get full access to all exams, medical resources, and doctor consultations.</p>
+                <h3 data-key="upgrade_title">🔓 Upgrade to Premium</h3>
+                <p style="margin-bottom:15px; color:var(--text-muted);" data-key="upgrade_desc">Get full access to all exams, medical resources, and doctor consultations.</p>
                 <div style="background:var(--bg-light); border-radius:12px; padding:20px; text-align:center; margin-bottom:15px;">
-                    <div style="font-size:24px; font-weight:800; color:var(--teal);">$4.99 / month</div>
-                    <div style="font-size:14px; color:var(--text-muted);">Cancel anytime</div>
+                    <div id="modalPrice" style="font-size:24px; font-weight:800; color:var(--teal);">600 ETB</div>
+                    <div style="font-size:14px; color:var(--text-muted);" data-key="duration">30-day access</div>
                 </div>
-                <button class="btn btn-warning" onclick="showToast('Payment gateway coming soon!', 'info')">💳 Subscribe Now</button>
-                <p style="text-align:center; font-size:12px; color:var(--text-muted); margin-top:10px;">Includes 3-day free trial</p>
+                <button class="btn btn-warning" onclick="showPaymentModal()">💳 <span data-key="upgrade">Subscribe Now</span></button>
+                <p style="text-align:center; font-size:12px; color:var(--text-muted); margin-top:10px;" data-key="cancel_anytime">Cancel anytime</p>
             </div>
         </div>
 
-        <div id="contactModal" class="modal">
+        <!-- Payment Modal -->
+        <div id="paymentModal" class="modal">
             <div class="modal-content">
-                <span class="close" onclick="closeModal('contactModal')">&times;</span>
-                <h3>📞 Contact Support</h3>
-                <p style="color:var(--text-muted);">Reach out to our admin team for help.</p>
-                <button class="btn" onclick="window.open('https://t.me/youradmin', '_blank')">📱 Admin Telegram</button>
-                <button class="btn btn-info" onclick="showToast('Email sent!', 'success')">📧 Send Email</button>
+                <span class="close" onclick="closeModal('paymentModal')">&times;</span>
+                <h3 data-key="step_1">📱 Step 1: Send Payment</h3>
+                <div style="background:var(--bg-light); border-radius:12px; padding:16px; margin-bottom:16px;">
+                    <p style="font-weight:600; margin-bottom:8px;">Send <strong style="color:var(--orange);" id="payAmount">600 ETB</strong> to:</p>
+                    <div style="background:white; padding:12px; border-radius:8px; border:1px solid var(--border);"><strong>Telebirr:</strong> <span id="adminTelebirr">+251935983470</span></div>
+                    <div style="background:white; padding:12px; border-radius:8px; border:1px solid var(--border); margin-top:8px;"><strong>Awash Bank:</strong> <span id="adminBank">11009983837737</span></div>
+                    <div style="background:white; padding:12px; border-radius:8px; border:1px solid var(--border); margin-top:8px;"><strong>Name:</strong> Tesfaye</div>
+                </div>
+                <h3 data-key="step_2">📷 Step 2: Upload Proof</h3>
+                <div class="form-group"><input type="text" id="payTxId" placeholder="Transaction ID"></div>
+                <div class="form-group"><input type="file" id="payReceipt" accept="image/*"></div>
+                <button class="btn btn-teal" onclick="submitPayment()">📤 <span data-key="submit_req">Submit for Approval</span></button>
+            </div>
+        </div>
+
+        <!-- Consultation Modal (7-Field Standard Form) -->
+        <div id="consultModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('consultModal')">&times;</span>
+                <h3 data-key="consult_doctor">👨‍⚕️ Medical Consultation Form</h3>
+                <div class="form-group"><label data-key="full_name">Full Name</label><input type="text" id="cName"></div>
+                <div class="form-group"><label data-key="age">Age</label>
+                    <select id="cAge"><option>18-25</option><option>26-35</option><option>36-50</option><option>50+</option></select>
+                </div>
+                <div class="form-group"><label data-key="gender">Gender</label>
+                    <select id="cGender"><option>Male</option><option>Female</option><option>Prefer not to say</option></select>
+                </div>
+                <div class="form-group"><label data-key="complaint">Chief Complaint</label><input type="text" id="cComplaint" placeholder="e.g. Persistent headache"></div>
+                <div class="form-group"><label data-key="severity">Severity</label>
+                    <select id="cSeverity"><option>Mild</option><option>Moderate</option><option>Severe</option></select>
+                </div>
+                <div class="form-group"><label data-key="history">Brief History</label><textarea id="cHistory" rows="3"></textarea></div>
+                <div style="font-size:11px; color:var(--text-muted); margin-bottom:12px; text-align:center;">
+                    ⚠️ <span data-key="disclaimer">This is for educational purposes only. Not a substitute for emergency care.</span>
+                </div>
+                <button class="btn btn-teal" onclick="submitConsultation()">📤 <span data-key="submit_req">Submit Request</span></button>
             </div>
         </div>
 
@@ -1101,15 +1127,15 @@ body {
             <div class="app-footer-tabs" id="footerTabs">
                 <button class="app-footer-tab active" data-tab="home" onclick="footerTabClick('home')">
                     <span class="tab-emoji">🏠</span>
-                    <span class="tab-label">Home</span>
+                    <span class="tab-label" data-key="home">Home</span>
                 </button>
                 <button class="app-footer-tab" data-tab="library" onclick="footerTabClick('library')">
                     <span class="tab-emoji">📚</span>
-                    <span class="tab-label">Library</span>
+                    <span class="tab-label" data-key="library">Library</span>
                 </button>
                 <button class="app-footer-tab" data-tab="contact" onclick="footerTabClick('contact')">
                     <span class="tab-emoji">📞</span>
-                    <span class="tab-label">Support</span>
+                    <span class="tab-label" data-key="support">Support</span>
                 </button>
                 <button class="app-footer-tab" data-tab="admin" id="adminTabBtn" onclick="footerTabClick('admin')" style="display:none;">
                     <span class="tab-emoji">⚙️</span>
@@ -1140,8 +1166,63 @@ body {
             isAdmin: false,
             currentUser: null,
             isLoggingOut: false,
-            authCheckDone: false
+            authCheckDone: false,
+            lang: 'en',
+            pendingPrice: 600
         };
+
+        // ================================================================
+        // TRANSLATIONS (ENGLISH & AMHARIC)
+        // ================================================================
+        const translations = {
+            en: {
+                home: "Home", library: "Library", support: "Support", consult_doctor: "Consult a Doctor",
+                premium_feature: "Premium Feature", public_health: "Public Health Guides", free_access: "Free Access",
+                exit_exam: "Exit Exam", exit_desc: "University Prep", ngat_exam: "NGAT Exam", ngat_desc: "Past Papers",
+                ermp_exam: "ERMP Exam", ermp_desc: "Residency Prep", medical_vault: "Medical Vault",
+                medical_desc: "Freshman to Residency", smart_notes: "🧠 Smart Medical Notes",
+                smart_desc: "Brief, clear notes for residents & doctors", disclaimer: "Educational use only.",
+                full_name: "Full Name", age: "Age", gender: "Gender", complaint: "Chief Complaint",
+                severity: "Severity", history: "Brief History", upgrade_title: "Unlock Premium Access",
+                upgrade_desc: "Upgrade to access all resources.", upgrade: "Upgrade", contact: "Contact",
+                submit_req: "Submit Request", duration: "30-day access", cancel_anytime: "Cancel anytime",
+                step_1: "Step 1: Send Payment", step_2: "Step 2: Upload Proof", choose_category: "Choose a category.",
+                quick_actions: "Quick Actions", message: "Message on Telegram", support_desc: "For support, questions, or technical help."
+            },
+            am: {
+                home: "መነሻ", library: "ቤተ መጻሕፍት", support: "እገዛ", consult_doctor: "ሐኪም ያማክሩ",
+                premium_feature: "ፕሪሚየም አገልግሎት", public_health: "የህብረተሰብ ጤና መመሪያዎች", free_access: "ነጻ አገልግሎት",
+                exit_exam: "የመግቢያ ፈተና", exit_desc: "የዩኒቨርሲቲ ዝግጅት", ngat_exam: "NGAT ፈተና", ngat_desc: "የቀድሞ ፈተናዎች",
+                ermp_exam: "ERMP ፈተና", ermp_desc: "የረዚደንሲ ዝግጅት", medical_vault: "የህክምና መዝገብ ቤት",
+                medical_desc: "ከመጀመሪያ እስከ ረዚደንሲ", smart_notes: "🧠 ስማርት የህክምና ማስታወሻዎች",
+                smart_desc: "ለሐኪሞች እና ረዚደንቶች አጭር ማስታወሻዎች", disclaimer: "ለትምህርት ብቻ ነው።",
+                full_name: "ሙሉ ስም", age: "ዕድሜ", gender: "ፆታ", complaint: "ዋና የህመም መግለጫ",
+                severity: "ክብደት", history: "አጭር ታሪክ", upgrade_title: "ፕሪሚየም አገልግሎት ይክፈቱ",
+                upgrade_desc: "ሁሉንም ሀብቶች ለማግኘት ይመዝገቡ።", upgrade: "ይመዝገቡ", contact: "ያነጋግሩ",
+                submit_req: "ጥያቄ አስገቡ", duration: "ለ30 ቀናት", cancel_anytime: "በማንኛውም ጊዜ መሰረዝ ይቻላል",
+                step_1: "ደረጃ 1: ክፍያ ይላኩ", step_2: "ደረጃ 2: ማረጋገጫ ይስቀሉ", choose_category: "ምድብ ይምረጡ።",
+                quick_actions: "ፈጣን ሥራዎች", message: "በቴሌግራም ላይ ይጻፉ", support_desc: "ለእገዛ ፣ ለጥያቄዎች ወይም ለቴክኒክ ችግሮች።"
+            }
+        };
+
+        function t(key) { return translations[AppState.lang][key] || key; }
+
+        function toggleLanguage() {
+            AppState.lang = AppState.lang === 'en' ? 'am' : 'en';
+            document.getElementById('langToggle').innerText = AppState.lang === 'en' ? '🇬🇧 EN' : '🇪🇹 አማ';
+            translatePage();
+            showToast(AppState.lang === 'en' ? 'Switched to English' : 'ወደ አማርኛ ተቀይሯል', 'info');
+        }
+
+        function translatePage() {
+            document.querySelectorAll('[data-key]').forEach(el => {
+                if (t(el.dataset.key)) el.innerText = t(el.dataset.key);
+            });
+            document.querySelectorAll('[data-key]').forEach(el => {
+                if (t(el.dataset.key)) el.placeholder = t(el.dataset.key);
+            });
+            document.getElementById('modalTitle').innerText = t('upgrade_title');
+        }
 
         // ================================================================
         // UTILITY FUNCTIONS
@@ -1182,6 +1263,7 @@ body {
                 else if(query.includes('ermp')) openTabContent('ermp');
                 else if(query.includes('medical') || query.includes('med') || query.includes('doctor')) openTabContent('medical');
                 else if(query.includes('health') || query.includes('disease') || query.includes('guide')) openTabContent('publichealth');
+                else if(query.includes('smart') || query.includes('note')) openTabContent('smartnotes');
                 else if(query.includes('consult') || query.includes('doctor')) openTabContent('consult');
                 else showToast('No direct match found. Showing Library.', 'info');
             }
@@ -1379,6 +1461,8 @@ body {
             document.getElementById('appHomeScreen').style.display = 'flex';
             document.getElementById('tabContentWrapper').classList.remove('active');
             document.getElementById('backButton').classList.remove('visible');
+            document.querySelectorAll('.footer-tab').forEach(t => t.classList.remove('active'));
+            document.querySelector('.footer-tab').classList.add('active');
         }
 
         function openTabContent(tabId) {
@@ -1393,6 +1477,7 @@ body {
                 case 'ngat': templateId = 'ngat-exam'; break;
                 case 'ermp': templateId = 'ermp-exam'; break;
                 case 'medical': templateId = 'medical-resource'; break;
+                case 'smartnotes': templateId = 'smart-notes'; break;
                 case 'publichealth': templateId = 'public-health'; break;
                 case 'consult': templateId = 'consult'; break;
                 case 'admin': templateId = 'admin'; break;
@@ -1400,10 +1485,34 @@ body {
                 default: return;
             }
 
+            // ADMIN BYPASS LOGIC: If Admin, bypass payment check
+            if (AppState.isAdmin) {
+                const template = document.getElementById(templateId);
+                if (template) {
+                    container.innerHTML = template.outerHTML;
+                    if (tabId === 'admin' && AppState.isAdmin) loadAdminPanel();
+                    translatePage();
+                }
+                return;
+            }
+
+            // PAYMENT CHECK LOGIC: If not Admin, check Premium
+            if (tabId === 'exit' || tabId === 'ngat' || tabId === 'ermp' || tabId === 'medical' || tabId === 'smartnotes' || tabId === 'consult') {
+                // Placeholder for CheckPremium Logic (Replace with real DB check later)
+                const isPremium = false; // Simulated for demo
+                if (!isPremium) {
+                    AppState.pendingPrice = 600; // Default price
+                    document.getElementById('payAmount').innerText = AppState.pendingPrice + ' ETB';
+                    document.getElementById('modalPrice').innerText = AppState.pendingPrice + ' ETB';
+                    return showModal('depositModal');
+                }
+            }
+
             const template = document.getElementById(templateId);
             if (template) {
                 container.innerHTML = template.outerHTML;
                 if (tabId === 'admin' && AppState.isAdmin) loadAdminPanel();
+                translatePage();
             }
         }
 
@@ -1413,13 +1522,51 @@ body {
             if (btn) btn.classList.add('active');
 
             if (tabId === 'home') return goToHome();
-            if (tabId === 'library') return openTabContent('library-main'); // Opens the master library menu
+            if (tabId === 'library') return openTabContent('library-main');
             if (tabId === 'contact') return openTabContent('contact');
             if (tabId === 'admin') return openTabContent('admin');
         }
 
         // ================================================================
-        // ADMIN PANEL (Interactive!)
+        // PAYMENTS (Option A - Manual Approval)
+        // ================================================================
+        function showPaymentModal() {
+            closeModal('depositModal');
+            document.getElementById('payAmount').innerText = AppState.pendingPrice + ' ETB';
+            showModal('paymentModal');
+        }
+
+        async function submitPayment() {
+            const tx = document.getElementById('payTxId').value;
+            const file = document.getElementById('payReceipt').files[0];
+            if (!tx || !file) return showToast('Please fill all fields', 'error');
+
+            // Simulated saving to Supabase
+            // await sb.from('premium_requests').insert({ user_id: AppState.userId, transaction_id: tx, ... });
+
+            showToast('✅ Request submitted! Admin will verify shortly.', 'success');
+            closeModal('paymentModal');
+            document.getElementById('payTxId').value = '';
+            document.getElementById('payReceipt').value = '';
+        }
+
+        // ================================================================
+        // CONSULTATION (In-App Form)
+        // ================================================================
+        async function submitConsultation() {
+            const name = document.getElementById('cName').value;
+            const complaint = document.getElementById('cComplaint').value;
+            if (!name || !complaint) return showToast('Please fill in Name and Complaint', 'error');
+
+            // Simulated saving to Supabase
+            // await sb.from('consultation_requests').insert({ user_id: AppState.userId, patient_name: name, ... });
+
+            showToast('✅ Consultation sent! You will receive a reply in 24-48 hours.', 'success');
+            closeModal('consultModal');
+        }
+
+        // ================================================================
+        // ADMIN PANEL (Full Management)
         // ================================================================
         async function loadAdminPanel() {
             const container = document.getElementById('tabContentContainer');
@@ -1430,45 +1577,45 @@ body {
 
             container.innerHTML = `
                 <div class="card"><h3>⚙️ T-Hub Admin Panel</h3>
-                    <p style="color:var(--text-muted); margin-bottom:15px;">Manage content, payments, and platform features.</p>
+                    <p style="color:var(--text-muted); margin-bottom:15px;">Manage content, payments, pricing, and consultations.</p>
                 </div>
 
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-bottom:20px;">
-                    <div class="card" style="cursor:pointer; text-align:center;" onclick="adminAction('📂 Upload Files', 'Upload new PDFs for Exit, NGAT, ERMP, and Medical Resources.')">
+                    <div class="card" style="cursor:pointer; text-align:center;" onclick="adminAction('📂 Upload Files', 'Upload new PDFs for Exit, NGAT, ERMP, Medical, and Smart Notes.')">
                         <div style="font-size:32px;">📂</div>
                         <h4>Upload Files</h4>
                         <p style="font-size:13px; color:var(--text-muted);">Add new PDF exams & resources</p>
                     </div>
-                    <div class="card" style="cursor:pointer; text-align:center;" onclick="adminAction('🎥 Add Videos', 'Paste YouTube or Vimeo links to embed educational and health videos.')">
-                        <div style="font-size:32px;">🎥</div>
-                        <h4>Add Videos</h4>
-                        <p style="font-size:13px; color:var(--text-muted);">Embed educational & health videos</p>
+                    <div class="card" style="cursor:pointer; text-align:center;" onclick="adminAction('🧠 Smart Notes', 'Upload brief, clear medical notes for residents and doctors.')">
+                        <div style="font-size:32px;">🧠</div>
+                        <h4>Smart Notes</h4>
+                        <p style="font-size:13px; color:var(--text-muted);">Manage premium short notes</p>
                     </div>
-                    <div class="card" style="cursor:pointer; text-align:center;" onclick="adminAction('🔗 Manage Links', 'Add external resource links and references for students.')">
-                        <div style="font-size:32px;">🔗</div>
-                        <h4>Manage Links</h4>
-                        <p style="font-size:13px; color:var(--text-muted);">External resources & references</p>
-                    </div>
-                    <div class="card" style="cursor:pointer; text-align:center;" onclick="showModal('depositModal')">
+                    <div class="card" style="cursor:pointer; text-align:center;" onclick="adminAction('💳 Payment Settings', 'Update Telebirr and Bank account details.')">
                         <div style="font-size:32px;">💳</div>
-                        <h4>Payment Methods</h4>
-                        <p style="font-size:13px; color:var(--text-muted);">Manage subscriptions & pricing</p>
+                        <h4>Payment Settings</h4>
+                        <p style="font-size:13px; color:var(--text-muted);">Change payment numbers</p>
                     </div>
-                    <div class="card" style="cursor:pointer; text-align:center;" onclick="adminAction('⚙️ Feature Toggles', 'Turn specific app features on or off without redeploying the code.')">
-                        <div style="font-size:32px;">⚙️</div>
-                        <h4>Feature Toggles</h4>
-                        <p style="font-size:13px; color:var(--text-muted);">Enable/Disable app features</p>
+                    <div class="card" style="cursor:pointer; text-align:center;" onclick="showPricingPanel()">
+                        <div style="font-size:32px;">💰</div>
+                        <h4>Set Prices</h4>
+                        <p style="font-size:13px; color:var(--text-muted);">Set price per tile (Default 600 ETB)</p>
                     </div>
-                    <div class="card" style="cursor:pointer; text-align:center;" onclick="adminAction('📊 Analytics', 'View user count, top downloaded exams, and premium subscribers.')">
+                    <div class="card" style="cursor:pointer; text-align:center;" onclick="viewConsultations()">
+                        <div style="font-size:32px;">📋</div>
+                        <h4>Consultations</h4>
+                        <p style="font-size:13px; color:var(--text-muted);">View & reply to patients</p>
+                    </div>
+                    <div class="card" style="cursor:pointer; text-align:center;" onclick="adminAction('📊 Analytics', 'View user count, downloads, and premium stats.')">
                         <div style="font-size:32px;">📊</div>
                         <h4>Analytics</h4>
-                        <p style="font-size:13px; color:var(--text-muted);">Track users & platform growth</p>
+                        <p style="font-size:13px; color:var(--text-muted);">Track platform growth</p>
                     </div>
                 </div>
             `;
+            translatePage();
         }
 
-        // Function to handle admin button clicks properly with a nice popup
         function adminAction(title, description) {
             const modal = document.createElement('div');
             modal.className = 'modal active';
@@ -1486,6 +1633,43 @@ body {
                 </div>
             `;
             document.body.appendChild(modal);
+            translatePage();
+        }
+
+        function showPricingPanel() {
+            const container = document.getElementById('tabContentContainer');
+            container.innerHTML = `
+                <div class="card">
+                    <h3>💰 Dynamic Pricing (Set price per tile)</h3>
+                    <div class="form-group"><label>Exit Exam (ETB)</label><input type="number" id="price_exit" value="600"></div>
+                    <div class="form-group"><label>NGAT Exam (ETB)</label><input type="number" id="price_ngat" value="600"></div>
+                    <div class="form-group"><label>ERMP Exam (ETB)</label><input type="number" id="price_ermp" value="600"></div>
+                    <div class="form-group"><label>Medical Vault (ETB)</label><input type="number" id="price_medical" value="600"></div>
+                    <div class="form-group"><label>Smart Notes (ETB)</label><input type="number" id="price_smartnotes" value="600"></div>
+                    <button class="btn btn-teal" onclick="savePrices()">💾 Save Prices</button>
+                    <button class="btn" onclick="loadAdminPanel()">← Back to Admin</button>
+                </div>
+            `;
+            translatePage();
+        }
+
+        function savePrices() {
+            showToast('Prices saved to database! (Simulated)', 'success');
+        }
+
+        function viewConsultations() {
+            const container = document.getElementById('tabContentContainer');
+            container.innerHTML = `
+                <div class="card">
+                    <h3>📋 Patient Consultations</h3>
+                    <div style="padding:20px; text-align:center; color:var(--text-muted);">
+                        <div style="font-size:48px;">🩺</div>
+                        <p>No pending consultations yet.</p>
+                    </div>
+                    <button class="btn" onclick="loadAdminPanel()">← Back to Admin</button>
+                </div>
+            `;
+            translatePage();
         }
 
         // ================================================================
