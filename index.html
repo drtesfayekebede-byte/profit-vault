@@ -19,24 +19,25 @@
     <style>
 /* ===== CSS CUSTOM PROPERTIES ===== */
 :root {
-    /* NEW EXACT COLORS FROM SCREENSHOT */
-    --navy: #0a2540;             /* Header & Footer */
-    --navy-light: #153e60;       /* Background for lang toggle */
-    --orange: #f59e0b;           /* Consult a Doctor */
-    --blue: #0ea5e9;             /* Public Health */
-    --red: #dc2626;              /* Exit Exam */
-    --purple: #9333ea;           /* NGAT Exam */
-    --green: #16a34a;            /* ERMP Exam */
-    --dark-slate: #475569;       /* Medical Vault */
+    /* UNIFIED DEEP NAVY THEME */
+    --navy: #0a2540;             /* Global color for header, footer, cards, and content */
+    --navy-light: #153e60;       /* Lighter navy for hover and lang toggle */
+    
+    /* ACCENT COLORS KEPT FOR TEXT AND ICONS */
+    --orange: #f59e0b;           
+    --blue: #0ea5e9;             
+    --red: #dc2626;              
+    --purple: #9333ea;           
+    --green: #16a34a;            
+    --dark-slate: #475569;       
     --banner-purple-start: #a855f7;
     --banner-purple-end: #7e22ce;
 
-    /* KEPT YOUR ORIGINAL COLORS FOR OTHER ELEMENTS */
-    --bg-light: #f8fafc;
+    /* NEUTRAL COLORS */
     --bg-white: #ffffff;
     --text-dark: #1e293b;
     --text-muted: #64748b;
-    --text-light: #f8fafc;
+    --text-light: #ffffff;
     --green-success: #10b981;
     --red-error: #ef4444;
     
@@ -51,17 +52,11 @@
 }
 
 @media (max-width: 600px) {
-    :root {
-        --header-height: 60px;
-        --footer-height: 60px;
-    }
+    :root { --header-height: 60px; --footer-height: 60px; }
 }
 
 @media (max-width: 400px) {
-    :root {
-        --header-height: 52px;
-        --footer-height: 52px;
-    }
+    :root { --header-height: 52px; --footer-height: 52px; }
 }
 
 /* ===== RESET ===== */
@@ -81,21 +76,11 @@
     0%, 100% { opacity: 0.5; width: 15px; }
     50% { opacity: 1; width: 25px; }
 }
-@keyframes pulseOrange {
-    0% { box-shadow: 0 0 5px rgba(255, 140, 0, 0.2); }
-    50% { box-shadow: 0 0 15px rgba(255, 140, 0, 0.4); }
-    100% { box-shadow: 0 0 5px rgba(255, 140, 0, 0.2); }
-}
-@keyframes pulseTeal {
-    0% { box-shadow: 0 0 5px rgba(0, 128, 128, 0.2); }
-    50% { box-shadow: 0 0 15px rgba(0, 128, 128, 0.4); }
-    100% { box-shadow: 0 0 5px rgba(0, 128, 128, 0.2); }
-}
 
 /* ===== BACKGROUND ===== */
 body {
     background: var(--bg-white);
-    color: var(--text-dark);
+    color: var(--text-light); /* Changed to white text to contrast with dark navy */
     font-family: var(--font-main);
     height: 100vh;
     width: 100vw;
@@ -105,7 +90,7 @@ body {
     -webkit-overflow-scrolling: touch;
 }
 
-/* ===== HEADER (DEEP NAVY) ===== */
+/* ===== HEADER ===== */
 .header {
     position: fixed;
     top: 0;
@@ -128,7 +113,7 @@ body {
     align-items: center;
     padding: 10px 24px;
     width: 100%;
-    max-width: 480px; /* Reduced to look like a mobile app */
+    max-width: 480px;
     margin: 0 auto;
 }
 
@@ -267,7 +252,7 @@ body {
     position: absolute;
     right: -10px;
     top: 44px;
-    background: var(--bg-white);
+    background: var(--navy-light);
     border-radius: 12px;
     box-shadow: 0 8px 32px rgba(0,0,0,0.15);
     z-index: 100001;
@@ -275,20 +260,21 @@ body {
     max-width: 350px;
     max-height: 400px;
     overflow: hidden;
-    border: 1px solid rgba(0,0,0,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
 }
 
 .notification-item {
     padding: 12px 16px;
     font-size: 13px;
-    border-bottom: 1px solid rgba(0,0,0,0.05);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
     cursor: pointer;
     transition: background 0.2s ease;
+    color: var(--text-light);
 }
-.notification-item:hover { background: rgba(0, 128, 128, 0.05); }
-.notification-item.unread { background: rgba(0, 128, 128, 0.08); border-left: 3px solid var(--navy); }
-.notification-item .notif-title { font-size: 14px; font-weight: 700; color: var(--navy); }
-.notification-item .notif-message { font-size: 13px; color: var(--text-dark); margin-top: 4px; }
+.notification-item:hover { background: rgba(255, 255, 255, 0.05); }
+.notification-item.unread { background: rgba(255, 255, 255, 0.1); border-left: 3px solid var(--orange); }
+.notification-item .notif-title { font-size: 14px; font-weight: 700; color: var(--orange); }
+.notification-item .notif-message { font-size: 13px; color: var(--text-light); margin-top: 4px; }
 .notification-item .notif-time { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
 .notification-empty { padding: 30px 20px; text-align: center; color: var(--text-muted); }
 
@@ -297,17 +283,17 @@ body {
     position: absolute;
     right: 10px;
     top: 50px;
-    background: var(--bg-white);
+    background: var(--navy-light);
     border-radius: 16px;
     box-shadow: 0 8px 32px rgba(0,0,0,0.15);
     z-index: 100000;
     min-width: 170px;
     overflow: hidden;
-    border: 1px solid rgba(0,0,0,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
 }
 .dropdown-menu.show { display: block !important; }
 .dropdown-menu div {
-    color: var(--text-dark);
+    color: var(--text-light);
     padding: 12px 20px;
     display: block;
     cursor: pointer;
@@ -315,7 +301,7 @@ body {
     font-size: 15px;
     font-weight: 600;
 }
-.dropdown-menu div:hover { background: rgba(0, 128, 128, 0.05); }
+.dropdown-menu div:hover { background: rgba(255, 255, 255, 0.05); }
 
 /* ===== HOME SCREEN ===== */
 .app-grid-container {
@@ -351,7 +337,7 @@ body {
     gap: 16px;
 }
 
-/* ===== APP CARDS ===== */
+/* ===== APP CARDS (ALL DEEP NAVY NOW) ===== */
 .app-card {
     border-radius: var(--border-radius-card);
     padding: 16px 10px;  
@@ -363,13 +349,14 @@ body {
     min-height: 110px;   
     cursor: pointer;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     text-align: center;
     border: none;
+    background: var(--navy); /* ALL CARDS NOW DEEP NAVY */
 }
 .app-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+    box-shadow: 0 8px 20px rgba(10, 37, 64, 0.4);
 }
 .app-card:active { transform: scale(0.96); }
 
@@ -393,14 +380,6 @@ body {
     text-align: center;
     margin-top: 4px;
 }
-
-/* ===== CARD COLORS ===== */
-.app-card.consult { background: var(--orange); }
-.app-card.public  { background: var(--blue); }
-.app-card.exit    { background: var(--red); }
-.app-card.ngat    { background: var(--purple); }
-.app-card.ermp    { background: var(--green); }
-.app-card.medical { background: var(--dark-slate); }
 
 /* ===== BADGES (White Pill with dark outline) ===== */
 .app-card .badge {
@@ -428,7 +407,7 @@ body {
 /* ===== SMART MEDICAL NOTES BANNER ===== */
 .smart-notes-banner {
     margin-top: 4px;
-    background: linear-gradient(135deg, var(--banner-purple-start), var(--banner-purple-end));
+    background: var(--navy); /* CHANGED TO DEEP NAVY */
     border-radius: var(--border-radius-card);
     padding: 16px 20px;
     display: flex;
@@ -436,19 +415,15 @@ body {
     justify-content: space-between;
     cursor: pointer;
     transition: transform 0.2s ease;
-    box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3);
+    box-shadow: 0 4px 15px rgba(10, 37, 64, 0.3);
 }
-.smart-notes-banner:hover {
-    transform: scale(1.01);
-}
+.smart-notes-banner:hover { transform: scale(1.01); }
 .smart-notes-banner .banner-left {
     display: flex;
     align-items: center;
     gap: 12px;
 }
-.smart-notes-banner .banner-icon {
-    font-size: 24px;
-}
+.smart-notes-banner .banner-icon { font-size: 24px; }
 .smart-notes-banner .banner-text h3 {
     color: white;
     font-size: 18px;
@@ -468,7 +443,7 @@ body {
     position: static;
     background: white;
     border: none;
-    color: var(--banner-purple-end);
+    color: var(--navy);
     padding: 6px 16px;
     font-size: 11px;
 }
@@ -477,9 +452,8 @@ body {
     font-size: 22px;
 }
 
-/* ===== FOOTER (DEEP NAVY) ===== */
+/* ===== FOOTER (DEEP NAVY - ALREADY MATCHES) ===== */
 .app-footer {
-    /* REMOVED position: fixed so it sits naturally at the bottom */
     background: var(--navy);
     border-top: none;
     box-shadow: 0 -4px 10px rgba(0,0,0,0.1);
@@ -487,7 +461,7 @@ body {
     height: var(--footer-height);
     display: flex;
     align-items: center;
-    flex-shrink: 0; /* Prevents it from squishing */
+    flex-shrink: 0;
 }
 .app-footer-tabs {
     display: flex;
@@ -581,6 +555,26 @@ body {
 .back-button.visible { display: flex; }
 .back-button:hover { transform: scale(1.02); background: var(--navy-light); }
 
+/* ===== CONTENT CARDS WHEN TABS OPEN (Deep Navy) ===== */
+.card {
+    background: var(--navy); /* CHANGED TO DEEP NAVY */
+    border-radius: var(--border-radius-card);
+    padding: 20px;
+    margin-bottom: 18px;
+    border: 1px solid rgba(255,255,255,0.05);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    color: var(--text-light);
+}
+.card h3 { 
+    margin-bottom: 15px; 
+    font-size: 20px; 
+    font-weight: 800; 
+    border-left: 4px solid var(--orange); 
+    padding-left: 12px; 
+    color: var(--orange); 
+}
+.card p, .card div, .card span { color: var(--text-light); }
+
 /* ===== MODAL ===== */
 .modal {
     display: none;
@@ -599,27 +593,27 @@ body {
 .modal.active { display: flex; animation: fadeIn 0.2s ease-out; }
 
 .modal-content {
-    background: var(--bg-white);
+    background: var(--navy); /* CHANGED TO DEEP NAVY */
     border-radius: var(--border-radius-card);
     padding: 25px;
     width: 90%;
     max-width: 420px;
     max-height: 85vh;
     overflow-y: auto;
-    border: 1px solid rgba(0,0,0,0.05);
+    border: 1px solid rgba(255,255,255,0.05);
     box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-    color: var(--text-dark);
+    color: var(--text-light);
 }
 .close { float: right; font-size: 28px; cursor: pointer; color: var(--red-error); font-weight: 700; transition: color 0.2s; }
 .close:hover { color: #ff4444; }
-.modal-content h3 { color: var(--navy); margin-bottom: 15px; font-weight: 800; }
+.modal-content h3 { color: var(--orange); margin-bottom: 15px; font-weight: 800; }
 
 .modal-content input, .modal-content select, .modal-content textarea {
-    background: var(--bg-light);
-    border: 1px solid rgba(0,0,0,0.1);
+    background: var(--navy-light);
+    border: 1px solid rgba(255,255,255,0.1);
     border-radius: 12px;
     padding: 12px 14px;
-    color: var(--text-dark);
+    color: var(--text-light);
     font-size: 15px;
     font-weight: 600;
     width: 100%;
@@ -628,32 +622,34 @@ body {
     box-sizing: border-box;
 }
 .modal-content input:focus, .modal-content select:focus, .modal-content textarea:focus {
-    border-color: var(--navy);
+    border-color: var(--orange);
     outline: none;
-    box-shadow: 0 0 0 3px rgba(10, 37, 64, 0.1);
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+}
+.modal-content input::placeholder, .modal-content textarea::placeholder {
+    color: rgba(255,255,255,0.5);
 }
 
 /* ===== BUTTONS ===== */
 .btn {
-    background: var(--navy);
+    background: var(--orange);
     border: none;
     padding: 14px 20px;
     border-radius: 40px;
-    color: white;
+    color: var(--text-dark);
     font-size: 16px;
     font-weight: 700;
     cursor: pointer;
     width: 100%;
     margin-bottom: 10px;
     transition: transform 0.1s, box-shadow 0.2s;
-    box-shadow: 0 4px 10px rgba(10, 37, 64, 0.2);
+    box-shadow: 0 4px 10px rgba(245, 158, 11, 0.2);
 }
 .btn:active { transform: scale(0.97); }
-.btn:hover { background: var(--navy-light); }
-.btn-success { background: var(--green-success); color: white; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2); }
-.btn-warning { background: var(--orange); color: white; box-shadow: 0 4px 10px rgba(245, 158, 11, 0.2); }
-.btn-danger { background: var(--red-error); color: white; box-shadow: 0 4px 10px rgba(239, 68, 68, 0.2); }
-.btn-info { background: var(--blue); color: white; }
+.btn:hover { background: #d97706; }
+.btn-success { background: var(--green-success); color: white; }
+.btn-danger { background: var(--red-error); color: white; }
+.btn-info { background: rgba(255,255,255,0.1); color: var(--text-light); border: 1px solid rgba(255,255,255,0.1); }
 .btn-sm { padding: 8px 16px; font-size: 13px; font-weight: 700; width: auto; display: inline-block; margin: 4px; border-radius: 40px; }
 
 /* ===== TOAST ===== */
@@ -664,7 +660,7 @@ body {
     transform: translateX(-50%);
     background: var(--text-dark);
     color: white;
-    border-left: 5px solid var(--navy);
+    border-left: 5px solid var(--orange);
     padding: 12px 20px;
     border-radius: 60px;
     font-weight: 700;
@@ -680,18 +676,6 @@ body {
 
 /* ===== LOADING ===== */
 .loading { text-align: center; padding: 30px; color: var(--text-muted); font-weight: 600; }
-
-/* ===== CARD CONTAINER ===== */
-.card {
-    background: var(--bg-white);
-    border-radius: var(--border-radius-card);
-    padding: 20px;
-    margin-bottom: 18px;
-    border: 1px solid rgba(0,0,0,0.05);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-    color: var(--text-dark);
-}
-.card h3 { margin-bottom: 15px; font-size: 20px; font-weight: 800; border-left: 4px solid var(--navy); padding-left: 12px; color: var(--navy); }
 
 /* ===== AUTH MODAL ===== */
 #authModal {
@@ -709,32 +693,32 @@ body {
     z-index: 2000;
 }
 #authModal .modal-content {
-    background: var(--bg-white);
+    background: var(--navy);
     border-radius: 48px;
     padding: 30px 25px;
     width: 90%;
     max-width: 420px;
     box-shadow: 0 25px 40px rgba(0,0,0,0.3);
-    border: 1px solid rgba(0,0,0,0.05);
+    border: 1px solid rgba(255,255,255,0.05);
     animation: fadeIn 0.3s ease-out;
 }
-.auth-header h2 { font-size: 36px; font-weight: 900; font-family: var(--font-serif); color: var(--navy); margin-bottom: 8px; text-align: center; letter-spacing: 1px;}
+.auth-header h2 { font-size: 36px; font-weight: 900; font-family: var(--font-serif); color: var(--orange); margin-bottom: 8px; text-align: center; letter-spacing: 1px;}
 .auth-header p { color: var(--text-muted); font-size: 15px; font-weight: 600; margin-bottom: 20px; text-align: center; }
 .mode-switch { display: flex; gap: 12px; justify-content: center; margin-bottom: 25px; }
-.mode-switch button { background: transparent; border: 2px solid var(--navy); border-radius: 60px; padding: 10px 28px; font-weight: 700; color: var(--navy); transition: all 0.2s ease; cursor: pointer; font-size: 15px; }
-.mode-switch button.active { background: var(--navy); color: white; box-shadow: 0 4px 10px rgba(10, 37, 64, 0.2); }
+.mode-switch button { background: transparent; border: 2px solid var(--orange); border-radius: 60px; padding: 10px 28px; font-weight: 700; color: var(--orange); transition: all 0.2s ease; cursor: pointer; font-size: 15px; }
+.mode-switch button.active { background: var(--orange); color: var(--text-dark); box-shadow: 0 4px 10px rgba(245, 158, 11, 0.2); }
 
 .password-wrapper { position: relative; width: 100%; display: flex; align-items: center; margin-bottom: 16px; }
 .password-wrapper input { flex: 1; padding-right: 45px !important; width: 100% !important; box-sizing: border-box !important; }
-.password-toggle { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--navy); font-size: 20px; cursor: pointer; padding: 5px; line-height: 1; }
-#authForm input { background: var(--bg-light); border: 1px solid rgba(0,0,0,0.1); border-radius: 60px; padding: 14px 20px; color: var(--text-dark); font-size: 16px; font-weight: 600; margin-bottom: 16px; transition: border-color 0.2s ease; width: 100%; box-sizing: border-box; }
-#authForm input:focus { border-color: var(--navy); outline: none; }
-#authForm .btn-success { background: var(--navy) !important; border: none !important; border-radius: 60px !important; padding: 14px 20px !important; font-weight: 900 !important; font-size: 17px !important; color: white !important; transition: all 0.2s ease !important; cursor: pointer !important; width: 100% !important; display: block !important; text-align: center !important; min-height: 50px !important; margin-bottom: 10px !important; box-shadow: 0 4px 10px rgba(10, 37, 64, 0.2) !important; }
+.password-toggle { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--orange); font-size: 20px; cursor: pointer; padding: 5px; line-height: 1; }
+#authForm input { background: var(--navy-light); border: 1px solid rgba(255,255,255,0.1); border-radius: 60px; padding: 14px 20px; color: var(--text-light); font-size: 16px; font-weight: 600; margin-bottom: 16px; transition: border-color 0.2s ease; width: 100%; box-sizing: border-box; }
+#authForm input:focus { border-color: var(--orange); outline: none; }
+#authForm .btn-success { background: var(--orange) !important; border: none !important; border-radius: 60px !important; padding: 14px 20px !important; font-weight: 900 !important; font-size: 17px !important; color: var(--text-dark) !important; transition: all 0.2s ease !important; cursor: pointer !important; width: 100% !important; display: block !important; text-align: center !important; min-height: 50px !important; margin-bottom: 10px !important; box-shadow: 0 4px 10px rgba(245, 158, 11, 0.2) !important; }
 #authForm .btn-success:hover { transform: scale(1.02) !important; }
 #authForm .btn-google { background: #db4437 !important; color: white !important; border: none !important; border-radius: 60px !important; padding: 14px 20px !important; font-weight: 900 !important; font-size: 16px !important; cursor: pointer !important; width: 100% !important; transition: all 0.2s ease !important; display: block !important; text-align: center !important; min-height: 50px !important; margin-bottom: 10px !important; }
 #authForm .btn-google:hover { transform: scale(1.02) !important; }
 #authForm .or-divider { text-align: center; margin: 8px 0; color: var(--text-muted); font-size: 14px; font-weight: 600; }
-.auth-warning { background: rgba(239, 68, 68, 0.1); border-left: 3px solid var(--red-error); padding: 8px; margin-top: 12px; border-radius: 8px; font-size: 12px; color: var(--text-dark); }
+.auth-warning { background: rgba(239, 68, 68, 0.1); border-left: 3px solid var(--red-error); padding: 8px; margin-top: 12px; border-radius: 8px; font-size: 12px; color: var(--text-light); }
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 600px) {
