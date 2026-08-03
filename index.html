@@ -834,64 +834,75 @@ body {
                 </div>
             </div>
         </div>
-
         <!-- ===== HOME SCREEN ===== -->
         <div id="appHomeScreen" class="app-grid-container">
             <div class="app-grid-wrapper">
                 
-                <!-- 2x3 Grid (6 Cards) -->
+                <!-- TOP BANNER: Consult a Doctor -->
+                <div class="app-banner-top" onclick="openTabContent('consult')">
+                    <div class="left-side">
+                        <i class="fas fa-user-doctor icon"></i>
+                        <div class="text-group">
+                            <h3 data-key="consult_doctor">Consult a Doctor</h3>
+                            <p data-key="premium_feature">Premium Feature</p>
+                        </div>
+                    </div>
+                    <span class="banner-badge">PREMIUM</span>
+                </div>
+
+                <!-- MIDDLE 3x2 GRID -->
                 <div class="app-grid" id="appGrid">
                     
-                    <!-- 1. Consult a Doctor (Orange) -->
-                    <div class="app-card consult" onclick="openTabContent('consult')">
-                        <span class="badge">PREMIUM</span>
-                        <i class="app-icon fas fa-user-doctor"></i>
-                        <span class="app-name" data-key="consult_doctor">Consult a Doctor</span>
-                        <span class="app-desc" data-key="premium_feature">Access 24/7</span>
-                    </div>
-
-                    <!-- 2. Public Health Guides (Blue) -->
+                    <!-- 1. Public Health Guides (FREE) -->
                     <div class="app-card public" onclick="openTabContent('publichealth')">
                         <span class="badge free">FREE</span>
                         <i class="app-icon fas fa-book-open"></i>
                         <span class="app-name" data-key="public_health">Public Health Guides</span>
-                        <span class="app-desc" data-key="free_access">Latest Updates</span>
+                        <span class="app-desc" data-key="free_access">Free Access</span>
                     </div>
 
-                    <!-- 3. Exit Exam (Red) -->
+                    <!-- 2. Exit Exam -->
                     <div class="app-card exit" onclick="openTabContent('exit')">
                         <span class="badge">PREMIUM</span>
                         <i class="app-icon fas fa-graduation-cap"></i>
                         <span class="app-name" data-key="exit_exam">Exit Exam</span>
-                        <span class="app-desc" data-key="exit_desc">Prepare Now</span>
+                        <span class="app-desc" data-key="exit_desc">University Prep</span>
                     </div>
 
-                    <!-- 4. NGAT Exam (Purple) -->
+                    <!-- 3. NGAT Exam -->
                     <div class="app-card ngat" onclick="openTabContent('ngat')">
                         <span class="badge">PREMIUM</span>
                         <i class="app-icon fas fa-book"></i>
                         <span class="app-name" data-key="ngat_exam">NGAT Exam</span>
-                        <span class="app-desc" data-key="ngat_desc">Start Practice</span>
+                        <span class="app-desc" data-key="ngat_desc">Past Papers</span>
                     </div>
 
-                    <!-- 5. ERMP Exam (Green) -->
+                    <!-- 4. ERMP Exam -->
                     <div class="app-card ermp" onclick="openTabContent('ermp')">
                         <span class="badge">PREMIUM</span>
                         <i class="app-icon fas fa-trophy"></i>
                         <span class="app-name" data-key="ermp_exam">ERMP Exam</span>
-                        <span class="app-desc" data-key="ermp_desc">Achieve Goals</span>
+                        <span class="app-desc" data-key="ermp_desc">Residency Prep</span>
                     </div>
 
-                    <!-- 6. Medical Vault (Dark Slate) -->
+                    <!-- 5. Medical Vault -->
                     <div class="app-card medical" onclick="openTabContent('medical')">
                         <span class="badge">PREMIUM</span>
                         <i class="app-icon fas fa-stethoscope"></i>
                         <span class="app-name" data-key="medical_vault">Medical Vault</span>
-                        <span class="app-desc" data-key="medical_desc">Secure Access</span>
+                        <span class="app-desc" data-key="medical_desc">Freshman to Residency</span>
+                    </div>
+
+                    <!-- 6. Gift / Support Dr. -->
+                    <div class="app-card gift" onclick="openTabContent('gift')">
+                        <span class="badge">PREMIUM</span>
+                        <i class="app-icon fas fa-gift"></i>
+                        <span class="app-name">Support Dr.</span>
+                        <span class="app-desc">Send a Gift</span>
                     </div>
                 </div>
 
-                <!-- Smart Medical Notes Banner (Purple) -->
+                <!-- BOTTOM BANNER: Smart Medical Notes -->
                 <div class="smart-notes-banner" onclick="openTabContent('smartnotes')">
                     <div class="banner-left">
                         <span class="banner-icon">🧠</span>
@@ -905,6 +916,7 @@ body {
                         <i class="icon fas fa-clipboard-list"></i>
                     </div>
                 </div>
+
             </div>
         </div>
 
