@@ -23,15 +23,11 @@
     --navy: #0a2540;             /* Global color for header, footer, cards, and content */
     --navy-light: #153e60;       /* Lighter navy for hover and lang toggle */
     
-    /* ACCENT COLORS KEPT FOR TEXT AND ICONS */
-    --orange: #f59e0b;           
-    --blue: #0ea5e9;             
-    --red: #dc2626;              
-    --purple: #9333ea;           
-    --green: #16a34a;            
-    --dark-slate: #475569;       
-    --banner-purple-start: #a855f7;
-    --banner-purple-end: #7e22ce;
+    /* NEW GOLD & TEAL ACCENTS */
+    --gold: #FFD700;             /* Main card titles & badge text */
+    --gold-dark: #ccac00;        /* Gold hover state */
+    --teal: #008080;             /* Badge background */
+    --teal-light: #20b2aa;       /* Badge hover */
 
     /* NEUTRAL COLORS */
     --bg-white: #ffffff;
@@ -80,7 +76,7 @@
 /* ===== BACKGROUND ===== */
 body {
     background: var(--bg-white);
-    color: var(--text-light); /* Changed to white text to contrast with dark navy */
+    color: var(--text-light);
     font-family: var(--font-main);
     height: 100vh;
     width: 100vw;
@@ -135,7 +131,7 @@ body {
 
 .logo-icon {
     font-size: 24px;
-    color: #f59e0b;
+    color: var(--gold);
     flex-shrink: 0;
     font-weight: 900;
 }
@@ -272,8 +268,8 @@ body {
     color: var(--text-light);
 }
 .notification-item:hover { background: rgba(255, 255, 255, 0.05); }
-.notification-item.unread { background: rgba(255, 255, 255, 0.1); border-left: 3px solid var(--orange); }
-.notification-item .notif-title { font-size: 14px; font-weight: 700; color: var(--orange); }
+.notification-item.unread { background: rgba(255, 255, 255, 0.1); border-left: 3px solid var(--gold); }
+.notification-item .notif-title { font-size: 14px; font-weight: 700; color: var(--gold); }
 .notification-item .notif-message { font-size: 13px; color: var(--text-light); margin-top: 4px; }
 .notification-item .notif-time { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
 .notification-empty { padding: 30px 20px; text-align: center; color: var(--text-muted); }
@@ -307,12 +303,12 @@ body {
 .app-grid-container {
     display: flex;
     flex-direction: column;
-    position: absolute; /* Changed from fixed to absolute */
+    position: fixed;
     top: var(--header-height);
     left: 0;
     right: 0;
-    bottom: 0; /* Removed bottom: var(--footer-height) so it reaches all the way down */
-    padding: 20px 16px 16px 16px;
+    bottom: 0;
+    padding: 20px 16px calc(var(--footer-height) + 20px) 16px; /* Fixes bottom gap */
     overflow-y: auto;
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
@@ -330,17 +326,49 @@ body {
     margin: 0 auto;
 }
 
-/* ===== 6-CARD GRID (2x3) ===== */
-.app-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
+/* ===== TOP BANNER CARD (Consult a Doctor) ===== */
+.app-banner-top {
+    background: var(--navy);
+    border-radius: var(--border-radius-card);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    transition: transform 0.2s ease;
+}
+.app-banner-top:hover { transform: scale(1.01); }
+
+.app-banner-top .left-side {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.app-banner-top .icon { font-size: 32px; }
+.app-banner-top .text-group h3 { color: var(--gold); font-size: 20px; font-weight: 800; }
+.app-banner-top .text-group p { color: rgba(255,255,255,0.8); font-size: 13px; margin-top: 2px; }
+
+.app-banner-top .banner-badge {
+    background: var(--teal);
+    color: var(--gold);
+    padding: 6px 18px;
+    border-radius: 30px;
+    font-weight: 800;
+    font-size: 13px;
 }
 
-/* ===== APP CARDS (ALL DEEP NAVY NOW) ===== */
+/* ===== MIDDLE 3x2 GRID ===== */
+.app-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr; /* 3 Columns */
+    gap: 12px;
+}
+
+/* ===== STANDARD CARDS (ALL DEEP NAVY) ===== */
 .app-card {
     border-radius: var(--border-radius-card);
-    padding: 16px 10px;  
+    padding: 16px 8px;  
     position: relative;
     display: flex;
     flex-direction: column;
@@ -352,62 +380,59 @@ body {
     box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     text-align: center;
     border: none;
-    background: var(--navy); /* ALL CARDS NOW DEEP NAVY */
+    background: var(--navy);
 }
-.app-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 20px rgba(10, 37, 64, 0.4);
-}
+.app-card:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(10, 37, 64, 0.4); }
 .app-card:active { transform: scale(0.96); }
 
 .app-card .app-icon {
     color: white;
-    font-size: 36px;
-    margin-bottom: 12px;
+    font-size: 32px;
+    margin-bottom: 8px;
     display: block;
 }
 .app-card .app-name {
-    color: white;
-    font-size: 18px;
+    color: var(--gold); /* GOLD TITLE */
+    font-size: 16px;
     font-weight: 800;
     text-align: center;
     letter-spacing: 0.3px;
 }
 .app-card .app-desc {
     color: rgba(255,255,255,0.8);
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 600;
     text-align: center;
     margin-top: 4px;
 }
 
-/* ===== BADGES (White Pill with dark outline) ===== */
+/* ===== BADGES (TEAL BG, GOLD TEXT) ===== */
 .app-card .badge {
     position: absolute;
-    top: 14px;
-    right: 14px;
-    background: white;
-    border: 2px solid rgba(0,0,0,0.15);
-    padding: 2px 12px;
+    top: 10px;
+    right: 10px;
+    background: var(--teal);
+    border: 1px solid rgba(255,215,0,0.3);
+    padding: 2px 10px;
     border-radius: 20px;
-    font-size: 10px;
+    font-size: 9px;
     font-weight: 800;
-    color: var(--text-dark);
+    color: var(--gold);
     letter-spacing: 0.5px;
     display: flex;
     align-items: center;
     gap: 4px;
 }
 .app-card .badge.free {
-    border-color: rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.3);
     color: white;
-    background: rgba(0,0,0,0.15);
 }
 
-/* ===== SMART MEDICAL NOTES BANNER ===== */
+/* ===== BOTTOM BANNER (Smart Medical Notes) ===== */
 .smart-notes-banner {
     margin-top: 4px;
-    background: var(--navy); /* CHANGED TO DEEP NAVY */
+    background: var(--navy);
     border-radius: var(--border-radius-card);
     padding: 16px 20px;
     display: flex;
@@ -424,36 +449,25 @@ body {
     gap: 12px;
 }
 .smart-notes-banner .banner-icon { font-size: 24px; }
-.smart-notes-banner .banner-text h3 {
-    color: white;
-    font-size: 18px;
+.smart-notes-banner .banner-text h3 { color: var(--gold); font-size: 18px; font-weight: 800; }
+.smart-notes-banner .banner-text p { color: rgba(255,255,255,0.85); font-size: 13px; margin-top: 2px; }
+.smart-notes-banner .banner-right .badge {
+    background: var(--teal);
+    color: var(--gold);
+    padding: 6px 16px;
+    border-radius: 30px;
+    font-size: 12px;
     font-weight: 800;
 }
-.smart-notes-banner .banner-text p {
-    color: rgba(255,255,255,0.85);
-    font-size: 13px;
-    margin-top: 2px;
-}
-.smart-notes-banner .banner-right {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-.smart-notes-banner .banner-right .badge {
-    position: static;
-    background: white;
-    border: none;
-    color: var(--navy);
-    padding: 6px 16px;
-    font-size: 11px;
-}
-.smart-notes-banner .banner-right .icon {
-    color: rgba(255,255,255,0.6);
-    font-size: 22px;
-}
 
-/* ===== FOOTER (DEEP NAVY - ALREADY MATCHES) ===== */
+/* ===== FOOTER (FIXED) ===== */
 .app-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 99;
     background: var(--navy);
     border-top: none;
     box-shadow: 0 -4px 10px rgba(0,0,0,0.1);
@@ -461,10 +475,6 @@ body {
     height: var(--footer-height);
     display: flex;
     align-items: center;
-    flex-shrink: 0;
-    position: sticky; /* This forces it to stick to the very bottom */
-    bottom: 0;
-    width: 100%;
 }
 .app-footer-tabs {
     display: flex;
@@ -499,7 +509,6 @@ body {
 }
 .app-footer-tab .tab-emoji { font-size: 20px; line-height: 1; pointer-events: none; }
 .app-footer-tab .tab-label { font-size: 9px; margin-top: 2px; font-weight: 700; pointer-events: none; white-space: nowrap; }
-
 .app-footer-tab.active { color: white; }
 .app-footer-tab.active .tab-emoji { transform: scale(1.1); }
 .app-footer-tab.active .tab-label { color: white; }
@@ -558,9 +567,9 @@ body {
 .back-button.visible { display: flex; }
 .back-button:hover { transform: scale(1.02); background: var(--navy-light); }
 
-/* ===== CONTENT CARDS WHEN TABS OPEN (Deep Navy) ===== */
+/* ===== CONTENT CARDS (Deep Navy) ===== */
 .card {
-    background: var(--navy); /* CHANGED TO DEEP NAVY */
+    background: var(--navy);
     border-radius: var(--border-radius-card);
     padding: 20px;
     margin-bottom: 18px;
@@ -572,9 +581,9 @@ body {
     margin-bottom: 15px; 
     font-size: 20px; 
     font-weight: 800; 
-    border-left: 4px solid var(--orange); 
+    border-left: 4px solid var(--gold); 
     padding-left: 12px; 
-    color: var(--orange); 
+    color: var(--gold); 
 }
 .card p, .card div, .card span { color: var(--text-light); }
 
@@ -596,7 +605,7 @@ body {
 .modal.active { display: flex; animation: fadeIn 0.2s ease-out; }
 
 .modal-content {
-    background: var(--navy); /* CHANGED TO DEEP NAVY */
+    background: var(--navy);
     border-radius: var(--border-radius-card);
     padding: 25px;
     width: 90%;
@@ -609,7 +618,7 @@ body {
 }
 .close { float: right; font-size: 28px; cursor: pointer; color: var(--red-error); font-weight: 700; transition: color 0.2s; }
 .close:hover { color: #ff4444; }
-.modal-content h3 { color: var(--orange); margin-bottom: 15px; font-weight: 800; }
+.modal-content h3 { color: var(--gold); margin-bottom: 15px; font-weight: 800; }
 
 .modal-content input, .modal-content select, .modal-content textarea {
     background: var(--navy-light);
@@ -625,9 +634,9 @@ body {
     box-sizing: border-box;
 }
 .modal-content input:focus, .modal-content select:focus, .modal-content textarea:focus {
-    border-color: var(--orange);
+    border-color: var(--gold);
     outline: none;
-    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+    box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
 }
 .modal-content input::placeholder, .modal-content textarea::placeholder {
     color: rgba(255,255,255,0.5);
@@ -635,7 +644,7 @@ body {
 
 /* ===== BUTTONS ===== */
 .btn {
-    background: var(--orange);
+    background: var(--gold);
     border: none;
     padding: 14px 20px;
     border-radius: 40px;
@@ -646,10 +655,10 @@ body {
     width: 100%;
     margin-bottom: 10px;
     transition: transform 0.1s, box-shadow 0.2s;
-    box-shadow: 0 4px 10px rgba(245, 158, 11, 0.2);
+    box-shadow: 0 4px 10px rgba(255, 215, 0, 0.2);
 }
 .btn:active { transform: scale(0.97); }
-.btn:hover { background: #d97706; }
+.btn:hover { background: var(--gold-dark); }
 .btn-success { background: var(--green-success); color: white; }
 .btn-danger { background: var(--red-error); color: white; }
 .btn-info { background: rgba(255,255,255,0.1); color: var(--text-light); border: 1px solid rgba(255,255,255,0.1); }
@@ -663,7 +672,7 @@ body {
     transform: translateX(-50%);
     background: var(--text-dark);
     color: white;
-    border-left: 5px solid var(--orange);
+    border-left: 5px solid var(--gold);
     padding: 12px 20px;
     border-radius: 60px;
     font-weight: 700;
@@ -675,7 +684,7 @@ body {
 }
 .toast.show { display: flex; animation: fadeIn 0.2s; }
 .toast.error { border-left-color: var(--red-error); }
-.toast.info { border-left-color: var(--orange); }
+.toast.info { border-left-color: var(--gold); }
 
 /* ===== LOADING ===== */
 .loading { text-align: center; padding: 30px; color: var(--text-muted); font-weight: 600; }
@@ -705,18 +714,18 @@ body {
     border: 1px solid rgba(255,255,255,0.05);
     animation: fadeIn 0.3s ease-out;
 }
-.auth-header h2 { font-size: 36px; font-weight: 900; font-family: var(--font-serif); color: var(--orange); margin-bottom: 8px; text-align: center; letter-spacing: 1px;}
+.auth-header h2 { font-size: 36px; font-weight: 900; font-family: var(--font-serif); color: var(--gold); margin-bottom: 8px; text-align: center; letter-spacing: 1px;}
 .auth-header p { color: var(--text-muted); font-size: 15px; font-weight: 600; margin-bottom: 20px; text-align: center; }
 .mode-switch { display: flex; gap: 12px; justify-content: center; margin-bottom: 25px; }
-.mode-switch button { background: transparent; border: 2px solid var(--orange); border-radius: 60px; padding: 10px 28px; font-weight: 700; color: var(--orange); transition: all 0.2s ease; cursor: pointer; font-size: 15px; }
-.mode-switch button.active { background: var(--orange); color: var(--text-dark); box-shadow: 0 4px 10px rgba(245, 158, 11, 0.2); }
+.mode-switch button { background: transparent; border: 2px solid var(--gold); border-radius: 60px; padding: 10px 28px; font-weight: 700; color: var(--gold); transition: all 0.2s ease; cursor: pointer; font-size: 15px; }
+.mode-switch button.active { background: var(--gold); color: var(--text-dark); box-shadow: 0 4px 10px rgba(255, 215, 0, 0.2); }
 
 .password-wrapper { position: relative; width: 100%; display: flex; align-items: center; margin-bottom: 16px; }
 .password-wrapper input { flex: 1; padding-right: 45px !important; width: 100% !important; box-sizing: border-box !important; }
-.password-toggle { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--orange); font-size: 20px; cursor: pointer; padding: 5px; line-height: 1; }
+.password-toggle { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--gold); font-size: 20px; cursor: pointer; padding: 5px; line-height: 1; }
 #authForm input { background: var(--navy-light); border: 1px solid rgba(255,255,255,0.1); border-radius: 60px; padding: 14px 20px; color: var(--text-light); font-size: 16px; font-weight: 600; margin-bottom: 16px; transition: border-color 0.2s ease; width: 100%; box-sizing: border-box; }
-#authForm input:focus { border-color: var(--orange); outline: none; }
-#authForm .btn-success { background: var(--orange) !important; border: none !important; border-radius: 60px !important; padding: 14px 20px !important; font-weight: 900 !important; font-size: 17px !important; color: var(--text-dark) !important; transition: all 0.2s ease !important; cursor: pointer !important; width: 100% !important; display: block !important; text-align: center !important; min-height: 50px !important; margin-bottom: 10px !important; box-shadow: 0 4px 10px rgba(245, 158, 11, 0.2) !important; }
+#authForm input:focus { border-color: var(--gold); outline: none; }
+#authForm .btn-success { background: var(--gold) !important; border: none !important; border-radius: 60px !important; padding: 14px 20px !important; font-weight: 900 !important; font-size: 17px !important; color: var(--text-dark) !important; transition: all 0.2s ease !important; cursor: pointer !important; width: 100% !important; display: block !important; text-align: center !important; min-height: 50px !important; margin-bottom: 10px !important; box-shadow: 0 4px 10px rgba(255, 215, 0, 0.2) !important; }
 #authForm .btn-success:hover { transform: scale(1.02) !important; }
 #authForm .btn-google { background: #db4437 !important; color: white !important; border: none !important; border-radius: 60px !important; padding: 14px 20px !important; font-weight: 900 !important; font-size: 16px !important; cursor: pointer !important; width: 100% !important; transition: all 0.2s ease !important; display: block !important; text-align: center !important; min-height: 50px !important; margin-bottom: 10px !important; }
 #authForm .btn-google:hover { transform: scale(1.02) !important; }
@@ -736,12 +745,18 @@ body {
     .lang-toggle { font-size: 10px; padding: 2px 8px; }
     
     .app-grid-container { padding: 12px 10px; }
-    .app-grid { gap: 12px; }
-    .app-card { padding: 16px 12px; }
-    .app-card .app-icon { font-size: 30px; }
-    .app-card .app-name { font-size: 15px; }
+    .app-grid { gap: 8px; }
+    .app-card { padding: 12px 6px; }
+    .app-card .app-icon { font-size: 24px; }
+    .app-card .app-name { font-size: 14px; }
+    .app-card .app-desc { font-size: 10px; }
+    .app-card .badge { font-size: 8px; padding: 2px 6px; top: 6px; right: 6px; }
     
-    .smart-notes-banner { padding: 14px 16px; }
+    .app-banner-top { padding: 12px 16px; }
+    .app-banner-top .text-group h3 { font-size: 16px; }
+    .app-banner-top .banner-badge { font-size: 11px; padding: 4px 12px; }
+    
+    .smart-notes-banner { padding: 12px 16px; }
     .smart-notes-banner .banner-text h3 { font-size: 16px; }
     .smart-notes-banner .banner-icon { font-size: 20px; }
     
@@ -760,10 +775,10 @@ body {
     .search-container { max-width: 100px; }
     .search-container input { font-size: 10px; padding: 4px 8px; }
     .lang-toggle { font-size: 8px; padding: 2px 6px; }
-    .app-grid { gap: 8px; }
-    .app-card { padding: 12px 8px; }
-    .app-card .app-icon { font-size: 24px; }
-    .app-card .app-name { font-size: 13px; }
+    .app-grid { gap: 6px; }
+    .app-card { padding: 8px 4px; }
+    .app-card .app-icon { font-size: 20px; }
+    .app-card .app-name { font-size: 12px; }
     .app-footer-tab .tab-emoji { font-size: 15px; }
     .app-footer-tab .tab-label { font-size: 7px; }
 }
