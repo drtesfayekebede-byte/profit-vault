@@ -307,11 +307,11 @@ body {
 .app-grid-container {
     display: flex;
     flex-direction: column;
-    position: fixed;
+    position: absolute; /* Changed from fixed to absolute */
     top: var(--header-height);
     left: 0;
     right: 0;
-    bottom: var(--footer-height);
+    bottom: 0; /* Removed bottom: var(--footer-height) so it reaches all the way down */
     padding: 20px 16px 16px 16px;
     overflow-y: auto;
     overflow-x: hidden;
@@ -462,6 +462,9 @@ body {
     display: flex;
     align-items: center;
     flex-shrink: 0;
+    position: sticky; /* This forces it to stick to the very bottom */
+    bottom: 0;
+    width: 100%;
 }
 .app-footer-tabs {
     display: flex;
