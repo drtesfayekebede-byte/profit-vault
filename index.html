@@ -41,7 +41,7 @@
     --header-height: 70px;
     --footer-height: 70px;
     --transition-speed: 0.3s;
-    --border-radius-card: 24px;
+    --border-radius-card: 28px;
     --border-radius-sm: 12px;
     --font-main: 'Segoe UI', system-ui, -apple-system, sans-serif;
     --font-serif: 'Times New Roman', Times, serif;
@@ -307,8 +307,8 @@ body {
     top: var(--header-height);
     left: 0;
     right: 0;
-    bottom: var(--footer-height); 
-    padding: 20px 16px 16px 16px; 
+    bottom: var(--footer-height);
+    padding: 24px 20px 24px 20px;
     overflow-y: auto;
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
@@ -320,21 +320,23 @@ body {
 .app-grid-wrapper {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 24px;
     flex: 1;
     max-width: 480px;
     margin: 0 auto;
+    justify-content: flex-start;
 }
 
 /* ===== TOP BANNER CARD (Consult a Doctor) ===== */
 .app-banner-top {
     background: var(--navy);
     border-radius: var(--border-radius-card);
-    padding: 16px 24px;
+    padding: 20px 24px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     cursor: pointer;
+    width: 100%;
     box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     transition: transform 0.2s ease;
 }
@@ -361,20 +363,20 @@ body {
 /* ===== MIDDLE 3x2 GRID ===== */
 .app-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr; /* 3 Columns */
-    gap: 12px;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 30px;
 }
 
-/* ===== STANDARD CARDS (ALL DEEP NAVY) ===== */
+/* ===== STANDARD CARDS (ALL DEEP NAVY, TALL 2:3 ASPECT RATIO) ===== */
 .app-card {
     border-radius: var(--border-radius-card);
-    padding: 16px 8px;  
+    padding: 20px 12px;  
     position: relative;
     display: flex;
     flex-direction: column;
     justify-content: center; 
     align-items: center;
-    min-height: 110px;   
+    aspect-ratio: 2 / 3;
     cursor: pointer;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     box-shadow: 0 4px 12px rgba(0,0,0,0.2);
@@ -392,7 +394,7 @@ body {
     display: block;
 }
 .app-card .app-name {
-    color: var(--gold); /* GOLD TITLE */
+    color: var(--gold);
     font-size: 16px;
     font-weight: 800;
     text-align: center;
@@ -431,14 +433,15 @@ body {
 
 /* ===== BOTTOM BANNER (Smart Medical Notes) ===== */
 .smart-notes-banner {
-    margin-top: 4px;
+    margin-top: 24px;
     background: var(--navy);
     border-radius: var(--border-radius-card);
-    padding: 16px 20px;
+    padding: 16px 24px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     cursor: pointer;
+    width: 100%;
     transition: transform 0.2s ease;
     box-shadow: 0 4px 15px rgba(10, 37, 64, 0.3);
 }
@@ -454,9 +457,9 @@ body {
 .smart-notes-banner .banner-right .badge {
     background: var(--teal);
     color: var(--gold);
-    padding: 6px 16px;
+    padding: 8px 20px;
     border-radius: 30px;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 800;
 }
 
@@ -744,9 +747,9 @@ body {
     .search-container input { font-size: 11px; padding: 6px 12px; }
     .lang-toggle { font-size: 10px; padding: 2px 8px; }
     
-    .app-grid-container { padding: 12px 10px; }
-    .app-grid { gap: 8px; }
-    .app-card { padding: 12px 6px; }
+    .app-grid-container { padding: 16px 14px; }
+    .app-grid { gap: 16px; }
+    .app-card { padding: 14px 8px; }
     .app-card .app-icon { font-size: 24px; }
     .app-card .app-name { font-size: 14px; }
     .app-card .app-desc { font-size: 10px; }
@@ -775,8 +778,8 @@ body {
     .search-container { max-width: 100px; }
     .search-container input { font-size: 10px; padding: 4px 8px; }
     .lang-toggle { font-size: 8px; padding: 2px 6px; }
-    .app-grid { gap: 6px; }
-    .app-card { padding: 8px 4px; }
+    .app-grid { gap: 12px; }
+    .app-card { padding: 10px 6px; }
     .app-card .app-icon { font-size: 20px; }
     .app-card .app-name { font-size: 12px; }
     .app-footer-tab .tab-emoji { font-size: 15px; }
