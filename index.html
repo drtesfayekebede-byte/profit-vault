@@ -64,30 +64,36 @@
     to { transform: translateX(0); opacity: 1; }
 }
 
-body {
+/* ===== FULL SCREEN RESPONSIVE LAYOUT (PC & MOBILE) ===== */
+html, body {
+    height: 100dvh;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
     background: var(--bg-white);
     color: var(--text-light);
     font-family: var(--font-main);
-    height: 100vh;
-    width: 100vw;
-    margin: 0;
-    padding: 0;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+}
+
+#appContent {
+    display: none;
+    height: 100dvh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
 /* ===== HEADER ===== */
 .header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
+    flex-shrink: 0;
     width: 100%;
     z-index: 100;
     background: var(--navy);
     border-bottom: none;
     box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-    padding: 0 32px;
+    padding: 0 16px;
     height: var(--header-height);
     display: flex;
     align-items: center;
@@ -97,10 +103,10 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 24px;
     width: 100%;
-    max-width: 480px;
+    max-width: 800px; /* Wider for PC screens */
     margin: 0 auto;
+    gap: 10px;
 }
 
 .app-logo {
@@ -129,7 +135,7 @@ body {
 .search-container {
     flex: 1;
     margin: 0 8px;
-    max-width: 180px;
+    max-width: 400px;
     display: flex;
 }
 .search-container input {
@@ -276,30 +282,21 @@ body {
 .dropdown-menu div:hover { background: rgba(255, 255, 255, 0.05); }
 
 /* ===== HOME SCREEN DASHBOARD ===== */
-.app-grid-container {
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    top: var(--header-height);
-    left: 0;
-    right: 0;
-    bottom: var(--footer-height);
-    padding: 16px 16px 16px 16px;
+.app-main {
+    flex: 1;
     overflow-y: auto;
-    overflow-x: hidden;
-    -webkit-overflow-scrolling: touch;
+    padding: 16px;
     background: var(--bg-white);
-    z-index: 1;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    padding-bottom: calc(var(--footer-height) + 20px);
 }
 
 .app-grid-wrapper {
     display: flex;
     flex-direction: column;
     gap: 16px;
-    flex: 1;
-    max-width: 480px;
-    margin: 0 auto;
-    justify-content: flex-start;
 }
 
 /* Welcome Banner */
@@ -339,7 +336,7 @@ body {
 /* Quick Actions */
 .quick-actions {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
     gap: 12px;
 }
 .quick-btn {
@@ -377,45 +374,15 @@ body {
 .feed-card .info p { color: var(--text-muted); font-size: 13px; margin-top: 4px; }
 .feed-card .action-btn { background: var(--teal); color: white; padding: 6px 14px; border-radius: 30px; font-weight: 700; font-size: 12px; border: none; cursor: pointer; }
 
-/* ===== MIDDLE GRID (For Library Fallback) ===== */
-.app-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 16px;
-}
-.app-card {
-    border-radius: var(--border-radius-card);
-    padding: 16px 8px;  
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: center; 
-    align-items: center;
-    aspect-ratio: 2 / 3;
-    cursor: pointer;
-    transition: 0.2s;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    text-align: center;
-    border: none;
-    background: var(--navy);
-}
-.app-card:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(10, 37, 64, 0.4); }
-.app-card .app-icon { color: white; font-size: 32px; margin-bottom: 8px; display: block; }
-.app-card .app-name { color: var(--gold); font-size: 16px; font-weight: 800; }
-.app-card .app-desc { color: rgba(255,255,255,0.8); font-size: 11px; font-weight: 600; margin-top: 4px; }
-
-/* ===== FOOTER (NEW 4 TABS) ===== */
+/* ===== FOOTER ===== */
 .app-footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    flex-shrink: 0;
     width: 100%;
     z-index: 99;
     background: var(--navy);
     border-top: none;
     box-shadow: 0 -4px 10px rgba(0,0,0,0.1);
-    padding: 10px 24px;
+    padding: 10px 16px;
     height: var(--footer-height);
     display: flex;
     align-items: center;
@@ -426,7 +393,7 @@ body {
     align-items: center;
     overflow-x: auto;
     padding: 4px 2px;
-    max-width: 480px;
+    max-width: 600px;
     margin: 0 auto;
     width: 100%;
     scrollbar-width: none;
@@ -470,20 +437,14 @@ body {
 }
 .app-footer-tab .tab-badge.show { display: block; }
 
-/* ===== TAB CONTENT WRAPPER ===== */
+/* ===== TAB CONTENT CONTAINERS ===== */
 .tab-content-wrapper {
     display: none;
-    position: fixed;
-    top: var(--header-height);
-    left: 0;
-    right: 0;
-    bottom: var(--footer-height);
-    overflow-y: auto;
-    padding: 16px 16px 20px 16px;
-    background: var(--bg-white);
-    z-index: 1;
+    height: 100dvh;
+    width: 100%;
+    flex-direction: column;
 }
-.tab-content-wrapper.active { display: block; }
+.tab-content-wrapper.active { display: flex; }
 
 .back-button {
     display: none;
@@ -510,7 +471,19 @@ body {
 .back-button.visible { display: flex; }
 .back-button:hover { transform: scale(1.02); background: var(--navy-light); }
 
-/* ===== MY CLASS TAB ===== */
+.tab-scroll-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    padding-bottom: calc(var(--footer-height) + 20px);
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* ================================================================
+   TAB: MY CLASS (Student View)
+   ================================================================ */
 .class-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
 .class-header h2 { color: var(--navy); font-size: 20px; font-weight: 800; }
 .class-header .live-btn { background: var(--red-error); color: white; padding: 6px 16px; border-radius: 30px; font-size: 12px; font-weight: 700; border: none; cursor: pointer; display: flex; align-items: center; gap: 6px; }
@@ -518,13 +491,24 @@ body {
 .class-tabs { display: flex; gap: 10px; margin-bottom: 16px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
 .class-tab { background: none; border: none; font-weight: 700; font-size: 14px; color: var(--text-muted); cursor: pointer; padding: 4px 12px; }
 .class-tab.active { color: var(--navy); border-bottom: 3px solid var(--gold); }
-
 .class-content { display: none; }
 .class-content.active { display: block; }
-.class-content .item { background: var(--bg-white); border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-.class-content .item .title { font-weight: 700; color: var(--text-dark); font-size: 14px; }
-.class-content .item .desc { color: var(--text-muted); font-size: 12px; }
-.class-content .item .btn-sm { background: var(--teal); color: white; padding: 4px 14px; border-radius: 20px; font-weight: 700; font-size: 12px; border: none; cursor: pointer; }
+
+/* Video & Content Cards with Like/Comment/Share */
+.content-card { background: var(--bg-white); border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 16px; }
+.content-card .thumbnail { width: 100%; height: 160px; background: #1a1a2e; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 32px; margin-bottom: 12px; position: relative; }
+.content-card .thumbnail .duration { position: absolute; bottom: 10px; right: 10px; background: rgba(0,0,0,0.7); padding: 2px 8px; border-radius: 6px; font-size: 12px; }
+.content-card .meta h4 { font-size: 16px; font-weight: 700; color: var(--text-dark); margin-bottom: 4px; }
+.content-card .meta p { font-size: 13px; color: var(--text-muted); }
+.content-card .actions { display: flex; gap: 16px; margin-top: 12px; border-top: 1px solid #eee; padding-top: 12px; }
+.content-card .actions button { background: none; border: none; font-size: 14px; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 4px; transition: 0.2s; }
+.content-card .actions button:hover { color: var(--navy); }
+.content-card .actions button.liked { color: var(--red-error); }
+.content-card .comment-section { margin-top: 12px; display: none; }
+.content-card .comment-section textarea { width: 100%; padding: 10px; border: 1px solid #eee; border-radius: 8px; resize: none; font-size: 14px; margin-bottom: 8px; }
+.content-card .comment-section .send-btn { background: var(--teal); color: white; border: none; padding: 6px 16px; border-radius: 20px; font-weight: 700; cursor: pointer; }
+.content-card .comment-list { margin-top: 12px; max-height: 150px; overflow-y: auto; }
+.content-card .comment-list .c-item { font-size: 13px; color: var(--text-dark); margin-bottom: 6px; border-bottom: 1px solid #f1f1f1; padding-bottom: 6px; }
 
 /* Mock Exam */
 .exam-toggle { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; }
@@ -532,12 +516,41 @@ body {
 .toggle-btn { background: #e2e8f0; border: none; border-radius: 30px; padding: 6px 16px; font-weight: 700; font-size: 12px; cursor: pointer; transition: 0.2s; }
 .toggle-btn.study { background: var(--green-success); color: white; }
 .toggle-btn.exam { background: var(--red-error); color: white; }
-
 .question-box { background: var(--bg-white); border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 10px; }
 .question-box p { font-weight: 700; color: var(--text-dark); margin-bottom: 8px; }
 .question-box label { display: block; font-size: 14px; color: var(--text-dark); margin-bottom: 4px; cursor: pointer; }
 
-/* ===== MEDICAL BOOKS TAB ===== */
+/* ================================================================
+   TAB: JOIN (Community Groups like Telegram)
+   ================================================================ */
+.join-header h2 { color: var(--navy); font-size: 20px; font-weight: 800; margin-bottom: 16px; }
+.teacher-card { background: var(--bg-white); border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.teacher-card .info .name { font-weight: 700; color: var(--text-dark); font-size: 16px; }
+.teacher-card .info .spec { color: var(--text-muted); font-size: 13px; }
+.teacher-card .join-btn { background: var(--teal); color: white; border: none; padding: 6px 16px; border-radius: 30px; font-weight: 700; cursor: pointer; }
+.teacher-card .join-btn.joined { background: var(--green-success); }
+
+/* ================================================================
+   TAB: MY STUDIO (Teacher View)
+   ================================================================ */
+.studio-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.studio-header h2 { color: var(--navy); font-size: 20px; font-weight: 800; }
+.studio-header span { font-size: 13px; color: var(--gold); font-weight: 700; }
+
+.studio-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+.studio-btn { background: var(--navy); border-radius: var(--border-radius-card); padding: 20px 16px; text-align: center; cursor: pointer; transition: 0.2s; border: none; color: white; }
+.studio-btn:hover { transform: scale(1.02); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+.studio-btn .icon { font-size: 32px; color: var(--gold); display: block; margin-bottom: 8px; }
+.studio-btn .title { font-weight: 700; font-size: 16px; }
+.studio-btn .sub { font-size: 12px; color: rgba(255,255,255,0.7); }
+
+.studio-upload-form { background: var(--bg-white); border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-top: 12px; display: none; }
+.studio-upload-form select, .studio-upload-form input, .studio-upload-form textarea { width: 100%; padding: 10px 14px; margin-bottom: 12px; border: 1px solid #eee; border-radius: 8px; font-size: 14px; box-sizing: border-box; }
+.studio-upload-form .submit-btn { background: var(--gold); color: var(--text-dark); border: none; padding: 12px; border-radius: 30px; font-weight: 700; width: 100%; cursor: pointer; }
+
+/* ================================================================
+   TAB: BOOKS (Store)
+   ================================================================ */
 .books-header h2 { color: var(--navy); font-size: 20px; font-weight: 800; margin-bottom: 12px; }
 .books-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .book-card { background: var(--bg-white); border: 1px solid #e2e8f0; border-radius: var(--border-radius-card); padding: 16px; text-align: center; }
@@ -547,97 +560,33 @@ body {
 .book-card .price { color: var(--gold); font-weight: 800; font-size: 16px; margin: 8px 0; }
 .book-card .buy-btn { background: var(--teal); color: white; border: none; padding: 6px 16px; border-radius: 30px; font-weight: 700; cursor: pointer; width: 100%; }
 
-/* ===== PROFILE TAB ===== */
+/* ================================================================
+   TAB: PROFILE
+   ================================================================ */
 .profile-card { background: var(--bg-white); border: 1px solid #e2e8f0; border-radius: var(--border-radius-card); padding: 20px; text-align: center; margin-bottom: 16px; }
 .profile-card .avatar-lg { width: 80px; height: 80px; border-radius: 50%; background: var(--navy); color: white; display: flex; align-items: center; justify-content: center; font-size: 40px; margin: 0 auto 12px; }
 .profile-card h3 { color: var(--text-dark); font-size: 20px; font-weight: 800; }
 .profile-card p { color: var(--text-muted); font-size: 14px; }
 .profile-actions .btn { background: var(--gold); color: var(--text-dark); border: none; padding: 12px; border-radius: 40px; font-weight: 700; width: 100%; margin-bottom: 10px; cursor: pointer; }
 
-/* ===== MODAL ===== */
-.modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
+/* ================================================================
+   MODALS
+   ================================================================ */
+.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(5px); justify-content: center; align-items: center; z-index: 1000; }
 .modal.active { display: flex; animation: fadeIn 0.2s ease-out; }
-
-.modal-content {
-    background: var(--bg-white);
-    border-radius: var(--border-radius-card);
-    padding: 25px;
-    width: 90%;
-    max-width: 420px;
-    max-height: 85vh;
-    overflow-y: auto;
-    border: 1px solid rgba(0,0,0,0.05);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-    color: var(--text-dark);
-}
+.modal-content { background: var(--bg-white); border-radius: var(--border-radius-card); padding: 25px; width: 90%; max-width: 420px; max-height: 85vh; overflow-y: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.2); color: var(--text-dark); }
 .close { float: right; font-size: 28px; cursor: pointer; color: var(--red-error); font-weight: 700; }
 .close:hover { color: #ff4444; }
 .modal-content h3 { color: var(--navy); margin-bottom: 15px; font-weight: 800; }
-
-.modal-content input, .modal-content select, .modal-content textarea {
-    background: var(--bg-light);
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 12px 14px;
-    color: var(--text-dark);
-    font-size: 15px;
-    font-weight: 600;
-    width: 100%;
-    margin-bottom: 12px;
-    transition: border-color 0.2s ease;
-    box-sizing: border-box;
-}
+.modal-content input, .modal-content select, .modal-content textarea { background: var(--bg-light); border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px 14px; color: var(--text-dark); font-size: 15px; font-weight: 600; width: 100%; margin-bottom: 12px; transition: border-color 0.2s ease; box-sizing: border-box; }
 .modal-content input:focus { border-color: var(--navy); outline: none; }
-
-.btn {
-    background: var(--gold);
-    border: none;
-    padding: 14px 20px;
-    border-radius: 40px;
-    color: var(--text-dark);
-    font-size: 16px;
-    font-weight: 700;
-    cursor: pointer;
-    width: 100%;
-    margin-bottom: 10px;
-    transition: 0.2s;
-}
+.btn { background: var(--gold); border: none; padding: 14px 20px; border-radius: 40px; color: var(--text-dark); font-size: 16px; font-weight: 700; cursor: pointer; width: 100%; margin-bottom: 10px; transition: 0.2s; }
 .btn:active { transform: scale(0.97); }
 .btn:hover { background: var(--gold-dark); }
 .btn-teal { background: var(--teal); color: white; }
 .btn-danger { background: var(--red-error); color: white; }
 
-/* ===== TOAST ===== */
-.toast {
-    position: fixed;
-    bottom: 100px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--text-dark);
-    color: white;
-    border-left: 5px solid var(--gold);
-    padding: 12px 20px;
-    border-radius: 60px;
-    font-weight: 700;
-    display: none;
-    z-index: 1001;
-    white-space: nowrap;
-    font-size: 14px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-}
+.toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: var(--text-dark); color: white; border-left: 5px solid var(--gold); padding: 12px 20px; border-radius: 60px; font-weight: 700; display: none; z-index: 1001; white-space: nowrap; font-size: 14px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
 .toast.show { display: flex; animation: fadeIn 0.2s; }
 .toast.error { border-left-color: var(--red-error); }
 
@@ -650,15 +599,20 @@ body {
     .profile-avatar { width: 34px; height: 34px; }
     .search-container { max-width: 130px; margin: 0 6px; }
     .search-container input { font-size: 11px; padding: 6px 12px; }
-    .app-grid-container { padding: 12px 10px; }
     .quick-actions { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .studio-grid { grid-template-columns: 1fr; }
     .books-grid { grid-template-columns: 1fr; }
     .app-footer { padding: 6px 12px; }
     .app-footer-tab { padding: 3px 8px; min-width: 36px; font-size: 9px; }
     .app-footer-tab .tab-emoji { font-size: 18px; }
     .app-footer-tab .tab-label { font-size: 8px; }
 }
-</style>
+@media (min-width: 601px) {
+    .quick-actions { grid-template-columns: 1fr 1fr 1fr 1fr; gap: 16px; }
+    .app-main { padding: 24px; }
+    .tab-scroll-area { padding: 24px; }
+}
+    </style>
 </head>
 <body>
 
@@ -686,13 +640,7 @@ body {
                         <span class="bell-icon">🔔</span>
                         <span id="notificationBadge" class="notification-badge">0</span>
                         <div class="notification-dropdown" id="notificationDropdown">
-                            <div style="padding:12px 16px; border-bottom:1px solid #eee; display:flex; justify-content:space-between;">
-                                <span style="font-weight:bold; color:var(--teal);">🔔 Notifications</span>
-                                <span id="notificationCount" style="font-size:12px; color:var(--text-muted);"></span>
-                            </div>
-                            <div id="notificationList" style="max-height:320px; overflow-y:auto; padding:0;">
-                                <div class="notification-empty">Loading notifications...</div>
-                            </div>
+                            <div id="notificationList"><div class="notification-empty">Loading notifications...</div></div>
                         </div>
                     </div>
                     <div class="profile-avatar" id="profileAvatar">
@@ -706,7 +654,7 @@ body {
         </div>
 
         <!-- ===== HOME SCREEN ===== -->
-        <div id="appHomeScreen" class="app-grid-container">
+        <div id="appMain" class="app-main">
             <div class="app-grid-wrapper">
                 
                 <!-- Welcome Banner -->
@@ -741,26 +689,26 @@ body {
                         <span class="icon">🔴</span>
                         <span class="label">Join Live Class</span>
                     </div>
-                    <div class="quick-btn" onclick="openTabContent('class')">
-                        <span class="icon">🧠</span>
-                        <span class="label">Smart Notes</span>
+                    <div class="quick-btn" onclick="openTabContent('join')">
+                        <span class="icon">🤝</span>
+                        <span class="label">Join Groups</span>
                     </div>
                 </div>
 
                 <!-- Trending Feed -->
                 <div class="feed-section">
-                    <h3>🔥 Trending Medical Notes</h3>
+                    <h3>🔥 Trending from Teachers</h3>
                     <div class="feed-card">
                         <div class="info">
-                            <h4>Emergency Medicine Protocols</h4>
-                            <p>By Dr. Tesfaye - Updated 2 days ago</p>
+                            <h4>Cardiology 101</h4>
+                            <p>By Dr. Tesfaye • 1.2k views</p>
                         </div>
-                        <button class="action-btn" onclick="openTabContent('class')">Read</button>
+                        <button class="action-btn" onclick="openTabContent('class')">Watch</button>
                     </div>
                     <div class="feed-card">
                         <div class="info">
-                            <h4>Anatomy: Upper Limb Summary</h4>
-                            <p>Premium Resource - 45 pages</p>
+                            <h4>Anatomy Note</h4>
+                            <p>By Dr. Alemu • Premium</p>
                         </div>
                         <button class="action-btn" onclick="openTabContent('class')">Read</button>
                     </div>
@@ -771,7 +719,7 @@ body {
         <!-- ===== TAB CONTENT WRAPPER ===== -->
         <div id="tabContentWrapper" class="tab-content-wrapper">
             <button class="back-button" id="backButton" onclick="goToHome()">← Home</button>
-            <div id="tabContentContainer"></div>
+            <div id="tabContentContainer" class="tab-scroll-area"></div>
         </div>
 
         <!-- ===== HIDDEN TAB CONTENT ===== -->
@@ -790,8 +738,43 @@ body {
                 </div>
 
                 <div id="videos" class="class-content active">
-                    <div class="item"><div><div class="title">Cardiology Basics</div><div class="desc">Dr. Tesfaye - 45 mins</div></div><button class="btn-sm">▶️ Play</button></div>
-                    <div class="item"><div><div class="title">Neurology Review</div><div class="desc">Dr. Alemu - 30 mins</div></div><button class="btn-sm">▶️ Play</button></div>
+                    <div class="content-card">
+                        <div class="thumbnail"><i class="fas fa-play-circle"></i><span class="duration">45:00</span></div>
+                        <div class="meta">
+                            <h4>Cardiology Basics</h4>
+                            <p>Dr. Tesfaye • 1.2k views</p>
+                        </div>
+                        <div class="actions">
+                            <button onclick="toggleLike(this)"><i class="fas fa-heart"></i> <span>124</span></button>
+                            <button onclick="toggleComment(this)"><i class="fas fa-comment"></i> <span>12</span></button>
+                            <button onclick="shareContent()"><i class="fas fa-share"></i> Share</button>
+                        </div>
+                        <div class="comment-section">
+                            <div class="comment-list">
+                                <div class="c-item"><strong>Student A:</strong> Great lecture, very clear!</div>
+                                <div class="c-item"><strong>Student B:</strong> Love the ECG breakdown.</div>
+                            </div>
+                            <textarea placeholder="Add a comment..."></textarea>
+                            <button class="send-btn" onclick="showToast('Comment posted!', 'success')">Post Comment</button>
+                        </div>
+                    </div>
+                    <div class="content-card">
+                        <div class="thumbnail"><i class="fas fa-play-circle"></i><span class="duration">30:00</span></div>
+                        <div class="meta">
+                            <h4>Neurology Review</h4>
+                            <p>Dr. Alemu • 850 views</p>
+                        </div>
+                        <div class="actions">
+                            <button onclick="toggleLike(this)"><i class="fas fa-heart"></i> <span>89</span></button>
+                            <button onclick="toggleComment(this)"><i class="fas fa-comment"></i> <span>5</span></button>
+                            <button onclick="shareContent()"><i class="fas fa-share"></i> Share</button>
+                        </div>
+                        <div class="comment-section">
+                            <div class="comment-list"><div class="c-item"><strong>Resident 1:</strong> Very helpful for my exam.</div></div>
+                            <textarea placeholder="Add a comment..."></textarea>
+                            <button class="send-btn" onclick="showToast('Comment posted!', 'success')">Post Comment</button>
+                        </div>
+                    </div>
                 </div>
 
                 <div id="ppts" class="class-content">
@@ -817,6 +800,49 @@ body {
                         <label><input type="radio" name="q2" value="C"> C) Kidney</label>
                     </div>
                     <button class="btn" onclick="showToast('✅ Exam submitted! Score: 100%', 'success')">Submit Exam</button>
+                </div>
+            </div>
+
+            <!-- JOIN GROUPS TAB -->
+            <div id="join-tab">
+                <div class="join-header">
+                    <h2>🤝 Join Teacher Groups</h2>
+                </div>
+                <div class="teacher-card">
+                    <div class="info">
+                        <div class="name">Dr. Tesfaye</div>
+                        <div class="spec">Cardiologist • 1.2k members</div>
+                    </div>
+                    <button class="join-btn" onclick="toggleJoin(this)">➕ Join Group</button>
+                </div>
+                <div class="teacher-card">
+                    <div class="info">
+                        <div class="name">Dr. Alemu</div>
+                        <div class="spec">Neurologist • 850 members</div>
+                    </div>
+                    <button class="join-btn" onclick="toggleJoin(this)">➕ Join Group</button>
+                </div>
+            </div>
+
+            <!-- MY STUDIO TAB (Teacher/Doctor View) -->
+            <div id="my-studio">
+                <div class="studio-header">
+                    <h2>🎥 My Studio</h2>
+                    <span>Verified Teacher</span>
+                </div>
+                <div class="studio-grid">
+                    <button class="studio-btn" onclick="openUploadForm('video')"><span class="icon">📹</span><span class="title">Upload Video</span><span class="sub">MP4 format</span></button>
+                    <button class="studio-btn" onclick="openUploadForm('ppt')"><span class="icon">📊</span><span class="title">Upload PPT</span><span class="sub">PDF format</span></button>
+                    <button class="studio-btn" onclick="openUploadForm('exam')"><span class="icon">📝</span><span class="title">Create Mock Exam</span><span class="sub">MCQ format</span></button>
+                    <button class="studio-btn" onclick="showToast('🔴 Going Live soon...', 'info')"><span class="icon">🔴</span><span class="title">Go Live</span><span class="sub">Start a stream</span></button>
+                </div>
+                <div id="uploadFormContainer" class="studio-upload-form">
+                    <select id="uploadType"><option value="video">Video</option><option value="ppt">PPT</option><option value="book">Book</option></select>
+                    <input type="text" id="uploadTitle" placeholder="Title of content...">
+                    <textarea id="uploadDesc" rows="3" placeholder="Description..."></textarea>
+                    <input type="text" id="uploadPrice" placeholder="Price (0 = Free)">
+                    <input type="file" id="uploadFile">
+                    <button class="submit-btn" onclick="submitStudioUpload()">📤 Publish Content</button>
                 </div>
             </div>
 
@@ -874,26 +900,26 @@ body {
             <div id="admin">
                 <div class="loading" style="color:var(--text-muted);">Loading admin panel...</div>
             </div>
-            
-            <!-- CONSULT A DOCTOR (Legacy content for the top banner) -->
+
+            <!-- CONSULT A DOCTOR -->
             <div id="consult">
-                <div class="card"><h3 data-key="consult_doctor">👨‍⚕️ Consult a Doctor</h3>
-                    <p style="color:var(--text-muted); margin-bottom:15px;" data-key="premium_feature">Book a session with our health professionals.</p>
+                <div class="card" style="background:var(--bg-white); border-radius:var(--border-radius-card); padding:20px; border:1px solid #e2e8f0; margin-bottom:18px;"><h3 style="color:var(--navy); margin-bottom:15px; font-weight:800;">👨‍⚕️ Consult a Doctor</h3>
+                    <p style="color:var(--text-muted); margin-bottom:15px;">Book a session with our health professionals.</p>
                     <div style="background:var(--bg-light); padding:20px; border-radius:12px; text-align:center;">
                         <div style="font-size:48px; margin-bottom:10px;">📅</div>
-                        <h4 style="margin-bottom:5px;" data-key="premium_feature">Premium Feature</h4>
-                        <p style="font-size:14px; color:var(--text-muted); margin-bottom:15px;" data-key="upgrade_desc">Upgrade to T-Hub Premium to book consultations.</p>
-                        <button class="btn btn-warning" onclick="showModal('depositModal')">🔓 <span data-key="upgrade">Unlock Premium</span></button>
+                        <h4 style="margin-bottom:5px; color:var(--text-dark);">Premium Feature</h4>
+                        <p style="font-size:14px; color:var(--text-muted); margin-bottom:15px;">Upgrade to T-Hub Premium to book consultations.</p>
+                        <button class="btn btn-warning" style="background:var(--gold); border:none; padding:14px 20px; border-radius:40px; color:var(--text-dark); font-weight:700; width:100%;" onclick="showModal('depositModal')">🔓 Unlock Premium</button>
                     </div>
                 </div>
             </div>
             
             <!-- CONTACT SUPPORT -->
             <div id="contact">
-                <div class="card"><h3 data-key="support">📞 Contact Support</h3>
+                <div class="card" style="background:var(--bg-white); border-radius:var(--border-radius-card); padding:20px; border:1px solid #e2e8f0; margin-bottom:18px;"><h3 style="color:var(--navy); margin-bottom:15px; font-weight:800;">📞 Contact Support</h3>
                     <div style="background:var(--bg-light); padding:20px; border-radius:12px;">
-                        <p style="margin-bottom:15px;" data-key="support_desc">For support, questions, or technical help.</p>
-                        <button class="btn btn-info" onclick="window.open('https://t.me/youradmin', '_blank')">📱 <span data-key="message">Message on Telegram</span></button>
+                        <p style="margin-bottom:15px; color:var(--text-muted);">For support, questions, or technical help.</p>
+                        <button class="btn btn-info" style="background:var(--teal); border:none; padding:14px 20px; border-radius:40px; color:white; font-weight:700; width:100%;" onclick="window.open('https://t.me/youradmin', '_blank')">📱 Message on Telegram</button>
                     </div>
                 </div>
             </div>
@@ -905,14 +931,14 @@ body {
         <div id="depositModal" class="modal">
             <div class="modal-content">
                 <span class="close" onclick="closeModal('depositModal')">&times;</span>
-                <h3 data-key="upgrade_title">🔓 Upgrade to Premium</h3>
-                <p style="margin-bottom:15px; color:var(--text-muted);" data-key="upgrade_desc">Get full access to all exams, medical resources, and doctor consultations.</p>
+                <h3>🔓 Upgrade to Premium</h3>
+                <p style="margin-bottom:15px; color:var(--text-muted);">Get full access to all exams, medical resources, and doctor consultations.</p>
                 <div style="background:var(--bg-light); border-radius:12px; padding:20px; text-align:center; margin-bottom:15px;">
-                    <div id="modalPrice" style="font-size:24px; font-weight:800; color:var(--teal);">600 ETB</div>
-                    <div style="font-size:14px; color:var(--text-muted);" data-key="duration">30-day access</div>
+                    <div style="font-size:24px; font-weight:800; color:var(--teal);">600 ETB</div>
+                    <div style="font-size:14px; color:var(--text-muted);">30-day access</div>
                 </div>
-                <button class="btn btn-warning" onclick="showPaymentModal()">💳 <span data-key="upgrade">Subscribe Now</span></button>
-                <p style="text-align:center; font-size:12px; color:var(--text-muted); margin-top:10px;" data-key="cancel_anytime">Cancel anytime</p>
+                <button class="btn btn-warning" onclick="showPaymentModal()">💳 Subscribe Now</button>
+                <p style="text-align:center; font-size:12px; color:var(--text-muted); margin-top:10px;">Cancel anytime</p>
             </div>
         </div>
 
@@ -920,41 +946,33 @@ body {
         <div id="paymentModal" class="modal">
             <div class="modal-content">
                 <span class="close" onclick="closeModal('paymentModal')">&times;</span>
-                <h3 data-key="step_1">📱 Step 1: Send Payment</h3>
+                <h3>📱 Step 1: Send Payment</h3>
                 <div style="background:var(--bg-light); border-radius:12px; padding:16px; margin-bottom:16px;">
-                    <p style="font-weight:600; margin-bottom:8px;">Send <strong style="color:var(--orange);" id="payAmount">600 ETB</strong> to:</p>
+                    <p style="font-weight:600; margin-bottom:8px;">Send <strong style="color:var(--gold);" id="payAmount">600 ETB</strong> to:</p>
                     <div style="background:white; padding:12px; border-radius:8px; border:1px solid var(--border);"><strong>Telebirr:</strong> <span id="adminTelebirr">+251935983470</span></div>
                     <div style="background:white; padding:12px; border-radius:8px; border:1px solid var(--border); margin-top:8px;"><strong>Awash Bank:</strong> <span id="adminBank">11009983837737</span></div>
                     <div style="background:white; padding:12px; border-radius:8px; border:1px solid var(--border); margin-top:8px;"><strong>Name:</strong> Tesfaye</div>
                 </div>
-                <h3 data-key="step_2">📷 Step 2: Upload Proof</h3>
+                <h3>📷 Step 2: Upload Proof</h3>
                 <div class="form-group"><input type="text" id="payTxId" placeholder="Transaction ID"></div>
                 <div class="form-group"><input type="file" id="payReceipt" accept="image/*"></div>
-                <button class="btn btn-teal" onclick="submitPayment()">📤 <span data-key="submit_req">Submit for Approval</span></button>
+                <button class="btn btn-teal" onclick="submitPayment()">📤 Submit for Approval</button>
             </div>
         </div>
 
-        <!-- Consultation Modal (7-Field Standard Form) -->
+        <!-- Consultation Modal -->
         <div id="consultModal" class="modal">
             <div class="modal-content">
                 <span class="close" onclick="closeModal('consultModal')">&times;</span>
-                <h3 data-key="consult_doctor">👨‍⚕️ Medical Consultation Form</h3>
-                <div class="form-group"><label data-key="full_name">Full Name</label><input type="text" id="cName"></div>
-                <div class="form-group"><label data-key="age">Age</label>
-                    <select id="cAge"><option>18-25</option><option>26-35</option><option>36-50</option><option>50+</option></select>
-                </div>
-                <div class="form-group"><label data-key="gender">Gender</label>
-                    <select id="cGender"><option>Male</option><option>Female</option><option>Prefer not to say</option></select>
-                </div>
-                <div class="form-group"><label data-key="complaint">Chief Complaint</label><input type="text" id="cComplaint" placeholder="e.g. Persistent headache"></div>
-                <div class="form-group"><label data-key="severity">Severity</label>
-                    <select id="cSeverity"><option>Mild</option><option>Moderate</option><option>Severe</option></select>
-                </div>
-                <div class="form-group"><label data-key="history">Brief History</label><textarea id="cHistory" rows="3"></textarea></div>
-                <div style="font-size:11px; color:var(--text-muted); margin-bottom:12px; text-align:center;">
-                    ⚠️ <span data-key="disclaimer">This is for educational purposes only. Not a substitute for emergency care.</span>
-                </div>
-                <button class="btn btn-teal" onclick="submitConsultation()">📤 <span data-key="submit_req">Submit Request</span></button>
+                <h3>👨‍⚕️ Medical Consultation Form</h3>
+                <div class="form-group"><label>Full Name</label><input type="text" id="cName"></div>
+                <div class="form-group"><label>Age</label><select id="cAge"><option>18-25</option><option>26-35</option><option>36-50</option><option>50+</option></select></div>
+                <div class="form-group"><label>Gender</label><select id="cGender"><option>Male</option><option>Female</option><option>Prefer not to say</option></select></div>
+                <div class="form-group"><label>Chief Complaint</label><input type="text" id="cComplaint" placeholder="e.g. Persistent headache"></div>
+                <div class="form-group"><label>Severity</label><select id="cSeverity"><option>Mild</option><option>Moderate</option><option>Severe</option></select></div>
+                <div class="form-group"><label>Brief History</label><textarea id="cHistory" rows="3"></textarea></div>
+                <div style="font-size:11px; color:var(--text-muted); margin-bottom:12px; text-align:center;">⚠️ This is for educational purposes only. Not a substitute for emergency care.</div>
+                <button class="btn btn-teal" onclick="submitConsultation()">📤 Submit Request</button>
             </div>
         </div>
 
@@ -969,6 +987,10 @@ body {
                     <span class="tab-emoji">📚</span>
                     <span class="tab-label">My Class</span>
                 </button>
+                <button class="app-footer-tab" data-tab="join" onclick="footerTabClick('join')">
+                    <span class="tab-emoji">🤝</span>
+                    <span class="tab-label">Join</span>
+                </button>
                 <button class="app-footer-tab" data-tab="books" onclick="footerTabClick('books')">
                     <span class="tab-emoji">📖</span>
                     <span class="tab-label">Books</span>
@@ -980,6 +1002,11 @@ body {
                 <button class="app-footer-tab" data-tab="admin" id="adminTabBtn" onclick="footerTabClick('admin')" style="display:none;">
                     <span class="tab-emoji">⚙️</span>
                     <span class="tab-label">Admin</span>
+                </button>
+                <!-- Hidden studio tab for verified teachers -->
+                <button class="app-footer-tab" data-tab="studio" id="studioTabBtn" onclick="footerTabClick('studio')" style="display:none;">
+                    <span class="tab-emoji">🎥</span>
+                    <span class="tab-label">Studio</span>
                 </button>
             </div>
         </div>
@@ -998,41 +1025,15 @@ body {
         const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         const AppState = {
-            userId: null, isAdmin: false, currentUser: null, isLoggingOut: false, authCheckDone: false, lang: 'en', pendingPrice: 600
+            userId: null, isAdmin: false, isTeacher: false, currentUser: null, isLoggingOut: false, authCheckDone: false, lang: 'en', pendingPrice: 600
         };
 
         // ================================================================
         // TRANSLATIONS
         // ================================================================
         const translations = {
-            en: {
-                home: "Home", class: "My Class", books: "Books", profile: "Profile", consult_doctor: "Consult a Doctor",
-                premium_feature: "Premium Feature", public_health: "Public Health Guides", free_access: "Free Access",
-                exit_exam: "Exit Exam", exit_desc: "University Prep", ngat_exam: "NGAT Exam", ngat_desc: "Past Papers",
-                ermp_exam: "ERMP Exam", ermp_desc: "Residency Prep", medical_vault: "Medical Vault",
-                medical_desc: "Freshman to Residency", smart_notes: "🧠 Smart Medical Notes",
-                smart_desc: "Brief, clear notes for residents & doctors", disclaimer: "Educational use only.",
-                full_name: "Full Name", age: "Age", gender: "Gender", complaint: "Chief Complaint",
-                severity: "Severity", history: "Brief History", upgrade_title: "Unlock Premium Access",
-                upgrade_desc: "Upgrade to access all resources.", upgrade: "Upgrade", contact: "Contact",
-                submit_req: "Submit Request", duration: "30-day access", cancel_anytime: "Cancel anytime",
-                step_1: "Step 1: Send Payment", step_2: "Step 2: Upload Proof", choose_category: "Choose a category.",
-                quick_actions: "Quick Actions", message: "Message on Telegram", support_desc: "For support, questions, or technical help."
-            },
-            am: {
-                home: "መነሻ", class: "ክፍሌ", books: "መጻሕፍት", profile: "መገለጫ", consult_doctor: "ሐኪም ያማክሩ",
-                premium_feature: "ፕሪሚየም አገልግሎት", public_health: "የህብረተሰብ ጤና መመሪያዎች", free_access: "ነጻ አገልግሎት",
-                exit_exam: "የመግቢያ ፈተና", exit_desc: "የዩኒቨርሲቲ ዝግጅት", ngat_exam: "NGAT ፈተና", ngat_desc: "የቀድሞ ፈተናዎች",
-                ermp_exam: "ERMP ፈተና", ermp_desc: "የረዚደንሲ ዝግጅት", medical_vault: "የህክምና መዝገብ ቤት",
-                medical_desc: "ከመጀመሪያ እስከ ረዚደንሲ", smart_notes: "🧠 ስማርት የህክምና ማስታወሻዎች",
-                smart_desc: "ለሐኪሞች እና ረዚደንቶች አጭር ማስታወሻዎች", disclaimer: "ለትምህርት ብቻ ነው።",
-                full_name: "ሙሉ ስም", age: "ዕድሜ", gender: "ፆታ", complaint: "ዋና የህመም መግለጫ",
-                severity: "ክብደት", history: "አጭር ታሪክ", upgrade_title: "ፕሪሚየም አገልግሎት ይክፈቱ",
-                upgrade_desc: "ሁሉንም ሀብቶች ለማግኘት ይመዝገቡ።", upgrade: "ይመዝገቡ", contact: "ያነጋግሩ",
-                submit_req: "ጥያቄ አስገቡ", duration: "ለ30 ቀናት", cancel_anytime: "በማንኛውም ጊዜ መሰረዝ ይቻላል",
-                step_1: "ደረጃ 1: ክፍያ ይላኩ", step_2: "ደረጃ 2: ማረጋገጫ ይስቀሉ", choose_category: "ምድብ ይምረጡ።",
-                quick_actions: "ፈጣን ሥራዎች", message: "በቴሌግራም ላይ ይጻፉ", support_desc: "ለእገዛ ፣ ለጥያቄዎች ወይም ለቴክኒክ ችግሮች።"
-            }
+            en: { home: "Home", class: "My Class", join: "Join", books: "Books", profile: "Profile", studio: "Studio" },
+            am: { home: "መነሻ", class: "ክፍሌ", join: "ተቀላቀል", books: "መጻሕፍት", profile: "መገለጫ", studio: "ስቱዲዮ" }
         };
         function t(key) { return translations[AppState.lang][key] || key; }
         function toggleLanguage() {
@@ -1045,10 +1046,6 @@ body {
             document.querySelectorAll('[data-key]').forEach(el => {
                 if (t(el.dataset.key)) el.innerText = t(el.dataset.key);
             });
-            document.querySelectorAll('[data-key]').forEach(el => {
-                if (t(el.dataset.key)) el.placeholder = t(el.dataset.key);
-            });
-            document.getElementById('modalTitle').innerText = t('upgrade_title');
         }
 
         // ================================================================
@@ -1066,7 +1063,6 @@ body {
         function showModal(id) { document.querySelectorAll('.modal.active').forEach(m => m.classList.remove('active'));
             document.getElementById(id).classList.add('active'); }
         function closeModal(id) { document.getElementById(id).classList.remove('active'); }
-        function escapeHTML(str) { if (!str) return ''; return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 
         // ================================================================
         // SEARCH
@@ -1076,6 +1072,7 @@ body {
                 const q = document.getElementById('globalSearch').value.toLowerCase();
                 if(q.includes('class') || q.includes('exam')) openTabContent('class');
                 else if(q.includes('book')) openTabContent('books');
+                else if(q.includes('join')) openTabContent('join');
                 else showToast('No direct match found', 'info');
             }
         }
@@ -1084,7 +1081,7 @@ body {
         // NAVIGATION
         // ================================================================
         function goToHome() {
-            document.getElementById('appHomeScreen').style.display = 'flex';
+            document.getElementById('appMain').style.display = 'block';
             document.getElementById('tabContentWrapper').classList.remove('active');
             document.getElementById('backButton').classList.remove('visible');
             document.querySelectorAll('.app-footer-tab').forEach(t => t.classList.remove('active'));
@@ -1092,15 +1089,17 @@ body {
         }
 
         function openTabContent(tabId) {
-            document.getElementById('appHomeScreen').style.display = 'none';
+            document.getElementById('appMain').style.display = 'none';
             document.getElementById('tabContentWrapper').classList.add('active');
             document.getElementById('backButton').classList.add('visible');
             const container = document.getElementById('tabContentContainer');
             let id = '';
             if(tabId === 'class') id = 'my-class';
+            else if(tabId === 'join') id = 'join-tab';
             else if(tabId === 'books') id = 'medical-books';
             else if(tabId === 'profile') id = 'profile';
             else if(tabId === 'admin') id = 'admin';
+            else if(tabId === 'studio') id = 'my-studio';
             else if(tabId === 'consult') id = 'consult';
             else if(tabId === 'contact') id = 'contact';
             else return;
@@ -1120,7 +1119,7 @@ body {
         }
 
         // ================================================================
-        // MY CLASS TABS
+        // MY CLASS FUNCTIONS
         // ================================================================
         function switchClassTab(tabId, btn) {
             document.querySelectorAll('.class-tab').forEach(t => t.classList.remove('active'));
@@ -1143,6 +1142,61 @@ body {
         }
 
         // ================================================================
+        // VIDEO INTERACTIONS (Like, Comment, Share)
+        // ================================================================
+        function toggleLike(btn) {
+            btn.classList.toggle('liked');
+            const span = btn.querySelector('span');
+            let count = parseInt(span.innerText);
+            if(btn.classList.contains('liked')) { count++;
+                span.innerText = count; } else { count--;
+                span.innerText = count; }
+        }
+
+        function toggleComment(btn) {
+            const section = btn.closest('.content-card').querySelector('.comment-section');
+            if(section.style.display === 'block') { section.style.display = 'none'; } else { section.style.display = 'block'; }
+        }
+
+        function shareContent() {
+            if(navigator.share) { navigator.share({ title: 'T-Hub Medical Video', url: window.location.href }).catch(() => {}); } else { showToast('📋 Link copied to clipboard!', 'success'); }
+        }
+
+        // ================================================================
+        // JOIN GROUP FUNCTIONS
+        // ================================================================
+        function toggleJoin(btn) {
+            if(btn.classList.contains('joined')) {
+                btn.classList.remove('joined');
+                btn.innerText = '➕ Join Group';
+                showToast('Left the group.', 'info');
+            } else {
+                btn.classList.add('joined');
+                btn.innerText = '✅ Joined';
+                showToast('You have joined the teacher\'s group!', 'success');
+            }
+        }
+
+        // ================================================================
+        // MY STUDIO FUNCTIONS
+        // ================================================================
+        function openUploadForm(type) {
+            const form = document.getElementById('uploadFormContainer');
+            if(form.style.display === 'block') { form.style.display = 'none'; } else {
+                form.style.display = 'block';
+                document.getElementById('uploadType').value = type;
+            }
+        }
+
+        function submitStudioUpload() {
+            const title = document.getElementById('uploadTitle').value;
+            if(!title) return showToast('Please enter a title.', 'error');
+            showToast('✅ Content published to T-Hub!', 'success');
+            document.getElementById('uploadFormContainer').style.display = 'none';
+            document.getElementById('uploadTitle').value = '';
+        }
+
+        // ================================================================
         // AUTHENTICATION
         // ================================================================
         async function checkSession() {
@@ -1152,11 +1206,13 @@ body {
                 const { data: { session } } = await sb.auth.getSession();
                 if (session?.user) {
                     AppState.userId = session.user.id;
-                    const { data: userData } = await sb.from('users').select('is_admin').eq('user_id', AppState.userId).single();
+                    const { data: userData } = await sb.from('users').select('is_admin, is_teacher').eq('user_id', AppState.userId).single();
                     AppState.isAdmin = userData?.is_admin === true;
-                    document.getElementById('appContent').style.display = 'block';
+                    AppState.isTeacher = userData?.is_teacher === true;
+                    document.getElementById('appContent').style.display = 'flex';
                     document.getElementById('loadingOverlay').style.display = 'none';
                     if (AppState.isAdmin) document.getElementById('adminTabBtn').style.display = 'flex';
+                    if (AppState.isTeacher || AppState.isAdmin) document.getElementById('studioTabBtn').style.display = 'flex';
                     document.getElementById('welcomeText').innerText = `👋 Welcome back, ${session.user.email.split('@')[0]}!`;
                     document.getElementById('profileName').innerText = session.user.email.split('@')[0];
                     document.getElementById('profileEmail').innerText = session.user.email;
@@ -1252,34 +1308,21 @@ body {
                 return;
             }
             container.innerHTML = `
-                <div class="card"><h3>⚙️ T-Hub Admin Panel</h3>
-                    <p style="color:var(--text-muted); margin-bottom:15px;">Manage content, payments, pricing, and consultations.</p>
+                <div class="card"><h3>⚙️ Admin Panel</h3>
+                    <p style="color:var(--text-muted); margin-bottom:15px;">Manage Teachers, Content, and Platform.</p>
                 </div>
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-bottom:20px;">
-                    <div class="card" style="cursor:pointer; text-align:center;" onclick="adminAction('📂 Upload Files', 'Upload new PDFs for Exams, Books, and Smart Notes.')">
-                        <div style="font-size:32px;">📂</div>
-                        <h4>Upload Files</h4>
-                        <p style="font-size:13px; color:var(--text-muted);">Add new PDF resources</p>
+                    <div class="card" style="cursor:pointer; text-align:center;" onclick="adminAction('📂 Upload Files', 'Upload PDFs.')">
+                        <div style="font-size:32px;">📂</div><h4>Upload Files</h4>
                     </div>
-                    <div class="card" style="cursor:pointer; text-align:center;" onclick="adminAction('📝 Mock Exam', 'Create a new digital multiple-choice exam for students.')">
-                        <div style="font-size:32px;">📝</div>
-                        <h4>Mock Exam</h4>
-                        <p style="font-size:13px; color:var(--text-muted);">Build digital tests</p>
+                    <div class="card" style="cursor:pointer; text-align:center;" onclick="adminAction('👨‍🏫 Verify Teachers', 'Approve new Teacher accounts.')">
+                        <div style="font-size:32px;">👨‍🏫</div><h4>Verify Teachers</h4>
                     </div>
                     <div class="card" style="cursor:pointer; text-align:center;" onclick="showPricingPanel()">
-                        <div style="font-size:32px;">💰</div>
-                        <h4>Set Prices</h4>
-                        <p style="font-size:13px; color:var(--text-muted);">Set price per item (Default 600 ETB)</p>
+                        <div style="font-size:32px;">💰</div><h4>Set Prices</h4>
                     </div>
                     <div class="card" style="cursor:pointer; text-align:center;" onclick="viewConsultations()">
-                        <div style="font-size:32px;">📋</div>
-                        <h4>Consultations</h4>
-                        <p style="font-size:13px; color:var(--text-muted);">View & reply to patients</p>
-                    </div>
-                    <div class="card" style="cursor:pointer; text-align:center;" onclick="adminAction('📊 Analytics', 'View user count, downloads, and premium stats.')">
-                        <div style="font-size:32px;">📊</div>
-                        <h4>Analytics</h4>
-                        <p style="font-size:13px; color:var(--text-muted);">Track platform growth</p>
+                        <div style="font-size:32px;">📋</div><h4>Consultations</h4>
                     </div>
                 </div>
             `;
@@ -1287,23 +1330,11 @@ body {
         }
 
         function adminAction(title, description) {
-            const modal = document.createElement('div');
-            modal.className = 'modal active';
-            modal.innerHTML = `
-                <div class="modal-content">
-                    <span class="close" onclick="this.closest('.modal').remove()">&times;</span>
-                    <h3>⚙️ ${title}</h3>
-                    <p style="color:var(--text-muted); margin-bottom: 20px;">${description}</p>
-                    <div style="background:var(--bg-light); padding:20px; border-radius:12px; text-align:center;">
-                        <div style="font-size:24px; margin-bottom:10px;">🚧</div>
-                        <p><strong>Feature Coming Soon!</strong></p>
-                        <p style="font-size:13px; color:var(--text-muted);">This admin tool is currently under development for T-Hub.</p>
-                    </div>
-                    <button class="btn" onclick="this.closest('.modal').remove()">Close</button>
-                </div>
-            `;
-            document.body.appendChild(modal);
-            translatePage();
+            if(title.includes('Verify Teachers')) {
+                showToast('✅ Pending Teachers: Dr. Alemu, Dr. Smith', 'info');
+            } else {
+                showToast(`${title} feature coming soon!`, 'info');
+            }
         }
 
         function showPricingPanel() {
@@ -1312,15 +1343,10 @@ body {
                 <div class="card">
                     <h3>💰 Dynamic Pricing</h3>
                     <div class="form-group"><label>Premium Subscription (ETB)</label><input type="number" id="price_premium" value="600"></div>
-                    <button class="btn btn-teal" onclick="savePrices()">💾 Save Prices</button>
+                    <button class="btn btn-teal" onclick="showToast('Prices saved!', 'success')">💾 Save Prices</button>
                     <button class="btn" onclick="loadAdminPanel()">← Back to Admin</button>
                 </div>
             `;
-            translatePage();
-        }
-
-        function savePrices() {
-            showToast('Prices saved to database! (Simulated)', 'success');
         }
 
         function viewConsultations() {
@@ -1335,7 +1361,6 @@ body {
                     <button class="btn" onclick="loadAdminPanel()">← Back to Admin</button>
                 </div>
             `;
-            translatePage();
         }
 
         // ================================================================
