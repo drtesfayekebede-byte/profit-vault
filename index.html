@@ -8,7 +8,7 @@
     <!-- Meta Tags -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>T-Hub | Education & Health Companion</title>
+    <title>T-Hub | Medical Education Ecosystem</title>
 
     <!-- Supabase JS SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -19,25 +19,18 @@
     <style>
 /* ===== CSS CUSTOM PROPERTIES ===== */
 :root {
-    /* UNIFIED DEEP NAVY THEME */
-    --navy: #0a2540;             /* Global color for header, footer, cards, and content */
-    --navy-light: #153e60;       /* Lighter navy for hover and lang toggle */
-    
-    /* NEW GOLD & TEAL ACCENTS */
-    --gold: #FFD700;             /* Main card titles & badge text */
-    --gold-dark: #ccac00;        /* Gold hover state */
-    --teal: #008080;             /* Badge background */
-    --teal-light: #20b2aa;       /* Badge hover */
-
-    /* NEUTRAL COLORS */
+    --navy: #0a2540;             
+    --navy-light: #153e60;       
+    --gold: #FFD700;             
+    --gold-dark: #ccac00;        
+    --teal: #008080;             
+    --teal-light: #20b2aa;       
     --bg-white: #ffffff;
     --text-dark: #1e293b;
     --text-muted: #64748b;
     --text-light: #ffffff;
     --green-success: #10b981;
     --red-error: #ef4444;
-    
-    /* SIZES & BORDERS */
     --header-height: 70px;
     --footer-height: 70px;
     --transition-speed: 0.3s;
@@ -55,7 +48,6 @@
     :root { --header-height: 52px; --footer-height: 52px; }
 }
 
-/* ===== RESET ===== */
 * {
     margin: 0;
     padding: 0;
@@ -63,17 +55,15 @@
     -webkit-tap-highlight-color: transparent;
 }
 
-/* ===== ANIMATIONS ===== */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
 }
-@keyframes tabActivePulse {
-    0%, 100% { opacity: 0.5; width: 15px; }
-    50% { opacity: 1; width: 25px; }
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
 }
 
-/* ===== BACKGROUND ===== */
 body {
     background: var(--bg-white);
     color: var(--text-light);
@@ -136,7 +126,6 @@ body {
     font-weight: 900;
 }
 
-/* ===== SEARCH BAR ===== */
 .search-container {
     flex: 1;
     margin: 0 8px;
@@ -158,7 +147,6 @@ body {
     box-shadow: 0 0 0 2px rgba(255,255,255,0.5);
 }
 
-/* ===== LANGUAGE TOGGLE ===== */
 .lang-toggle {
     background: var(--navy-light);
     border: 1px solid rgba(255,255,255,0.2);
@@ -175,11 +163,8 @@ body {
     align-items: center;
     gap: 4px;
 }
-.lang-toggle:hover {
-    background: rgba(255,255,255,0.1);
-}
+.lang-toggle:hover { background: rgba(255,255,255,0.1); }
 
-/* ===== PROFILE AREA ===== */
 .profile-area {
     display: flex;
     align-items: center;
@@ -204,11 +189,7 @@ body {
     box-shadow: 0 0 10px rgba(255,255,255,0.1);
 }
 
-.profile-avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
+.profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
 
 .notification-bell-wrapper {
     position: relative;
@@ -217,11 +198,7 @@ body {
     display: none;
 }
 
-.bell-icon {
-    font-size: 20px;
-    line-height: 1;
-    color: var(--text-light);
-}
+.bell-icon { font-size: 20px; line-height: 1; color: var(--text-light); }
 
 .notification-badge {
     display: none;
@@ -240,7 +217,6 @@ body {
     padding: 0 4px;
     border: 1px solid var(--navy);
 }
-
 .notification-badge.has-notifications { display: block; }
 
 .notification-dropdown {
@@ -299,7 +275,7 @@ body {
 }
 .dropdown-menu div:hover { background: rgba(255, 255, 255, 0.05); }
 
-/* ===== HOME SCREEN ===== */
+/* ===== HOME SCREEN DASHBOARD ===== */
 .app-grid-container {
     display: flex;
     flex-direction: column;
@@ -308,7 +284,7 @@ body {
     left: 0;
     right: 0;
     bottom: var(--footer-height);
-    padding: 24px 20px 24px 20px;
+    padding: 16px 16px 16px 16px;
     overflow-y: auto;
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
@@ -316,61 +292,100 @@ body {
     z-index: 1;
 }
 
-/* ===== APP GRID WRAPPER ===== */
 .app-grid-wrapper {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 16px;
     flex: 1;
     max-width: 480px;
     margin: 0 auto;
     justify-content: flex-start;
 }
 
-/* ===== TOP BANNER CARD (Consult a Doctor) ===== */
-.app-banner-top {
+/* Welcome Banner */
+.welcome-banner {
     background: var(--navy);
     border-radius: var(--border-radius-card);
     padding: 20px 24px;
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    cursor: pointer;
+    align-items: center;
     width: 100%;
     box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    transition: transform 0.2s ease;
 }
-.app-banner-top:hover { transform: scale(1.01); }
+.welcome-banner h2 { color: var(--gold); font-size: 20px; font-weight: 800; }
+.welcome-banner p { color: rgba(255,255,255,0.8); font-size: 14px; }
+.welcome-banner .btn-go { background: var(--teal); color: white; padding: 8px 16px; border-radius: 30px; font-weight: 700; font-size: 13px; border: none; cursor: pointer; transition: 0.2s; }
+.welcome-banner .btn-go:hover { background: var(--teal-light); }
 
-.app-banner-top .left-side {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+/* Announcement Ticker */
+.ticker-container {
+    background: var(--navy-light);
+    border-radius: 12px;
+    padding: 8px 16px;
+    overflow: hidden;
+    white-space: nowrap;
+    width: 100%;
 }
-.app-banner-top .icon { font-size: 32px; }
-.app-banner-top .text-group h3 { color: var(--gold); font-size: 20px; font-weight: 800; }
-.app-banner-top .text-group p { color: rgba(255,255,255,0.8); font-size: 13px; margin-top: 2px; }
-
-.app-banner-top .banner-badge {
-    background: var(--teal);
+.ticker-text {
+    display: inline-block;
+    animation: slideIn 20s linear infinite;
     color: var(--gold);
-    padding: 6px 18px;
-    border-radius: 30px;
-    font-weight: 800;
+    font-weight: 600;
     font-size: 13px;
 }
+.ticker-text span { margin: 0 40px; color: var(--text-light); }
 
-/* ===== MIDDLE 3x2 GRID ===== */
+/* Quick Actions */
+.quick-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+.quick-btn {
+    background: var(--navy);
+    border-radius: var(--border-radius-card);
+    padding: 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.quick-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 16px rgba(10, 37, 64, 0.2); }
+.quick-btn .icon { font-size: 28px; color: var(--gold); display: block; margin-bottom: 6px; }
+.quick-btn .label { color: var(--text-light); font-weight: 700; font-size: 14px; }
+.quick-btn.live { border: 2px solid var(--red-error); animation: pulseRed 2s infinite; }
+
+@keyframes pulseRed {
+    0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+/* Feed Section */
+.feed-section h3 { color: var(--navy); font-size: 18px; font-weight: 800; margin-bottom: 12px; border-left: 4px solid var(--gold); padding-left: 10px; }
+.feed-card {
+    background: var(--bg-white);
+    border: 1px solid #e2e8f0;
+    border-radius: var(--border-radius-card);
+    padding: 16px;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.feed-card .info h4 { color: var(--text-dark); font-size: 15px; font-weight: 700; }
+.feed-card .info p { color: var(--text-muted); font-size: 13px; margin-top: 4px; }
+.feed-card .action-btn { background: var(--teal); color: white; padding: 6px 14px; border-radius: 30px; font-weight: 700; font-size: 12px; border: none; cursor: pointer; }
+
+/* ===== MIDDLE GRID (For Library Fallback) ===== */
 .app-grid {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
-    gap: 40px;
+    gap: 16px;
 }
-
-/* ===== STANDARD CARDS (ALL DEEP NAVY, TALL 2:3 ASPECT RATIO) ===== */
 .app-card {
     border-radius: var(--border-radius-card);
-    padding: 20px 12px;  
+    padding: 16px 8px;  
     position: relative;
     display: flex;
     flex-direction: column;
@@ -378,92 +393,18 @@ body {
     align-items: center;
     aspect-ratio: 2 / 3;
     cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: 0.2s;
     box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     text-align: center;
     border: none;
     background: var(--navy);
 }
 .app-card:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(10, 37, 64, 0.4); }
-.app-card:active { transform: scale(0.96); }
+.app-card .app-icon { color: white; font-size: 32px; margin-bottom: 8px; display: block; }
+.app-card .app-name { color: var(--gold); font-size: 16px; font-weight: 800; }
+.app-card .app-desc { color: rgba(255,255,255,0.8); font-size: 11px; font-weight: 600; margin-top: 4px; }
 
-.app-card .app-icon {
-    color: white;
-    font-size: 32px;
-    margin-bottom: 8px;
-    display: block;
-}
-.app-card .app-name {
-    color: var(--gold);
-    font-size: 16px;
-    font-weight: 800;
-    text-align: center;
-    letter-spacing: 0.3px;
-}
-.app-card .app-desc {
-    color: rgba(255,255,255,0.8);
-    font-size: 11px;
-    font-weight: 600;
-    text-align: center;
-    margin-top: 4px;
-}
-
-/* ===== BADGES (TEAL BG, GOLD TEXT) ===== */
-.app-card .badge {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: var(--teal);
-    border: 1px solid rgba(255,215,0,0.3);
-    padding: 2px 10px;
-    border-radius: 20px;
-    font-size: 9px;
-    font-weight: 800;
-    color: var(--gold);
-    letter-spacing: 0.5px;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-.app-card .badge.free {
-    background: rgba(255,255,255,0.2);
-    border: 1px solid rgba(255,255,255,0.3);
-    color: white;
-}
-
-/* ===== BOTTOM BANNER (Smart Medical Notes) ===== */
-.smart-notes-banner {
-    margin-top: 24px;
-    background: var(--navy);
-    border-radius: var(--border-radius-card);
-    padding: 16px 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    cursor: pointer;
-    width: 100%;
-    transition: transform 0.2s ease;
-    box-shadow: 0 4px 15px rgba(10, 37, 64, 0.3);
-}
-.smart-notes-banner:hover { transform: scale(1.01); }
-.smart-notes-banner .banner-left {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-.smart-notes-banner .banner-icon { font-size: 24px; }
-.smart-notes-banner .banner-text h3 { color: var(--gold); font-size: 18px; font-weight: 800; }
-.smart-notes-banner .banner-text p { color: rgba(255,255,255,0.85); font-size: 13px; margin-top: 2px; }
-.smart-notes-banner .banner-right .badge {
-    background: var(--teal);
-    color: var(--gold);
-    padding: 8px 20px;
-    border-radius: 30px;
-    font-size: 13px;
-    font-weight: 800;
-}
-
-/* ===== FOOTER (FIXED) ===== */
+/* ===== FOOTER (NEW 4 TABS) ===== */
 .app-footer {
     position: fixed;
     bottom: 0;
@@ -516,7 +457,6 @@ body {
 .app-footer-tab.active .tab-emoji { transform: scale(1.1); }
 .app-footer-tab.active .tab-label { color: white; }
 
-/* Admin Dot */
 .app-footer-tab .tab-badge {
     position: absolute;
     top: -2px;
@@ -539,7 +479,7 @@ body {
     right: 0;
     bottom: var(--footer-height);
     overflow-y: auto;
-    padding: 20px 16px 20px 16px;
+    padding: 16px 16px 20px 16px;
     background: var(--bg-white);
     z-index: 1;
 }
@@ -570,25 +510,49 @@ body {
 .back-button.visible { display: flex; }
 .back-button:hover { transform: scale(1.02); background: var(--navy-light); }
 
-/* ===== CONTENT CARDS (Deep Navy) ===== */
-.card {
-    background: var(--navy);
-    border-radius: var(--border-radius-card);
-    padding: 20px;
-    margin-bottom: 18px;
-    border: 1px solid rgba(255,255,255,0.05);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-    color: var(--text-light);
-}
-.card h3 { 
-    margin-bottom: 15px; 
-    font-size: 20px; 
-    font-weight: 800; 
-    border-left: 4px solid var(--gold); 
-    padding-left: 12px; 
-    color: var(--gold); 
-}
-.card p, .card div, .card span { color: var(--text-light); }
+/* ===== MY CLASS TAB ===== */
+.class-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.class-header h2 { color: var(--navy); font-size: 20px; font-weight: 800; }
+.class-header .live-btn { background: var(--red-error); color: white; padding: 6px 16px; border-radius: 30px; font-size: 12px; font-weight: 700; border: none; cursor: pointer; display: flex; align-items: center; gap: 6px; }
+
+.class-tabs { display: flex; gap: 10px; margin-bottom: 16px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+.class-tab { background: none; border: none; font-weight: 700; font-size: 14px; color: var(--text-muted); cursor: pointer; padding: 4px 12px; }
+.class-tab.active { color: var(--navy); border-bottom: 3px solid var(--gold); }
+
+.class-content { display: none; }
+.class-content.active { display: block; }
+.class-content .item { background: var(--bg-white); border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+.class-content .item .title { font-weight: 700; color: var(--text-dark); font-size: 14px; }
+.class-content .item .desc { color: var(--text-muted); font-size: 12px; }
+.class-content .item .btn-sm { background: var(--teal); color: white; padding: 4px 14px; border-radius: 20px; font-weight: 700; font-size: 12px; border: none; cursor: pointer; }
+
+/* Mock Exam */
+.exam-toggle { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; }
+.exam-toggle span { font-weight: 700; color: var(--text-dark); }
+.toggle-btn { background: #e2e8f0; border: none; border-radius: 30px; padding: 6px 16px; font-weight: 700; font-size: 12px; cursor: pointer; transition: 0.2s; }
+.toggle-btn.study { background: var(--green-success); color: white; }
+.toggle-btn.exam { background: var(--red-error); color: white; }
+
+.question-box { background: var(--bg-white); border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 10px; }
+.question-box p { font-weight: 700; color: var(--text-dark); margin-bottom: 8px; }
+.question-box label { display: block; font-size: 14px; color: var(--text-dark); margin-bottom: 4px; cursor: pointer; }
+
+/* ===== MEDICAL BOOKS TAB ===== */
+.books-header h2 { color: var(--navy); font-size: 20px; font-weight: 800; margin-bottom: 12px; }
+.books-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.book-card { background: var(--bg-white); border: 1px solid #e2e8f0; border-radius: var(--border-radius-card); padding: 16px; text-align: center; }
+.book-card .emoji { font-size: 40px; margin-bottom: 8px; display: block; }
+.book-card .title { font-weight: 700; color: var(--text-dark); font-size: 15px; }
+.book-card .author { color: var(--text-muted); font-size: 13px; margin: 4px 0; }
+.book-card .price { color: var(--gold); font-weight: 800; font-size: 16px; margin: 8px 0; }
+.book-card .buy-btn { background: var(--teal); color: white; border: none; padding: 6px 16px; border-radius: 30px; font-weight: 700; cursor: pointer; width: 100%; }
+
+/* ===== PROFILE TAB ===== */
+.profile-card { background: var(--bg-white); border: 1px solid #e2e8f0; border-radius: var(--border-radius-card); padding: 20px; text-align: center; margin-bottom: 16px; }
+.profile-card .avatar-lg { width: 80px; height: 80px; border-radius: 50%; background: var(--navy); color: white; display: flex; align-items: center; justify-content: center; font-size: 40px; margin: 0 auto 12px; }
+.profile-card h3 { color: var(--text-dark); font-size: 20px; font-weight: 800; }
+.profile-card p { color: var(--text-muted); font-size: 14px; }
+.profile-actions .btn { background: var(--gold); color: var(--text-dark); border: none; padding: 12px; border-radius: 40px; font-weight: 700; width: 100%; margin-bottom: 10px; cursor: pointer; }
 
 /* ===== MODAL ===== */
 .modal {
@@ -608,27 +572,27 @@ body {
 .modal.active { display: flex; animation: fadeIn 0.2s ease-out; }
 
 .modal-content {
-    background: var(--navy);
+    background: var(--bg-white);
     border-radius: var(--border-radius-card);
     padding: 25px;
     width: 90%;
     max-width: 420px;
     max-height: 85vh;
     overflow-y: auto;
-    border: 1px solid rgba(255,255,255,0.05);
+    border: 1px solid rgba(0,0,0,0.05);
     box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-    color: var(--text-light);
+    color: var(--text-dark);
 }
-.close { float: right; font-size: 28px; cursor: pointer; color: var(--red-error); font-weight: 700; transition: color 0.2s; }
+.close { float: right; font-size: 28px; cursor: pointer; color: var(--red-error); font-weight: 700; }
 .close:hover { color: #ff4444; }
-.modal-content h3 { color: var(--gold); margin-bottom: 15px; font-weight: 800; }
+.modal-content h3 { color: var(--navy); margin-bottom: 15px; font-weight: 800; }
 
 .modal-content input, .modal-content select, .modal-content textarea {
-    background: var(--navy-light);
-    border: 1px solid rgba(255,255,255,0.1);
+    background: var(--bg-light);
+    border: 1px solid #e2e8f0;
     border-radius: 12px;
     padding: 12px 14px;
-    color: var(--text-light);
+    color: var(--text-dark);
     font-size: 15px;
     font-weight: 600;
     width: 100%;
@@ -636,16 +600,8 @@ body {
     transition: border-color 0.2s ease;
     box-sizing: border-box;
 }
-.modal-content input:focus, .modal-content select:focus, .modal-content textarea:focus {
-    border-color: var(--gold);
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
-}
-.modal-content input::placeholder, .modal-content textarea::placeholder {
-    color: rgba(255,255,255,0.5);
-}
+.modal-content input:focus { border-color: var(--navy); outline: none; }
 
-/* ===== BUTTONS ===== */
 .btn {
     background: var(--gold);
     border: none;
@@ -657,15 +613,12 @@ body {
     cursor: pointer;
     width: 100%;
     margin-bottom: 10px;
-    transition: transform 0.1s, box-shadow 0.2s;
-    box-shadow: 0 4px 10px rgba(255, 215, 0, 0.2);
+    transition: 0.2s;
 }
 .btn:active { transform: scale(0.97); }
 .btn:hover { background: var(--gold-dark); }
-.btn-success { background: var(--green-success); color: white; }
+.btn-teal { background: var(--teal); color: white; }
 .btn-danger { background: var(--red-error); color: white; }
-.btn-info { background: rgba(255,255,255,0.1); color: var(--text-light); border: 1px solid rgba(255,255,255,0.1); }
-.btn-sm { padding: 8px 16px; font-size: 13px; font-weight: 700; width: auto; display: inline-block; margin: 4px; border-radius: 40px; }
 
 /* ===== TOAST ===== */
 .toast {
@@ -687,53 +640,6 @@ body {
 }
 .toast.show { display: flex; animation: fadeIn 0.2s; }
 .toast.error { border-left-color: var(--red-error); }
-.toast.info { border-left-color: var(--gold); }
-
-/* ===== LOADING ===== */
-.loading { text-align: center; padding: 30px; color: var(--text-muted); font-weight: 600; }
-
-/* ===== AUTH MODAL ===== */
-#authModal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(10, 37, 64, 0.9);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 2000;
-}
-#authModal .modal-content {
-    background: var(--navy);
-    border-radius: 48px;
-    padding: 30px 25px;
-    width: 90%;
-    max-width: 420px;
-    box-shadow: 0 25px 40px rgba(0,0,0,0.3);
-    border: 1px solid rgba(255,255,255,0.05);
-    animation: fadeIn 0.3s ease-out;
-}
-.auth-header h2 { font-size: 36px; font-weight: 900; font-family: var(--font-serif); color: var(--gold); margin-bottom: 8px; text-align: center; letter-spacing: 1px;}
-.auth-header p { color: var(--text-muted); font-size: 15px; font-weight: 600; margin-bottom: 20px; text-align: center; }
-.mode-switch { display: flex; gap: 12px; justify-content: center; margin-bottom: 25px; }
-.mode-switch button { background: transparent; border: 2px solid var(--gold); border-radius: 60px; padding: 10px 28px; font-weight: 700; color: var(--gold); transition: all 0.2s ease; cursor: pointer; font-size: 15px; }
-.mode-switch button.active { background: var(--gold); color: var(--text-dark); box-shadow: 0 4px 10px rgba(255, 215, 0, 0.2); }
-
-.password-wrapper { position: relative; width: 100%; display: flex; align-items: center; margin-bottom: 16px; }
-.password-wrapper input { flex: 1; padding-right: 45px !important; width: 100% !important; box-sizing: border-box !important; }
-.password-toggle { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--gold); font-size: 20px; cursor: pointer; padding: 5px; line-height: 1; }
-#authForm input { background: var(--navy-light); border: 1px solid rgba(255,255,255,0.1); border-radius: 60px; padding: 14px 20px; color: var(--text-light); font-size: 16px; font-weight: 600; margin-bottom: 16px; transition: border-color 0.2s ease; width: 100%; box-sizing: border-box; }
-#authForm input:focus { border-color: var(--gold); outline: none; }
-#authForm .btn-success { background: var(--gold) !important; border: none !important; border-radius: 60px !important; padding: 14px 20px !important; font-weight: 900 !important; font-size: 17px !important; color: var(--text-dark) !important; transition: all 0.2s ease !important; cursor: pointer !important; width: 100% !important; display: block !important; text-align: center !important; min-height: 50px !important; margin-bottom: 10px !important; box-shadow: 0 4px 10px rgba(255, 215, 0, 0.2) !important; }
-#authForm .btn-success:hover { transform: scale(1.02) !important; }
-#authForm .btn-google { background: #db4437 !important; color: white !important; border: none !important; border-radius: 60px !important; padding: 14px 20px !important; font-weight: 900 !important; font-size: 16px !important; cursor: pointer !important; width: 100% !important; transition: all 0.2s ease !important; display: block !important; text-align: center !important; min-height: 50px !important; margin-bottom: 10px !important; }
-#authForm .btn-google:hover { transform: scale(1.02) !important; }
-#authForm .or-divider { text-align: center; margin: 8px 0; color: var(--text-muted); font-size: 14px; font-weight: 600; }
-.auth-warning { background: rgba(239, 68, 68, 0.1); border-left: 3px solid var(--red-error); padding: 8px; margin-top: 12px; border-radius: 8px; font-size: 12px; color: var(--text-light); }
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 600px) {
@@ -742,50 +648,17 @@ body {
     .header-content { padding: 6px 12px; }
     .header { padding: 0 12px; }
     .profile-avatar { width: 34px; height: 34px; }
-    .bell-icon { font-size: 18px; }
     .search-container { max-width: 130px; margin: 0 6px; }
     .search-container input { font-size: 11px; padding: 6px 12px; }
-    .lang-toggle { font-size: 10px; padding: 2px 8px; }
-    
-    .app-grid-container { padding: 16px 14px; }
-    .app-grid { gap: 16px; }
-    .app-card { padding: 14px 8px; }
-    .app-card .app-icon { font-size: 24px; }
-    .app-card .app-name { font-size: 14px; }
-    .app-card .app-desc { font-size: 10px; }
-    .app-card .badge { font-size: 8px; padding: 2px 6px; top: 6px; right: 6px; }
-    
-    .app-banner-top { padding: 12px 16px; }
-    .app-banner-top .text-group h3 { font-size: 16px; }
-    .app-banner-top .banner-badge { font-size: 11px; padding: 4px 12px; }
-    
-    .smart-notes-banner { padding: 12px 16px; }
-    .smart-notes-banner .banner-text h3 { font-size: 16px; }
-    .smart-notes-banner .banner-icon { font-size: 20px; }
-    
+    .app-grid-container { padding: 12px 10px; }
+    .quick-actions { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .books-grid { grid-template-columns: 1fr; }
     .app-footer { padding: 6px 12px; }
     .app-footer-tab { padding: 3px 8px; min-width: 36px; font-size: 9px; }
     .app-footer-tab .tab-emoji { font-size: 18px; }
     .app-footer-tab .tab-label { font-size: 8px; }
-    
-    .tab-content-wrapper { padding: 12px 10px 20px 10px; }
-    .back-button { font-size: 13px; padding: 8px 14px; min-height: 38px; bottom: 74px; left: 12px; }
 }
-
-@media (max-width: 400px) {
-    .app-logo h1 { font-size: 16px; }
-    .logo-icon { font-size: 18px; }
-    .search-container { max-width: 100px; }
-    .search-container input { font-size: 10px; padding: 4px 8px; }
-    .lang-toggle { font-size: 8px; padding: 2px 6px; }
-    .app-grid { gap: 12px; }
-    .app-card { padding: 10px 6px; }
-    .app-card .app-icon { font-size: 20px; }
-    .app-card .app-name { font-size: 12px; }
-    .app-footer-tab .tab-emoji { font-size: 15px; }
-    .app-footer-tab .tab-label { font-size: 7px; }
-}
-    </style>
+</style>
 </head>
 <body>
 
@@ -795,7 +668,6 @@ body {
         <div style="margin-top: 20px; color: var(--teal); font-weight: 700; font-size: 18px;">Loading T-Hub...</div>
     </div>
 
-    <!-- ===== APP CONTENT ===== -->
     <div id="appContent" style="display: none;">
 
         <!-- ===== HEADER ===== -->
@@ -805,16 +677,11 @@ body {
                     <span class="logo-icon">📶</span>
                     <h1>T-Hub</h1>
                 </div>
-
-                <!-- SEARCH BAR -->
                 <div class="search-container">
-                    <input type="text" id="globalSearch" placeholder="Search exams, health guides, doctors..." onkeyup="handleSearch(event)">
+                    <input type="text" id="globalSearch" placeholder="Search..." onkeyup="handleSearch(event)">
                 </div>
-
                 <div class="profile-area" id="profileArea">
-                    <!-- LANGUAGE TOGGLE -->
                     <button class="lang-toggle" id="langToggle" onclick="toggleLanguage()">🇬🇧 EN</button>
-
                     <div class="notification-bell-wrapper" id="notificationBellWrapper" onclick="toggleNotificationDropdown(event)">
                         <span class="bell-icon">🔔</span>
                         <span id="notificationBadge" class="notification-badge">0</span>
@@ -842,155 +709,173 @@ body {
         <div id="appHomeScreen" class="app-grid-container">
             <div class="app-grid-wrapper">
                 
-                <!-- TOP BANNER: Consult a Doctor -->
-                <div class="app-banner-top" onclick="openTabContent('consult')">
-                    <div class="left-side">
-                        <i class="fas fa-user-doctor icon"></i>
-                        <div class="text-group">
-                            <h3 data-key="consult_doctor">Consult a Doctor</h3>
-                            <p data-key="premium_feature">Premium Feature</p>
+                <!-- Welcome Banner -->
+                <div class="welcome-banner">
+                    <div>
+                        <h2 id="welcomeText">👋 Welcome back!</h2>
+                        <p>Your medical education ecosystem</p>
+                    </div>
+                    <button class="btn-go" onclick="openTabContent('class')">📚 Go to Class</button>
+                </div>
+
+                <!-- Announcement Ticker -->
+                <div class="ticker-container">
+                    <div class="ticker-text">
+                        <span>📝 New Mock Exam: Exit Exam 2024 is unlocked!</span>
+                        <span>📖 New Medical Book: 'Anatomy Textbook' is now on sale!</span>
+                        <span>🔴 Live Class: Dr. Tesfaye is teaching now!</span>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <div class="quick-btn" onclick="openTabContent('books')">
+                        <span class="icon">📖</span>
+                        <span class="label">Medical Books</span>
+                    </div>
+                    <div class="quick-btn" onclick="openTabContent('class')">
+                        <span class="icon">📝</span>
+                        <span class="label">Start Mock Exam</span>
+                    </div>
+                    <div class="quick-btn live" onclick="openTabContent('class')">
+                        <span class="icon">🔴</span>
+                        <span class="label">Join Live Class</span>
+                    </div>
+                    <div class="quick-btn" onclick="openTabContent('class')">
+                        <span class="icon">🧠</span>
+                        <span class="label">Smart Notes</span>
+                    </div>
+                </div>
+
+                <!-- Trending Feed -->
+                <div class="feed-section">
+                    <h3>🔥 Trending Medical Notes</h3>
+                    <div class="feed-card">
+                        <div class="info">
+                            <h4>Emergency Medicine Protocols</h4>
+                            <p>By Dr. Tesfaye - Updated 2 days ago</p>
                         </div>
+                        <button class="action-btn" onclick="openTabContent('class')">Read</button>
                     </div>
-                    <span class="banner-badge">PREMIUM</span>
-                </div>
-
-                <!-- MIDDLE 3x2 GRID -->
-                <div class="app-grid" id="appGrid">
-                    
-                    <!-- 1. Public Health Guides (FREE) -->
-                    <div class="app-card public" onclick="openTabContent('publichealth')">
-                        <span class="badge free">FREE</span>
-                        <i class="app-icon fas fa-book-open"></i>
-                        <span class="app-name" data-key="public_health">Public Health Guides</span>
-                        <span class="app-desc" data-key="free_access">Free Access</span>
-                    </div>
-
-                    <!-- 2. Exit Exam -->
-                    <div class="app-card exit" onclick="openTabContent('exit')">
-                        <span class="badge">PREMIUM</span>
-                        <i class="app-icon fas fa-graduation-cap"></i>
-                        <span class="app-name" data-key="exit_exam">Exit Exam</span>
-                        <span class="app-desc" data-key="exit_desc">University Prep</span>
-                    </div>
-
-                    <!-- 3. NGAT Exam -->
-                    <div class="app-card ngat" onclick="openTabContent('ngat')">
-                        <span class="badge">PREMIUM</span>
-                        <i class="app-icon fas fa-book"></i>
-                        <span class="app-name" data-key="ngat_exam">NGAT Exam</span>
-                        <span class="app-desc" data-key="ngat_desc">Past Papers</span>
-                    </div>
-
-                    <!-- 4. ERMP Exam -->
-                    <div class="app-card ermp" onclick="openTabContent('ermp')">
-                        <span class="badge">PREMIUM</span>
-                        <i class="app-icon fas fa-trophy"></i>
-                        <span class="app-name" data-key="ermp_exam">ERMP Exam</span>
-                        <span class="app-desc" data-key="ermp_desc">Residency Prep</span>
-                    </div>
-
-                    <!-- 5. Medical Vault -->
-                    <div class="app-card medical" onclick="openTabContent('medical')">
-                        <span class="badge">PREMIUM</span>
-                        <i class="app-icon fas fa-stethoscope"></i>
-                        <span class="app-name" data-key="medical_vault">Medical Vault</span>
-                        <span class="app-desc" data-key="medical_desc">Freshman to Residency</span>
-                    </div>
-
-                    <!-- 6. Gift / Support Dr. -->
-                    <div class="app-card gift" onclick="openTabContent('gift')">
-                        <span class="badge">PREMIUM</span>
-                        <i class="app-icon fas fa-gift"></i>
-                        <span class="app-name">Support Dr.</span>
-                        <span class="app-desc">Send a Gift</span>
-                    </div>
-                </div>
-
-                <!-- BOTTOM BANNER: Smart Medical Notes -->
-                <div class="smart-notes-banner" onclick="openTabContent('smartnotes')">
-                    <div class="banner-left">
-                        <span class="banner-icon">🧠</span>
-                        <div class="banner-text">
-                            <h3 data-key="smart_notes">Smart Medical Notes</h3>
-                            <p data-key="smart_desc">Brief, clear notes for residents & doctors</p>
+                    <div class="feed-card">
+                        <div class="info">
+                            <h4>Anatomy: Upper Limb Summary</h4>
+                            <p>Premium Resource - 45 pages</p>
                         </div>
-                    </div>
-                    <div class="banner-right">
-                        <span class="badge">PREMIUM</span>
-                        <i class="icon fas fa-clipboard-list"></i>
+                        <button class="action-btn" onclick="openTabContent('class')">Read</button>
                     </div>
                 </div>
-
             </div>
         </div>
 
         <!-- ===== TAB CONTENT WRAPPER ===== -->
         <div id="tabContentWrapper" class="tab-content-wrapper">
-            <button class="back-button" id="backButton" onclick="goToHome()">← Back to Home</button>
-            <div id="tabContentContainer">
-                <!-- Content dynamically loaded by JS -->
-            </div>
+            <button class="back-button" id="backButton" onclick="goToHome()">← Home</button>
+            <div id="tabContentContainer"></div>
         </div>
 
-        <!-- ===== HIDDEN TAB CONTENT TEMPLATES ===== -->
-        <div style="display: none;">
-            <!-- DASHBOARD -->
-            <div id="dashboard">
-                <div class="card"><h3 data-key="quick_actions">⚡ Quick Actions</h3>
-                    <button class="btn btn-success" onclick="showModal('depositModal')">💰 <span data-key="upgrade">Upgrade to Premium</span></button>
-                    <button class="btn btn-warning" onclick="showModal('contactModal')">📞 <span data-key="contact">Contact Admin</span></button>
+        <!-- ===== HIDDEN TAB CONTENT ===== -->
+        <div style="display:none;">
+            
+            <!-- MY CLASS TAB -->
+            <div id="my-class">
+                <div class="class-header">
+                    <h2>📚 My Class</h2>
+                    <button class="live-btn" onclick="showToast('🔴 Live class starting soon!', 'info')"><i class="fas fa-circle" style="font-size:8px; margin-right:4px;"></i> Live</button>
+                </div>
+                <div class="class-tabs">
+                    <button class="class-tab active" onclick="switchClassTab('videos', this)">📹 Videos</button>
+                    <button class="class-tab" onclick="switchClassTab('ppts', this)">📊 PPTs</button>
+                    <button class="class-tab" onclick="switchClassTab('exam', this)">📝 Mock Exam</button>
+                </div>
+
+                <div id="videos" class="class-content active">
+                    <div class="item"><div><div class="title">Cardiology Basics</div><div class="desc">Dr. Tesfaye - 45 mins</div></div><button class="btn-sm">▶️ Play</button></div>
+                    <div class="item"><div><div class="title">Neurology Review</div><div class="desc">Dr. Alemu - 30 mins</div></div><button class="btn-sm">▶️ Play</button></div>
+                </div>
+
+                <div id="ppts" class="class-content">
+                    <div class="item"><div><div class="title">Anatomy Slides (Upper Limb)</div><div class="desc">45 Pages</div></div><button class="btn-sm">📖 Read</button></div>
+                    <div class="item"><div><div class="title">Internal Medicine Notes</div><div class="desc">82 Pages</div></div><button class="btn-sm">📖 Read</button></div>
+                </div>
+
+                <div id="exam" class="class-content">
+                    <div class="exam-toggle">
+                        <span>Mode:</span>
+                        <button class="toggle-btn study" id="examModeBtn" onclick="toggleExamMode()">📖 Study Mode</button>
+                    </div>
+                    <div class="question-box">
+                        <p>1. What is the primary pacemaker of the heart?</p>
+                        <label><input type="radio" name="q1" value="A"> A) SA Node</label>
+                        <label><input type="radio" name="q1" value="B"> B) AV Node</label>
+                        <label><input type="radio" name="q1" value="C"> C) Bundle of His</label>
+                    </div>
+                    <div class="question-box">
+                        <p>2. Which organ is responsible for insulin production?</p>
+                        <label><input type="radio" name="q2" value="A"> A) Liver</label>
+                        <label><input type="radio" name="q2" value="B"> B) Pancreas</label>
+                        <label><input type="radio" name="q2" value="C"> C) Kidney</label>
+                    </div>
+                    <button class="btn" onclick="showToast('✅ Exam submitted! Score: 100%', 'success')">Submit Exam</button>
                 </div>
             </div>
 
-            <!-- EXIT EXAM -->
-            <div id="exit-exam">
-                <div class="card"><h3 data-key="exit_exam">🎓 Exit Exam Library</h3>
-                    <p style="color:var(--text-muted); margin-bottom:15px;" data-key="exit_desc">Previous exams and reading materials.</p>
-                    <div id="exitExamFiles"></div>
+            <!-- MEDICAL BOOKS TAB -->
+            <div id="medical-books">
+                <div class="books-header">
+                    <h2>📖 Medical Books</h2>
+                </div>
+                <div class="books-grid">
+                    <div class="book-card">
+                        <span class="emoji">📘</span>
+                        <div class="title">Anatomy Textbook</div>
+                        <div class="author">By Dr. Smith</div>
+                        <div class="price">850 ETB</div>
+                        <button class="buy-btn" onclick="showToast('🛒 Added to cart!', 'success')">Buy Now</button>
+                    </div>
+                    <div class="book-card">
+                        <span class="emoji">📕</span>
+                        <div class="title">Internal Medicine</div>
+                        <div class="author">By Dr. Jones</div>
+                        <div class="price">1,200 ETB</div>
+                        <button class="buy-btn" onclick="showToast('🛒 Added to cart!', 'success')">Buy Now</button>
+                    </div>
+                    <div class="book-card">
+                        <span class="emoji">📗</span>
+                        <div class="title">Residency Prep 2024</div>
+                        <div class="author">By T-Hub Team</div>
+                        <div class="price">600 ETB</div>
+                        <button class="buy-btn" onclick="showToast('🛒 Added to cart!', 'success')">Buy Now</button>
+                    </div>
+                    <div class="book-card">
+                        <span class="emoji">📙</span>
+                        <div class="title">Cardiology Essentials</div>
+                        <div class="author">By Dr. Alemu</div>
+                        <div class="price">950 ETB</div>
+                        <button class="buy-btn" onclick="showToast('🛒 Added to cart!', 'success')">Buy Now</button>
+                    </div>
                 </div>
             </div>
 
-            <!-- NGAT EXAM -->
-            <div id="ngat-exam">
-                <div class="card"><h3 data-key="ngat_exam">📘 NGAT Prep</h3>
-                    <p style="color:var(--text-muted); margin-bottom:15px;" data-key="ngat_desc">Materials and previous exams.</p>
-                    <div id="ngatFiles"></div>
+            <!-- PROFILE TAB -->
+            <div id="profile">
+                <div class="profile-card">
+                    <div class="avatar-lg">👤</div>
+                    <h3 id="profileName">Medical Student</h3>
+                    <p id="profileEmail">student@email.com</p>
+                </div>
+                <div class="profile-actions">
+                    <button class="btn" onclick="showModal('depositModal')">💳 Premium: 600 ETB/month</button>
+                    <button class="btn btn-danger" onclick="logout()">🚪 Logout</button>
                 </div>
             </div>
 
-            <!-- ERMP EXAM -->
-            <div id="ermp-exam">
-                <div class="card"><h3 data-key="ermp_exam">🏆 ERMP Exam Prep</h3>
-                    <p style="color:var(--text-muted); margin-bottom:15px;" data-key="ermp_desc">Resources for the Residency Match.</p>
-                    <div id="ermpFiles"></div>
-                </div>
+            <!-- ADMIN PANEL -->
+            <div id="admin">
+                <div class="loading" style="color:var(--text-muted);">Loading admin panel...</div>
             </div>
-
-            <!-- MEDICAL RESOURCE -->
-            <div id="medical-resource">
-                <div class="card"><h3 data-key="medical_vault">🩺 Medical Resource Vault</h3>
-                    <p style="color:var(--text-muted); margin-bottom:15px;" data-key="medical_desc">All essential materials from freshman to residency.</p>
-                    <div id="medFiles"></div>
-                </div>
-            </div>
-
-            <!-- SMART MEDICAL NOTES -->
-            <div id="smart-notes">
-                <div class="card"><h3 data-key="smart_notes">🧠 Smart Medical Notes</h3>
-                    <p style="color:var(--text-muted); margin-bottom:15px;" data-key="smart_desc">Brief, clear notes for residents & doctors.</p>
-                    <div id="smartNotesFiles"></div>
-                </div>
-            </div>
-
-            <!-- PUBLIC HEALTH -->
-            <div id="public-health">
-                <div class="card"><h3 data-key="public_health">📖 Public Health Guides</h3>
-                    <p style="color:var(--text-muted); margin-bottom:15px;" data-key="free_access">Simple, easy-to-understand info.</p>
-                    <div id="phFiles" style="display:flex; flex-direction:column; gap:10px;"></div>
-                </div>
-            </div>
-
-            <!-- CONSULT A DOCTOR -->
+            
+            <!-- CONSULT A DOCTOR (Legacy content for the top banner) -->
             <div id="consult">
                 <div class="card"><h3 data-key="consult_doctor">👨‍⚕️ Consult a Doctor</h3>
                     <p style="color:var(--text-muted); margin-bottom:15px;" data-key="premium_feature">Book a session with our health professionals.</p>
@@ -1002,37 +887,7 @@ body {
                     </div>
                 </div>
             </div>
-
-            <!-- LIBRARY (Master Menu) -->
-            <div id="library-main">
-                <div class="card"><h3 data-key="library">📚 Resource Library</h3>
-                    <p style="color:var(--text-muted); margin-bottom:15px;" data-key="choose_category">Choose a category.</p>
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
-                        <div class="app-card exit" onclick="openTabContent('exit')" style="min-height:80px; cursor:pointer;">
-                            <span class="app-icon" style="font-size:28px;">🎓</span>
-                            <span class="app-name" style="font-size:16px;" data-key="exit_exam">Exit Exam</span>
-                        </div>
-                        <div class="app-card ngat" onclick="openTabContent('ngat')" style="min-height:80px; cursor:pointer;">
-                            <span class="app-icon" style="font-size:28px;">📘</span>
-                            <span class="app-name" style="font-size:16px;" data-key="ngat_exam">NGAT Exam</span>
-                        </div>
-                        <div class="app-card ermp" onclick="openTabContent('ermp')" style="min-height:80px; cursor:pointer;">
-                            <span class="app-icon" style="font-size:28px;">🏆</span>
-                            <span class="app-name" style="font-size:16px;" data-key="ermp_exam">ERMP Exam</span>
-                        </div>
-                        <div class="app-card medical" onclick="openTabContent('medical')" style="min-height:80px; cursor:pointer;">
-                            <span class="app-icon" style="font-size:28px;">🩺</span>
-                            <span class="app-name" style="font-size:16px;" data-key="medical_vault">Medical Resource</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ADMIN PANEL -->
-            <div id="admin">
-                <div class="loading" style="color:var(--text-muted);">Loading admin panel...</div>
-            </div>
-
+            
             <!-- CONTACT SUPPORT -->
             <div id="contact">
                 <div class="card"><h3 data-key="support">📞 Contact Support</h3>
@@ -1042,6 +897,7 @@ body {
                     </div>
                 </div>
             </div>
+
         </div>
 
         <!-- ===== MODALS ===== -->
@@ -1107,15 +963,19 @@ body {
             <div class="app-footer-tabs" id="footerTabs">
                 <button class="app-footer-tab active" data-tab="home" onclick="footerTabClick('home')">
                     <span class="tab-emoji">🏠</span>
-                    <span class="tab-label" data-key="home">Home</span>
+                    <span class="tab-label">Home</span>
                 </button>
-                <button class="app-footer-tab" data-tab="library" onclick="footerTabClick('library')">
+                <button class="app-footer-tab" data-tab="class" onclick="footerTabClick('class')">
                     <span class="tab-emoji">📚</span>
-                    <span class="tab-label" data-key="library">Library</span>
+                    <span class="tab-label">My Class</span>
                 </button>
-                <button class="app-footer-tab" data-tab="contact" onclick="footerTabClick('contact')">
-                    <span class="tab-emoji">📞</span>
-                    <span class="tab-label" data-key="support">Support</span>
+                <button class="app-footer-tab" data-tab="books" onclick="footerTabClick('books')">
+                    <span class="tab-emoji">📖</span>
+                    <span class="tab-label">Books</span>
+                </button>
+                <button class="app-footer-tab" data-tab="profile" onclick="footerTabClick('profile')">
+                    <span class="tab-emoji">👤</span>
+                    <span class="tab-label">Profile</span>
                 </button>
                 <button class="app-footer-tab" data-tab="admin" id="adminTabBtn" onclick="footerTabClick('admin')" style="display:none;">
                     <span class="tab-emoji">⚙️</span>
@@ -1128,7 +988,6 @@ body {
         <div id="toast" class="toast"></div>
 
     </div>
-    <!-- ===== END appContent ===== -->
 
     <script>
         // ================================================================
@@ -1138,25 +997,16 @@ body {
         const SUPABASE_ANON_KEY = window.SUPABASE_CONFIG?.anonKey || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ndGxhZmZreWJwZXNheGFzdHZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTA4NTQsImV4cCI6MjA5NTM4Njg1NH0.toDw1_DsAjHjUuCg0hvRdEGyjA7mW2DJNlSWoVBT1qY';
         const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // ================================================================
-        // STATE MANAGEMENT
-        // ================================================================
         const AppState = {
-            userId: null,
-            isAdmin: false,
-            currentUser: null,
-            isLoggingOut: false,
-            authCheckDone: false,
-            lang: 'en',
-            pendingPrice: 600
+            userId: null, isAdmin: false, currentUser: null, isLoggingOut: false, authCheckDone: false, lang: 'en', pendingPrice: 600
         };
 
         // ================================================================
-        // TRANSLATIONS (ENGLISH & AMHARIC)
+        // TRANSLATIONS
         // ================================================================
         const translations = {
             en: {
-                home: "Home", library: "Library", support: "Support", consult_doctor: "Consult a Doctor",
+                home: "Home", class: "My Class", books: "Books", profile: "Profile", consult_doctor: "Consult a Doctor",
                 premium_feature: "Premium Feature", public_health: "Public Health Guides", free_access: "Free Access",
                 exit_exam: "Exit Exam", exit_desc: "University Prep", ngat_exam: "NGAT Exam", ngat_desc: "Past Papers",
                 ermp_exam: "ERMP Exam", ermp_desc: "Residency Prep", medical_vault: "Medical Vault",
@@ -1170,7 +1020,7 @@ body {
                 quick_actions: "Quick Actions", message: "Message on Telegram", support_desc: "For support, questions, or technical help."
             },
             am: {
-                home: "መነሻ", library: "ቤተ መጻሕፍት", support: "እገዛ", consult_doctor: "ሐኪም ያማክሩ",
+                home: "መነሻ", class: "ክፍሌ", books: "መጻሕፍት", profile: "መገለጫ", consult_doctor: "ሐኪም ያማክሩ",
                 premium_feature: "ፕሪሚየም አገልግሎት", public_health: "የህብረተሰብ ጤና መመሪያዎች", free_access: "ነጻ አገልግሎት",
                 exit_exam: "የመግቢያ ፈተና", exit_desc: "የዩኒቨርሲቲ ዝግጅት", ngat_exam: "NGAT ፈተና", ngat_desc: "የቀድሞ ፈተናዎች",
                 ermp_exam: "ERMP ፈተና", ermp_desc: "የረዚደንሲ ዝግጅት", medical_vault: "የህክምና መዝገብ ቤት",
@@ -1184,16 +1034,13 @@ body {
                 quick_actions: "ፈጣን ሥራዎች", message: "በቴሌግራም ላይ ይጻፉ", support_desc: "ለእገዛ ፣ ለጥያቄዎች ወይም ለቴክኒክ ችግሮች።"
             }
         };
-
         function t(key) { return translations[AppState.lang][key] || key; }
-
         function toggleLanguage() {
             AppState.lang = AppState.lang === 'en' ? 'am' : 'en';
             document.getElementById('langToggle').innerText = AppState.lang === 'en' ? '🇬🇧 EN' : '🇪🇹 አማ';
             translatePage();
             showToast(AppState.lang === 'en' ? 'Switched to English' : 'ወደ አማርኛ ተቀይሯል', 'info');
         }
-
         function translatePage() {
             document.querySelectorAll('[data-key]').forEach(el => {
                 if (t(el.dataset.key)) el.innerText = t(el.dataset.key);
@@ -1216,223 +1063,22 @@ body {
             setTimeout(() => t.classList.remove('show'), 3000);
         }
 
-        function showModal(id) {
-            document.querySelectorAll('.modal.active').forEach(m => m.classList.remove('active'));
-            const modal = document.getElementById(id);
-            if (modal) modal.classList.add('active');
-        }
-
-        function closeModal(id) {
-            const modal = document.getElementById(id);
-            if (modal) modal.classList.remove('active');
-        }
-
+        function showModal(id) { document.querySelectorAll('.modal.active').forEach(m => m.classList.remove('active'));
+            document.getElementById(id).classList.add('active'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
         function escapeHTML(str) { if (!str) return ''; return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 
         // ================================================================
-        // SEARCH FUNCTIONALITY
+        // SEARCH
         // ================================================================
         function handleSearch(event) {
             if(event.key === 'Enter') {
-                const query = document.getElementById('globalSearch').value.toLowerCase().trim();
-                if(!query) return showToast('Please type something to search.', 'info');
-                showToast(`Searching for "${query}"...`, 'info');
-                
-                if(query.includes('exit') || query.includes('exam')) openTabContent('exit');
-                else if(query.includes('ngat')) openTabContent('ngat');
-                else if(query.includes('ermp')) openTabContent('ermp');
-                else if(query.includes('medical') || query.includes('med') || query.includes('doctor')) openTabContent('medical');
-                else if(query.includes('health') || query.includes('disease') || query.includes('guide')) openTabContent('publichealth');
-                else if(query.includes('smart') || query.includes('note')) openTabContent('smartnotes');
-                else if(query.includes('consult') || query.includes('doctor')) openTabContent('consult');
-                else showToast('No direct match found. Showing Library.', 'info');
+                const q = document.getElementById('globalSearch').value.toLowerCase();
+                if(q.includes('class') || q.includes('exam')) openTabContent('class');
+                else if(q.includes('book')) openTabContent('books');
+                else showToast('No direct match found', 'info');
             }
         }
-
-        // ================================================================
-        // AUTHENTICATION
-        // ================================================================
-        async function checkSession() {
-            if (AppState.authCheckDone) return;
-            AppState.authCheckDone = true;
-
-            try {
-                const { data: { session }, error: sessionError } = await sb.auth.getSession();
-                if (sessionError) throw sessionError;
-
-                if (session?.user) {
-                    AppState.userId = session.user.id;
-                    const { data: userData } = await sb.from('users').select('is_admin').eq('user_id', AppState.userId).single();
-                    AppState.isAdmin = userData?.is_admin === true;
-                    
-                    document.getElementById('appContent').style.display = 'block';
-                    document.getElementById('loadingOverlay').style.display = 'none';
-                    
-                    if (AppState.isAdmin) {
-                        document.getElementById('adminTabBtn').style.display = 'flex';
-                    }
-                    updateUserMenu();
-                    loadNotifications();
-                } else {
-                    showAuthModal();
-                    document.getElementById('loadingOverlay').style.display = 'none';
-                }
-            } catch (err) {
-                console.error(err);
-                document.getElementById('loadingOverlay').style.display = 'none';
-                showAuthModal();
-            }
-        }
-
-        function showAuthModal() {
-            if (document.getElementById('authModal')) return;
-            let modalDiv = document.createElement('div');
-            modalDiv.id = 'authModal';
-            modalDiv.innerHTML = `
-                    <div class="modal-content">
-                        <div class="auth-header">
-                            <h2>📶 T-Hub</h2>
-                            <p>Education & Health Companion</p>
-                        </div>
-                        <div class="mode-switch">
-                            <button id="loginModeBtn" class="active" onclick="setAuthMode('login')">Login</button>
-                            <button id="registerModeBtn" onclick="setAuthMode('register')">Register</button>
-                        </div>
-                        <div id="authForm"></div>
-                    </div>
-                `;
-            document.body.appendChild(modalDiv);
-            setAuthMode('login');
-        }
-
-        function setAuthMode(mode) {
-            const container = document.getElementById('authForm');
-            if (!container) return;
-            const isLogin = mode === 'login';
-            document.getElementById('loginModeBtn').classList.toggle('active', isLogin);
-            document.getElementById('registerModeBtn').classList.toggle('active', !isLogin);
-
-            if (isLogin) {
-                container.innerHTML = `
-                        <input type="email" id="authEmail" placeholder="Email address">
-                        <div class="password-wrapper">
-                            <input type="password" id="authPassword" placeholder="Password">
-                            <button type="button" class="password-toggle" onclick="togglePasswordVisibility('authPassword', this)">👁️</button>
-                        </div>
-                        <button class="btn btn-success" onclick="login()">Sign In</button>
-                        <div class="or-divider">— or —</div>
-                        <button class="btn btn-google" onclick="signInWithGoogle()">🔐 Sign in with Google</button>
-                    `;
-            } else {
-                container.innerHTML = `
-                        <input type="email" id="authEmail" placeholder="Email address">
-                        <div class="password-wrapper">
-                            <input type="password" id="authPassword" placeholder="Password (min 6)">
-                            <button type="button" class="password-toggle" onclick="togglePasswordVisibility('authPassword', this)">👁️</button>
-                        </div>
-                        <div class="password-wrapper">
-                            <input type="password" id="authConfirmPassword" placeholder="Confirm Password">
-                            <button type="button" class="password-toggle" onclick="togglePasswordVisibility('authConfirmPassword', this)">👁️</button>
-                        </div>
-                        <button class="btn btn-success" onclick="register()">Create Account</button>
-                        <div class="or-divider">— or —</div>
-                        <button class="btn btn-google" onclick="signInWithGoogle()">🔐 Sign in with Google</button>
-                    `;
-            }
-        }
-
-        async function login() {
-            const email = document.getElementById('authEmail')?.value?.trim();
-            const password = document.getElementById('authPassword')?.value;
-            if (!email || !password) return showToast('Email and password required', 'error');
-            const { error } = await sb.auth.signInWithPassword({ email, password });
-            if (error) return showToast(error.message, 'error');
-            document.getElementById('authModal').remove();
-            showToast('Login successful!', 'success');
-            setTimeout(() => window.location.reload(), 1000);
-        }
-
-        async function register() {
-            const email = document.getElementById('authEmail')?.value?.trim();
-            const password = document.getElementById('authPassword')?.value;
-            const confirmPassword = document.getElementById('authConfirmPassword')?.value;
-            if (!email || !password) return showToast('Email and password required', 'error');
-            if (password.length < 6) return showToast('Password must be at least 6 characters', 'error');
-            if (password !== confirmPassword) return showToast('Passwords do not match', 'error');
-
-            const { error } = await sb.auth.signUp({ email, password });
-            if (error) return showToast(error.message, 'error');
-            showToast('Registration successful!', 'success');
-            document.getElementById('authModal').remove();
-            setTimeout(() => window.location.reload(), 1000);
-        }
-
-        async function signInWithGoogle() {
-            const { error } = await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.origin } });
-            if (error) showToast(error.message, 'error');
-        }
-
-        function togglePasswordVisibility(inputId, btn) {
-            const input = document.getElementById(inputId);
-            if (input.type === 'password') { input.type = 'text'; btn.textContent = '🙈'; } 
-            else { input.type = 'password'; btn.textContent = '👁️'; }
-        }
-
-        function updateUserMenu() {
-            const items = document.getElementById('dropdownItems');
-            if (!items) return;
-            if (AppState.userId) {
-                items.innerHTML = `<div onclick="logout()">🚪 Logout</div>`;
-            } else {
-                items.innerHTML = `<div onclick="showAuthModal()">🔐 Login</div>`;
-            }
-        }
-
-        async function logout() {
-            AppState.isLoggingOut = true;
-            await sb.auth.signOut();
-            localStorage.clear();
-            sessionStorage.clear();
-            window.location.reload();
-        }
-
-        // ================================================================
-        // NOTIFICATIONS
-        // ================================================================
-        async function loadNotifications() {
-            if (!AppState.userId) return;
-            const list = document.getElementById('notificationList');
-            const { data } = await sb.from('notifications').select('*').eq('user_id', AppState.userId).order('created_at', { ascending: false }).limit(20);
-            
-            if (!data || data.length === 0) {
-                list.innerHTML = `<div class="notification-empty">🔔 No notifications</div>`;
-                return;
-            }
-            list.innerHTML = data.map(n => `
-                <div class="notification-item ${n.is_read ? '' : 'unread'}">
-                    <div class="notif-title">${escapeHTML(n.title)}</div>
-                    <div class="notif-message">${escapeHTML(n.message)}</div>
-                </div>
-            `).join('');
-        }
-
-        function toggleNotificationDropdown(event) {
-            if (event) event.stopPropagation();
-            const dropdown = document.getElementById('notificationDropdown');
-            if(dropdown.style.display === 'block') {
-                dropdown.style.display = 'none';
-            } else {
-                dropdown.style.display = 'block';
-                loadNotifications();
-            }
-        }
-        document.addEventListener('click', function(e) {
-            const wrapper = document.getElementById('notificationBellWrapper');
-            const dropdown = document.getElementById('notificationDropdown');
-            if (wrapper && dropdown && !wrapper.contains(e.target) && !dropdown.contains(e.target)) {
-                dropdown.style.display = 'none';
-            }
-        });
 
         // ================================================================
         // NAVIGATION
@@ -1441,70 +1087,129 @@ body {
             document.getElementById('appHomeScreen').style.display = 'flex';
             document.getElementById('tabContentWrapper').classList.remove('active');
             document.getElementById('backButton').classList.remove('visible');
-            document.querySelectorAll('.footer-tab').forEach(t => t.classList.remove('active'));
-            document.querySelector('.footer-tab').classList.add('active');
+            document.querySelectorAll('.app-footer-tab').forEach(t => t.classList.remove('active'));
+            document.querySelector('[data-tab="home"]').classList.add('active');
         }
 
         function openTabContent(tabId) {
             document.getElementById('appHomeScreen').style.display = 'none';
             document.getElementById('tabContentWrapper').classList.add('active');
             document.getElementById('backButton').classList.add('visible');
-
             const container = document.getElementById('tabContentContainer');
-            let templateId = '';
-            switch(tabId) {
-                case 'exit': templateId = 'exit-exam'; break;
-                case 'ngat': templateId = 'ngat-exam'; break;
-                case 'ermp': templateId = 'ermp-exam'; break;
-                case 'medical': templateId = 'medical-resource'; break;
-                case 'smartnotes': templateId = 'smart-notes'; break;
-                case 'publichealth': templateId = 'public-health'; break;
-                case 'consult': templateId = 'consult'; break;
-                case 'admin': templateId = 'admin'; break;
-                case 'contact': templateId = 'contact'; break;
-                default: return;
-            }
+            let id = '';
+            if(tabId === 'class') id = 'my-class';
+            else if(tabId === 'books') id = 'medical-books';
+            else if(tabId === 'profile') id = 'profile';
+            else if(tabId === 'admin') id = 'admin';
+            else if(tabId === 'consult') id = 'consult';
+            else if(tabId === 'contact') id = 'contact';
+            else return;
 
-            // ADMIN BYPASS LOGIC: If Admin, bypass payment check
-            if (AppState.isAdmin) {
-                const template = document.getElementById(templateId);
-                if (template) {
-                    container.innerHTML = template.outerHTML;
-                    if (tabId === 'admin' && AppState.isAdmin) loadAdminPanel();
-                    translatePage();
-                }
-                return;
-            }
-
-            // PAYMENT CHECK LOGIC: If not Admin, check Premium
-            if (tabId === 'exit' || tabId === 'ngat' || tabId === 'ermp' || tabId === 'medical' || tabId === 'smartnotes' || tabId === 'consult') {
-                // Placeholder for CheckPremium Logic (Replace with real DB check later)
-                const isPremium = false; // Simulated for demo
-                if (!isPremium) {
-                    AppState.pendingPrice = 600; // Default price
-                    document.getElementById('payAmount').innerText = AppState.pendingPrice + ' ETB';
-                    document.getElementById('modalPrice').innerText = AppState.pendingPrice + ' ETB';
-                    return showModal('depositModal');
-                }
-            }
-
-            const template = document.getElementById(templateId);
-            if (template) {
-                container.innerHTML = template.outerHTML;
-                if (tabId === 'admin' && AppState.isAdmin) loadAdminPanel();
-                translatePage();
-            }
+            const template = document.getElementById(id);
+            if(template) container.innerHTML = template.outerHTML;
+            if(tabId === 'admin') loadAdminPanel();
+            translatePage();
         }
 
         function footerTabClick(tabId) {
             document.querySelectorAll('.app-footer-tab').forEach(t => t.classList.remove('active'));
             const btn = document.querySelector(`[data-tab="${tabId}"]`);
-            if (btn) btn.classList.add('active');
+            if(btn) btn.classList.add('active');
+            if(tabId === 'home') return goToHome();
+            openTabContent(tabId);
+        }
 
-            if (tabId === 'home') return goToHome();
-            if (tabId === 'library') return openTabContent('library-main');
-            if (tabId === 'contact') return openTabContent('contact');
-            if (tabId === 'admin') return openTabContent('admin');
+        // ================================================================
+        // MY CLASS TABS
+        // ================================================================
+        function switchClassTab(tabId, btn) {
+            document.querySelectorAll('.class-tab').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+            document.querySelectorAll('.class-content').forEach(c => c.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        let examMode = 'study';
+        function toggleExamMode() {
+            const btn = document.getElementById('examModeBtn');
+            if(examMode === 'study') { examMode = 'exam';
+                btn.innerText = '🚫 Exam Mode';
+                btn.className = 'toggle-btn exam';
+                showToast('🔒 Exam Mode locked. Answers hidden.', 'info'); } 
+            else { examMode = 'study';
+                btn.innerText = '📖 Study Mode';
+                btn.className = 'toggle-btn study';
+                showToast('📖 Study Mode activated.', 'info'); }
+        }
+
+        // ================================================================
+        // AUTHENTICATION
+        // ================================================================
+        async function checkSession() {
+            if (AppState.authCheckDone) return;
+            AppState.authCheckDone = true;
+            try {
+                const { data: { session } } = await sb.auth.getSession();
+                if (session?.user) {
+                    AppState.userId = session.user.id;
+                    const { data: userData } = await sb.from('users').select('is_admin').eq('user_id', AppState.userId).single();
+                    AppState.isAdmin = userData?.is_admin === true;
+                    document.getElementById('appContent').style.display = 'block';
+                    document.getElementById('loadingOverlay').style.display = 'none';
+                    if (AppState.isAdmin) document.getElementById('adminTabBtn').style.display = 'flex';
+                    document.getElementById('welcomeText').innerText = `👋 Welcome back, ${session.user.email.split('@')[0]}!`;
+                    document.getElementById('profileName').innerText = session.user.email.split('@')[0];
+                    document.getElementById('profileEmail').innerText = session.user.email;
+                } else { showAuthModal();
+                    document.getElementById('loadingOverlay').style.display = 'none'; }
+            } catch (err) { console.error(err);
+                document.getElementById('loadingOverlay').style.display = 'none';
+                showAuthModal(); }
+        }
+
+        function showAuthModal() {
+            if (document.getElementById('authModal')) return;
+            let m = document.createElement('div');
+            m.id = 'authModal';
+            m.innerHTML = `
+                <div class="modal-content">
+                    <h3 style="color:var(--navy);">📶 T-Hub</h3>
+                    <p style="color:var(--text-muted); margin-bottom:15px;">Medical Education Ecosystem</p>
+                    <input type="email" id="authEmail" placeholder="Email">
+                    <input type="password" id="authPassword" placeholder="Password">
+                    <button class="btn" onclick="login()">Sign In</button>
+                    <button class="btn btn-teal" onclick="register()">Create Account</button>
+                </div>
+            `;
+            document.body.appendChild(m);
+        }
+
+        async function login() {
+            const email = document.getElementById('authEmail')?.value;
+            const password = document.getElementById('authPassword')?.value;
+            if (!email || !password) return showToast('Email and password required', 'error');
+            const { error } = await sb.auth.signInWithPassword({ email, password });
+            if (error) return showToast(error.message, 'error');
+            document.getElementById('authModal').remove();
+            window.location.reload();
+        }
+
+        async function register() {
+            const email = document.getElementById('authEmail')?.value;
+            const password = document.getElementById('authPassword')?.value;
+            if (!email || !password) return showToast('Email and password required', 'error');
+            if (password.length < 6) return showToast('Password must be at least 6 characters', 'error');
+            const { error } = await sb.auth.signUp({ email, password });
+            if (error) return showToast(error.message, 'error');
+            showToast('Account created! Redirecting...', 'success');
+            document.getElementById('authModal').remove();
+            window.location.reload();
+        }
+
+        async function logout() {
+            AppState.isLoggingOut = true;
+            await sb.auth.signOut();
+            window.location.reload();
         }
 
         // ================================================================
@@ -1520,10 +1225,6 @@ body {
             const tx = document.getElementById('payTxId').value;
             const file = document.getElementById('payReceipt').files[0];
             if (!tx || !file) return showToast('Please fill all fields', 'error');
-
-            // Simulated saving to Supabase
-            // await sb.from('premium_requests').insert({ user_id: AppState.userId, transaction_id: tx, ... });
-
             showToast('✅ Request submitted! Admin will verify shortly.', 'success');
             closeModal('paymentModal');
             document.getElementById('payTxId').value = '';
@@ -1537,16 +1238,12 @@ body {
             const name = document.getElementById('cName').value;
             const complaint = document.getElementById('cComplaint').value;
             if (!name || !complaint) return showToast('Please fill in Name and Complaint', 'error');
-
-            // Simulated saving to Supabase
-            // await sb.from('consultation_requests').insert({ user_id: AppState.userId, patient_name: name, ... });
-
             showToast('✅ Consultation sent! You will receive a reply in 24-48 hours.', 'success');
             closeModal('consultModal');
         }
 
         // ================================================================
-        // ADMIN PANEL (Full Management)
+        // ADMIN PANEL
         // ================================================================
         async function loadAdminPanel() {
             const container = document.getElementById('tabContentContainer');
@@ -1554,32 +1251,25 @@ body {
                 container.innerHTML = '<div class="card"><h3>⛔ Access Denied</h3><p>Admin only.</p></div>';
                 return;
             }
-
             container.innerHTML = `
                 <div class="card"><h3>⚙️ T-Hub Admin Panel</h3>
                     <p style="color:var(--text-muted); margin-bottom:15px;">Manage content, payments, pricing, and consultations.</p>
                 </div>
-
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-bottom:20px;">
-                    <div class="card" style="cursor:pointer; text-align:center;" onclick="adminAction('📂 Upload Files', 'Upload new PDFs for Exit, NGAT, ERMP, Medical, and Smart Notes.')">
+                    <div class="card" style="cursor:pointer; text-align:center;" onclick="adminAction('📂 Upload Files', 'Upload new PDFs for Exams, Books, and Smart Notes.')">
                         <div style="font-size:32px;">📂</div>
                         <h4>Upload Files</h4>
-                        <p style="font-size:13px; color:var(--text-muted);">Add new PDF exams & resources</p>
+                        <p style="font-size:13px; color:var(--text-muted);">Add new PDF resources</p>
                     </div>
-                    <div class="card" style="cursor:pointer; text-align:center;" onclick="adminAction('🧠 Smart Notes', 'Upload brief, clear medical notes for residents and doctors.')">
-                        <div style="font-size:32px;">🧠</div>
-                        <h4>Smart Notes</h4>
-                        <p style="font-size:13px; color:var(--text-muted);">Manage premium short notes</p>
-                    </div>
-                    <div class="card" style="cursor:pointer; text-align:center;" onclick="adminAction('💳 Payment Settings', 'Update Telebirr and Bank account details.')">
-                        <div style="font-size:32px;">💳</div>
-                        <h4>Payment Settings</h4>
-                        <p style="font-size:13px; color:var(--text-muted);">Change payment numbers</p>
+                    <div class="card" style="cursor:pointer; text-align:center;" onclick="adminAction('📝 Mock Exam', 'Create a new digital multiple-choice exam for students.')">
+                        <div style="font-size:32px;">📝</div>
+                        <h4>Mock Exam</h4>
+                        <p style="font-size:13px; color:var(--text-muted);">Build digital tests</p>
                     </div>
                     <div class="card" style="cursor:pointer; text-align:center;" onclick="showPricingPanel()">
                         <div style="font-size:32px;">💰</div>
                         <h4>Set Prices</h4>
-                        <p style="font-size:13px; color:var(--text-muted);">Set price per tile (Default 600 ETB)</p>
+                        <p style="font-size:13px; color:var(--text-muted);">Set price per item (Default 600 ETB)</p>
                     </div>
                     <div class="card" style="cursor:pointer; text-align:center;" onclick="viewConsultations()">
                         <div style="font-size:32px;">📋</div>
@@ -1620,12 +1310,8 @@ body {
             const container = document.getElementById('tabContentContainer');
             container.innerHTML = `
                 <div class="card">
-                    <h3>💰 Dynamic Pricing (Set price per tile)</h3>
-                    <div class="form-group"><label>Exit Exam (ETB)</label><input type="number" id="price_exit" value="600"></div>
-                    <div class="form-group"><label>NGAT Exam (ETB)</label><input type="number" id="price_ngat" value="600"></div>
-                    <div class="form-group"><label>ERMP Exam (ETB)</label><input type="number" id="price_ermp" value="600"></div>
-                    <div class="form-group"><label>Medical Vault (ETB)</label><input type="number" id="price_medical" value="600"></div>
-                    <div class="form-group"><label>Smart Notes (ETB)</label><input type="number" id="price_smartnotes" value="600"></div>
+                    <h3>💰 Dynamic Pricing</h3>
+                    <div class="form-group"><label>Premium Subscription (ETB)</label><input type="number" id="price_premium" value="600"></div>
                     <button class="btn btn-teal" onclick="savePrices()">💾 Save Prices</button>
                     <button class="btn" onclick="loadAdminPanel()">← Back to Admin</button>
                 </div>
