@@ -260,8 +260,12 @@
                         <span id="notificationBadge" class="notification-badge">0</span>
                         <div class="notification-dropdown" id="notificationDropdown"><div id="notificationList"><div class="notification-empty">No notifications</div></div></div>
                     </div>
-                    <div class="profile-avatar" id="profileAvatar"><img loading="lazy" id="profileImage" src="https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app-assets/1780156694418.png" alt="T-Hub"></div>
-                    <div class="dropdown-menu" id="dropdownMenu"><div id="dropdownItems"></div></div>
+                    <div class="profile-avatar" id="profileAvatar">
+                        <img loading="lazy" id="profileImage" src="https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app-assets/1780156694418.png" alt="T-Hub">
+                    </div>
+                    <div class="dropdown-menu" id="dropdownMenu">
+                        <div id="dropdownItems"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -299,6 +303,7 @@
             <button class="back-button" id="backButton" onclick="goToHome()">← Home</button>
             <div id="tabContentContainer" class="tab-scroll-area"></div>
         </div>
+
         <!-- HIDDEN TEMPLATES -->
         <div style="display:none;">
 
@@ -309,13 +314,15 @@
                     <button class="live-btn" onclick="showToast('🔴 Live class starting soon!', 'info')"><i class="fas fa-circle" style="font-size:8px; margin-right:4px;"></i> Live</button>
                 </div>
                 
-                <!-- APPEAL BANNER (For unverified users) -->
+                <!-- APPEAL BANNER (Hidden for Admin) -->
                 <div id="appealBanner" style="background:var(--navy); border-radius:var(--border-radius-card); padding:16px 20px; margin-bottom:16px; display:flex; align-items:center; justify-content:space-between; width:100%; border:2px solid var(--gold);">
                     <div>
                         <h4 style="color:var(--gold); font-size:16px; font-weight:800;">👑 Want to become a Verified Teacher?</h4>
                         <p style="color:rgba(255,255,255,0.8); font-size:13px;">Start your application to create your own class.</p>
                     </div>
-                    <button class="btn" style="width:auto; padding:4px 16px; font-size:12px; margin:0; background:var(--gold); color:var(--text-dark);" onclick="showModal('appealModal')">📝 Apply Now</button>
+                    <div id="appealBtnContainer">
+                        <button class="btn" style="width:auto; padding:4px 16px; font-size:12px; margin:0; background:var(--gold); color:var(--text-dark);" onclick="showModal('appealModal')">📝 Apply Now</button>
+                    </div>
                 </div>
 
                 <!-- CREATE GROUP BUTTON (Only for verified teachers) -->
@@ -560,75 +567,87 @@
 
         const AppState = { userId: null, isAdmin: false, isTeacher: false, currentUser: null, isLoggingOut: false, authCheckDone: false, lang: 'en', pendingPrice: 600 };
 
-// ================================================================
-// TRANSLATIONS
-// ================================================================
-const translations = {
-    en: {
-        home: "Home", class: "My Class", books: "Books", job: "Job", research: "Research",
-        welcome_title: "Welcome back!", welcome_desc: "Your medical education ecosystem",
-        go_to_class: "Go to Class", trending: "Trending Content", 
-        live: "Live", apply_now: "Apply Now", become_teacher: "Want to become a Verified Teacher?",
-        start_application: "Start your application to create your own class.",
-        create_group: "Create New Group", join_class: "Join Class", joined: "Joined",
-        followers: "Followers", online: "Online", public: "Public", private: "Private",
-        video: "Video", ppt: "PPT", mock_exam: "Mock Exam", settings: "Settings",
-        go_live: "Go Live", invite: "Invite people to join", add_file: "Add file/content",
-        delete_file: "Delete selected files", boost: "Boost group (Coins)", wallet: "Wallet",
-        delete_group: "Delete group", exam_submitted: "Exam submitted! Score: 100%",
-        study_mode: "Study Mode", exam_mode: "Exam Mode", 
-        books_title: "Books", medical_books: "Medical Books", fiction: "Fiction", other: "Other Categories",
-        buy_now: "Buy Now", job_vacancies: "Job Vacancies", apply_now_job: "Apply Now",
-        research_journals: "Research Journals", free: "Free", premium: "Premium",
-        profile: "Profile", premium_sub: "Premium: 600 ETB/month", logout: "Logout",
-        admin_panel: "Admin Panel", upload_files: "Upload Files", mock_exam_mgmt: "Mock Exam",
-        verify_teachers: "Verify Teachers", set_prices: "Set Prices", consultations: "Consultations",
-        analytics: "Analytics", subscription: "Premium Subscription", subscribe: "Subscribe Now",
-        send_payment: "Send Payment", transaction_id: "Transaction ID", submit_approval: "Submit for Approval",
-        apply_job_form: "Apply for Job", submit_application: "Submit Application",
-        comment: "Comment", share: "Share", post_comment: "Post Comment",
-        apply_creator: "Apply to Become a Verified Creator", submit_review: "Submit for Review",
-        create_new_group: "Create a New Class Group", group_name: "Group Name", 
-        group_desc: "Group Description", group_type: "Group Type", group_purpose: "Group Purpose",
-        teaching_class: "Teaching Class (Video, PPT, Mock Exam)", social_network: "Social Network (Text posts & Links only)",
-        upload_national_id: "Upload National ID", select_profession: "Select Profession",
-        upload_certificate: "Upload Certificate", select_university: "Select Graduated University",
-        wallet_title: "Group & Owner Wallet", balance: "Balance", withdraw: "Withdraw",
-        buy_coins: "Buy More Coins"
-    },
-    am: {
-        home: "መነሻ", class: "ክፍሌ", books: "መጻሕፍት", job: "ሥራ", research: "ምርምር",
-        welcome_title: "እንኳን ደህና መጡ!", welcome_desc: "የእርስዎ የህክምና ትምህርት ስነ-ምህዳር",
-        go_to_class: "ወደ ክፍል ይሂዱ", trending: "ተወዳጅ ይዘት", 
-        live: "ቀጥታ ስርጭት", apply_now: "አሁኑኑ ይተግብሩ", become_teacher: "የተረጋገጠ መምህር መሆን ይፈልጋሉ?",
-        start_application: "የራስዎን ክፍል ለመፍጠር ማመልከቻዎን ይጀምሩ",
-        create_group: "አዲስ ቡድን ይፍጠሩ", join_class: "ክፍል ይቀላቀሉ", joined: "ተቀላቅለዋል",
-        followers: "ተከታዮች", online: "ኦንላይን", public: "ህዝባዊ", private: "የግል",
-        video: "ቪዲዮ", ppt: "ፒፒቲ", mock_exam: "የሙከራ ፈተና", settings: "ቅንብሮች",
-        go_live: "ቀጥታ ስርጭት ይሂዱ", invite: "ሰዎችን ይጋብዙ", add_file: "ፋይል/ይዘት ይጨምሩ",
-        delete_file: "የተመረጡ ፋይሎች ይሰርዙ", boost: "ቡድን ያሳድጉ (ሳንቲም)", wallet: "ኪስ ቦርሳ",
-        delete_group: "ቡድን ይሰርዙ", exam_submitted: "ፈተናው ተልኳል! ውጤት: 100%",
-        study_mode: "የጥናት ሁኔታ", exam_mode: "የፈተና ሁኔታ", 
-        books_title: "መጻሕፍት", medical_books: "የህክምና መጻሕፍት", fiction: "ልቦለድ", other: "ሌሎች ምድቦች",
-        buy_now: "አሁኑኑ ይግዙ", job_vacancies: "የሥራ እድሎች", apply_now_job: "አሁኑኑ ይተግብሩ",
-        research_journals: "የምርምር መጽሔቶች", free: "ነጻ", premium: "ፕሪሚየም",
-        profile: "መገለጫ", premium_sub: "ፕሪሚየም: 600 ETB/በወር", logout: "ውጣ",
-        admin_panel: "የአስተዳዳሪ ፓነል", upload_files: "ፋይሎች ይስቀሉ", mock_exam_mgmt: "የሙከራ ፈተና",
-        verify_teachers: "መምህራን ያረጋግጡ", set_prices: "ዋጋ ያዘጋጁ", consultations: "ምክክር",
-        analytics: "ትንተና", subscription: "ፕሪሚየም ምዝገባ", subscribe: "አሁኑኑ ይመዝገቡ",
-        send_payment: "ክፍያ ይላኩ", transaction_id: "የግብይት መለያ", submit_approval: "ለማጽደቅ ይላኩ",
-        apply_job_form: "ለሥራ ይተግብሩ", submit_application: "መጠይቅ ይላኩ",
-        comment: "አስተያየት", share: "ያጋሩ", post_comment: "አስተያየት ይለጥፉ",
-        apply_creator: "የተረጋገጠ ፈጣሪ ለመሆን ያመልክቱ", submit_review: "ለግምገማ ያስገቡ",
-        create_new_group: "አዲስ የክፍል ቡድን ይፍጠሩ", group_name: "የቡድን ስም", 
-        group_desc: "የቡድን መግለጫ", group_type: "የቡድን አይነት", group_purpose: "የቡድን ዓላማ",
-        teaching_class: "የማስተማሪያ ክፍል (ቪዲዮ፣ ፒፒቲ፣ ሙከራ ፈተና)", social_network: "ማህበራዊ አውታር (ጽሑፍ እና አገናኞች ብቻ)",
-        upload_national_id: "ብሄራዊ መታወቂያ ይስቀሉ", select_profession: "ሙያ ይምረጡ",
-        upload_certificate: "የምስክር ወረቀት ይስቀሉ", select_university: "የተመረቁበት ዩኒቨርሲቲ ይምረጡ",
-        wallet_title: "የቡድን እና የባለቤት ኪስ ቦርሳ", balance: "ቀሪ ሂሳብ", withdraw: "አውጣ",
-        buy_coins: "ተጨማሪ ሳንቲም ይግዙ"
-    }
-};
+        // ================================================================
+        // TRANSLATIONS
+        // ================================================================
+        const translations = {
+            en: {
+                home: "Home", class: "My Class", books: "Books", job: "Job", research: "Research",
+                welcome_title: "Welcome back!", welcome_desc: "Your medical education ecosystem",
+                go_to_class: "Go to Class", trending: "Trending Content", 
+                live: "Live", apply_now: "Apply Now", become_teacher: "Want to become a Verified Teacher?",
+                start_application: "Start your application to create your own class.",
+                create_group: "Create New Group", join_class: "Join Class", joined: "Joined",
+                followers: "Followers", online: "Online", public: "Public", private: "Private",
+                video: "Video", ppt: "PPT", mock_exam: "Mock Exam", settings: "Settings",
+                go_live: "Go Live", invite: "Invite people to join", add_file: "Add file/content",
+                delete_file: "Delete selected files", boost: "Boost group (Coins)", wallet: "Wallet",
+                delete_group: "Delete group", exam_submitted: "Exam submitted! Score: 100%",
+                study_mode: "Study Mode", exam_mode: "Exam Mode", 
+                books_title: "Books", medical_books: "Medical Books", fiction: "Fiction", other: "Other Categories",
+                buy_now: "Buy Now", job_vacancies: "Job Vacancies", apply_now_job: "Apply Now",
+                research_journals: "Research Journals", free: "Free", premium: "Premium",
+                profile: "Profile", premium_sub: "Premium: 600 ETB/month", logout: "Logout",
+                admin_panel: "Admin Panel", upload_files: "Upload Files", mock_exam_mgmt: "Mock Exam",
+                verify_teachers: "Verify Teachers", set_prices: "Set Prices", consultations: "Consultations",
+                analytics: "Analytics", subscription: "Premium Subscription", subscribe: "Subscribe Now",
+                send_payment: "Send Payment", transaction_id: "Transaction ID", submit_approval: "Submit for Approval",
+                apply_job_form: "Apply for Job", submit_application: "Submit Application",
+                comment: "Comment", share: "Share", post_comment: "Post Comment",
+                apply_creator: "Apply to Become a Verified Creator", submit_review: "Submit for Review",
+                create_new_group: "Create a New Class Group", group_name: "Group Name", 
+                group_desc: "Group Description", group_type: "Group Type", group_purpose: "Group Purpose",
+                teaching_class: "Teaching Class (Video, PPT, Mock Exam)", social_network: "Social Network (Text posts & Links only)",
+                upload_national_id: "Upload National ID", select_profession: "Select Profession",
+                upload_certificate: "Upload Certificate", select_university: "Select Graduated University",
+                wallet_title: "Group & Owner Wallet", balance: "Balance", withdraw: "Withdraw",
+                buy_coins: "Buy More Coins"
+            },
+            am: {
+                home: "መነሻ", class: "ክፍሌ", books: "መጻሕፍት", job: "ሥራ", research: "ምርምር",
+                welcome_title: "እንኳን ደህና መጡ!", welcome_desc: "የእርስዎ የህክምና ትምህርት ስነ-ምህዳር",
+                go_to_class: "ወደ ክፍል ይሂዱ", trending: "ተወዳጅ ይዘት", 
+                live: "ቀጥታ ስርጭት", apply_now: "አሁኑኑ ይተግብሩ", become_teacher: "የተረጋገጠ መምህር መሆን ይፈልጋሉ?",
+                start_application: "የራስዎን ክፍል ለመፍጠር ማመልከቻዎን ይጀምሩ",
+                create_group: "አዲስ ቡድን ይፍጠሩ", join_class: "ክፍል ይቀላቀሉ", joined: "ተቀላቅለዋል",
+                followers: "ተከታዮች", online: "ኦንላይን", public: "ህዝባዊ", private: "የግል",
+                video: "ቪዲዮ", ppt: "ፒፒቲ", mock_exam: "የሙከራ ፈተና", settings: "ቅንብሮች",
+                go_live: "ቀጥታ ስርጭት ይሂዱ", invite: "ሰዎችን ይጋብዙ", add_file: "ፋይል/ይዘት ይጨምሩ",
+                delete_file: "የተመረጡ ፋይሎች ይሰርዙ", boost: "ቡድን ያሳድጉ (ሳንቲም)", wallet: "ኪስ ቦርሳ",
+                delete_group: "ቡድን ይሰርዙ", exam_submitted: "ፈተናው ተልኳል! ውጤት: 100%",
+                study_mode: "የጥናት ሁኔታ", exam_mode: "የፈተና ሁኔታ", 
+                books_title: "መጻሕፍት", medical_books: "የህክምና መጻሕፍት", fiction: "ልቦለድ", other: "ሌሎች ምድቦች",
+                buy_now: "አሁኑኑ ይግዙ", job_vacancies: "የሥራ እድሎች", apply_now_job: "አሁኑኑ ይተግብሩ",
+                research_journals: "የምርምር መጽሔቶች", free: "ነጻ", premium: "ፕሪሚየም",
+                profile: "መገለጫ", premium_sub: "ፕሪሚየም: 600 ETB/በወር", logout: "ውጣ",
+                admin_panel: "የአስተዳዳሪ ፓነል", upload_files: "ፋይሎች ይስቀሉ", mock_exam_mgmt: "የሙከራ ፈተና",
+                verify_teachers: "መምህራን ያረጋግጡ", set_prices: "ዋጋ ያዘጋጁ", consultations: "ምክክር",
+                analytics: "ትንተና", subscription: "ፕሪሚየም ምዝገባ", subscribe: "አሁኑኑ ይመዝገቡ",
+                send_payment: "ክፍያ ይላኩ", transaction_id: "የግብይት መለያ", submit_approval: "ለማጽደቅ ይላኩ",
+                apply_job_form: "ለሥራ ይተግብሩ", submit_application: "መጠይቅ ይላኩ",
+                comment: "አስተያየት", share: "ያጋሩ", post_comment: "አስተያየት ይለጥፉ",
+                apply_creator: "የተረጋገጠ ፈጣሪ ለመሆን ያመልክቱ", submit_review: "ለግምገማ ያስገቡ",
+                create_new_group: "አዲስ የክፍል ቡድን ይፍጠሩ", group_name: "የቡድን ስም", 
+                group_desc: "የቡድን መግለጫ", group_type: "የቡድን አይነት", group_purpose: "የቡድን ዓላማ",
+                teaching_class: "የማስተማሪያ ክፍል (ቪዲዮ፣ ፒፒቲ፣ ሙከራ ፈተና)", social_network: "ማህበራዊ አውታር (ጽሑፍ እና አገናኞች ብቻ)",
+                upload_national_id: "ብሄራዊ መታወቂያ ይስቀሉ", select_profession: "ሙያ ይምረጡ",
+                upload_certificate: "የምስክር ወረቀት ይስቀሉ", select_university: "የተመረቁበት ዩኒቨርሲቲ ይምረጡ",
+                wallet_title: "የቡድን እና የባለቤት ኪስ ቦርሳ", balance: "ቀሪ ሂሳብ", withdraw: "አውጣ",
+                buy_coins: "ተጨማሪ ሳንቲም ይግዙ"
+            }
+        };
+
+        function t(key) { return translations[AppState.lang][key] || key; }
+
+        function toggleLanguage() {
+            AppState.lang = AppState.lang === 'en' ? 'am' : 'en';
+            document.getElementById('langToggle').innerText = AppState.lang === 'en' ? '🇬🇧 EN' : '🇪🇹 አማ';
+            translatePage();
+            showToast(AppState.lang === 'en' ? 'Switched to English' : 'ወደ አማርኛ ተቀይሯል', 'info');
+        }
+        function translatePage() {
+            document.querySelectorAll('[data-key]').forEach(el => { if (t(el.dataset.key)) el.innerText = t(el.dataset.key); });
+        }
 
         // ================================================================
         // UTILITY FUNCTIONS
@@ -817,15 +836,38 @@ const translations = {
                 if (session?.user) {
                     AppState.userId = session.user.id;
                     const { data: userData } = await sb.from('users').select('is_admin, is_teacher').eq('user_id', AppState.userId).single();
-                    AppState.isAdmin = userData?.is_admin === true;
-                    AppState.isTeacher = userData?.is_teacher === true;
+                    
+                    // ✅ FIX: Admin hardcoded bypass if database hasn't updated yet
+                    if (session.user.email === 'drtesfayekebede@gmail.com') {
+                        AppState.isAdmin = true;
+                        AppState.isTeacher = true;
+                    } else {
+                        AppState.isAdmin = userData?.is_admin === true;
+                        AppState.isTeacher = userData?.is_teacher === true;
+                    }
+                    
                     document.getElementById('appContent').style.display = 'flex';
                     document.getElementById('loadingOverlay').style.display = 'none';
-                    if (AppState.isAdmin) document.getElementById('adminTabBtn').style.display = 'flex';
-                    if (AppState.isTeacher) document.getElementById('createGroupBtn').style.display = 'block';
+                    
+                    if (AppState.isAdmin) {
+                        document.getElementById('adminTabBtn').style.display = 'flex';
+                        document.getElementById('appealBtnContainer').style.display = 'none'; // Hide Appeal banner
+                    }
+                    
+                    if (AppState.isTeacher || AppState.isAdmin) {
+                        document.getElementById('createGroupBtn').style.display = 'block';
+                    }
+                    
                     document.getElementById('welcomeText').innerText = `👋 Welcome back, ${session.user.email.split('@')[0]}!`;
                     document.getElementById('profileName').innerText = session.user.email.split('@')[0];
                     document.getElementById('profileEmail').innerText = session.user.email;
+                    
+                    // ✅ FIX: Manually populate the profile dropdown
+                    document.getElementById('dropdownItems').innerHTML = `
+                        <div onclick="openTabContent('profile')">👤 Profile</div>
+                        <div onclick="logout()">🚪 Logout</div>
+                    `;
+                    
                 } else { showAuthModal();
                     document.getElementById('loadingOverlay').style.display = 'none'; }
             } catch (err) { console.error(err);
