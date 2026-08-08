@@ -715,7 +715,7 @@
             document.querySelector('[data-tab="home"]').classList.add('active');
         }
 
-        function openTabContent(tabId) {
+        function openTabContent(tabId, specificGroupId = null) {
             document.getElementById('appMain').style.display = 'none';
             document.getElementById('tabContentWrapper').classList.add('active');
             document.getElementById('backButton').classList.add('visible');
@@ -727,6 +727,7 @@
             else if (tabId === 'research') id = 'research-tab';
             else if (tabId === 'profile') id = 'profile-tab';
             else if (tabId === 'admin') id = 'admin-tab';
+            else if (tabId === 'group-feed') id = 'group-feed';
             else return;
             
             const template = document.getElementById(id);
@@ -734,14 +735,14 @@
             if (tabId === 'admin') loadAdminPanel();
             translatePage();
 
-            // NEW: RENDER USER GROUPS IF THEY EXIST
+            // RENDER USER GROUPS IF THEY EXIST
             if (tabId === 'class') {
                 const containerDiv = document.getElementById('myGroupsContainer');
                 if (AppState.groups && AppState.groups.length > 0) {
                     let html = `<div class="join-header"><h2>📂 My Groups</h2></div>`;
                     AppState.groups.forEach(group => {
                         html += `
-                            <div class="teacher-card" onclick="openTabContent('group-feed')" style="cursor:pointer;">
+                            <div class="teacher-card" onclick="openTabContent('group-feed', ${group.id})" style="cursor:pointer;">
                                 <div class="info">
                                     <div class="name">${group.name} <span class="verified-badge">✓</span></div>
                                     <div class="spec">👥 0 Followers • ${group.group_type}</div>
@@ -753,6 +754,17 @@
                     containerDiv.innerHTML = html;
                 } else {
                     containerDiv.innerHTML = '';
+                }
+            }
+
+            // 📌 NEW: If opening a specific group feed, load its data
+            if (tabId === 'group-feed' && specificGroupId) {
+                const group = AppState.groups.find(g => g.id === specificGroupId);
+                if (group) {
+                    // Update the banner inside the group-feed template to reflect this group
+                    document.querySelector('#group-feed .group-banner h3').innerText = group.name;
+                    document.querySelector('#group-feed .group-banner .stats span:first-child').innerText = group.followers || 0;
+                    document.querySelector('#group-feed .group-banner .stats span:last-child').innerText = group.online || 0;
                 }
             }
         }
@@ -984,41 +996,80 @@ async function createGroup() {
                 if (session?.user) {
                     AppState.userId = session.user.id;
                     
-                    // Simulate fetching data from Supabase
-                    AppState.isAdmin = session.user.email === 'drtesfayekebede@gmail.com';
-                    AppState.isTeacher = AppState.isAdmin;
-                    
-                    // Simulated user data
-                    AppState.coinBalance = 8500;
-                    AppState.groups = []; 
-                    // To test the dropdown, add a group here:
-                    // AppState.groups = [{ id: 1, purpose: 'teaching' }]; 
+                    // 1. Fetch the user's role and coin balance from the database
+                    const { data: userData, error: userError } = await sb
+                        .from('users')
+                        .select('is_admin, is_teacher, coin_balance')
+                        .eq('user_id', AppState.userId)
+                        .single();
 
+                    if (userError) {
+                        console.warn("User data not found in database. Maybe a new user?");
+                        // Set defaults if they are brand new
+                        AppState.isAdmin = false;
+                        AppState.isTeacher = false;
+                        AppState.coinBalance = 0;
+                    } else {
+                        // Set the data from the database
+                        AppState.isAdmin = userData.is_admin === true;
+                        AppState.isTeacher = userData.is_teacher === true;
+                        AppState.coinBalance = userData.coin_balance || 0;
+                    }
+
+                    // 2. ADMIN HARDCODED BYPASS (Kept for you so you always have Admin rights)
+                    if (session.user.email === 'drtesfayekebede@gmail.com') {
+                        AppState.isAdmin = true;
+                        AppState.isTeacher = true;
+                    }
+                    
+                    // 3. Fetch the actual groups created by this user
+                    const { data: groupData, error: groupError } = await sb
+                        .from('groups')
+                        .select('*')
+                        .eq('owner_id', AppState.userId);
+
+                    if (!groupError && groupData) {
+                        AppState.groups = groupData;
+                    } else {
+                        AppState.groups = [];
+                    }
+
+                    // 4. Show the app and hide the loader
                     document.getElementById('appContent').style.display = 'flex';
                     document.getElementById('loadingOverlay').style.display = 'none';
                     
+                    // 5. Show Admin/Teacher UI elements
                     if (AppState.isAdmin) {
                         document.getElementById('adminTabBtn').style.display = 'flex';
                         document.getElementById('appealBtnContainer').style.display = 'none';
                         document.getElementById('createGroupBtn').style.display = 'block';
+                    } else if (AppState.isTeacher) {
+                        // If they are a teacher but not admin
+                        document.getElementById('appealBtnContainer').style.display = 'none';
+                        document.getElementById('createGroupBtn').style.display = 'block';
                     }
                     
+                    // 6. Update the welcome text and profile info
                     document.getElementById('welcomeText').innerText = `👋 Welcome back, ${session.user.email.split('@')[0]}!`;
                     document.getElementById('profileName').innerText = session.user.email.split('@')[0];
                     document.getElementById('profileEmail').innerText = session.user.email;
                     
+                    // 7. Populate the profile dropdown menu
                     document.getElementById('dropdownItems').innerHTML = `
                         <div onclick="openTabContent('profile')">👤 Profile</div>
                         <div onclick="logout()">🚪 Logout</div>
                     `;
                     
-                } else { showAuthModal();
-                    document.getElementById('loadingOverlay').style.display = 'none'; }
-            } catch (err) { console.error(err);
+                } else { 
+                    showAuthModal();
+                    document.getElementById('loadingOverlay').style.display = 'none'; 
+                }
+            } catch (err) { 
+                console.error("Session check error:", err);
                 document.getElementById('loadingOverlay').style.display = 'none';
-                showAuthModal(); }
+                showAuthModal(); 
+            }
         }
-
         function showAuthModal() {
             if (document.getElementById('authModal')) return;
             let m = document.createElement('div');
