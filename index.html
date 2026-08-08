@@ -344,6 +344,11 @@
                     <button class="btn btn-teal" onclick="showModal('createGroupModal')">➕ Create New Group</button>
                 </div>
 
+                <!-- MY GROUPS SECTION (Dynamic Renderer) -->
+                <div id="myGroupsContainer" style="margin-bottom:16px;">
+                    <!-- Groups will be rendered here by JavaScript -->
+                </div>
+
                 <!-- TRENDING GROUPS -->
                 <div class="join-header"><h2>🔥 Trending Groups to Join</h2></div>
                 <div class="teacher-card">
@@ -723,10 +728,33 @@
             else if (tabId === 'profile') id = 'profile-tab';
             else if (tabId === 'admin') id = 'admin-tab';
             else return;
+            
             const template = document.getElementById(id);
             if (template) container.innerHTML = template.outerHTML;
             if (tabId === 'admin') loadAdminPanel();
             translatePage();
+
+            // NEW: RENDER USER GROUPS IF THEY EXIST
+            if (tabId === 'class') {
+                const containerDiv = document.getElementById('myGroupsContainer');
+                if (AppState.groups && AppState.groups.length > 0) {
+                    let html = `<div class="join-header"><h2>📂 My Groups</h2></div>`;
+                    AppState.groups.forEach(group => {
+                        html += `
+                            <div class="teacher-card" onclick="openTabContent('group-feed')" style="cursor:pointer;">
+                                <div class="info">
+                                    <div class="name">${group.name} <span class="verified-badge">✓</span></div>
+                                    <div class="spec">👥 0 Followers • ${group.group_type}</div>
+                                </div>
+                                <button class="join-btn joined" style="background:var(--gold); color:var(--text-dark); cursor:default;">Owner</button>
+                            </div>
+                        `;
+                    });
+                    containerDiv.innerHTML = html;
+                } else {
+                    containerDiv.innerHTML = '';
+                }
+            }
         }
 
         function footerTabClick(tabId) {
@@ -897,14 +925,46 @@
             showToast('📤 Application submitted! 6,000 Coins deducted. Admin will review within 48 hours.', 'success');
             closeModal('appealModal');
         }
+// ================================================================
+// CREATE GROUP LOGIC (REAL DATABASE CONNECTION)
+// ================================================================
+async function createGroup() {
+    // 1. Get the values from the modal inputs
+    const name = document.querySelector('#createGroupModal input[type="text"]').value;
+    const description = document.querySelector('#createGroupModal textarea').value;
+    const type = document.querySelector('#createGroupModal select').value;
+    const purpose = document.querySelector('#createGroupModal select:last-child').value;
 
-        // ================================================================
-        // CREATE GROUP LOGIC
-        // ================================================================
-        function createGroup() {
+    if (!name) return showToast('Please enter a group name.', 'error');
+
+    try {
+        // 2. Save the group to Supabase
+        const { data, error } = await sb.from('groups').insert({
+            owner_id: AppState.userId,
+            name: name,
+            description: description,
+            group_type: type,
+            group_purpose: purpose,
+            profile_pic_url: 'default'
+        }).select();
+
+        if (error) throw error;
+
+        // 3. Update local state and UI
+        if (data && data.length > 0) {
+            AppState.groups.push(data[0]); // Add the new group to the local array
+            AppState.groupCount = AppState.groups.length;
+            
             showToast('🚀 Group created successfully!', 'success');
             closeModal('createGroupModal');
+            
+            // 4. Refresh the page to show the new group
+            openTabContent('class'); // Reloads the My Class tab
         }
+    } catch (err) {
+        showToast('Error creating group: ' + err.message, 'error');
+    }
+}
 
         // ================================================================
         // AUTHENTICATION
