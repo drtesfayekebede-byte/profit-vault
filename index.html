@@ -1378,6 +1378,9 @@
         // ================================================================
         // SUBMIT ADD FILE (UPDATED TO SAVE EXAMS)
         // ================================================================
+        // ================================================================
+        // SUBMIT ADD FILE (UPDATED WITH FULL ERROR LOGGING)
+        // ================================================================
         async function submitAddFile() {
             const type = document.getElementById('addFileType').value;
             const groupId = AppState.groups[0]?.id;
@@ -1403,7 +1406,8 @@
                     questions.push({ question: q, options: [a, b, c, d], answer: ans });
                 }
 
-                // Save exam to Supabase
+                // ✅ Save exam to Supabase
+                console.log("📤 Attempting to save exam to Supabase...");
                 const { data, error } = await sb.from('mock_exams').insert({
                     group_id: groupId,
                     author_id: AppState.userId,
@@ -1412,13 +1416,15 @@
                 }).select();
 
                 if (error) {
-                    console.error("Supabase error:", error);
+                    console.error("❌ Supabase Error Details:", error);
                     return showToast('Error saving exam: ' + error.message, 'error');
                 }
 
+                console.log("✅ Exam saved successfully! Data:", data);
+
                 showToast(`📝 Exam '${title}' with ${questions.length} questions created!`, 'success');
                 closeModal('addFileModal');
-                examQuestionCount = 1; // Reset count
+                examQuestionCount = 1;
                 
                 // ✅ Refresh the exam list instantly
                 setTimeout(() => loadExams(), 500);
@@ -1432,7 +1438,6 @@
             if(!title) return showToast('Please enter a title.', 'error');
             if(!url) return showToast('Please upload a file first (click the Upload button).', 'error');
 
-            // Save to Supabase group_content
             const { error } = await sb.from('group_content').insert({
                 group_id: groupId, author_id: AppState.userId, content_type: type, title: title, file_url: url, likes: 0
             });
@@ -1444,52 +1449,6 @@
             document.getElementById('addFileInput').value = '';
             document.getElementById('addFileUrl').value = '';
             document.getElementById('uploadStatus').innerText = '⏳ No file selected';
-        }
-        // ================================================================
-        // FETCH AND DISPLAY EXAMS
-        // ================================================================
-        async function loadExams() {
-            const container = document.getElementById('examListContainer');
-            if (!container) return;
-
-            const groupId = AppState.groups[0]?.id;
-            if (!groupId) {
-                container.innerHTML = '<div style="text-align:center; color:var(--text-muted);">No exams available. Create one using the "Add File" menu.</div>';
-                return;
-            }
-
-            try {
-                // Fetch exams from the 'mock_exams' table
-                const { data, error } = await sb
-                    .from('mock_exams')
-                    .select('*')
-                    .eq('group_id', groupId)
-                    .order('created_at', { ascending: false });
-
-                if (error) throw error;
-
-                if (!data || data.length === 0) {
-                    container.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:20px;">📝 No exams created yet.</div>';
-                    return;
-                }
-
-                // Render each exam as a clickable card
-                container.innerHTML = data.map(exam => `
-                    <div class="content-card" onclick="startExam(${exam.id})" style="cursor:pointer;">
-                        <div class="meta">
-                            <h4>📝 ${exam.title}</h4>
-                            <p>${exam.questions ? exam.questions.length : 0} Questions • Created ${new Date(exam.created_at).toLocaleDateString()}</p>
-                        </div>
-                        <div class="actions">
-                            <button class="btn-sm btn-teal" style="margin:0;">▶️ Start Exam</button>
-                        </div>
-                    </div>
-                `).join('');
-
-            } catch (err) {
-                console.error("Error loading exams:", err);
-                container.innerHTML = '<div style="text-align:center; color:var(--red-error);">Failed to load exams.</div>';
-            }
         }
         async function submitWithdraw() {
             const amountCoins = 100000;
