@@ -249,7 +249,6 @@
     </style>
 </head>
 <body>
-
     <div id="loadingOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#ffffff; z-index:10000; justify-content:center; align-items:center; flex-direction:column;">
         <div style="font-size: 48px; color: var(--teal);">📚</div>
         <div style="margin-top: 20px; color: var(--teal); font-weight: 700; font-size: 18px;">Loading T-Hub...</div>
@@ -402,42 +401,15 @@
                 </div>
 
                 <div id="videos" class="class-content active">
-                    <div class="content-card">
-                        <div class="thumbnail"><i class="fas fa-play-circle"></i><span class="duration">45:00</span></div>
-                        <div class="meta"><h4>Cardiology Basics</h4><p>Dr. Tesfaye • 1.2k views</p></div>
-                        <div class="actions">
-                            <button onclick="toggleLike(this)"><i class="fas fa-heart"></i> <span>124</span></button>
-                            <button onclick="toggleComment(this)"><i class="fas fa-comment"></i> <span>12</span></button>
-                            <button onclick="shareContent()"><i class="fas fa-share"></i> Share</button>
-                        </div>
-                        <div class="comment-section">
-                            <div class="comment-list"><div class="c-item"><strong>Student A:</strong> Great lecture, very clear!</div></div>
-                            <textarea placeholder="Add a comment..."></textarea>
-                            <button class="send-btn" onclick="showToast('Comment posted!', 'success')">Post Comment</button>
-                        </div>
-                    </div>
+                    <!-- Videos will be dynamically loaded -->
                 </div>
 
                 <div id="ppts" class="class-content">
-                    <div class="content-card">
-                        <div class="meta"><h4>Anatomy Slides (Upper Limb)</h4><p>45 Pages • Premium</p></div>
-                        <div class="actions">
-                            <button onclick="toggleLike(this)"><i class="fas fa-heart"></i> <span>45</span></button>
-                            <button onclick="toggleComment(this)"><i class="fas fa-comment"></i> <span>3</span></button>
-                            <button onclick="shareContent()"><i class="fas fa-share"></i> Share</button>
-                        </div>
-                        <div class="comment-section">
-                            <div class="comment-list"><div class="c-item"><strong>Resident 1:</strong> Very helpful for my exam.</div></div>
-                            <textarea placeholder="Add a comment..."></textarea>
-                            <button class="send-btn" onclick="showToast('Comment posted!', 'success')">Post Comment</button>
-                        </div>
-                    </div>
+                    <!-- PPTs will be dynamically loaded -->
                 </div>
 
                 <div id="exam" class="class-content">
-                    <div class="exam-toggle"><span>Mode:</span><button class="toggle-btn study" id="examModeBtn" onclick="toggleExamMode()">📖 Study Mode</button></div>
-                    <div class="question-box"><p>1. What is the primary pacemaker of the heart?</p><label><input type="radio" name="q1" value="A"> A) SA Node</label><label><input type="radio" name="q1" value="B"> B) AV Node</label><label><input type="radio" name="q1" value="C"> C) Bundle of His</label></div>
-                    <button class="btn" onclick="showToast('✅ Exam submitted! Score: 100%', 'success')">Submit Exam</button>
+                    <!-- Mock Exams will be dynamically loaded -->
                 </div>
             </div>
 
@@ -525,7 +497,6 @@
                     <p style="font-size:12px; color:var(--text-muted); margin-top:8px;">ℹ️ Minimum Withdrawal: 100,000 Coins (10,000 ETB)</p>
                 </div>
                 
-                <!-- ✅ UPDATED BUTTONS (These now call your real functions) -->
                 <button class="btn" onclick="submitWithdraw()">📥 Withdraw (Min 100,000 Coins)</button>
                 <button class="btn btn-teal" onclick="showModal('buyCoinsModal')">💳 Buy More Coins</button>
             </div>
@@ -565,6 +536,7 @@
                 <button class="btn btn-teal" onclick="showToast('✅ Application sent!', 'success'); closeModal('jobApplyModal')">Submit Application</button>
             </div>
         </div>
+
         <!-- EDIT GROUP INFO MODAL -->
         <div id="editGroupModal" class="modal">
             <div class="modal-content">
@@ -648,7 +620,6 @@
                 <button class="btn btn-teal" onclick="submitBuyCoins()">💳 Request Coins</button>
             </div>
         </div>
-
         <!-- FOOTER -->
         <div class="app-footer" id="appFooter">
             <div class="app-footer-tabs" id="footerTabs">
@@ -830,7 +801,7 @@
                             <div class="teacher-card" onclick="openTabContent('group-feed', ${group.id})" style="cursor:pointer;">
                                 <div class="info">
                                     <div class="name">${group.name} <span class="verified-badge">✓</span></div>
-                                    <div class="spec">👥 0 Followers • ${group.group_type}</div>
+                                    <div class="spec">👥 ${group.followers || 0} Followers • ${group.group_type}</div>
                                 </div>
                                 <button class="join-btn joined" style="background:var(--gold); color:var(--text-dark); cursor:default;">Owner</button>
                             </div>
@@ -842,15 +813,18 @@
                 }
             }
 
-            // 📌 NEW: If opening a specific group feed, load its data
+            // 📌 Load content when a group feed is opened
             if (tabId === 'group-feed' && specificGroupId) {
                 const group = AppState.groups.find(g => g.id === specificGroupId);
                 if (group) {
-                    // Update the banner inside the group-feed template to reflect this group
                     document.querySelector('#group-feed .group-banner h3').innerText = group.name;
                     document.querySelector('#group-feed .group-banner .stats span:first-child').innerText = group.followers || 0;
                     document.querySelector('#group-feed .group-banner .stats span:last-child').innerText = group.online || 0;
                 }
+                // Load content for each tab
+                loadGroupContent(specificGroupId, 'videos');
+                loadGroupContent(specificGroupId, 'ppts');
+                loadGroupContent(specificGroupId, 'exam');
             }
         }
 
@@ -866,13 +840,99 @@
         // MY CLASS FUNCTIONS
         // ================================================================
         let groupJoined = false;
-        function toggleGroupJoin(btn) {
+        async function toggleGroupJoin(btn) {
+            const groupId = AppState.groups[0]?.id;
+            if (!groupId) return showToast('No group found to follow.', 'error');
+
+            const currentFollowers = parseInt(document.querySelector('#group-feed .group-banner .stats span:first-child').innerText) || 0;
+            
             groupJoined = !groupJoined;
-            if (groupJoined) { btn.innerText = '✅ Joined';
+            if (groupJoined) {
+                // Increment follower count
+                const newFollowers = currentFollowers + 1;
+                await sb.from('groups').update({ followers: newFollowers }).eq('id', groupId);
+                document.querySelector('#group-feed .group-banner .stats span:first-child').innerText = newFollowers;
+                btn.innerText = '✅ Joined';
                 btn.className = 'join-btn joined';
-                showToast('You have joined this class!', 'success'); } else { btn.innerText = '➕ Join Class';
+                showToast('You have joined this class!', 'success');
+            } else {
+                // Decrement follower count
+                const newFollowers = Math.max(0, currentFollowers - 1);
+                await sb.from('groups').update({ followers: newFollowers }).eq('id', groupId);
+                document.querySelector('#group-feed .group-banner .stats span:first-child').innerText = newFollowers;
+                btn.innerText = '➕ Join Class';
                 btn.className = 'join-btn';
-                showToast('Left the class.', 'info'); }
+                showToast('Left the class.', 'info');
+            }
+        }
+
+        // ================================================================
+        // LOAD GROUP CONTENT (Videos, PPTs, Exams)
+        // ================================================================
+        async function loadGroupContent(groupId, contentType) {
+            const container = document.getElementById(contentType);
+            if (!container) return;
+
+            container.innerHTML = `<div class="loading">Loading ${contentType}...</div>`;
+
+            const { data, error } = await sb
+                .from('group_content')
+                .select('*')
+                .eq('group_id', groupId)
+                .eq('content_type', contentType === 'exam' ? 'exam' : contentType === 'videos' ? 'video' : 'ppt')
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                container.innerHTML = `<div class="loading" style="color:var(--red-error);">Error loading content</div>`;
+                return;
+            }
+
+            if (!data || data.length === 0) {
+                container.innerHTML = `<div class="loading" style="color:var(--text-muted);">No ${contentType} uploaded yet.</div>`;
+                return;
+            }
+
+            if (contentType === 'exam') {
+                // Render exams as interactive cards
+                let html = `<div class="exam-toggle"><span>Mode:</span><button class="toggle-btn study" id="examModeBtn" onclick="toggleExamMode()">📖 Study Mode</button></div>`;
+                data.forEach(exam => {
+                    html += `
+                        <div class="content-card" style="cursor:pointer;" onclick="startExam(${exam.id})">
+                            <div class="meta">
+                                <h4>📝 ${exam.title}</h4>
+                                <p>Created by Dr. Tesfaye • ${exam.questions ? exam.questions.length : 0} Questions</p>
+                            </div>
+                            <div class="actions" style="margin-top:0; border-top:none;">
+                                <button class="btn-sm btn-teal" style="margin:0; width:auto;">▶️ Start Exam</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            } else {
+                // Render videos or PPTs
+                container.innerHTML = data.map(item => `
+                    <div class="content-card">
+                        <div class="thumbnail">
+                            ${item.file_url ? `<i class="fas fa-play-circle"></i><span class="duration">Content</span>` : `<i class="fas fa-file-alt"></i>`}
+                        </div>
+                        <div class="meta">
+                            <h4>${item.title}</h4>
+                            <p>Uploaded • ${new Date(item.created_at).toLocaleDateString()}</p>
+                        </div>
+                        <div class="actions">
+                            <button onclick="toggleLike(this)"><i class="fas fa-heart"></i> <span>${item.likes || 0}</span></button>
+                            <button onclick="toggleComment(this)"><i class="fas fa-comment"></i> <span>0</span></button>
+                            <button onclick="shareContent()"><i class="fas fa-share"></i> Share</button>
+                        </div>
+                        <div class="comment-section">
+                            <div class="comment-list"></div>
+                            <textarea placeholder="Add a comment..."></textarea>
+                            <button class="send-btn" onclick="showToast('Comment posted!', 'success')">Post Comment</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
         }
 
         function switchGroupTab(tabId, btn) {
@@ -880,8 +940,136 @@
             btn.classList.add('active');
             document.querySelectorAll('.class-content').forEach(c => c.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
+            
+            // Reload content if needed
+            const groupId = AppState.groups[0]?.id;
+            if (groupId && tabId !== 'exam') {
+                loadGroupContent(groupId, tabId);
+            }
         }
 
+        // ================================================================
+        // EXAM ENGINE (Previous/Next, Score, Explanations)
+        // ================================================================
+        let currentExam = null;
+        let currentQuestionIndex = 0;
+        let correctCount = 0;
+        let incorrectCount = 0;
+
+        function startExam(examId) {
+            // In a real implementation, fetch the exam questions from Supabase
+            // For demo, we'll simulate an exam
+            currentExam = {
+                id: examId,
+                title: "Sample Mock Exam",
+                questions: [
+                    { question: "What is the primary pacemaker of the heart?", options: ["SA Node", "AV Node", "Bundle of His", "Purkinje Fibers"], answer: "A", explanation: "The SA Node is the natural pacemaker of the heart." },
+                    { question: "Which organ is responsible for insulin production?", options: ["Liver", "Pancreas", "Kidney", "Stomach"], answer: "B", explanation: "The pancreas produces insulin." }
+                ]
+            };
+            currentQuestionIndex = 0;
+            correctCount = 0;
+            incorrectCount = 0;
+            renderExamQuestion();
+        }
+
+        function renderExamQuestion() {
+            const container = document.getElementById('exam');
+            if (!container || !currentExam) return;
+
+            const q = currentExam.questions[currentQuestionIndex];
+            const total = currentExam.questions.length;
+            const progress = Math.round((currentQuestionIndex / total) * 100);
+
+            container.innerHTML = `
+                <div style="margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-weight:700; color:var(--navy);">Question ${currentQuestionIndex+1} of ${total}</span>
+                    <span style="font-weight:700; color:var(--navy);">✅ ${correctCount} | ❌ ${incorrectCount}</span>
+                </div>
+                <div class="progress-bar" style="background:#eee; border-radius:12px; height:8px; margin-bottom:16px;">
+                    <div class="progress-fill" style="width:${progress}%; height:100%; background:var(--gold); border-radius:12px;"></div>
+                </div>
+                <div class="question-box">
+                    <p style="font-size:18px;">${q.question}</p>
+                    ${q.options.map((opt, idx) => `
+                        <label style="display:block; margin:8px 0; padding:8px; border:1px solid #eee; border-radius:8px; cursor:pointer;" onclick="answerExamQuestion('${String.fromCharCode(65+idx)}', this)">
+                            <input type="radio" name="examAnswer" value="${String.fromCharCode(65+idx)}" style="margin-right:8px;"> 
+                            ${opt}
+                        </label>
+                    `).join('')}
+                    <div id="examExplanation" style="display:none; margin-top:12px; padding:12px; background:#f0fdf4; border-radius:8px; color:var(--text-dark);"></div>
+                </div>
+                <div style="display:flex; gap:10px; margin-top:12px;">
+                    <button class="btn-sm" onclick="prevExamQuestion()" style="flex:1;" ${currentQuestionIndex === 0 ? 'disabled' : ''}>◀ Previous</button>
+                    <button class="btn-sm btn-teal" onclick="nextExamQuestion()" style="flex:1;" ${currentQuestionIndex === total-1 ? 'disabled' : ''}>Next ▶</button>
+                </div>
+                ${currentQuestionIndex === total-1 ? `<button class="btn" onclick="finishExam()" style="margin-top:10px;">📊 Finish Exam & View Score</button>` : ''}
+            `;
+        }
+
+        function answerExamQuestion(selected, labelEl) {
+            const q = currentExam.questions[currentQuestionIndex];
+            const isCorrect = selected === q.answer;
+            const radio = labelEl.querySelector('input[type="radio"]');
+            radio.checked = true;
+
+            // Disable all options
+            document.querySelectorAll('#exam .question-box label').forEach(l => l.style.pointerEvents = 'none');
+
+            if (isCorrect) {
+                correctCount++;
+                labelEl.style.borderColor = 'var(--green-success)';
+                labelEl.style.background = '#f0fdf4';
+            } else {
+                incorrectCount++;
+                labelEl.style.borderColor = 'var(--red-error)';
+                labelEl.style.background = '#fef2f2';
+                // Highlight correct answer
+                document.querySelectorAll('#exam .question-box label').forEach((l, idx) => {
+                    if (String.fromCharCode(65+idx) === q.answer) {
+                        l.style.borderColor = 'var(--green-success)';
+                        l.style.background = '#f0fdf4';
+                    }
+                });
+            }
+
+            // Show explanation
+            const expDiv = document.getElementById('examExplanation');
+            if (expDiv) {
+                expDiv.style.display = 'block';
+                expDiv.innerHTML = `<strong>${isCorrect ? '✅ Correct!' : '❌ Incorrect.'}</strong> ${q.explanation || ''}`;
+            }
+        }
+
+        function nextExamQuestion() {
+            if (currentQuestionIndex < currentExam.questions.length - 1) {
+                currentQuestionIndex++;
+                renderExamQuestion();
+            }
+        }
+
+        function prevExamQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                renderExamQuestion();
+            }
+        }
+
+        function finishExam() {
+            const total = currentExam.questions.length;
+            const score = Math.round((correctCount / total) * 100);
+            showToast(`📊 Exam Complete! Score: ${score}% (${correctCount}/${total} correct)`, 'success');
+            // Reset
+            currentExam = null;
+            currentQuestionIndex = 0;
+            correctCount = 0;
+            incorrectCount = 0;
+            loadGroupContent(AppState.groups[0]?.id, 'exam');
+        }
+
+        // ================================================================
+        // MISC INTERACTIONS
+        // ================================================================
         let examMode = 'study';
         function toggleExamMode() {
             const btn = document.getElementById('examModeBtn');
@@ -922,7 +1110,6 @@
             document.querySelectorAll('.class-header-dropdown').forEach(d => d.classList.remove('active'));
             if (!isOpen) dropdown.classList.add('active');
 
-            // Intelligent menu content based on user's current groups
             const hasTeachingGroup = AppState.groups.some(g => g.purpose === 'teaching');
             const hasSocialGroup = AppState.groups.some(g => g.purpose === 'social');
             const totalGroups = AppState.groups.length;
@@ -953,7 +1140,7 @@
         });
 
         // ================================================================
-        // GROUP 3-DOT MENU FUNCTIONS (UPDATED - FULLY FUNCTIONAL)
+        // GROUP 3-DOT MENU FUNCTIONS
         // ================================================================
         function toggleClassMenu(event) {
             if(event) event.stopPropagation();
@@ -964,9 +1151,7 @@
         function classAction(action) {
             document.getElementById('classDropdownMenu').style.display = 'none';
             
-            if(action === 'Go Live') {
-                showToast('🔴 Generating Zoom/Meet link for your class...', 'info');
-            }
+            if(action === 'Go Live') showToast('🔴 Generating Zoom/Meet link for your class...', 'info');
             else if(action === 'Invite') {
                 if(navigator.share) {
                     navigator.share({ title: 'Join my T-Hub Class', url: window.location.href });
@@ -975,26 +1160,17 @@
                     showToast('📤 Invite link copied to clipboard!', 'success');
                 }
             }
-            else if(action === 'Add File') {
-                showModal('addFileModal');
-            }
-            else if(action === 'Delete File') {
-                showToast('🖱️ Click items to mark them for deletion.', 'info');
-            }
+            else if(action === 'Add File') showModal('addFileModal');
+            else if(action === 'Delete File') showToast('🖱️ Click items to mark them for deletion.', 'info');
             else if(action === 'Edit Group') {
-                // Pre-fill current group info
                 if(AppState.groups.length > 0) {
                     document.getElementById('editGroupName').value = AppState.groups[0].name;
                     document.getElementById('editGroupDesc').value = AppState.groups[0].description || '';
                 }
                 showModal('editGroupModal');
             }
-            else if(action === 'Boost') {
-                showToast('🚀 Boosting a group costs T-Hub Coins. Feature coming soon.', 'info');
-            }
-            else if(action === 'Wallet') {
-                showModal('walletModal');
-            }
+            else if(action === 'Boost') showToast('🚀 Boosting a group costs T-Hub Coins. Feature coming soon.', 'info');
+            else if(action === 'Wallet') showModal('walletModal');
             else if(action === 'Delete Group') {
                 if(confirm('⚠️ Are you sure you want to permanently delete this class? This cannot be undone.')) {
                     showToast('⛔ Class deleted.', 'info');
@@ -1008,6 +1184,7 @@
                 menu.style.display = 'none';
             }
         });
+
         // ================================================================
         // BOOKS FUNCTIONS
         // ================================================================
@@ -1036,62 +1213,52 @@
             document.getElementById('payReceipt').value = '';
         }
 
-// ================================================================
-// VERIFICATION & KYC (Appeal)
-// ================================================================
-async function submitAppeal() {
-    // 🟢 ADMIN BYPASS: If you are Admin, you don't need coins. Approve instantly.
-    if (AppState.isAdmin) {
-        showToast('👑 Admin automatically verified!', 'success');
-        closeModal('appealModal');
-        return;
-    }
-
-    if (AppState.coinBalance < 6000) return showToast('⚠️ Insufficient coins. Please buy more coins first.', 'error');
-    
-    showToast('📤 Application submitted! 6,000 Coins deducted. Admin will review within 48 hours.', 'success');
-    closeModal('appealModal');
-}
-// ================================================================
-// CREATE GROUP LOGIC (REAL DATABASE CONNECTION)
-// ================================================================
-async function createGroup() {
-    // 1. Get the values from the modal inputs
-    const name = document.querySelector('#createGroupModal input[type="text"]').value;
-    const description = document.querySelector('#createGroupModal textarea').value;
-    const type = document.querySelector('#createGroupModal select').value;
-    const purpose = document.querySelector('#createGroupModal select:last-child').value;
-
-    if (!name) return showToast('Please enter a group name.', 'error');
-
-    try {
-        // 2. Save the group to Supabase
-        const { data, error } = await sb.from('groups').insert({
-            owner_id: AppState.userId,
-            name: name,
-            description: description,
-            group_type: type,
-            group_purpose: purpose,
-            profile_pic_url: 'default'
-        }).select();
-
-        if (error) throw error;
-
-        // 3. Update local state and UI
-        if (data && data.length > 0) {
-            AppState.groups.push(data[0]); // Add the new group to the local array
-            AppState.groupCount = AppState.groups.length;
-            
-            showToast('🚀 Group created successfully!', 'success');
-            closeModal('createGroupModal');
-            
-            // 4. Refresh the page to show the new group
-            openTabContent('class'); // Reloads the My Class tab
+        // ================================================================
+        // VERIFICATION & KYC
+        // ================================================================
+        async function submitAppeal() {
+            if (AppState.isAdmin) {
+                showToast('👑 Admin automatically verified!', 'success');
+                closeModal('appealModal');
+                return;
+            }
+            if (AppState.coinBalance < 6000) return showToast('⚠️ Insufficient coins. Please buy more coins first.', 'error');
+            showToast('📤 Application submitted! 6,000 Coins deducted. Admin will review within 48 hours.', 'success');
+            closeModal('appealModal');
         }
-    } catch (err) {
-        showToast('Error creating group: ' + err.message, 'error');
-    }
-}
+
+        // ================================================================
+        // CREATE GROUP LOGIC
+        // ================================================================
+        async function createGroup() {
+            const name = document.querySelector('#createGroupModal input[type="text"]').value;
+            const description = document.querySelector('#createGroupModal textarea').value;
+            const type = document.querySelector('#createGroupModal select').value;
+            const purpose = document.querySelector('#createGroupModal select:last-child').value;
+            if (!name) return showToast('Please enter a group name.', 'error');
+            try {
+                const { data, error } = await sb.from('groups').insert({
+                    owner_id: AppState.userId,
+                    name: name,
+                    description: description,
+                    group_type: type,
+                    group_purpose: purpose,
+                    profile_pic_url: 'default',
+                    followers: 0,
+                    online: 0
+                }).select();
+                if (error) throw error;
+                if (data && data.length > 0) {
+                    AppState.groups.push(data[0]);
+                    AppState.groupCount = AppState.groups.length;
+                    showToast('🚀 Group created successfully!', 'success');
+                    closeModal('createGroupModal');
+                    openTabContent('class');
+                }
+            } catch (err) {
+                showToast('Error creating group: ' + err.message, 'error');
+            }
+        }
 
         // ================================================================
         // AUTHENTICATION
@@ -1103,328 +1270,147 @@ async function createGroup() {
                 const { data: { session } } = await sb.auth.getSession();
                 if (session?.user) {
                     AppState.userId = session.user.id;
-                    
-                    // 1. Fetch the user's role and coin balance from the database
-                    const { data: userData, error: userError } = await sb
-                        .from('users')
-                        .select('is_admin, is_teacher, coin_balance')
-                        .eq('user_id', AppState.userId)
-                        .single();
-
+                    const { data: userData, error: userError } = await sb.from('users').select('is_admin, is_teacher, coin_balance').eq('user_id', AppState.userId).single();
                     if (userError) {
-                        console.warn("User data not found in database. Maybe a new user?");
-                        // Set defaults if they are brand new
-                        AppState.isAdmin = false;
-                        AppState.isTeacher = false;
-                        AppState.coinBalance = 0;
+                        AppState.isAdmin = false; AppState.isTeacher = false; AppState.coinBalance = 0;
                     } else {
-                        // Set the data from the database
-                        AppState.isAdmin = userData.is_admin === true;
-                        AppState.isTeacher = userData.is_teacher === true;
-                        AppState.coinBalance = userData.coin_balance || 0;
+                        AppState.isAdmin = userData.is_admin === true; AppState.isTeacher = userData.is_teacher === true; AppState.coinBalance = userData.coin_balance || 0;
                     }
-
-                    // 2. ADMIN HARDCODED BYPASS (Kept for you so you always have Admin rights)
-                    if (session.user.email === 'drtesfayekebede@gmail.com') {
-                        AppState.isAdmin = true;
-                        AppState.isTeacher = true;
-                    }
-                    
-                    // 3. Fetch the actual groups created by this user
-                    const { data: groupData, error: groupError } = await sb
-                        .from('groups')
-                        .select('*')
-                        .eq('owner_id', AppState.userId);
-
-                    if (!groupError && groupData) {
-                        AppState.groups = groupData;
-                    } else {
-                        AppState.groups = [];
-                    }
-
-                    // 4. Show the app and hide the loader
+                    if (session.user.email === 'drtesfayekebede@gmail.com') { AppState.isAdmin = true; AppState.isTeacher = true; }
+                    const { data: groupData, error: groupError } = await sb.from('groups').select('*').eq('owner_id', AppState.userId);
+                    if (!groupError && groupData) { AppState.groups = groupData; } else { AppState.groups = []; }
                     document.getElementById('appContent').style.display = 'flex';
                     document.getElementById('loadingOverlay').style.display = 'none';
-                    
-                    // 5. Show Admin/Teacher UI elements
-                    if (AppState.isAdmin) {
-                        document.getElementById('adminTabBtn').style.display = 'flex';
-                        document.getElementById('appealBtnContainer').style.display = 'none';
-                        document.getElementById('createGroupBtn').style.display = 'block';
-                    } else if (AppState.isTeacher) {
-                        // If they are a teacher but not admin
-                        document.getElementById('appealBtnContainer').style.display = 'none';
-                        document.getElementById('createGroupBtn').style.display = 'block';
-                    }
-                    
-                    // 6. Update the welcome text and profile info
+                    if (AppState.isAdmin) { document.getElementById('adminTabBtn').style.display = 'flex'; document.getElementById('appealBtnContainer').style.display = 'none'; document.getElementById('createGroupBtn').style.display = 'block'; }
+                    else if (AppState.isTeacher) { document.getElementById('appealBtnContainer').style.display = 'none'; document.getElementById('createGroupBtn').style.display = 'block'; }
                     document.getElementById('welcomeText').innerText = `👋 Welcome back, ${session.user.email.split('@')[0]}!`;
                     document.getElementById('profileName').innerText = session.user.email.split('@')[0];
                     document.getElementById('profileEmail').innerText = session.user.email;
-                    
-                    // 7. Populate the profile dropdown menu
-                    document.getElementById('dropdownItems').innerHTML = `
-                        <div onclick="openTabContent('profile')">👤 Profile</div>
-                        <div onclick="logout()">🚪 Logout</div>
-                    `;
-                    
-                } else { 
-                    showAuthModal();
-                    document.getElementById('loadingOverlay').style.display = 'none'; 
-                }
-            } catch (err) { 
-                console.error("Session check error:", err);
-                document.getElementById('loadingOverlay').style.display = 'none';
-                showAuthModal(); 
-            }
+                    document.getElementById('dropdownItems').innerHTML = `<div onclick="openTabContent('profile')">👤 Profile</div><div onclick="logout()">🚪 Logout</div>`;
+                } else { showAuthModal(); document.getElementById('loadingOverlay').style.display = 'none'; }
+            } catch (err) { console.error(err); document.getElementById('loadingOverlay').style.display = 'none'; showAuthModal(); }
         }
+
         function showAuthModal() {
             if (document.getElementById('authModal')) return;
-            let m = document.createElement('div');
-            m.id = 'authModal';
-            m.innerHTML = `
-                <div class="modal-content">
-                    <h3 style="color:var(--navy);">📶 T-Hub</h3>
-                    <p style="color:var(--text-muted); margin-bottom:15px;">Medical Education Ecosystem</p>
-                    <input type="email" id="authEmail" placeholder="Email">
-                    <input type="password" id="authPassword" placeholder="Password">
-                    <button class="btn" onclick="login()">Sign In</button>
-                    <button class="btn btn-teal" onclick="register()">Create Account</button>
-                </div>
-            `;
+            let m = document.createElement('div'); m.id = 'authModal';
+            m.innerHTML = `<div class="modal-content"><h3 style="color:var(--navy);">📶 T-Hub</h3><p style="color:var(--text-muted); margin-bottom:15px;">Medical Education Ecosystem</p><input type="email" id="authEmail" placeholder="Email"><input type="password" id="authPassword" placeholder="Password"><button class="btn" onclick="login()">Sign In</button><button class="btn btn-teal" onclick="register()">Create Account</button></div>`;
             document.body.appendChild(m);
         }
 
         async function login() {
-            const email = document.getElementById('authEmail')?.value;
-            const password = document.getElementById('authPassword')?.value;
+            const email = document.getElementById('authEmail')?.value; const password = document.getElementById('authPassword')?.value;
             if (!email || !password) return showToast('Email and password required', 'error');
             const { error } = await sb.auth.signInWithPassword({ email, password });
             if (error) return showToast(error.message, 'error');
-            document.getElementById('authModal').remove();
-            window.location.reload();
+            document.getElementById('authModal').remove(); window.location.reload();
         }
 
         async function register() {
-            const email = document.getElementById('authEmail')?.value;
-            const password = document.getElementById('authPassword')?.value;
+            const email = document.getElementById('authEmail')?.value; const password = document.getElementById('authPassword')?.value;
             if (!email || !password) return showToast('Email and password required', 'error');
             if (password.length < 6) return showToast('Password must be at least 6 characters', 'error');
             const { error } = await sb.auth.signUp({ email, password });
             if (error) return showToast(error.message, 'error');
             showToast('Account created! Redirecting...', 'success');
-            document.getElementById('authModal').remove();
-            window.location.reload();
+            document.getElementById('authModal').remove(); window.location.reload();
         }
 
-        async function logout() {
-            AppState.isLoggingOut = true;
-            await sb.auth.signOut();
-            window.location.reload();
-        }
+        async function logout() { AppState.isLoggingOut = true; await sb.auth.signOut(); window.location.reload(); }
 
         // ================================================================
         // ADMIN PANEL
         // ================================================================
         async function loadAdminPanel() {
             const container = document.getElementById('tabContentContainer');
-            if (!AppState.isAdmin) {
-                container.innerHTML = '<div class="card"><h3>⛔ Access Denied</h3><p>Admin only.</p></div>';
-                return;
-            }
+            if (!AppState.isAdmin) { container.innerHTML = '<div class="card"><h3>⛔ Access Denied</h3><p>Admin only.</p></div>'; return; }
             container.innerHTML = `
-                <div class="card"><h3>⚙️ T-Hub Admin Panel</h3>
-                    <p style="color:var(--text-muted); margin-bottom:15px;">Manage content, teachers, payments, and consultations.</p>
-                </div>
+                <div class="card"><h3>⚙️ T-Hub Admin Panel</h3><p style="color:var(--text-muted); margin-bottom:15px;">Manage content, teachers, payments, and consultations.</p></div>
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-bottom:20px;">
-                    <div class="card" style="cursor:pointer; text-align:center;" onclick="adminAction('📂 Upload Files')">
-                        <div style="font-size:32px;">📂</div><h4>Upload Files</h4>
-                        <p style="font-size:13px; color:var(--text-muted);">PDFs for Exams, Books & Smart Notes</p>
-                    </div>
-                    <div class="card" style="cursor:pointer; text-align:center;" onclick="adminAction('📝 Mock Exam')">
-                        <div style="font-size:32px;">📝</div><h4>Mock Exam</h4>
-                        <p style="font-size:13px; color:var(--text-muted);">Create digital MCQ exams</p>
-                    </div>
-                    <div class="card" style="cursor:pointer; text-align:center;" onclick="adminAction('👨‍🏫 Verify Teachers')">
-                        <div style="font-size:32px;">👨‍🏫</div><h4>Verify Teachers</h4>
-                        <p style="font-size:13px; color:var(--text-muted);">Approve pending educator accounts</p>
-                    </div>
-                    <div class="card" style="cursor:pointer; text-align:center;" onclick="showPricingPanel()">
-                        <div style="font-size:32px;">💰</div><h4>Set Prices</h4>
-                        <p style="font-size:13px; color:var(--text-muted);">Premium subscription & item pricing</p>
-                    </div>
-                    <div class="card" style="cursor:pointer; text-align:center;" onclick="viewConsultations()">
-                        <div style="font-size:32px;">📋</div><h4>Consultations</h4>
-                        <p style="font-size:13px; color:var(--text-muted);">Reply to patient medical requests</p>
-                    </div>
-                    <div class="card" style="cursor:pointer; text-align:center;" onclick="adminAction('📊 Analytics')">
-                        <div style="font-size:32px;">📊</div><h4>Analytics</h4>
-                        <p style="font-size:13px; color:var(--text-muted);">Track users, revenue & growth</p>
-                    </div>
+                    <div class="card" onclick="adminAction('📂 Upload Files')"><div style="font-size:32px;">📂</div><h4>Upload Files</h4><p style="font-size:13px; color:var(--text-muted);">PDFs for Exams, Books & Smart Notes</p></div>
+                    <div class="card" onclick="adminAction('📝 Mock Exam')"><div style="font-size:32px;">📝</div><h4>Mock Exam</h4><p style="font-size:13px; color:var(--text-muted);">Create digital MCQ exams</p></div>
+                    <div class="card" onclick="adminAction('👨‍🏫 Verify Teachers')"><div style="font-size:32px;">👨‍🏫</div><h4>Verify Teachers</h4><p style="font-size:13px; color:var(--text-muted);">Approve pending educator accounts</p></div>
+                    <div class="card" onclick="showPricingPanel()"><div style="font-size:32px;">💰</div><h4>Set Prices</h4><p style="font-size:13px; color:var(--text-muted);">Premium subscription & item pricing</p></div>
+                    <div class="card" onclick="viewConsultations()"><div style="font-size:32px;">📋</div><h4>Consultations</h4><p style="font-size:13px; color:var(--text-muted);">Reply to patient medical requests</p></div>
+                    <div class="card" onclick="adminAction('📊 Analytics')"><div style="font-size:32px;">📊</div><h4>Analytics</h4><p style="font-size:13px; color:var(--text-muted);">Track users, revenue & growth</p></div>
                 </div>
             `;
             translatePage();
         }
 
         function adminAction(action) {
-            if(action === '👨‍🏫 Verify Teachers') {
-                showToast('👨‍🏫 Pending Teachers: Dr. Alemu, Dr. Smith. Click to verify.', 'info');
-            } else {
-                showToast(`${action} feature ready.`, 'info');
-            }
+            if(action === '👨‍🏫 Verify Teachers') { showToast('👨‍🏫 Pending Teachers: Dr. Alemu, Dr. Smith. Click to verify.', 'info'); }
+            else { showToast(`${action} feature ready.`, 'info'); }
         }
 
         function showPricingPanel() {
             const container = document.getElementById('tabContentContainer');
-            container.innerHTML = `
-                <div class="card">
-                    <h3>💰 Dynamic Pricing</h3>
-                    <div class="form-group"><label>Premium Subscription (ETB)</label><input type="number" id="price_premium" value="600"></div>
-                    <button class="btn btn-teal" onclick="showToast('Prices saved to database! (Simulated)', 'success')">💾 Save Prices</button>
-                    <button class="btn" onclick="loadAdminPanel()">← Back to Admin</button>
-                </div>
-            `;
+            container.innerHTML = `<div class="card"><h3>💰 Dynamic Pricing</h3><div class="form-group"><label>Premium Subscription (ETB)</label><input type="number" id="price_premium" value="600"></div><button class="btn btn-teal" onclick="showToast('Prices saved to database! (Simulated)', 'success')">💾 Save Prices</button><button class="btn" onclick="loadAdminPanel()">← Back to Admin</button></div>`;
             translatePage();
         }
 
         function viewConsultations() {
             const container = document.getElementById('tabContentContainer');
-            container.innerHTML = `
-                <div class="card">
-                    <h3>📋 Patient Consultations</h3>
-                    <div style="padding:20px; text-align:center; color:var(--text-muted);">
-                        <div style="font-size:48px;">🩺</div>
-                        <p>No pending consultations yet.</p>
-                    </div>
-                    <button class="btn" onclick="loadAdminPanel()">← Back to Admin</button>
-                </div>
-            `;
+            container.innerHTML = `<div class="card"><h3>📋 Patient Consultations</h3><div style="padding:20px; text-align:center; color:var(--text-muted);"><div style="font-size:48px;">🩺</div><p>No pending consultations yet.</p></div><button class="btn" onclick="loadAdminPanel()">← Back to Admin</button></div>`;
             translatePage();
         }
+
         // ================================================================
-        // NEW FUNCTION: EDIT GROUP (Saves to Supabase)
+        // EDIT GROUP, ADD FILE, BUY COINS, WITHDRAW
         // ================================================================
         async function submitEditGroup() {
-            const name = document.getElementById('editGroupName').value;
-            const desc = document.getElementById('editGroupDesc').value;
+            const name = document.getElementById('editGroupName').value; const desc = document.getElementById('editGroupDesc').value;
             if(!name) return showToast('Group name cannot be empty.', 'error');
-            
             const groupId = AppState.groups[0]?.id;
             if(!groupId) return showToast('No group found to edit.', 'error');
-
             const { error } = await sb.from('groups').update({ name, description: desc }).eq('id', groupId);
             if(error) return showToast('Error updating group: ' + error.message, 'error');
-
-            showToast('✅ Group info updated!', 'success');
-            closeModal('editGroupModal');
-            openTabContent('class'); // Refresh page
+            showToast('✅ Group info updated!', 'success'); closeModal('editGroupModal'); openTabContent('class');
         }
 
-        // ================================================================
-        // NEW FUNCTION: ADD FILE (Saves to Supabase)
-        // ================================================================
         async function submitAddFile() {
-            const type = document.getElementById('addFileType').value;
-            const title = document.getElementById('addFileTitle').value;
-            const url = document.getElementById('addFileUrl').value;
-            
+            const type = document.getElementById('addFileType').value; const title = document.getElementById('addFileTitle').value; const url = document.getElementById('addFileUrl').value;
             if(!title || !url) return showToast('Please fill in Title and URL.', 'error');
-
             const groupId = AppState.groups[0]?.id;
             if(!groupId) return showToast('You must be in a group to add content.', 'error');
-
-            const { error } = await sb.from('group_content').insert({
-                group_id: groupId,
-                author_id: AppState.userId,
-                content_type: type,
-                title: title,
-                file_url: url,
-                likes: 0
-            });
-
+            const { error } = await sb.from('group_content').insert({ group_id: groupId, author_id: AppState.userId, content_type: type, title: title, file_url: url, likes: 0 });
             if(error) return showToast('Error adding file: ' + error.message, 'error');
-
-            showToast('📤 Content published successfully!', 'success');
-            closeModal('addFileModal');
-            openTabContent('group-feed'); // Refresh feed
+            showToast('📤 Content published successfully!', 'success'); closeModal('addFileModal'); openTabContent('group-feed', groupId);
         }
 
-        // ================================================================
-        // NEW FUNCTION: BUY COINS (Saves to Supabase)
-        // ================================================================
         async function submitBuyCoins() {
-            const amountETB = parseInt(document.getElementById('buyCoinAmount').value);
-            const txId = document.getElementById('buyCoinTxId').value;
-            
+            const amountETB = parseInt(document.getElementById('buyCoinAmount').value); const txId = document.getElementById('buyCoinTxId').value;
             if(!amountETB || amountETB < 10) return showToast('Minimum purchase is 10 ETB (100 Coins).', 'error');
             if(!txId) return showToast('Please enter your Telebirr Transaction ID.', 'error');
-
-            // Calculate coins (1 ETB = 10 Coins)
             const coinsToAdd = amountETB * 10;
-
-            // Update the user's coin balance in the database
-            const { error } = await sb.from('users').update({
-                coin_balance: AppState.coinBalance + coinsToAdd
-            }).eq('user_id', AppState.userId);
-
+            const { error } = await sb.from('users').update({ coin_balance: AppState.coinBalance + coinsToAdd }).eq('user_id', AppState.userId);
             if(error) return showToast('Error buying coins: ' + error.message, 'error');
-
-            // Update local state
             AppState.coinBalance += coinsToAdd;
-            
-            showToast(`💳 Added ${coinsToAdd} Coins! (${amountETB} ETB)`, 'success');
-            closeModal('buyCoinsModal');
-            document.getElementById('buyCoinAmount').value = '';
-            document.getElementById('buyCoinTxId').value = '';
+            showToast(`💳 Added ${coinsToAdd} Coins! (${amountETB} ETB)`, 'success'); closeModal('buyCoinsModal');
+            document.getElementById('buyCoinAmount').value = ''; document.getElementById('buyCoinTxId').value = '';
         }
 
-        // ================================================================
-        // NEW FUNCTION: WITHDRAW (Saves to Supabase)
-        // ================================================================
         async function submitWithdraw() {
-            // Placeholder for your withdraw logic. For now, we will just create a request.
-            const amountCoins = 100000; // Minimum 100,000 coins (10,000 ETB)
-            
-            if(AppState.coinBalance < amountCoins) {
-                return showToast(`⚠️ Minimum withdrawal is ${amountCoins} Coins (10,000 ETB). You have ${AppState.coinBalance} Coins.`, 'error');
-            }
-
-            // Save request to database
-            const { error } = await sb.from('withdrawal_requests').insert({
-                user_id: AppState.userId,
-                amount: amountCoins,
-                status: 'pending'
-            });
-
+            const amountCoins = 100000;
+            if(AppState.coinBalance < amountCoins) { return showToast(`⚠️ Minimum withdrawal is ${amountCoins} Coins (10,000 ETB). You have ${AppState.coinBalance} Coins.`, 'error'); }
+            const { error } = await sb.from('withdrawal_requests').insert({ user_id: AppState.userId, amount: amountCoins, status: 'pending' });
             if(error) return showToast('Error requesting withdrawal: ' + error.message, 'error');
-
-            showToast('📤 Withdrawal request sent to Admin! (100,000 Coins)', 'success');
-            closeModal('walletModal');
+            showToast('📤 Withdrawal request sent to Admin! (100,000 Coins)', 'success'); closeModal('walletModal');
         }
+
         // ================================================================
-        // TOGGLE CONTENT FIELDS (Video/PPT vs Mock Exam)
+        // TOGGLE CONTENT FIELDS & ADD EXAM QUESTIONS
         // ================================================================
         function toggleContentFields() {
             const type = document.getElementById('addFileType').value;
-            const standard = document.getElementById('standardFields');
-            const examBuilder = document.getElementById('examBuilder');
-
-            if (type === 'exam') {
-                standard.style.display = 'none';
-                examBuilder.style.display = 'block';
-            } else {
-                standard.style.display = 'block';
-                examBuilder.style.display = 'none';
-            }
+            const standard = document.getElementById('standardFields'); const examBuilder = document.getElementById('examBuilder');
+            if (type === 'exam') { standard.style.display = 'none'; examBuilder.style.display = 'block'; }
+            else { standard.style.display = 'block'; examBuilder.style.display = 'none'; }
         }
 
-        // ================================================================
-        // ADD DYNAMIC EXAM QUESTIONS
-        // ================================================================
         let examQuestionCount = 1;
         function addExamQuestion() {
-            examQuestionCount++;
-            const container = document.getElementById('examBuilder');
+            examQuestionCount++; const container = document.getElementById('examBuilder');
             const newQ = document.createElement('div');
             newQ.style.cssText = "background:var(--bg-light); border-radius:12px; padding:12px; margin-bottom:12px;";
             newQ.innerHTML = `
@@ -1450,101 +1436,19 @@ async function createGroup() {
         // UPLOAD FILE TO SUPABASE STORAGE
         // ================================================================
         async function uploadFileToStorage() {
-            const fileInput = document.getElementById('addFileInput');
-            const file = fileInput.files[0];
-            const statusDiv = document.getElementById('uploadStatus');
-
+            const fileInput = document.getElementById('addFileInput'); const file = fileInput.files[0]; const statusDiv = document.getElementById('uploadStatus');
             if (!file) return showToast('Please select a file from your phone first.', 'error');
-
-            if (file.size > 50 * 1024 * 1024) {
-                return showToast('File is too large. Max 50MB allowed.', 'error');
-            }
-
-            statusDiv.innerText = `⏳ Uploading ${file.name}...`;
-            statusDiv.style.color = 'var(--gold)';
-
+            if (file.size > 50 * 1024 * 1024) { return showToast('File is too large. Max 50MB allowed.', 'error'); }
+            statusDiv.innerText = `⏳ Uploading ${file.name}...`; statusDiv.style.color = 'var(--gold)';
             try {
-                const fileExt = file.name.split('.').pop();
-                const fileName = `uploads/${AppState.userId}_${Date.now()}.${fileExt}`;
-
-                const { data, error } = await sb.storage
-                    .from('t-hub-uploads')
-                    .upload(fileName, file, { cacheControl: '3600', upsert: false });
-
+                const fileExt = file.name.split('.').pop(); const fileName = `uploads/${AppState.userId}_${Date.now()}.${fileExt}`;
+                const { data, error } = await sb.storage.from('t-hub-uploads').upload(fileName, file, { cacheControl: '3600', upsert: false });
                 if (error) throw error;
-
-                const { data: urlData } = sb.storage
-                    .from('t-hub-uploads')
-                    .getPublicUrl(fileName);
-
-                const publicUrl = urlData.publicUrl;
-
-                document.getElementById('addFileUrl').value = publicUrl;
-                statusDiv.innerText = `✅ Uploaded ${file.name}!`;
-                statusDiv.style.color = 'var(--green-success)';
-
+                const { data: urlData } = sb.storage.from('t-hub-uploads').getPublicUrl(fileName); const publicUrl = urlData.publicUrl;
+                document.getElementById('addFileUrl').value = publicUrl; statusDiv.innerText = `✅ Uploaded ${file.name}!`; statusDiv.style.color = 'var(--green-success)';
                 showToast('✅ File uploaded to T-Hub Cloud!', 'success');
-
             } catch (err) {
-                console.error(err);
-                statusDiv.innerText = `❌ Upload failed: ${err.message}`;
-                statusDiv.style.color = 'var(--red-error)';
-                showToast('Upload failed: ' + err.message, 'error');
-            }
-        }
-
-        // ================================================================
-        // SUBMIT ADD FILE (UPDATED WITH AUTO-FILLED URL)
-        // ================================================================
-        async function submitAddFile() {
-            const type = document.getElementById('addFileType').value;
-            
-            if (type === 'exam') {
-                const title = document.getElementById('examTitle').value;
-                if (!title) return showToast('Please enter an Exam Title.', 'error');
-
-                const questions = [];
-                for (let i = 1; i <= examQuestionCount; i++) {
-                    const q = document.getElementById(`examQ${i}`)?.value;
-                    const a = document.getElementById(`examA${i}`)?.value;
-                    const b = document.getElementById(`examB${i}`)?.value;
-                    const c = document.getElementById(`examC${i}`)?.value;
-                    const d = document.getElementById(`examD${i}`)?.value;
-                    const ans = document.getElementById(`examAns${i}`)?.value;
-                    
-                    if (!q) return showToast(`Please fill in Question ${i}.`, 'error');
-                    if (!a || !b || !c || !d) return showToast(`Please fill in all options for Question ${i}.`, 'error');
-                    
-                    questions.push({ question: q, options: [a, b, c, d], answer: ans });
-                }
-
-                // Save to Supabase (Mock exams table - uncomment when ready)
-                // const { error } = await sb.from('mock_exams').insert({ title, questions, author_id: AppState.userId });
-                
-                showToast(`📝 Exam '${title}' with ${questions.length} questions created!`, 'success');
-                closeModal('addFileModal');
-                examQuestionCount = 1;
-
-            } else {
-                const title = document.getElementById('addFileTitle').value;
-                const url = document.getElementById('addFileUrl').value;
-                
-                if(!title) return showToast('Please enter a title.', 'error');
-                if(!url) return showToast('Please upload a file first (click the Upload button).', 'error');
-
-                const groupId = AppState.groups[0]?.id;
-                if(!groupId) return showToast('You must be in a group to add content.', 'error');
-
-                // Save to Supabase (Group content table - uncomment when ready)
-                // const { error } = await sb.from('group_content').insert({
-                //     group_id: groupId, author_id: AppState.userId, content_type: type, title: title, file_url: url, likes: 0
-                // });
-
-                showToast(`📤 ${type === 'video' ? 'Video' : 'PPT'} published successfully!`, 'success');
-                closeModal('addFileModal');
-                document.getElementById('addFileInput').value = '';
-                document.getElementById('addFileUrl').value = '';
-                document.getElementById('uploadStatus').innerText = '⏳ No file selected';
+                console.error(err); statusDiv.innerText = `❌ Upload failed: ${err.message}`; statusDiv.style.color = 'var(--red-error)'; showToast('Upload failed: ' + err.message, 'error');
             }
         }
 
