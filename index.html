@@ -576,16 +576,64 @@
             </div>
         </div>
 
-        <!-- ADD FILE / CONTENT MODAL -->
+        <!-- ADD FILE / CONTENT MODAL (UPDATED) -->
         <div id="addFileModal" class="modal">
             <div class="modal-content">
                 <span class="close" onclick="closeModal('addFileModal')">&times;</span>
                 <h3>📂 Add File / Content</h3>
-                <div class="form-group"><label>Content Type</label>
-                    <select id="addFileType"><option value="video">📹 Video</option><option value="ppt">📊 PPT</option><option value="text">📝 Text Post</option></select>
+                <div class="form-group">
+                    <label>Content Type</label>
+                    <select id="addFileType" onchange="toggleContentFields()">
+                        <option value="video">📹 Video</option>
+                        <option value="ppt">📊 PPT</option>
+                        <option value="exam">📝 Mock Exam</option>
+                    </select>
                 </div>
-                <div class="form-group"><label>Title</label><input type="text" id="addFileTitle"></div>
-                <div class="form-group"><label>File URL (or Text if posting text)</label><input type="text" id="addFileUrl"></div>
+                
+                <!-- STANDARD FIELDS (For Video & PPT) -->
+                <div id="standardFields">
+                    <div class="form-group"><label>Title</label><input type="text" id="addFileTitle"></div>
+                    
+                    <!-- NEW: FILE PICKER -->
+                    <div class="form-group">
+                        <label>Upload File (Video or PDF)</label>
+                        <div style="display:flex; gap:10px; align-items:center;">
+                            <input type="file" id="addFileInput" accept="video/*,.pdf" style="flex:1; padding:8px; border:1px solid #eee; border-radius:8px; background:var(--bg-light);">
+                            <button class="btn-sm btn-teal" onclick="uploadFileToStorage()" style="margin:0; width:auto; padding:8px 16px;">📤 Upload</button>
+                        </div>
+                        <div id="uploadStatus" style="font-size:12px; color:var(--text-muted); margin-top:4px;">⏳ No file selected</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>File URL (Auto-filled after upload)</label>
+                        <input type="text" id="addFileUrl" placeholder="Upload a file to generate the URL..." readonly style="background:#f9f9f9; color:#888;">
+                    </div>
+                </div>
+
+                <!-- MOCK EXAM BUILDER FIELDS (Hidden by default) -->
+                <div id="examBuilder" style="display:none;">
+                    <div class="form-group"><label>Exam Title</label><input type="text" id="examTitle"></div>
+                    
+                    <div style="background:var(--bg-light); border-radius:12px; padding:12px; margin-bottom:12px;">
+                        <p style="font-weight:700; color:var(--text-dark); margin-bottom:4px;">Q1: Question</p>
+                        <input type="text" id="examQ1" placeholder="Type your question..." style="width:100%; margin-bottom:6px; padding:8px; border:1px solid #eee; border-radius:8px;">
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
+                            <input type="text" id="examA1" placeholder="Option A" style="padding:6px; border:1px solid #eee; border-radius:6px;">
+                            <input type="text" id="examB1" placeholder="Option B" style="padding:6px; border:1px solid #eee; border-radius:6px;">
+                            <input type="text" id="examC1" placeholder="Option C" style="padding:6px; border:1px solid #eee; border-radius:6px;">
+                            <input type="text" id="examD1" placeholder="Option D" style="padding:6px; border:1px solid #eee; border-radius:6px;">
+                        </div>
+                        <div style="margin-top:6px;">
+                            <label style="font-size:13px; font-weight:600;">Correct Answer:</label>
+                            <select id="examAns1" style="padding:4px 8px; border-radius:6px; border:1px solid #eee;">
+                                <option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button class="btn-sm btn-teal" onclick="addExamQuestion()" style="width:100%; margin-bottom:12px;">➕ Add Another Question</button>
+                </div>
+
                 <button class="btn btn-teal" onclick="submitAddFile()">📤 Publish</button>
             </div>
         </div>
@@ -1352,6 +1400,152 @@ async function createGroup() {
 
             showToast('📤 Withdrawal request sent to Admin! (100,000 Coins)', 'success');
             closeModal('walletModal');
+        }
+        // ================================================================
+        // TOGGLE CONTENT FIELDS (Video/PPT vs Mock Exam)
+        // ================================================================
+        function toggleContentFields() {
+            const type = document.getElementById('addFileType').value;
+            const standard = document.getElementById('standardFields');
+            const examBuilder = document.getElementById('examBuilder');
+
+            if (type === 'exam') {
+                standard.style.display = 'none';
+                examBuilder.style.display = 'block';
+            } else {
+                standard.style.display = 'block';
+                examBuilder.style.display = 'none';
+            }
+        }
+
+        // ================================================================
+        // ADD DYNAMIC EXAM QUESTIONS
+        // ================================================================
+        let examQuestionCount = 1;
+        function addExamQuestion() {
+            examQuestionCount++;
+            const container = document.getElementById('examBuilder');
+            const newQ = document.createElement('div');
+            newQ.style.cssText = "background:var(--bg-light); border-radius:12px; padding:12px; margin-bottom:12px;";
+            newQ.innerHTML = `
+                <p style="font-weight:700; color:var(--text-dark); margin-bottom:4px;">Q${examQuestionCount}: Question</p>
+                <input type="text" id="examQ${examQuestionCount}" placeholder="Type your question..." style="width:100%; margin-bottom:6px; padding:8px; border:1px solid #eee; border-radius:8px;">
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
+                    <input type="text" id="examA${examQuestionCount}" placeholder="Option A" style="padding:6px; border:1px solid #eee; border-radius:6px;">
+                    <input type="text" id="examB${examQuestionCount}" placeholder="Option B" style="padding:6px; border:1px solid #eee; border-radius:6px;">
+                    <input type="text" id="examC${examQuestionCount}" placeholder="Option C" style="padding:6px; border:1px solid #eee; border-radius:6px;">
+                    <input type="text" id="examD${examQuestionCount}" placeholder="Option D" style="padding:6px; border:1px solid #eee; border-radius:6px;">
+                </div>
+                <div style="margin-top:6px;">
+                    <label style="font-size:13px; font-weight:600;">Correct Answer:</label>
+                    <select id="examAns${examQuestionCount}" style="padding:4px 8px; border-radius:6px; border:1px solid #eee;">
+                        <option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option>
+                    </select>
+                </div>
+            `;
+            container.insertBefore(newQ, container.lastElementChild);
+        }
+
+        // ================================================================
+        // UPLOAD FILE TO SUPABASE STORAGE
+        // ================================================================
+        async function uploadFileToStorage() {
+            const fileInput = document.getElementById('addFileInput');
+            const file = fileInput.files[0];
+            const statusDiv = document.getElementById('uploadStatus');
+
+            if (!file) return showToast('Please select a file from your phone first.', 'error');
+
+            if (file.size > 50 * 1024 * 1024) {
+                return showToast('File is too large. Max 50MB allowed.', 'error');
+            }
+
+            statusDiv.innerText = `⏳ Uploading ${file.name}...`;
+            statusDiv.style.color = 'var(--gold)';
+
+            try {
+                const fileExt = file.name.split('.').pop();
+                const fileName = `uploads/${AppState.userId}_${Date.now()}.${fileExt}`;
+
+                const { data, error } = await sb.storage
+                    .from('t-hub-uploads')
+                    .upload(fileName, file, { cacheControl: '3600', upsert: false });
+
+                if (error) throw error;
+
+                const { data: urlData } = sb.storage
+                    .from('t-hub-uploads')
+                    .getPublicUrl(fileName);
+
+                const publicUrl = urlData.publicUrl;
+
+                document.getElementById('addFileUrl').value = publicUrl;
+                statusDiv.innerText = `✅ Uploaded ${file.name}!`;
+                statusDiv.style.color = 'var(--green-success)';
+
+                showToast('✅ File uploaded to T-Hub Cloud!', 'success');
+
+            } catch (err) {
+                console.error(err);
+                statusDiv.innerText = `❌ Upload failed: ${err.message}`;
+                statusDiv.style.color = 'var(--red-error)';
+                showToast('Upload failed: ' + err.message, 'error');
+            }
+        }
+
+        // ================================================================
+        // SUBMIT ADD FILE (UPDATED WITH AUTO-FILLED URL)
+        // ================================================================
+        async function submitAddFile() {
+            const type = document.getElementById('addFileType').value;
+            
+            if (type === 'exam') {
+                const title = document.getElementById('examTitle').value;
+                if (!title) return showToast('Please enter an Exam Title.', 'error');
+
+                const questions = [];
+                for (let i = 1; i <= examQuestionCount; i++) {
+                    const q = document.getElementById(`examQ${i}`)?.value;
+                    const a = document.getElementById(`examA${i}`)?.value;
+                    const b = document.getElementById(`examB${i}`)?.value;
+                    const c = document.getElementById(`examC${i}`)?.value;
+                    const d = document.getElementById(`examD${i}`)?.value;
+                    const ans = document.getElementById(`examAns${i}`)?.value;
+                    
+                    if (!q) return showToast(`Please fill in Question ${i}.`, 'error');
+                    if (!a || !b || !c || !d) return showToast(`Please fill in all options for Question ${i}.`, 'error');
+                    
+                    questions.push({ question: q, options: [a, b, c, d], answer: ans });
+                }
+
+                // Save to Supabase (Mock exams table - uncomment when ready)
+                // const { error } = await sb.from('mock_exams').insert({ title, questions, author_id: AppState.userId });
+                
+                showToast(`📝 Exam '${title}' with ${questions.length} questions created!`, 'success');
+                closeModal('addFileModal');
+                examQuestionCount = 1;
+
+            } else {
+                const title = document.getElementById('addFileTitle').value;
+                const url = document.getElementById('addFileUrl').value;
+                
+                if(!title) return showToast('Please enter a title.', 'error');
+                if(!url) return showToast('Please upload a file first (click the Upload button).', 'error');
+
+                const groupId = AppState.groups[0]?.id;
+                if(!groupId) return showToast('You must be in a group to add content.', 'error');
+
+                // Save to Supabase (Group content table - uncomment when ready)
+                // const { error } = await sb.from('group_content').insert({
+                //     group_id: groupId, author_id: AppState.userId, content_type: type, title: title, file_url: url, likes: 0
+                // });
+
+                showToast(`📤 ${type === 'video' ? 'Video' : 'PPT'} published successfully!`, 'success');
+                closeModal('addFileModal');
+                document.getElementById('addFileInput').value = '';
+                document.getElementById('addFileUrl').value = '';
+                document.getElementById('uploadStatus').innerText = '⏳ No file selected';
+            }
         }
 
         // ================================================================
