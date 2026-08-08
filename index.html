@@ -916,15 +916,22 @@
             document.getElementById('payReceipt').value = '';
         }
 
-        // ================================================================
-        // VERIFICATION & KYC (Appeal)
-        // ================================================================
-        async function submitAppeal() {
-            if (AppState.coinBalance < 6000) return showToast('⚠️ Insufficient coins. Please buy more coins first.', 'error');
-            // Simulate deduction and submit
-            showToast('📤 Application submitted! 6,000 Coins deducted. Admin will review within 48 hours.', 'success');
-            closeModal('appealModal');
-        }
+// ================================================================
+// VERIFICATION & KYC (Appeal)
+// ================================================================
+async function submitAppeal() {
+    // 🟢 ADMIN BYPASS: If you are Admin, you don't need coins. Approve instantly.
+    if (AppState.isAdmin) {
+        showToast('👑 Admin automatically verified!', 'success');
+        closeModal('appealModal');
+        return;
+    }
+
+    if (AppState.coinBalance < 6000) return showToast('⚠️ Insufficient coins. Please buy more coins first.', 'error');
+    
+    showToast('📤 Application submitted! 6,000 Coins deducted. Admin will review within 48 hours.', 'success');
+    closeModal('appealModal');
+}
 // ================================================================
 // CREATE GROUP LOGIC (REAL DATABASE CONNECTION)
 // ================================================================
