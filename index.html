@@ -641,7 +641,7 @@
         <div id="toast" class="toast"></div>
     </div>
 
-    <script>
+<script>
         // ================================================================
         // CONFIGURATION
         // ================================================================
@@ -714,7 +714,8 @@
                 create_social_group: "Create Social Group", create_teaching_group: "Create Teaching Group",
                 my_groups: "My Groups", promote_admin: "Promote to Admin", mode: "Mode:",
                 watch: "Watch", read: "Read", publish: "Publish", save: "Save Changes",
-                deduct_coins: "💰 Deduct 6,000 Coins (Verification Fee)"
+                deduct_coins: "💰 Deduct 6,000 Coins (Verification Fee)",
+                start: "▶️ Start Exam"
             },
             am: {
                 home: "መነሻ", class: "ክፍሌ", books: "መጻሕፍት", job: "ሥራ", research: "ምርምር",
@@ -749,32 +750,68 @@
                 create_social_group: "ማህበራዊ ቡድን ይፍጠሩ", create_teaching_group: "የማስተማሪያ ቡድን ይፍጠሩ",
                 my_groups: "የኔ ቡድኖች", promote_admin: "ወደ አስተዳዳሪ ከፍ አድርግ", mode: "ሁኔታ:",
                 watch: "ተመልከት", read: "አንብብ", publish: "አሳትም", save: "አስቀምጥ",
-                deduct_coins: "💰 6,000 ሳንቲም ይቀንሱ (የማረጋገጫ ክፍያ)"
+                deduct_coins: "💰 6,000 ሳንቲም ይቀንሱ (የማረጋገጫ ክፍያ)",
+                start: "▶️ ፈተና ጀምር"
             }
         };
 
-        function t(key) { return translations[AppState.lang][key] || key; }
+        function t(key) { 
+            const translation = translations[AppState.lang][key];
+            return translation || key;
+        }
 
+        // ================================================================
+        // LANGUAGE TOGGLE - FIXED
+        // ================================================================
         function toggleLanguage() {
             AppState.lang = AppState.lang === 'en' ? 'am' : 'en';
             const toggleBtn = document.getElementById('langToggle');
-            if (toggleBtn) toggleBtn.innerText = AppState.lang === 'en' ? '🇬🇧 EN' : '🇪🇹 አማ';
+            if (toggleBtn) {
+                toggleBtn.innerText = AppState.lang === 'en' ? '🇬🇧 EN' : '🇪🇹 አማ';
+            }
             translatePage();
             showToast(AppState.lang === 'en' ? 'Switched to English' : 'ወደ አማርኛ ተቀይሯል', 'info');
         }
         
+        // ================================================================
+        // TRANSLATE PAGE - FIXED (Preserves original text)
+        // ================================================================
         function translatePage() {
-            document.querySelectorAll('[data-key]').forEach(el => { 
+            // First pass: Store original text for ALL elements
+            document.querySelectorAll('[data-key]').forEach(el => {
+                // Store original text if not already stored
+                if (!el.hasAttribute('data-original')) {
+                    el.setAttribute('data-original', el.innerText);
+                }
+            });
+            
+            // Second pass: Apply translations
+            document.querySelectorAll('[data-key]').forEach(el => {
                 const key = el.getAttribute('data-key');
-                const translation = t(key);
-                if (translation && translation !== key) {
-                    // Preserve emojis and icons
-                    const currentText = el.innerText;
-                    const emojiMatch = currentText.match(/^[^\w\s]+/);
-                    if (emojiMatch) {
+                const originalText = el.getAttribute('data-original') || el.innerText;
+                
+                // Get the translation for the current language
+                let translation = t(key);
+                
+                // If we're in English mode, restore original text
+                if (AppState.lang === 'en') {
+                    el.innerText = originalText;
+                    return;
+                }
+                
+                // For Amharic mode, apply translation
+                if (AppState.lang === 'am') {
+                    // Check if original text starts with an emoji
+                    const emojiMatch = originalText.match(/^[^\w\s]+/);
+                    
+                    if (emojiMatch && translation && translation !== key) {
+                        // Preserve the emoji and add translation
                         el.innerText = emojiMatch[0] + ' ' + translation;
-                    } else {
+                    } else if (translation && translation !== key) {
                         el.innerText = translation;
+                    } else {
+                        // If no translation, keep original
+                        el.innerText = originalText;
                     }
                 }
             });
@@ -804,7 +841,7 @@
         }
 
         // ================================================================
-        // NOTIFICATION FUNCTIONS - FIXED
+        // NOTIFICATION FUNCTIONS
         // ================================================================
         function toggleNotificationDropdown(event) {
             if (event) event.stopPropagation();
@@ -838,6 +875,7 @@
             const homeTab = document.querySelector('[data-tab="home"]');
             if (homeTab) homeTab.classList.add('active');
             AppState.currentGroupId = null;
+            translatePage();
         }
 
         function openTabContent(tabId, specificGroupId = null) {
@@ -862,7 +900,11 @@
             }
             
             if (tabId === 'admin') loadAdminPanel();
-            translatePage();
+            
+            // Store original text for all new elements
+            setTimeout(() => {
+                translatePage();
+            }, 50);
 
             if (tabId === 'group-feed' && specificGroupId) {
                 AppState.currentGroupId = specificGroupId;
@@ -905,10 +947,10 @@
                     `;
                 });
                 containerDiv.innerHTML = html;
+                setTimeout(() => translatePage(), 50);
             } else {
                 containerDiv.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:20px;">No groups yet. Create one using the "Create New Group" button.</div>`;
             }
-            translatePage();
         }
 
         function footerTabClick(tabId) {
@@ -1020,7 +1062,7 @@
                         </div>
                     `).join('');
                 }
-                translatePage();
+                setTimeout(() => translatePage(), 50);
             } catch (err) {
                 console.error(err);
                 container.innerHTML = `<div class="loading" style="color:var(--red-error);">Failed to load content</div>`;
@@ -1059,7 +1101,7 @@
                         </div>
                     `).join('')}
                 `;
-                translatePage();
+                setTimeout(() => translatePage(), 50);
             } catch (err) {
                 console.error('Error loading exams:', err);
                 container.innerHTML = `<div class="loading" style="color:var(--red-error);">Failed to load exams</div>`;
@@ -1495,6 +1537,9 @@
                         dropdownItems.innerHTML = `<div onclick="openTabContent('profile')">👤 Profile</div><div onclick="logout()">🚪 Logout</div>`;
                     }
                     
+                    // Store original text and translate
+                    setTimeout(() => translatePage(), 100);
+                    
                 } else { 
                     showAuthModal(); 
                     document.getElementById('loadingOverlay').style.display = 'none'; 
@@ -1608,7 +1653,7 @@
                     </div>
                 </div>
             `;
-            translatePage();
+            setTimeout(() => translatePage(), 50);
         }
 
         function adminAction(action) {
@@ -1633,7 +1678,7 @@
                     <button class="btn" onclick="loadAdminPanel()" style="margin-top:10px;">← Back to Admin</button>
                 </div>
             `;
-            translatePage();
+            setTimeout(() => translatePage(), 50);
         }
 
         function viewConsultations() {
@@ -1649,7 +1694,7 @@
                     <button class="btn" onclick="loadAdminPanel()">← Back to Admin</button>
                 </div>
             `;
-            translatePage();
+            setTimeout(() => translatePage(), 50);
         }
 
         // ================================================================
@@ -1853,7 +1898,7 @@
                         </div>
                     </div>
                 `).join('');
-                translatePage();
+                setTimeout(() => translatePage(), 50);
 
             } catch (err) {
                 console.error("Error loading exams:", err);
@@ -1972,27 +2017,23 @@
         }
 
         // ================================================================
-        // CLOSE DROPDOWNS ON OUTSIDE CLICK - FIXED
+        // CLOSE DROPDOWNS ON OUTSIDE CLICK
         // ================================================================
         document.addEventListener('click', function(e) {
-            // Close profile dropdown
             const menu = document.getElementById('dropdownMenu');
             if (menu && menu.classList.contains('show') && 
                 !e.target.closest('.profile-area')) {
                 menu.classList.remove('show');
             }
             
-            // Close notification dropdown
             const dropdown = document.getElementById('notificationDropdown');
             if (dropdown && dropdown.style.display === 'block' && 
                 !e.target.closest('.notification-bell-wrapper')) {
                 dropdown.style.display = 'none';
             }
             
-            // Close class header dropdown
             document.querySelectorAll('.class-header-dropdown').forEach(d => d.classList.remove('active'));
             
-            // Close class dropdown menu
             const classMenu = document.getElementById('classDropdownMenu');
             if (classMenu && classMenu.style.display === 'block' && 
                 !e.target.closest('#classDropdownMenu') && 
@@ -2002,7 +2043,7 @@
         });
 
         // ================================================================
-        // PROFILE AVATAR CLICK - FIXED
+        // PROFILE AVATAR CLICK
         // ================================================================
         document.addEventListener('DOMContentLoaded', function() {
             const avatar = document.getElementById('profileAvatar');
@@ -2022,6 +2063,6 @@
             document.getElementById('loadingOverlay').style.display = 'flex';
             checkSession();
         });
-    </script>
+</script>
 </body>
 </html>
