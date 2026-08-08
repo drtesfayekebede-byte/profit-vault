@@ -26,6 +26,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes pulseRed { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
 
         html, body { height: 100dvh; width: 100%; margin: 0; padding: 0; overflow: hidden; background: var(--bg-white); font-family: var(--font-main); }
 
@@ -46,7 +47,7 @@
         .profile-area { display: flex; align-items: center; gap: 10px; flex-shrink: 0; position: relative; }
         .profile-avatar { width: 38px; height: 38px; background: #e2e8f0; border-radius: 50%; display: flex; align-items: center; justify-content: center; overflow: hidden; cursor: pointer; transition: 0.2s; border: 2px solid rgba(255,255,255,0.3); flex-shrink: 0; box-shadow: 0 0 10px rgba(255,255,255,0.1); }
         .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
-        .notification-bell-wrapper { position: relative; cursor: pointer; flex-shrink: 0; display: none; }
+        .notification-bell-wrapper { position: relative; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; }
         .bell-icon { font-size: 20px; line-height: 1; color: var(--text-light); }
         .notification-badge { display: none; position: absolute; top: -4px; right: -6px; background: var(--red-error); color: white; font-size: 9px; font-weight: bold; min-width: 16px; height: 16px; border-radius: 50%; text-align: center; line-height: 16px; padding: 0 4px; border: 1px solid var(--navy); }
         .notification-badge.has-notifications { display: block; }
@@ -83,7 +84,6 @@
         .quick-btn .icon { font-size: 28px; color: var(--gold); display: block; margin-bottom: 6px; }
         .quick-btn .label { color: var(--text-light); font-weight: 700; font-size: 14px; }
         .quick-btn.live { border: 2px solid var(--red-error); animation: pulseRed 2s infinite; }
-        @keyframes pulseRed { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
 
         .feed-section h3 { color: var(--navy); font-size: 18px; font-weight: 800; margin-bottom: 12px; border-left: 4px solid var(--gold); padding-left: 10px; }
         .feed-card { background: var(--bg-white); border: 1px solid #e2e8f0; border-radius: var(--border-radius-card); padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
@@ -112,7 +112,7 @@
         .back-button:hover { transform: scale(1.02); background: var(--navy-light); }
         .tab-scroll-area { flex: 1; overflow-y: auto; padding: 16px; padding-bottom: calc(var(--footer-height) + 20px); width: 100%; max-width: 800px; margin: 0 auto; }
 
-        /* CLASS HEADER - WITH THE NEW 3-DOT MENU FOR CLASS SETTINGS */
+        /* CLASS HEADER */
         .class-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
         .class-header h2 { color: var(--navy); font-size: 20px; font-weight: 800; }
         .class-header .class-header-menu { position: relative; cursor: pointer; font-size: 22px; color: var(--gold); }
@@ -129,7 +129,7 @@
         .group-banner .stats { font-size: 14px; color: rgba(255,255,255,0.8); }
         .group-banner .stats span { color: var(--gold); font-weight: 700; }
 
-        .class-tabs { display: flex; gap: 10px; margin-bottom: 16px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .class-tabs { display: flex; gap: 10px; margin-bottom: 16px; border-bottom: 2px solid #eee; padding-bottom: 10px; flex-wrap: wrap; align-items: center; }
         .class-tab { background: none; border: none; font-weight: 700; font-size: 14px; color: var(--text-muted); cursor: pointer; padding: 4px 12px; }
         .class-tab.active { color: var(--navy); border-bottom: 3px solid var(--gold); }
         .class-content { display: none; }
@@ -213,8 +213,8 @@
         .close { float: right; font-size: 28px; cursor: pointer; color: var(--red-error); font-weight: 700; }
         .close:hover { color: #ff4444; }
         .modal-content h3 { color: var(--navy); margin-bottom: 15px; font-weight: 800; }
-        .modal-content input, .modal-content select, .modal-content textarea { background: var(--bg-light); border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px 14px; color: var(--text-dark); font-size: 15px; font-weight: 600; width: 100%; margin-bottom: 12px; box-sizing: border-box; }
-        .modal-content input:focus { border-color: var(--navy); outline: none; }
+        .modal-content input, .modal-content select, .modal-content textarea { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px 14px; color: var(--text-dark); font-size: 15px; font-weight: 600; width: 100%; margin-bottom: 12px; box-sizing: border-box; }
+        .modal-content input:focus { border-color: var(--navy); outline: none; box-shadow: 0 0 0 2px rgba(10, 37, 64, 0.1); }
 
         .btn { background: var(--gold); border: none; padding: 14px 20px; border-radius: 40px; color: var(--text-dark); font-size: 16px; font-weight: 700; cursor: pointer; width: 100%; margin-bottom: 10px; transition: 0.2s; }
         .btn:active { transform: scale(0.97); }
@@ -225,6 +225,29 @@
         .toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: var(--text-dark); color: white; border-left: 5px solid var(--gold); padding: 12px 20px; border-radius: 60px; font-weight: 700; display: none; z-index: 1001; white-space: nowrap; font-size: 14px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
         .toast.show { display: flex; animation: fadeIn 0.2s; }
         .toast.error { border-left-color: var(--red-error); }
+        .toast.info { border-left-color: #3b82f6; background: #1e293b; }
+
+        /* ADDITIONAL FIXED STYLES */
+        .btn-sm { padding: 6px 16px; border: none; border-radius: 20px; font-weight: 700; cursor: pointer; font-size: 12px; transition: 0.2s; }
+        .btn-sm.btn-teal { background: var(--teal); color: white; }
+        .btn-sm:hover { transform: scale(1.02); }
+        .btn-sm:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        .progress-bar { background: #eee; border-radius: 12px; height: 8px; margin-bottom: 16px; overflow: hidden; }
+        .progress-fill { width: 0%; height: 100%; background: var(--gold); border-radius: 12px; transition: width 0.3s ease; }
+
+        .verified-badge { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; background: var(--navy); color: white; border-radius: 50%; font-size: 10px; font-weight: bold; border: 1px solid rgba(255,255,255,0.3); margin-left: 4px; }
+
+        .loading { text-align: center; padding: 20px; color: var(--text-muted); }
+
+        .card { background: var(--bg-white); border-radius: var(--border-radius-card); padding: 20px; margin-bottom: 18px; border: 1px solid #e2e8f0; color: var(--text-dark); transition: 0.2s; }
+        .card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .card h3 { margin-bottom: 15px; font-size: 20px; font-weight: 800; border-left: 4px solid var(--gold); padding-left: 12px; color: var(--navy); }
+        .card h4 { color: var(--text-dark); font-weight: 700; margin: 8px 0 4px; }
+        .card .form-group { margin-bottom: 12px; }
+        .card label { display: block; font-weight: 600; margin-bottom: 4px; color: var(--text-dark); }
+
+        .notification-bell-wrapper { position: relative; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; }
 
         @media (max-width: 600px) {
             .app-logo h1 { font-size: 18px; }
@@ -282,8 +305,8 @@
         <div id="appMain" class="app-main">
             <div class="app-grid-wrapper">
                 <div class="welcome-banner">
-                    <div><h2 id="welcomeText">👋 Welcome back!</h2><p>Your medical education ecosystem</p></div>
-                    <button class="btn-go" onclick="openTabContent('class')">📚 Go to My Class</button>
+                    <div><h2 id="welcomeText" data-key="welcome_title">👋 Welcome back!</h2><p data-key="welcome_desc">Your medical education ecosystem</p></div>
+                    <button class="btn-go" onclick="openTabContent('class')" data-key="go_to_class">📚 Go to My Class</button>
                 </div>
                 <div class="ticker-container">
                     <div class="ticker-text">
@@ -293,22 +316,22 @@
                     </div>
                 </div>
                 <div class="quick-actions">
-                    <div class="quick-btn" onclick="openTabContent('class')"><span class="icon">📚</span><span class="label">My Class</span></div>
-                    <div class="quick-btn" onclick="openTabContent('books')"><span class="icon">📖</span><span class="label">Books</span></div>
-                    <div class="quick-btn" onclick="openTabContent('jobs')"><span class="icon">💼</span><span class="label">Job</span></div>
-                    <div class="quick-btn" onclick="openTabContent('research')"><span class="icon">🔬</span><span class="label">Research</span></div>
+                    <div class="quick-btn" onclick="openTabContent('class')"><span class="icon">📚</span><span class="label" data-key="class">My Class</span></div>
+                    <div class="quick-btn" onclick="openTabContent('books')"><span class="icon">📖</span><span class="label" data-key="books">Books</span></div>
+                    <div class="quick-btn" onclick="openTabContent('jobs')"><span class="icon">💼</span><span class="label" data-key="job">Job</span></div>
+                    <div class="quick-btn" onclick="openTabContent('research')"><span class="icon">🔬</span><span class="label" data-key="research">Research</span></div>
                 </div>
                 <div class="feed-section">
-                    <h3>🔥 Trending Content</h3>
-                    <div class="feed-card"><div class="info"><h4>Cardiology 101</h4><p>By Dr. Tesfaye • 1.2k views</p></div><button class="action-btn" onclick="openTabContent('class')">Watch</button></div>
-                    <div class="feed-card"><div class="info"><h4>Anatomy Note</h4><p>By Dr. Alemu • Premium</p></div><button class="action-btn" onclick="openTabContent('class')">Read</button></div>
+                    <h3 data-key="trending">🔥 Trending Content</h3>
+                    <div class="feed-card"><div class="info"><h4>Cardiology 101</h4><p>By Dr. Tesfaye • 1.2k views</p></div><button class="action-btn" onclick="openTabContent('class')" data-key="watch">Watch</button></div>
+                    <div class="feed-card"><div class="info"><h4>Anatomy Note</h4><p>By Dr. Alemu • Premium</p></div><button class="action-btn" onclick="openTabContent('class')" data-key="read">Read</button></div>
                 </div>
             </div>
         </div>
 
         <!-- TAB WRAPPER -->
         <div id="tabContentWrapper" class="tab-content-wrapper">
-            <button class="back-button" id="backButton" onclick="goToHome()">← Home</button>
+            <button class="back-button" id="backButton" onclick="goToHome()" data-key="home">← Home</button>
             <div id="tabContentContainer" class="tab-scroll-area"></div>
         </div>
 
@@ -318,49 +341,41 @@
             <!-- MY CLASS TAB -->
             <div id="class-tab">
                 <div class="class-header">
-                    <h2>📚 My Class</h2>
+                    <h2 data-key="class">📚 My Class</h2>
                     <div class="class-header-menu" onclick="toggleClassHeaderMenu(event)">
                         <i class="fas fa-ellipsis-v"></i>
-                        <div id="classHeaderDropdown" class="class-header-dropdown">
-                            <!-- Dynamically injected based on groups -->
-                        </div>
+                        <div id="classHeaderDropdown" class="class-header-dropdown"></div>
                     </div>
                 </div>
                 
-                <!-- APPEAL BANNER (Hidden for Admin) -->
                 <div id="appealBanner" style="background:var(--navy); border-radius:var(--border-radius-card); padding:16px 20px; margin-bottom:16px; display:flex; align-items:center; justify-content:space-between; width:100%; border:2px solid var(--gold);">
                     <div>
-                        <h4 style="color:var(--gold); font-size:16px; font-weight:800;">👑 Want to become a Verified Teacher?</h4>
-                        <p style="color:rgba(255,255,255,0.8); font-size:13px;">Start your application to create your own class.</p>
+                        <h4 style="color:var(--gold); font-size:16px; font-weight:800;" data-key="become_teacher">👑 Want to become a Verified Teacher?</h4>
+                        <p style="color:rgba(255,255,255,0.8); font-size:13px;" data-key="start_application">Start your application to create your own class.</p>
                     </div>
                     <div id="appealBtnContainer">
-                        <button class="btn" style="width:auto; padding:4px 16px; font-size:12px; margin:0; background:var(--gold); color:var(--text-dark);" onclick="showModal('appealModal')">📝 Apply Now</button>
+                        <button class="btn" style="width:auto; padding:4px 16px; font-size:12px; margin:0; background:var(--gold); color:var(--text-dark);" onclick="showModal('appealModal')" data-key="apply_now">📝 Apply Now</button>
                     </div>
                 </div>
 
-                <!-- CREATE GROUP BUTTON (Only for verified teachers) -->
                 <div id="createGroupBtn" style="display:none; margin-bottom:16px;">
-                    <button class="btn btn-teal" onclick="showModal('createGroupModal')">➕ Create New Group</button>
+                    <button class="btn btn-teal" onclick="showModal('createGroupModal')" data-key="create_group">➕ Create New Group</button>
                 </div>
 
-                <!-- MY GROUPS SECTION (Dynamic Renderer) -->
-                <div id="myGroupsContainer" style="margin-bottom:16px;">
-                    <!-- Groups will be rendered here by JavaScript -->
-                </div>
+                <div id="myGroupsContainer" style="margin-bottom:16px;"></div>
 
-                <!-- TRENDING GROUPS -->
-                <div class="join-header"><h2>🔥 Trending Groups to Join</h2></div>
+                <div class="join-header"><h2 data-key="trending">🔥 Trending Groups to Join</h2></div>
                 <div class="teacher-card">
                     <div class="info"><div class="name">Dr. Tesfaye Teaching Class <span class="verified-badge">✓</span></div><div class="spec">👥 1,247 Followers • Public</div></div>
-                    <button class="join-btn" onclick="toggleGroupJoin(this)">➕ Join Class</button>
+                    <button class="join-btn" onclick="toggleGroupJoin(this)" data-key="join_class">➕ Join Class</button>
                 </div>
                 <div class="teacher-card">
                     <div class="info"><div class="name">Dr. Alemu Research Hub <span class="verified-badge">✓</span></div><div class="spec">👥 850 Followers • Private</div></div>
-                    <button class="join-btn" onclick="toggleGroupJoin(this)">➕ Join Class</button>
+                    <button class="join-btn" onclick="toggleGroupJoin(this)" data-key="join_class">➕ Join Class</button>
                 </div>
             </div>
             
-            <!-- GROUP INTERNAL FEED (Hidden until a group is clicked) -->
+            <!-- GROUP INTERNAL FEED -->
             <div id="group-feed">
                 <div class="group-banner">
                     <div style="display:flex; align-items:center; gap:12px; justify-content:center;">
@@ -368,91 +383,80 @@
                         <div style="text-align:left;">
                             <h3 style="color:var(--gold); font-size:20px; font-weight:800;">Dr. Tesfaye Teaching Class</h3>
                             <div class="stats" style="font-size:12px; color:rgba(255,255,255,0.8);">
-                                <span style="color:var(--gold); font-weight:700;">1,247</span> Followers • <span style="color:var(--gold); font-weight:700;">300</span> Online
+                                <span style="color:var(--gold); font-weight:700;">1,247</span> <span data-key="followers">Followers</span> • <span style="color:var(--gold); font-weight:700;">300</span> <span data-key="online">Online</span>
                             </div>
                         </div>
                     </div>
                     <div style="display:flex; gap:10px; justify-content:center; margin-top:10px;">
-                        <button class="btn" style="width:auto; padding:4px 16px; font-size:12px; margin:0;" onclick="toggleGroupJoin(this)">➕ Join Class</button>
+                        <button class="btn" style="width:auto; padding:4px 16px; font-size:12px; margin:0;" onclick="toggleGroupJoin(this)" data-key="join_class">➕ Join Class</button>
                     </div>
                 </div>
 
                 <div class="class-tabs">
-                    <button class="class-tab active" onclick="switchGroupTab('videos', this)">📹 Video</button>
-                    <button class="class-tab" onclick="switchGroupTab('ppts', this)">📊 PPT</button>
+                    <button class="class-tab active" onclick="switchGroupTab('videos', this)" data-key="video">📹 Video</button>
+                    <button class="class-tab" onclick="switchGroupTab('ppts', this)" data-key="ppt">📊 PPT</button>
                     <div style="position:relative; display:inline-block;">
-                        <button class="class-tab" onclick="switchGroupTab('exam', this)" style="padding-right:30px;">📝 Mock Exam</button>
-                        <!-- The 3-dot menu button -->
+                        <button class="class-tab" onclick="switchGroupTab('exam', this)" style="padding-right:30px;" data-key="mock_exam">📝 Mock Exam</button>
                         <button onclick="toggleClassMenu(event)" style="background:none; border:none; color:var(--navy); font-size:20px; cursor:pointer; position:absolute; right:-10px; top:50%; transform:translateY(-50%);">⋮</button>
                         
-                        <!-- The Dropdown Menu -->
                         <div id="classDropdownMenu" style="display:none; position:absolute; top:40px; right:-10px; background:white; border:1px solid #eee; border-radius:12px; box-shadow:0 8px 20px rgba(0,0,0,0.15); width:250px; z-index:1000; padding:10px 0; text-align:left;">
-                            <div style="padding:8px 16px; border-bottom:1px solid #f1f1f1; font-weight:700; color:var(--gold); font-size:13px;">⚙️ Settings</div>
-                            <div onclick="classAction('Go Live')" style="padding:8px 16px; cursor:pointer; font-size:13px; color:var(--gold); font-weight:700;">🔴 Go Live</div>
-                            <div onclick="classAction('Invite')" style="padding:8px 16px; cursor:pointer; font-size:13px; color:var(--text-dark);">📤 Invite people to join</div>
-                            <div onclick="classAction('Add File')" style="padding:8px 16px; cursor:pointer; font-size:13px; color:var(--text-dark);">📂 Add file/content</div>
-                            <div onclick="classAction('Delete File')" style="padding:8px 16px; cursor:pointer; font-size:13px; color:var(--text-dark);">🗑️ Delete selected files</div>
-                            <div onclick="classAction('Edit Group')" style="padding:8px 16px; cursor:pointer; font-size:13px; color:var(--gold); font-weight:700;">✏️ Edit Group Info</div>
-                            <div onclick="classAction('Boost')" style="padding:8px 16px; cursor:pointer; font-size:13px; color:var(--text-dark);">🚀 Boost group (Coins)</div>
-                            <div onclick="classAction('Wallet')" style="padding:8px 16px; cursor:pointer; font-size:13px; color:var(--gold); font-weight:700;">💳 Wallet</div>
-                            <div onclick="classAction('Delete Group')" style="padding:8px 16px; cursor:pointer; font-size:13px; color:var(--text-dark);">⛔ Delete group</div>
+                            <div style="padding:8px 16px; border-bottom:1px solid #f1f1f1; font-weight:700; color:var(--gold); font-size:13px;" data-key="settings">⚙️ Settings</div>
+                            <div onclick="classAction('Go Live')" style="padding:8px 16px; cursor:pointer; font-size:13px; color:var(--gold); font-weight:700;" data-key="go_live">🔴 Go Live</div>
+                            <div onclick="classAction('Invite')" style="padding:8px 16px; cursor:pointer; font-size:13px; color:var(--text-dark);" data-key="invite">📤 Invite people to join</div>
+                            <div onclick="classAction('Add File')" style="padding:8px 16px; cursor:pointer; font-size:13px; color:var(--text-dark);" data-key="add_file">📂 Add file/content</div>
+                            <div onclick="classAction('Delete File')" style="padding:8px 16px; cursor:pointer; font-size:13px; color:var(--text-dark);" data-key="delete_file">🗑️ Delete selected files</div>
+                            <div onclick="classAction('Edit Group')" style="padding:8px 16px; cursor:pointer; font-size:13px; color:var(--gold); font-weight:700;" data-key="edit_group">✏️ Edit Group Info</div>
+                            <div onclick="classAction('Boost')" style="padding:8px 16px; cursor:pointer; font-size:13px; color:var(--text-dark);" data-key="boost">🚀 Boost group (Coins)</div>
+                            <div onclick="classAction('Wallet')" style="padding:8px 16px; cursor:pointer; font-size:13px; color:var(--gold); font-weight:700;" data-key="wallet">💳 Wallet</div>
+                            <div onclick="classAction('Delete Group')" style="padding:8px 16px; cursor:pointer; font-size:13px; color:var(--text-dark);" data-key="delete_group">⛔ Delete group</div>
                         </div>
                     </div>
                 </div>
 
-                <div id="videos" class="class-content active">
-                    <!-- Videos will be dynamically loaded -->
-                </div>
-
-                <div id="ppts" class="class-content">
-                    <!-- PPTs will be dynamically loaded -->
-                </div>
-
+                <div id="videos" class="class-content active"></div>
+                <div id="ppts" class="class-content"></div>
                 <div id="exam" class="class-content">
                     <div class="exam-toggle">
-                        <span>Mode:</span>
-                        <button class="toggle-btn study" id="examModeBtn" onclick="toggleExamMode()">📖 Study Mode</button>
+                        <span data-key="mode">Mode:</span>
+                        <button class="toggle-btn study" id="examModeBtn" onclick="toggleExamMode()" data-key="study_mode">📖 Study Mode</button>
                     </div>
-                    <!-- DYNAMIC EXAM LIST CONTAINER -->
-                    <div id="examListContainer">
-                        <div class="loading">Loading exams...</div>
-                    </div>
+                    <div id="examListContainer"><div class="loading">Loading exams...</div></div>
                 </div>
-            </div> <!-- ✅ GROUP FEED ENDS HERE. EVERYTHING BELOW IS OUTSIDE THE GROUP -->
+            </div>
 
             <!-- BOOKS TAB -->
             <div id="books-tab">
-                <div class="books-header"><h2>📖 Books</h2></div>
+                <div class="books-header"><h2 data-key="books_title">📖 Books</h2></div>
                 <div class="book-filters">
-                    <button class="active" onclick="filterBooks('medical', this)">📚 Medical Books</button>
-                    <button onclick="filterBooks('fiction', this)">📖 Fiction</button>
-                    <button onclick="filterBooks('other', this)">🧠 Other Categories</button>
+                    <button class="active" onclick="filterBooks('medical', this)" data-key="medical_books">📚 Medical Books</button>
+                    <button onclick="filterBooks('fiction', this)" data-key="fiction">📖 Fiction</button>
+                    <button onclick="filterBooks('other', this)" data-key="other">🧠 Other Categories</button>
                 </div>
                 <div class="books-grid">
-                    <div class="book-card"><span class="emoji">📘</span><div class="title">Anatomy Textbook</div><div class="author">By Dr. Smith</div><div class="price">500 Coins</div><button class="buy-btn" onclick="showToast('🛒 Unlocked! 500 coins deducted.', 'success')">🔓 Unlock with Coins</button></div>
-                    <div class="book-card"><span class="emoji">📕</span><div class="title">Internal Medicine</div><div class="author">By Dr. Jones</div><div class="price">850 Coins</div><button class="buy-btn" onclick="showToast('🛒 Unlocked! 850 coins deducted.', 'success')">🔓 Unlock with Coins</button></div>
+                    <div class="book-card"><span class="emoji">📘</span><div class="title">Anatomy Textbook</div><div class="author">By Dr. Smith</div><div class="price">500 Coins</div><button class="buy-btn" onclick="showToast('🛒 Unlocked! 500 coins deducted.', 'success')" data-key="buy_now">🔓 Unlock with Coins</button></div>
+                    <div class="book-card"><span class="emoji">📕</span><div class="title">Internal Medicine</div><div class="author">By Dr. Jones</div><div class="price">850 Coins</div><button class="buy-btn" onclick="showToast('🛒 Unlocked! 850 coins deducted.', 'success')" data-key="buy_now">🔓 Unlock with Coins</button></div>
                 </div>
             </div>
 
             <!-- JOBS TAB -->
             <div id="jobs-tab">
-                <div class="jobs-header"><h2>💼 Job Vacancies</h2></div>
-                <div class="job-card"><div class="title">Senior Cardiologist</div><div class="details"><span>🏥 Full-time</span><span>📍 Addis Ababa</span><span>📅 End: Dec 30</span></div><div class="details" style="margin-top:4px;">Requirement: 5+ years experience</div><button class="apply-btn" onclick="showModal('jobApplyModal')">Apply Now</button></div>
-                <div class="job-card"><div class="title">Neurology Resident</div><div class="details"><span>🎓 Part-time</span><span>📍 Bahir Dar</span><span>📅 End: Jan 15</span></div><div class="details" style="margin-top:4px;">Requirement: Completed internship</div><button class="apply-btn" onclick="showModal('jobApplyModal')">Apply Now</button></div>
+                <div class="jobs-header"><h2 data-key="job_vacancies">💼 Job Vacancies</h2></div>
+                <div class="job-card"><div class="title">Senior Cardiologist</div><div class="details"><span>🏥 Full-time</span><span>📍 Addis Ababa</span><span>📅 End: Dec 30</span></div><div class="details" style="margin-top:4px;">Requirement: 5+ years experience</div><button class="apply-btn" onclick="showModal('jobApplyModal')" data-key="apply_now_job">Apply Now</button></div>
+                <div class="job-card"><div class="title">Neurology Resident</div><div class="details"><span>🎓 Part-time</span><span>📍 Bahir Dar</span><span>📅 End: Jan 15</span></div><div class="details" style="margin-top:4px;">Requirement: Completed internship</div><button class="apply-btn" onclick="showModal('jobApplyModal')" data-key="apply_now_job">Apply Now</button></div>
             </div>
 
             <!-- RESEARCH TAB -->
             <div id="research-tab">
-                <div class="research-header"><h2>🔬 Research Journals</h2></div>
-                <div class="research-card"><div class="info"><div class="title">Malaria Prevention in Ethiopia</div><div class="author">By Dr. Alemu • Dec 2024</div></div><div><span class="tag free">Free</span><button class="read-btn" onclick="showToast('📖 Opening journal...', 'success')">Read</button></div></div>
-                <div class="research-card"><div class="info"><div class="title">Advanced Cardiology Techniques</div><div class="author">By Dr. Tesfaye • Nov 2024</div></div><div><span class="tag premium">Premium</span><button class="read-btn" onclick="showToast('🔓 Premium required', 'info')">Read</button></div></div>
+                <div class="research-header"><h2 data-key="research_journals">🔬 Research Journals</h2></div>
+                <div class="research-card"><div class="info"><div class="title">Malaria Prevention in Ethiopia</div><div class="author">By Dr. Alemu • Dec 2024</div></div><div><span class="tag free" data-key="free">Free</span><button class="read-btn" onclick="showToast('📖 Opening journal...', 'success')" data-key="read">Read</button></div></div>
+                <div class="research-card"><div class="info"><div class="title">Advanced Cardiology Techniques</div><div class="author">By Dr. Tesfaye • Nov 2024</div></div><div><span class="tag premium" data-key="premium">Premium</span><button class="read-btn" onclick="showToast('🔓 Premium required', 'info')" data-key="read">Read</button></div></div>
             </div>
 
             <!-- PROFILE TAB -->
             <div id="profile-tab">
                 <div class="profile-card"><div class="avatar-lg">👤</div><h3 id="profileName">Medical Student</h3><p id="profileEmail">student@email.com</p></div>
-                <button class="btn" onclick="showModal('depositModal')">💳 Premium: 600 ETB/month</button>
-                <button class="btn btn-danger" onclick="logout()">🚪 Logout</button>
+                <button class="btn" onclick="showModal('depositModal')" data-key="premium_sub">💳 Premium: 600 ETB/month</button>
+                <button class="btn btn-danger" onclick="logout()" data-key="logout">🚪 Logout</button>
             </div>
 
             <!-- ADMIN PANEL -->
@@ -466,63 +470,63 @@
         <div id="appealModal" class="modal">
             <div class="modal-content">
                 <span class="close" onclick="closeModal('appealModal')">&times;</span>
-                <h3>📝 Apply to Become a Verified Creator</h3>
-                <div class="form-group"><label>💰 Deduct 6,000 Coins (Verification Fee)</label><p style="color:var(--gold); font-weight:700;">Your Balance: 8,500 Coins</p></div>
-                <div class="form-group"><label>Upload National ID (Front/Back)</label><input type="file" accept="image/*"></div>
-                <div class="form-group"><label>Select Profession</label><select><option>General Practitioner</option><option>Specialist / Surgeon</option><option>Medical Professor</option></select></div>
-                <div class="form-group"><label>Upload Certificate (PDF/Image)</label><input type="file" accept="image/*,.pdf"></div>
-                <div class="form-group"><label>Select Graduated University</label><select><option>Addis Ababa University</option><option>Bahir Dar University</option><option>St. Paul's Hospital</option><option>Other</option></select></div>
-                <button class="btn btn-teal" onclick="submitAppeal()">📤 Submit & Pay 6,000 Coins</button>
+                <h3 data-key="apply_creator">📝 Apply to Become a Verified Creator</h3>
+                <div class="form-group"><label data-key="deduct_coins">💰 Deduct 6,000 Coins (Verification Fee)</label><p style="color:var(--gold); font-weight:700;">Your Balance: 8,500 Coins</p></div>
+                <div class="form-group"><label data-key="upload_national_id">Upload National ID (Front/Back)</label><input type="file" accept="image/*"></div>
+                <div class="form-group"><label data-key="select_profession">Select Profession</label><select><option>General Practitioner</option><option>Specialist / Surgeon</option><option>Medical Professor</option></select></div>
+                <div class="form-group"><label data-key="upload_certificate">Upload Certificate (PDF/Image)</label><input type="file" accept="image/*,.pdf"></div>
+                <div class="form-group"><label data-key="select_university">Select Graduated University</label><select><option>Addis Ababa University</option><option>Bahir Dar University</option><option>St. Paul's Hospital</option><option>Other</option></select></div>
+                <button class="btn btn-teal" onclick="submitAppeal()" data-key="submit_review">📤 Submit & Pay 6,000 Coins</button>
             </div>
         </div>
 
         <div id="createGroupModal" class="modal">
             <div class="modal-content">
                 <span class="close" onclick="closeModal('createGroupModal')">&times;</span>
-                <h3>➕ Create a New Class Group</h3>
-                <div class="form-group"><label>Group Name</label><input type="text"></div>
+                <h3 data-key="create_new_group">➕ Create a New Class Group</h3>
+                <div class="form-group"><label data-key="group_name">Group Name</label><input type="text"></div>
                 <div class="form-group"><label>Upload Profile Pic</label><input type="file" accept="image/*"></div>
-                <div class="form-group"><label>Group Description</label><textarea rows="2"></textarea></div>
-                <div class="form-group"><label>Group Type</label>
+                <div class="form-group"><label data-key="group_desc">Group Description</label><textarea rows="2"></textarea></div>
+                <div class="form-group"><label data-key="group_type">Group Type</label>
                     <select><option>Private (Channel - Only owner & admins can post)</option><option>Public (Anyone can post)</option></select>
                 </div>
-                <div class="form-group"><label>Group Purpose</label>
-                    <select><option>Teaching Class (Video, PPT, Mock Exam)</option><option>Social Network (Text posts & Links only)</option></select>
+                <div class="form-group"><label data-key="group_purpose">Group Purpose</label>
+                    <select><option data-key="teaching_class">Teaching Class (Video, PPT, Mock Exam)</option><option data-key="social_network">Social Network (Text posts & Links only)</option></select>
                 </div>
-                <button class="btn btn-teal" onclick="createGroup()">🚀 Create Group</button>
+                <button class="btn btn-teal" onclick="createGroup()" data-key="create_group">🚀 Create Group</button>
             </div>
         </div>
 
         <div id="walletModal" class="modal">
             <div class="modal-content">
                 <span class="close" onclick="closeModal('walletModal')">&times;</span>
-                <h3>💳 T-Hub Wallet</h3>
+                <h3 data-key="wallet_title">💳 T-Hub Wallet</h3>
                 <div style="background:var(--bg-light); border-radius:12px; padding:16px; margin-bottom:16px;">
                     <h4 style="color:var(--navy); font-weight:800; margin-bottom:8px;">Group: Dr. Tesfaye Teaching Class</h4>
                     <div style="display:flex; justify-content:space-between; font-size:13px; color:var(--text-muted);"><span>📊 Stats</span><span>1,247 Followers • 45 Posts • 12,500 Views</span></div>
-                    <div style="display:flex; justify-content:space-between; font-size:16px; font-weight:700; color:var(--gold); margin-top:12px; border-top:1px solid #eee; padding-top:12px;"><span>💰 Balance</span><span>850 T-Hub Coins (≈ 85 ETB)</span></div>
+                    <div style="display:flex; justify-content:space-between; font-size:16px; font-weight:700; color:var(--gold); margin-top:12px; border-top:1px solid #eee; padding-top:12px;"><span data-key="balance">💰 Balance</span><span>850 T-Hub Coins (≈ 85 ETB)</span></div>
                     <p style="font-size:12px; color:var(--text-muted); margin-top:8px;">ℹ️ Minimum Withdrawal: 100,000 Coins (10,000 ETB)</p>
                 </div>
                 
-                <button class="btn" onclick="submitWithdraw()">📥 Withdraw (Min 100,000 Coins)</button>
-                <button class="btn btn-teal" onclick="showModal('buyCoinsModal')">💳 Buy More Coins</button>
+                <button class="btn" onclick="submitWithdraw()" data-key="withdraw">📥 Withdraw (Min 100,000 Coins)</button>
+                <button class="btn btn-teal" onclick="showModal('buyCoinsModal')" data-key="buy_coins">💳 Buy More Coins</button>
             </div>
         </div>
 
         <div id="depositModal" class="modal">
             <div class="modal-content">
                 <span class="close" onclick="closeModal('depositModal')">&times;</span>
-                <h3>🔓 Premium Subscription</h3>
+                <h3 data-key="subscription">🔓 Premium Subscription</h3>
                 <p style="color:var(--text-muted); margin-bottom:15px;">Unlock all premium books, research, and content.</p>
                 <div style="background:var(--bg-light); border-radius:12px; padding:20px; text-align:center; margin-bottom:15px;"><div style="font-size:24px; font-weight:800; color:var(--teal);">600 ETB</div><div style="font-size:14px; color:var(--text-muted);">30-day access</div></div>
-                <button class="btn" onclick="showPaymentModal()">💳 Subscribe Now</button>
+                <button class="btn" onclick="showPaymentModal()" data-key="subscribe">💳 Subscribe Now</button>
             </div>
         </div>
 
         <div id="paymentModal" class="modal">
             <div class="modal-content">
                 <span class="close" onclick="closeModal('paymentModal')">&times;</span>
-                <h3>📱 Send Payment</h3>
+                <h3 data-key="send_payment">📱 Send Payment</h3>
                 <div style="background:var(--bg-light); border-radius:12px; padding:16px; margin-bottom:16px;">
                     <p style="font-weight:600; margin-bottom:8px;">Send <strong style="color:var(--gold);" id="payAmount">600 ETB</strong> to:</p>
                     <div style="background:white; padding:12px; border-radius:8px; border:1px solid #eee;"><strong>Telebirr:</strong> <span id="adminTelebirr">+251935983470</span></div>
@@ -530,50 +534,46 @@
                 </div>
                 <div class="form-group"><input type="text" id="payTxId" placeholder="Transaction ID"></div>
                 <div class="form-group"><input type="file" id="payReceipt" accept="image/*"></div>
-                <button class="btn btn-teal" onclick="submitPayment()">📤 Submit for Approval</button>
+                <button class="btn btn-teal" onclick="submitPayment()" data-key="submit_approval">📤 Submit for Approval</button>
             </div>
         </div>
 
         <div id="jobApplyModal" class="modal">
             <div class="modal-content">
                 <span class="close" onclick="closeModal('jobApplyModal')">&times;</span>
-                <h3>📄 Apply for Job</h3>
+                <h3 data-key="apply_job_form">📄 Apply for Job</h3>
                 <div class="form-group"><label>Full Name</label><input type="text"></div>
                 <div class="form-group"><label>Upload CV (PDF)</label><input type="file" accept=".pdf"></div>
-                <button class="btn btn-teal" onclick="showToast('✅ Application sent!', 'success'); closeModal('jobApplyModal')">Submit Application</button>
+                <button class="btn btn-teal" onclick="showToast('✅ Application sent!', 'success'); closeModal('jobApplyModal')" data-key="submit_application">Submit Application</button>
             </div>
         </div>
 
-        <!-- EDIT GROUP INFO MODAL -->
         <div id="editGroupModal" class="modal">
             <div class="modal-content">
                 <span class="close" onclick="closeModal('editGroupModal')">&times;</span>
-                <h3>✏️ Edit Group Info</h3>
-                <div class="form-group"><label>Group Name</label><input type="text" id="editGroupName"></div>
-                <div class="form-group"><label>Group Description</label><textarea id="editGroupDesc" rows="2"></textarea></div>
-                <button class="btn btn-teal" onclick="submitEditGroup()">💾 Save Changes</button>
+                <h3 data-key="edit_group">✏️ Edit Group Info</h3>
+                <div class="form-group"><label data-key="group_name">Group Name</label><input type="text" id="editGroupName"></div>
+                <div class="form-group"><label data-key="group_desc">Group Description</label><textarea id="editGroupDesc" rows="2"></textarea></div>
+                <button class="btn btn-teal" onclick="submitEditGroup()" data-key="save">💾 Save Changes</button>
             </div>
         </div>
 
-        <!-- ADD FILE / CONTENT MODAL (UPDATED) -->
         <div id="addFileModal" class="modal">
             <div class="modal-content">
                 <span class="close" onclick="closeModal('addFileModal')">&times;</span>
-                <h3>📂 Add File / Content</h3>
+                <h3 data-key="add_file">📂 Add File / Content</h3>
                 <div class="form-group">
                     <label>Content Type</label>
                     <select id="addFileType" onchange="toggleContentFields()">
-                        <option value="video">📹 Video</option>
-                        <option value="ppt">📊 PPT</option>
-                        <option value="exam">📝 Mock Exam</option>
+                        <option value="video" data-key="video">📹 Video</option>
+                        <option value="ppt" data-key="ppt">📊 PPT</option>
+                        <option value="exam" data-key="mock_exam">📝 Mock Exam</option>
                     </select>
                 </div>
                 
-                <!-- STANDARD FIELDS (For Video & PPT) -->
                 <div id="standardFields">
                     <div class="form-group"><label>Title</label><input type="text" id="addFileTitle"></div>
                     
-                    <!-- NEW: FILE PICKER -->
                     <div class="form-group">
                         <label>Upload File (Video or PDF)</label>
                         <div style="display:flex; gap:10px; align-items:center;">
@@ -589,7 +589,6 @@
                     </div>
                 </div>
 
-                <!-- MOCK EXAM BUILDER FIELDS (Hidden by default) -->
                 <div id="examBuilder" style="display:none;">
                     <div class="form-group"><label>Exam Title</label><input type="text" id="examTitle"></div>
                     
@@ -613,30 +612,29 @@
                     <button class="btn-sm btn-teal" onclick="addExamQuestion()" style="width:100%; margin-bottom:12px;">➕ Add Another Question</button>
                 </div>
 
-                <button class="btn btn-teal" onclick="submitAddFile()">📤 Publish</button>
+                <button class="btn btn-teal" onclick="submitAddFile()" data-key="publish">📤 Publish</button>
             </div>
         </div>
 
-        <!-- BUY COINS MODAL -->
         <div id="buyCoinsModal" class="modal">
             <div class="modal-content">
                 <span class="close" onclick="closeModal('buyCoinsModal')">&times;</span>
-                <h3>💳 Buy T-Hub Coins</h3>
+                <h3 data-key="buy_coins">💳 Buy T-Hub Coins</h3>
                 <div class="form-group"><label>Amount in ETB (1 ETB = 10 Coins)</label><input type="number" id="buyCoinAmount" placeholder="e.g. 100"></div>
                 <div class="form-group"><label>Telebirr Transaction ID</label><input type="text" id="buyCoinTxId" placeholder="Enter ID"></div>
-                <button class="btn btn-teal" onclick="submitBuyCoins()">💳 Request Coins</button>
+                <button class="btn btn-teal" onclick="submitBuyCoins()" data-key="buy_coins">💳 Request Coins</button>
             </div>
         </div>
 
         <!-- FOOTER -->
         <div class="app-footer" id="appFooter">
             <div class="app-footer-tabs" id="footerTabs">
-                <button class="app-footer-tab active" data-tab="home" onclick="footerTabClick('home')"><span class="tab-emoji">🏠</span><span class="tab-label">Home</span></button>
-                <button class="app-footer-tab" data-tab="class" onclick="footerTabClick('class')"><span class="tab-emoji">📚</span><span class="tab-label">My Class</span></button>
-                <button class="app-footer-tab" data-tab="books" onclick="footerTabClick('books')"><span class="tab-emoji">📖</span><span class="tab-label">Books</span></button>
-                <button class="app-footer-tab" data-tab="jobs" onclick="footerTabClick('jobs')"><span class="tab-emoji">💼</span><span class="tab-label">Job</span></button>
-                <button class="app-footer-tab" data-tab="research" onclick="footerTabClick('research')"><span class="tab-emoji">🔬</span><span class="tab-label">Research</span></button>
-                <button class="app-footer-tab" data-tab="admin" id="adminTabBtn" onclick="footerTabClick('admin')" style="display:none;"><span class="tab-emoji">⚙️</span><span class="tab-label">Admin</span></button>
+                <button class="app-footer-tab active" data-tab="home" onclick="footerTabClick('home')"><span class="tab-emoji">🏠</span><span class="tab-label" data-key="home">Home</span></button>
+                <button class="app-footer-tab" data-tab="class" onclick="footerTabClick('class')"><span class="tab-emoji">📚</span><span class="tab-label" data-key="class">My Class</span></button>
+                <button class="app-footer-tab" data-tab="books" onclick="footerTabClick('books')"><span class="tab-emoji">📖</span><span class="tab-label" data-key="books">Books</span></button>
+                <button class="app-footer-tab" data-tab="jobs" onclick="footerTabClick('jobs')"><span class="tab-emoji">💼</span><span class="tab-label" data-key="job">Job</span></button>
+                <button class="app-footer-tab" data-tab="research" onclick="footerTabClick('research')"><span class="tab-emoji">🔬</span><span class="tab-label" data-key="research">Research</span></button>
+                <button class="app-footer-tab" data-tab="admin" id="adminTabBtn" onclick="footerTabClick('admin')" style="display:none;"><span class="tab-emoji">⚙️</span><span class="tab-label" data-key="admin_panel">Admin</span></button>
             </div>
         </div>
 
@@ -651,10 +649,36 @@
         const SUPABASE_ANON_KEY = window.SUPABASE_CONFIG?.anonKey || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ndGxhZmZreWJwZXNheGFzdHZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTA4NTQsImV4cCI6MjA5NTM4Njg1NH0.toDw1_DsAjHjUuCg0hvRdEGyjA7mW2DJNlSWoVBT1qY';
         const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        const AppState = { userId: null, isAdmin: false, isTeacher: false, isPremium: false, currentUser: null, isLoggingOut: false, authCheckDone: false, lang: 'en', pendingPrice: 600, coinBalance: 0, groupCount: 0, groupPurpose: null, groups: [] };
+        // ================================================================
+        // GLOBAL STATE
+        // ================================================================
+        const AppState = { 
+            userId: null, 
+            isAdmin: false, 
+            isTeacher: false, 
+            isPremium: false, 
+            currentUser: null, 
+            isLoggingOut: false, 
+            authCheckDone: false, 
+            lang: 'en', 
+            pendingPrice: 600, 
+            coinBalance: 0, 
+            groupCount: 0, 
+            groupPurpose: null, 
+            groups: [],
+            currentGroupId: null
+        };
+        
+        let examQuestionCount = 1;
+        let currentExam = null;
+        let currentQuestionIndex = 0;
+        let correctCount = 0;
+        let incorrectCount = 0;
+        let groupJoined = false;
+        let examMode = 'study';
 
         // ================================================================
-        // FULL TRANSLATIONS (ENGLISH & AMHARIC)
+        // TRANSLATIONS
         // ================================================================
         const translations = {
             en: {
@@ -668,8 +692,7 @@
                 video: "Video", ppt: "PPT", mock_exam: "Mock Exam", settings: "Settings",
                 go_live: "Go Live", invite: "Invite people to join", add_file: "Add file/content",
                 delete_file: "Delete selected files", boost: "Boost group (Coins)", wallet: "Wallet",
-                delete_group: "Delete group", exam_submitted: "Exam submitted! Score: 100%",
-                study_mode: "Study Mode", exam_mode: "Exam Mode", 
+                delete_group: "Delete group", study_mode: "Study Mode", exam_mode: "Exam Mode", 
                 books_title: "Books", medical_books: "Medical Books", fiction: "Fiction", other: "Other Categories",
                 buy_now: "Buy Now", job_vacancies: "Job Vacancies", apply_now_job: "Apply Now",
                 research_journals: "Research Journals", free: "Free", premium: "Premium",
@@ -689,7 +712,9 @@
                 wallet_title: "Group & Owner Wallet", balance: "Balance", withdraw: "Withdraw",
                 buy_coins: "Buy More Coins", edit_group: "Edit Group Info",
                 create_social_group: "Create Social Group", create_teaching_group: "Create Teaching Group",
-                my_groups: "My Groups", promote_admin: "Promote to Admin"
+                my_groups: "My Groups", promote_admin: "Promote to Admin", mode: "Mode:",
+                watch: "Watch", read: "Read", publish: "Publish", save: "Save Changes",
+                deduct_coins: "💰 Deduct 6,000 Coins (Verification Fee)"
             },
             am: {
                 home: "መነሻ", class: "ክፍሌ", books: "መጻሕፍት", job: "ሥራ", research: "ምርምር",
@@ -702,8 +727,7 @@
                 video: "ቪዲዮ", ppt: "ፒፒቲ", mock_exam: "የሙከራ ፈተና", settings: "ቅንብሮች",
                 go_live: "ቀጥታ ስርጭት ይሂዱ", invite: "ሰዎችን ይጋብዙ", add_file: "ፋይል/ይዘት ይጨምሩ",
                 delete_file: "የተመረጡ ፋይሎች ይሰርዙ", boost: "ቡድን ያሳድጉ (ሳንቲም)", wallet: "ኪስ ቦርሳ",
-                delete_group: "ቡድን ይሰርዙ", exam_submitted: "ፈተናው ተልኳል! ውጤት: 100%",
-                study_mode: "የጥናት ሁኔታ", exam_mode: "የፈተና ሁኔታ", 
+                delete_group: "ቡድን ይሰርዙ", study_mode: "የጥናት ሁኔታ", exam_mode: "የፈተና ሁኔታ", 
                 books_title: "መጻሕፍት", medical_books: "የህክምና መጻሕፍት", fiction: "ልቦለድ", other: "ሌሎች ምድቦች",
                 buy_now: "አሁኑኑ ይግዙ", job_vacancies: "የሥራ እድሎች", apply_now_job: "አሁኑኑ ይተግብሩ",
                 research_journals: "የምርምር መጽሔቶች", free: "ነጻ", premium: "ፕሪሚየም",
@@ -723,7 +747,9 @@
                 wallet_title: "የቡድን እና የባለቤት ኪስ ቦርሳ", balance: "ቀሪ ሂሳብ", withdraw: "አውጣ",
                 buy_coins: "ተጨማሪ ሳንቲም ይግዙ", edit_group: "የቡድን መረጃ ያርትዑ",
                 create_social_group: "ማህበራዊ ቡድን ይፍጠሩ", create_teaching_group: "የማስተማሪያ ቡድን ይፍጠሩ",
-                my_groups: "የኔ ቡድኖች", promote_admin: "ወደ አስተዳዳሪ ከፍ አድርግ"
+                my_groups: "የኔ ቡድኖች", promote_admin: "ወደ አስተዳዳሪ ከፍ አድርግ", mode: "ሁኔታ:",
+                watch: "ተመልከት", read: "አንብብ", publish: "አሳትም", save: "አስቀምጥ",
+                deduct_coins: "💰 6,000 ሳንቲም ይቀንሱ (የማረጋገጫ ክፍያ)"
             }
         };
 
@@ -731,12 +757,27 @@
 
         function toggleLanguage() {
             AppState.lang = AppState.lang === 'en' ? 'am' : 'en';
-            document.getElementById('langToggle').innerText = AppState.lang === 'en' ? '🇬🇧 EN' : '🇪🇹 አማ';
+            const toggleBtn = document.getElementById('langToggle');
+            if (toggleBtn) toggleBtn.innerText = AppState.lang === 'en' ? '🇬🇧 EN' : '🇪🇹 አማ';
             translatePage();
             showToast(AppState.lang === 'en' ? 'Switched to English' : 'ወደ አማርኛ ተቀይሯል', 'info');
         }
+        
         function translatePage() {
-            document.querySelectorAll('[data-key]').forEach(el => { if (t(el.dataset.key)) el.innerText = t(el.dataset.key); });
+            document.querySelectorAll('[data-key]').forEach(el => { 
+                const key = el.getAttribute('data-key');
+                const translation = t(key);
+                if (translation && translation !== key) {
+                    // Preserve emojis and icons
+                    const currentText = el.innerText;
+                    const emojiMatch = currentText.match(/^[^\w\s]+/);
+                    if (emojiMatch) {
+                        el.innerText = emojiMatch[0] + ' ' + translation;
+                    } else {
+                        el.innerText = translation;
+                    }
+                }
+            });
         }
 
         // ================================================================
@@ -750,9 +791,27 @@
             t.classList.add('show');
             setTimeout(() => t.classList.remove('show'), 3000);
         }
-        function showModal(id) { document.querySelectorAll('.modal.active').forEach(m => m.classList.remove('active'));
-            document.getElementById(id).classList.add('active'); }
-        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+        
+        function showModal(id) { 
+            document.querySelectorAll('.modal.active').forEach(m => m.classList.remove('active'));
+            const modal = document.getElementById(id);
+            if (modal) modal.classList.add('active');
+        }
+        
+        function closeModal(id) { 
+            const modal = document.getElementById(id);
+            if (modal) modal.classList.remove('active');
+        }
+
+        // ================================================================
+        // NOTIFICATION FUNCTIONS - FIXED
+        // ================================================================
+        function toggleNotificationDropdown(event) {
+            if (event) event.stopPropagation();
+            const dropdown = document.getElementById('notificationDropdown');
+            if (!dropdown) return;
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        }
 
         // ================================================================
         // SEARCH
@@ -776,7 +835,9 @@
             document.getElementById('tabContentWrapper').classList.remove('active');
             document.getElementById('backButton').classList.remove('visible');
             document.querySelectorAll('.app-footer-tab').forEach(t => t.classList.remove('active'));
-            document.querySelector('[data-tab="home"]').classList.add('active');
+            const homeTab = document.querySelector('[data-tab="home"]');
+            if (homeTab) homeTab.classList.add('active');
+            AppState.currentGroupId = null;
         }
 
         function openTabContent(tabId, specificGroupId = null) {
@@ -784,6 +845,7 @@
             document.getElementById('tabContentWrapper').classList.add('active');
             document.getElementById('backButton').classList.add('visible');
             const container = document.getElementById('tabContentContainer');
+            
             let id = '';
             if (tabId === 'class') id = 'class-tab';
             else if (tabId === 'books') id = 'books-tab';
@@ -795,45 +857,58 @@
             else return;
             
             const template = document.getElementById(id);
-            if (template) container.innerHTML = template.outerHTML;
+            if (template) {
+                container.innerHTML = template.outerHTML;
+            }
+            
             if (tabId === 'admin') loadAdminPanel();
             translatePage();
 
-            // RENDER USER GROUPS IF THEY EXIST
-            if (tabId === 'class') {
-                const containerDiv = document.getElementById('myGroupsContainer');
-                if (AppState.groups && AppState.groups.length > 0) {
-                    let html = `<div class="join-header"><h2>📂 My Groups</h2></div>`;
-                    AppState.groups.forEach(group => {
-                        html += `
-                            <div class="teacher-card" onclick="openTabContent('group-feed', ${group.id})" style="cursor:pointer;">
-                                <div class="info">
-                                    <div class="name">${group.name} <span class="verified-badge">✓</span></div>
-                                    <div class="spec">👥 ${group.followers || 0} Followers • ${group.group_type}</div>
-                                </div>
-                                <button class="join-btn joined" style="background:var(--gold); color:var(--text-dark); cursor:default;">Owner</button>
-                            </div>
-                        `;
-                    });
-                    containerDiv.innerHTML = html;
-                } else {
-                    containerDiv.innerHTML = '';
-                }
-            }
-
-            // 📌 Load content when a group feed is opened
             if (tabId === 'group-feed' && specificGroupId) {
+                AppState.currentGroupId = specificGroupId;
                 const group = AppState.groups.find(g => g.id === specificGroupId);
                 if (group) {
-                    document.querySelector('#group-feed .group-banner h3').innerText = group.name;
-                    document.querySelector('#group-feed .group-banner .stats span:first-child').innerText = group.followers || 0;
-                    document.querySelector('#group-feed .group-banner .stats span:last-child').innerText = group.online || 0;
+                    const bannerTitle = document.querySelector('#group-feed .group-banner h3');
+                    if (bannerTitle) bannerTitle.innerText = group.name;
+                    
+                    const statsSpans = document.querySelectorAll('#group-feed .group-banner .stats span');
+                    if (statsSpans.length >= 2) {
+                        statsSpans[0].innerText = group.followers || 0;
+                        statsSpans[1].innerText = group.online || 0;
+                    }
                 }
-                // Load content for each tab
                 loadGroupContent(specificGroupId, 'videos');
                 loadGroupContent(specificGroupId, 'ppts');
                 loadGroupContent(specificGroupId, 'exam');
             }
+
+            if (tabId === 'class') {
+                renderUserGroups();
+            }
+        }
+
+        function renderUserGroups() {
+            const containerDiv = document.getElementById('myGroupsContainer');
+            if (!containerDiv) return;
+            
+            if (AppState.groups && AppState.groups.length > 0) {
+                let html = `<div class="join-header"><h2 data-key="my_groups">📂 My Groups</h2></div>`;
+                AppState.groups.forEach(group => {
+                    html += `
+                        <div class="teacher-card" style="cursor:pointer;" onclick="openTabContent('group-feed', ${group.id})">
+                            <div class="info">
+                                <div class="name">${group.name} <span class="verified-badge">✓</span></div>
+                                <div class="spec">👥 ${group.followers || 0} Followers • ${group.group_type || 'Public'}</div>
+                            </div>
+                            <button class="join-btn joined" style="background:var(--gold); color:var(--text-dark); cursor:default;">Owner</button>
+                        </div>
+                    `;
+                });
+                containerDiv.innerHTML = html;
+            } else {
+                containerDiv.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:20px;">No groups yet. Create one using the "Create New Group" button.</div>`;
+            }
+            translatePage();
         }
 
         function footerTabClick(tabId) {
@@ -847,35 +922,53 @@
         // ================================================================
         // MY CLASS FUNCTIONS
         // ================================================================
-        let groupJoined = false;
         async function toggleGroupJoin(btn) {
-            const groupId = AppState.groups[0]?.id;
-            if (!groupId) return showToast('No group found to follow.', 'error');
-
-            const currentFollowers = parseInt(document.querySelector('#group-feed .group-banner .stats span:first-child').innerText) || 0;
+            const card = btn.closest('.teacher-card');
+            if (!card) return showToast('Group not found.', 'error');
             
-            groupJoined = !groupJoined;
-            if (groupJoined) {
-                // Increment follower count
-                const newFollowers = currentFollowers + 1;
-                await sb.from('groups').update({ followers: newFollowers }).eq('id', groupId);
-                document.querySelector('#group-feed .group-banner .stats span:first-child').innerText = newFollowers;
+            const nameEl = card.querySelector('.name');
+            if (!nameEl) return showToast('Group not found.', 'error');
+            
+            const groupName = nameEl.textContent.replace('✓', '').trim();
+            const group = AppState.groups.find(g => g.name === groupName);
+            
+            if (!group) {
+                showToast('📌 You are now following this group!', 'success');
                 btn.innerText = '✅ Joined';
                 btn.className = 'join-btn joined';
-                showToast('You have joined this class!', 'success');
+                return;
+            }
+
+            const currentFollowers = group.followers || 0;
+            const isJoined = btn.innerText.includes('Joined');
+            
+            if (!isJoined) {
+                const newFollowers = currentFollowers + 1;
+                const { error } = await sb.from('groups').update({ followers: newFollowers }).eq('id', group.id);
+                if (!error) {
+                    group.followers = newFollowers;
+                    btn.innerText = '✅ Joined';
+                    btn.className = 'join-btn joined';
+                    showToast('You have joined this class!', 'success');
+                    const statsSpans = document.querySelectorAll('#group-feed .group-banner .stats span');
+                    if (statsSpans.length >= 2) statsSpans[0].innerText = newFollowers;
+                }
             } else {
-                // Decrement follower count
                 const newFollowers = Math.max(0, currentFollowers - 1);
-                await sb.from('groups').update({ followers: newFollowers }).eq('id', groupId);
-                document.querySelector('#group-feed .group-banner .stats span:first-child').innerText = newFollowers;
-                btn.innerText = '➕ Join Class';
-                btn.className = 'join-btn';
-                showToast('Left the class.', 'info');
+                const { error } = await sb.from('groups').update({ followers: newFollowers }).eq('id', group.id);
+                if (!error) {
+                    group.followers = newFollowers;
+                    btn.innerText = '➕ Join Class';
+                    btn.className = 'join-btn';
+                    showToast('Left the class.', 'info');
+                    const statsSpans = document.querySelectorAll('#group-feed .group-banner .stats span');
+                    if (statsSpans.length >= 2) statsSpans[0].innerText = newFollowers;
+                }
             }
         }
 
         // ================================================================
-        // LOAD GROUP CONTENT (Videos, PPTs, Exams)
+        // LOAD GROUP CONTENT
         // ================================================================
         async function loadGroupContent(groupId, contentType) {
             const container = document.getElementById(contentType);
@@ -883,63 +976,93 @@
 
             container.innerHTML = `<div class="loading">Loading ${contentType}...</div>`;
 
-            const { data, error } = await sb
-                .from('group_content')
-                .select('*')
-                .eq('group_id', groupId)
-                .eq('content_type', contentType === 'exam' ? 'exam' : contentType === 'videos' ? 'video' : 'ppt')
-                .order('created_at', { ascending: false });
+            try {
+                const { data, error } = await sb
+                    .from('group_content')
+                    .select('*')
+                    .eq('group_id', groupId)
+                    .eq('content_type', contentType === 'exam' ? 'exam' : contentType === 'videos' ? 'video' : 'ppt')
+                    .order('created_at', { ascending: false });
 
-            if (error) {
-                container.innerHTML = `<div class="loading" style="color:var(--red-error);">Error loading content</div>`;
-                return;
+                if (error) {
+                    console.error('Load error:', error);
+                    container.innerHTML = `<div class="loading" style="color:var(--red-error);">Error loading content</div>`;
+                    return;
+                }
+
+                if (!data || data.length === 0) {
+                    container.innerHTML = `<div class="loading" style="color:var(--text-muted);">No ${contentType} uploaded yet.</div>`;
+                    return;
+                }
+
+                if (contentType === 'exam') {
+                    await loadExamsIntoContainer(container, groupId);
+                } else {
+                    container.innerHTML = data.map(item => `
+                        <div class="content-card">
+                            <div class="thumbnail">
+                                ${item.file_url ? `<i class="fas fa-play-circle"></i><span class="duration">Content</span>` : `<i class="fas fa-file-alt"></i>`}
+                            </div>
+                            <div class="meta">
+                                <h4>${item.title}</h4>
+                                <p>Uploaded • ${new Date(item.created_at).toLocaleDateString()}</p>
+                            </div>
+                            <div class="actions">
+                                <button onclick="toggleLike(this)"><i class="fas fa-heart"></i> <span>${item.likes || 0}</span></button>
+                                <button onclick="toggleComment(this)"><i class="fas fa-comment"></i> <span>0</span></button>
+                                <button onclick="shareContent()"><i class="fas fa-share"></i> <span data-key="share">Share</span></button>
+                            </div>
+                            <div class="comment-section">
+                                <div class="comment-list"></div>
+                                <textarea placeholder="Add a comment..."></textarea>
+                                <button class="send-btn" onclick="showToast('Comment posted!', 'success')" data-key="post_comment">Post Comment</button>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+                translatePage();
+            } catch (err) {
+                console.error(err);
+                container.innerHTML = `<div class="loading" style="color:var(--red-error);">Failed to load content</div>`;
             }
+        }
 
-            if (!data || data.length === 0) {
-                container.innerHTML = `<div class="loading" style="color:var(--text-muted);">No ${contentType} uploaded yet.</div>`;
-                return;
-            }
+        async function loadExamsIntoContainer(container, groupId) {
+            try {
+                const { data, error } = await sb
+                    .from('mock_exams')
+                    .select('*')
+                    .eq('group_id', groupId)
+                    .order('created_at', { ascending: false });
 
-            if (contentType === 'exam') {
-                // Render exams as interactive cards
-                let html = `<div class="exam-toggle"><span>Mode:</span><button class="toggle-btn study" id="examModeBtn" onclick="toggleExamMode()">📖 Study Mode</button></div>`;
-                data.forEach(exam => {
-                    html += `
-                        <div class="content-card" style="cursor:pointer;" onclick="startExam(${exam.id})">
+                if (error) throw error;
+
+                if (!data || data.length === 0) {
+                    container.innerHTML = `<div class="loading" style="color:var(--text-muted);">📝 No exams created yet.</div>`;
+                    return;
+                }
+
+                container.innerHTML = `
+                    <div class="exam-toggle">
+                        <span data-key="mode">Mode:</span>
+                        <button class="toggle-btn study" id="examModeBtn" onclick="toggleExamMode()" data-key="study_mode">📖 Study Mode</button>
+                    </div>
+                    ${data.map(exam => `
+                        <div class="content-card" onclick="startExam(${exam.id})" style="cursor:pointer;">
                             <div class="meta">
                                 <h4>📝 ${exam.title}</h4>
-                                <p>Created by Dr. Tesfaye • ${exam.questions ? exam.questions.length : 0} Questions</p>
+                                <p>${exam.questions ? exam.questions.length : 0} Questions • Created ${new Date(exam.created_at).toLocaleDateString()}</p>
                             </div>
-                            <div class="actions" style="margin-top:0; border-top:none;">
-                                <button class="btn-sm btn-teal" style="margin:0; width:auto;">▶️ Start Exam</button>
+                            <div class="actions">
+                                <button class="btn-sm btn-teal" style="margin:0;" data-key="start">▶️ Start Exam</button>
                             </div>
                         </div>
-                    `;
-                });
-                container.innerHTML = html;
-            } else {
-                // Render videos or PPTs
-                container.innerHTML = data.map(item => `
-                    <div class="content-card">
-                        <div class="thumbnail">
-                            ${item.file_url ? `<i class="fas fa-play-circle"></i><span class="duration">Content</span>` : `<i class="fas fa-file-alt"></i>`}
-                        </div>
-                        <div class="meta">
-                            <h4>${item.title}</h4>
-                            <p>Uploaded • ${new Date(item.created_at).toLocaleDateString()}</p>
-                        </div>
-                        <div class="actions">
-                            <button onclick="toggleLike(this)"><i class="fas fa-heart"></i> <span>${item.likes || 0}</span></button>
-                            <button onclick="toggleComment(this)"><i class="fas fa-comment"></i> <span>0</span></button>
-                            <button onclick="shareContent()"><i class="fas fa-share"></i> Share</button>
-                        </div>
-                        <div class="comment-section">
-                            <div class="comment-list"></div>
-                            <textarea placeholder="Add a comment..."></textarea>
-                            <button class="send-btn" onclick="showToast('Comment posted!', 'success')">Post Comment</button>
-                        </div>
-                    </div>
-                `).join('');
+                    `).join('')}
+                `;
+                translatePage();
+            } catch (err) {
+                console.error('Error loading exams:', err);
+                container.innerHTML = `<div class="loading" style="color:var(--red-error);">Failed to load exams</div>`;
             }
         }
 
@@ -947,25 +1070,19 @@
             document.querySelectorAll('.class-tab').forEach(t => t.classList.remove('active'));
             btn.classList.add('active');
             document.querySelectorAll('.class-content').forEach(c => c.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
+            const content = document.getElementById(tabId);
+            if (content) content.classList.add('active');
 
-            // ✅ IF SWITCHING TO THE EXAM TAB, LOAD THE EXAMS
-            if (tabId === 'exam') {
-                loadExams();
+            if (tabId === 'exam' && AppState.currentGroupId) {
+                loadGroupContent(AppState.currentGroupId, 'exam');
             }
         }
 
         // ================================================================
-        // EXAM ENGINE (Previous/Next, Score, Explanations)
+        // EXAM ENGINE
         // ================================================================
-        let currentExam = null;
-        let currentQuestionIndex = 0;
-        let correctCount = 0;
-        let incorrectCount = 0;
-
         function startExam(examId) {
-            // In a real implementation, fetch the exam questions from Supabase
-            // For demo, we'll simulate an exam
+            showToast('📝 Loading exam...', 'info');
             currentExam = {
                 id: examId,
                 title: "Sample Mock Exam",
@@ -986,16 +1103,14 @@
 
             const q = currentExam.questions[currentQuestionIndex];
             const total = currentExam.questions.length;
-            const progress = Math.round((currentQuestionIndex / total) * 100);
+            const progress = Math.round(((currentQuestionIndex + 1) / total) * 100);
 
             container.innerHTML = `
                 <div style="margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
                     <span style="font-weight:700; color:var(--navy);">Question ${currentQuestionIndex+1} of ${total}</span>
                     <span style="font-weight:700; color:var(--navy);">✅ ${correctCount} | ❌ ${incorrectCount}</span>
                 </div>
-                <div class="progress-bar" style="background:#eee; border-radius:12px; height:8px; margin-bottom:16px;">
-                    <div class="progress-fill" style="width:${progress}%; height:100%; background:var(--gold); border-radius:12px;"></div>
-                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width:${progress}%;"></div></div>
                 <div class="question-box">
                     <p style="font-size:18px;">${q.question}</p>
                     ${q.options.map((opt, idx) => `
@@ -1007,8 +1122,8 @@
                     <div id="examExplanation" style="display:none; margin-top:12px; padding:12px; background:#f0fdf4; border-radius:8px; color:var(--text-dark);"></div>
                 </div>
                 <div style="display:flex; gap:10px; margin-top:12px;">
-                    <button class="btn-sm" onclick="prevExamQuestion()" style="flex:1;" ${currentQuestionIndex === 0 ? 'disabled' : ''}>◀ Previous</button>
-                    <button class="btn-sm btn-teal" onclick="nextExamQuestion()" style="flex:1;" ${currentQuestionIndex === total-1 ? 'disabled' : ''}>Next ▶</button>
+                    <button class="btn-sm" onclick="prevExamQuestion()" style="flex:1; padding:8px; border:1px solid #eee; border-radius:8px; background:#f5f5f5; cursor:pointer;" ${currentQuestionIndex === 0 ? 'disabled style="opacity:0.5;"' : ''}>◀ Previous</button>
+                    <button class="btn-sm btn-teal" onclick="nextExamQuestion()" style="flex:1; padding:8px; border:none; border-radius:8px; background:var(--teal); color:white; cursor:pointer;" ${currentQuestionIndex === total-1 ? 'disabled style="opacity:0.5;"' : ''}>Next ▶</button>
                 </div>
                 ${currentQuestionIndex === total-1 ? `<button class="btn" onclick="finishExam()" style="margin-top:10px;">📊 Finish Exam & View Score</button>` : ''}
             `;
@@ -1018,9 +1133,8 @@
             const q = currentExam.questions[currentQuestionIndex];
             const isCorrect = selected === q.answer;
             const radio = labelEl.querySelector('input[type="radio"]');
-            radio.checked = true;
+            if (radio) radio.checked = true;
 
-            // Disable all options
             document.querySelectorAll('#exam .question-box label').forEach(l => l.style.pointerEvents = 'none');
 
             if (isCorrect) {
@@ -1031,7 +1145,6 @@
                 incorrectCount++;
                 labelEl.style.borderColor = 'var(--red-error)';
                 labelEl.style.background = '#fef2f2';
-                // Highlight correct answer
                 document.querySelectorAll('#exam .question-box label').forEach((l, idx) => {
                     if (String.fromCharCode(65+idx) === q.answer) {
                         l.style.borderColor = 'var(--green-success)';
@@ -1040,7 +1153,6 @@
                 });
             }
 
-            // Show explanation
             const expDiv = document.getElementById('examExplanation');
             if (expDiv) {
                 expDiv.style.display = 'block';
@@ -1066,59 +1178,76 @@
             const total = currentExam.questions.length;
             const score = Math.round((correctCount / total) * 100);
             showToast(`📊 Exam Complete! Score: ${score}% (${correctCount}/${total} correct)`, 'success');
-            // Reset
             currentExam = null;
             currentQuestionIndex = 0;
             correctCount = 0;
             incorrectCount = 0;
-            loadGroupContent(AppState.groups[0]?.id, 'exam');
+            if (AppState.currentGroupId) {
+                loadGroupContent(AppState.currentGroupId, 'exam');
+            }
         }
 
         // ================================================================
         // MISC INTERACTIONS
         // ================================================================
-        let examMode = 'study';
         function toggleExamMode() {
             const btn = document.getElementById('examModeBtn');
-            if (examMode === 'study') { examMode = 'exam';
+            if (!btn) return;
+            if (examMode === 'study') { 
+                examMode = 'exam';
                 btn.innerText = '🚫 Exam Mode';
                 btn.className = 'toggle-btn exam';
-                showToast('🔒 Exam Mode locked. Answers hidden.', 'info'); } else { examMode = 'study';
+                showToast('🔒 Exam Mode locked. Answers hidden.', 'info'); 
+            } else { 
+                examMode = 'study';
                 btn.innerText = '📖 Study Mode';
                 btn.className = 'toggle-btn study';
-                showToast('📖 Study Mode activated.', 'info'); }
+                showToast('📖 Study Mode activated.', 'info'); 
+            }
         }
 
         function toggleLike(btn) {
             btn.classList.toggle('liked');
             const span = btn.querySelector('span');
-            let count = parseInt(span.innerText);
-            if (btn.classList.contains('liked')) { count++;
-                span.innerText = count; } else { count--;
-                span.innerText = count; }
+            if (!span) return;
+            let count = parseInt(span.innerText) || 0;
+            if (btn.classList.contains('liked')) { 
+                count++;
+                span.innerText = count; 
+            } else { 
+                count--;
+                span.innerText = count; 
+            }
         }
 
         function toggleComment(btn) {
             const section = btn.closest('.content-card').querySelector('.comment-section');
-            if (section.style.display === 'block') { section.style.display = 'none'; } else { section.style.display = 'block'; }
+            if (!section) return;
+            section.style.display = section.style.display === 'block' ? 'none' : 'block';
         }
 
         function shareContent() {
-            if (navigator.share) { navigator.share({ title: 'T-Hub Medical Video', url: window.location.href }).catch(() => {}); } else { showToast('📋 Link copied to clipboard!', 'success'); }
+            if (navigator.share) { 
+                navigator.share({ title: 'T-Hub Medical Video', url: window.location.href }).catch(() => {}); 
+            } else { 
+                showToast('📋 Link copied to clipboard!', 'success'); 
+            }
         }
 
         // ================================================================
-        // CLASS HEADER DROPDOWN (Create Teaching/Social Logic)
+        // CLASS HEADER DROPDOWN
         // ================================================================
         function toggleClassHeaderMenu(event) {
-            event.stopPropagation();
+            if (event) event.stopPropagation();
             const dropdown = document.getElementById('classHeaderDropdown');
+            if (!dropdown) return;
+            
             const isOpen = dropdown.classList.contains('active');
             document.querySelectorAll('.class-header-dropdown').forEach(d => d.classList.remove('active'));
             if (!isOpen) dropdown.classList.add('active');
 
-            const hasTeachingGroup = AppState.groups.some(g => g.purpose === 'teaching');
-            const hasSocialGroup = AppState.groups.some(g => g.purpose === 'social');
+            const hasTeachingGroup = AppState.groups.some(g => g.group_purpose === 'teaching');
+            const hasSocialGroup = AppState.groups.some(g => g.group_purpose === 'social');
             const totalGroups = AppState.groups.length;
 
             let menuHtml = `<div class="divider"></div>`;
@@ -1142,28 +1271,26 @@
             dropdown.innerHTML = menuHtml;
         }
 
-        document.addEventListener('click', function(e) {
-            document.querySelectorAll('.class-header-dropdown').forEach(d => d.classList.remove('active'));
-        });
-
         // ================================================================
         // GROUP 3-DOT MENU FUNCTIONS
         // ================================================================
         function toggleClassMenu(event) {
             if(event) event.stopPropagation();
             const menu = document.getElementById('classDropdownMenu');
-            if(menu.style.display === 'block') { menu.style.display = 'none'; } else { menu.style.display = 'block'; }
+            if (!menu) return;
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
         }
 
         function classAction(action) {
-            document.getElementById('classDropdownMenu').style.display = 'none';
+            const menu = document.getElementById('classDropdownMenu');
+            if (menu) menu.style.display = 'none';
             
             if(action === 'Go Live') showToast('🔴 Generating Zoom/Meet link for your class...', 'info');
             else if(action === 'Invite') {
                 if(navigator.share) {
                     navigator.share({ title: 'Join my T-Hub Class', url: window.location.href });
                 } else {
-                    navigator.clipboard.writeText(window.location.href);
+                    navigator.clipboard.writeText(window.location.href).catch(() => {});
                     showToast('📤 Invite link copied to clipboard!', 'success');
                 }
             }
@@ -1171,8 +1298,10 @@
             else if(action === 'Delete File') showToast('🖱️ Click items to mark them for deletion.', 'info');
             else if(action === 'Edit Group') {
                 if(AppState.groups.length > 0) {
-                    document.getElementById('editGroupName').value = AppState.groups[0].name;
-                    document.getElementById('editGroupDesc').value = AppState.groups[0].description || '';
+                    const nameInput = document.getElementById('editGroupName');
+                    const descInput = document.getElementById('editGroupDesc');
+                    if (nameInput) nameInput.value = AppState.groups[0].name;
+                    if (descInput) descInput.value = AppState.groups[0].description || '';
                 }
                 showModal('editGroupModal');
             }
@@ -1185,39 +1314,37 @@
             }
         }
 
-        document.addEventListener('click', function(e) {
-            const menu = document.getElementById('classDropdownMenu');
-            if(menu && menu.style.display === 'block' && !e.target.closest('#classDropdownMenu') && !e.target.closest('.class-tabs')) {
-                menu.style.display = 'none';
-            }
-        });
-
         // ================================================================
         // BOOKS FUNCTIONS
         // ================================================================
         function filterBooks(category, btn) {
             document.querySelectorAll('.book-filters button').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
+            if (btn) btn.classList.add('active');
             showToast(`📖 Showing ${category} books`, 'info');
         }
 
         // ================================================================
-        // PAYMENTS (Option A - Manual Approval)
+        // PAYMENTS
         // ================================================================
         function showPaymentModal() {
             closeModal('depositModal');
-            document.getElementById('payAmount').innerText = AppState.pendingPrice + ' ETB';
+            const payAmount = document.getElementById('payAmount');
+            if (payAmount) payAmount.innerText = AppState.pendingPrice + ' ETB';
             showModal('paymentModal');
         }
 
         async function submitPayment() {
-            const tx = document.getElementById('payTxId').value;
-            const file = document.getElementById('payReceipt').files[0];
-            if (!tx || !file) return showToast('Please fill all fields', 'error');
+            const tx = document.getElementById('payTxId');
+            const fileInput = document.getElementById('payReceipt');
+            if (!tx || !fileInput) return showToast('Payment fields not found.', 'error');
+            
+            const txValue = tx.value;
+            const file = fileInput.files[0];
+            if (!txValue || !file) return showToast('Please fill all fields', 'error');
             showToast('✅ Request submitted! Admin will verify shortly.', 'success');
             closeModal('paymentModal');
-            document.getElementById('payTxId').value = '';
-            document.getElementById('payReceipt').value = '';
+            if (tx) tx.value = '';
+            if (fileInput) fileInput.value = '';
         }
 
         // ================================================================
@@ -1235,14 +1362,22 @@
         }
 
         // ================================================================
-        // CREATE GROUP LOGIC
+        // CREATE GROUP
         // ================================================================
         async function createGroup() {
-            const name = document.querySelector('#createGroupModal input[type="text"]').value;
-            const description = document.querySelector('#createGroupModal textarea').value;
-            const type = document.querySelector('#createGroupModal select').value;
-            const purpose = document.querySelector('#createGroupModal select:last-child').value;
+            const nameInput = document.querySelector('#createGroupModal input[type="text"]');
+            const descInput = document.querySelector('#createGroupModal textarea');
+            const selects = document.querySelectorAll('#createGroupModal select');
+            
+            if (!nameInput) return showToast('Form elements not found.', 'error');
+            
+            const name = nameInput.value;
+            const description = descInput ? descInput.value : '';
+            const type = selects.length > 0 ? selects[0].value : 'Public';
+            const purpose = selects.length > 1 ? selects[1].value : 'teaching';
+            
             if (!name) return showToast('Please enter a group name.', 'error');
+            
             try {
                 const { data, error } = await sb.from('groups').insert({
                     owner_id: AppState.userId,
@@ -1254,15 +1389,19 @@
                     followers: 0,
                     online: 0
                 }).select();
+                
                 if (error) throw error;
                 if (data && data.length > 0) {
                     AppState.groups.push(data[0]);
                     AppState.groupCount = AppState.groups.length;
                     showToast('🚀 Group created successfully!', 'success');
                     closeModal('createGroupModal');
+                    nameInput.value = '';
+                    if (descInput) descInput.value = '';
                     openTabContent('class');
                 }
             } catch (err) {
+                console.error('Create group error:', err);
                 showToast('Error creating group: ' + err.message, 'error');
             }
         }
@@ -1273,119 +1412,300 @@
         async function checkSession() {
             if (AppState.authCheckDone) return;
             AppState.authCheckDone = true;
+            
             try {
                 const { data: { session } } = await sb.auth.getSession();
                 if (session?.user) {
                     AppState.userId = session.user.id;
-                    const { data: userData, error: userError } = await sb.from('users').select('is_admin, is_teacher, coin_balance').eq('user_id', AppState.userId).single();
-                    if (userError) {
-                        AppState.isAdmin = false; AppState.isTeacher = false; AppState.coinBalance = 0;
-                    } else {
-                        AppState.isAdmin = userData.is_admin === true; AppState.isTeacher = userData.is_teacher === true; AppState.coinBalance = userData.coin_balance || 0;
+                    
+                    const { data: userData, error: userError } = await sb
+                        .from('users')
+                        .select('is_admin, is_teacher, coin_balance')
+                        .eq('user_id', AppState.userId)
+                        .single();
+                    
+                    if (userError && userError.code === 'PGRST116') {
+                        await sb.from('users').insert({
+                            user_id: AppState.userId,
+                            email: session.user.email,
+                            is_admin: false,
+                            is_teacher: false,
+                            coin_balance: 0
+                        });
+                        AppState.isAdmin = false;
+                        AppState.isTeacher = false;
+                        AppState.coinBalance = 0;
+                    } else if (userData) {
+                        AppState.isAdmin = userData.is_admin === true;
+                        AppState.isTeacher = userData.is_teacher === true;
+                        AppState.coinBalance = userData.coin_balance || 0;
                     }
-                    if (session.user.email === 'drtesfayekebede@gmail.com') { AppState.isAdmin = true; AppState.isTeacher = true; }
-                    const { data: groupData, error: groupError } = await sb.from('groups').select('*').eq('owner_id', AppState.userId);
-                    if (!groupError && groupData) { AppState.groups = groupData; } else { AppState.groups = []; }
+                    
+                    if (session.user.email === 'drtesfayekebede@gmail.com') { 
+                        AppState.isAdmin = true; 
+                        AppState.isTeacher = true; 
+                    }
+                    
+                    const { data: groupData, error: groupError } = await sb
+                        .from('groups')
+                        .select('*')
+                        .eq('owner_id', AppState.userId);
+                    
+                    if (!groupError && groupData) { 
+                        AppState.groups = groupData; 
+                    } else { 
+                        AppState.groups = []; 
+                    }
+                    
                     document.getElementById('appContent').style.display = 'flex';
                     document.getElementById('loadingOverlay').style.display = 'none';
-                    if (AppState.isAdmin) { document.getElementById('adminTabBtn').style.display = 'flex'; document.getElementById('appealBtnContainer').style.display = 'none'; document.getElementById('createGroupBtn').style.display = 'block'; }
-                    else if (AppState.isTeacher) { document.getElementById('appealBtnContainer').style.display = 'none'; document.getElementById('createGroupBtn').style.display = 'block'; }
-                    document.getElementById('welcomeText').innerText = `👋 Welcome back, ${session.user.email.split('@')[0]}!`;
-                    document.getElementById('profileName').innerText = session.user.email.split('@')[0];
-                    document.getElementById('profileEmail').innerText = session.user.email;
-                    document.getElementById('dropdownItems').innerHTML = `<div onclick="openTabContent('profile')">👤 Profile</div><div onclick="logout()">🚪 Logout</div>`;
-                } else { showAuthModal(); document.getElementById('loadingOverlay').style.display = 'none'; }
-            } catch (err) { console.error(err); document.getElementById('loadingOverlay').style.display = 'none'; showAuthModal(); }
+                    
+                    const adminTab = document.getElementById('adminTabBtn');
+                    if (adminTab) {
+                        adminTab.style.display = AppState.isAdmin ? 'flex' : 'none';
+                    }
+                    
+                    const appealBtnContainer = document.getElementById('appealBtnContainer');
+                    if (appealBtnContainer) {
+                        appealBtnContainer.style.display = (AppState.isAdmin || AppState.isTeacher) ? 'none' : 'block';
+                    }
+                    
+                    const createGroupBtn = document.getElementById('createGroupBtn');
+                    if (createGroupBtn) {
+                        createGroupBtn.style.display = (AppState.isAdmin || AppState.isTeacher) ? 'block' : 'none';
+                    }
+                    
+                    const welcomeText = document.getElementById('welcomeText');
+                    if (welcomeText) {
+                        welcomeText.innerText = `👋 Welcome back, ${session.user.email.split('@')[0]}!`;
+                    }
+                    
+                    const profileName = document.getElementById('profileName');
+                    if (profileName) {
+                        profileName.innerText = session.user.email.split('@')[0];
+                    }
+                    
+                    const profileEmail = document.getElementById('profileEmail');
+                    if (profileEmail) {
+                        profileEmail.innerText = session.user.email;
+                    }
+                    
+                    const dropdownItems = document.getElementById('dropdownItems');
+                    if (dropdownItems) {
+                        dropdownItems.innerHTML = `<div onclick="openTabContent('profile')">👤 Profile</div><div onclick="logout()">🚪 Logout</div>`;
+                    }
+                    
+                } else { 
+                    showAuthModal(); 
+                    document.getElementById('loadingOverlay').style.display = 'none'; 
+                }
+            } catch (err) { 
+                console.error('Session check error:', err); 
+                document.getElementById('loadingOverlay').style.display = 'none'; 
+                showAuthModal(); 
+            }
         }
 
         function showAuthModal() {
             if (document.getElementById('authModal')) return;
-            let m = document.createElement('div'); m.id = 'authModal';
-            m.innerHTML = `<div class="modal-content"><h3 style="color:var(--navy);">📶 T-Hub</h3><p style="color:var(--text-muted); margin-bottom:15px;">Medical Education Ecosystem</p><input type="email" id="authEmail" placeholder="Email"><input type="password" id="authPassword" placeholder="Password"><button class="btn" onclick="login()">Sign In</button><button class="btn btn-teal" onclick="register()">Create Account</button></div>`;
+            let m = document.createElement('div'); 
+            m.id = 'authModal';
+            m.className = 'modal active';
+            m.innerHTML = `
+                <div class="modal-content">
+                    <h3 style="color:var(--navy);">📶 T-Hub</h3>
+                    <p style="color:var(--text-muted); margin-bottom:15px;">Medical Education Ecosystem</p>
+                    <input type="email" id="authEmail" placeholder="Email" style="width:100%; padding:12px; margin-bottom:10px; border:1px solid #eee; border-radius:8px;">
+                    <input type="password" id="authPassword" placeholder="Password" style="width:100%; padding:12px; margin-bottom:10px; border:1px solid #eee; border-radius:8px;">
+                    <button class="btn" onclick="login()" style="width:100%; margin-bottom:8px;">Sign In</button>
+                    <button class="btn btn-teal" onclick="register()" style="width:100%;">Create Account</button>
+                </div>
+            `;
             document.body.appendChild(m);
         }
 
         async function login() {
-            const email = document.getElementById('authEmail')?.value; const password = document.getElementById('authPassword')?.value;
+            const email = document.getElementById('authEmail')?.value; 
+            const password = document.getElementById('authPassword')?.value;
             if (!email || !password) return showToast('Email and password required', 'error');
-            const { error } = await sb.auth.signInWithPassword({ email, password });
-            if (error) return showToast(error.message, 'error');
-            document.getElementById('authModal').remove(); window.location.reload();
+            try {
+                const { error } = await sb.auth.signInWithPassword({ email, password });
+                if (error) throw error;
+                const modal = document.getElementById('authModal');
+                if (modal) modal.remove();
+                window.location.reload();
+            } catch (err) {
+                showToast(err.message, 'error');
+            }
         }
 
         async function register() {
-            const email = document.getElementById('authEmail')?.value; const password = document.getElementById('authPassword')?.value;
+            const email = document.getElementById('authEmail')?.value; 
+            const password = document.getElementById('authPassword')?.value;
             if (!email || !password) return showToast('Email and password required', 'error');
             if (password.length < 6) return showToast('Password must be at least 6 characters', 'error');
-            const { error } = await sb.auth.signUp({ email, password });
-            if (error) return showToast(error.message, 'error');
-            showToast('Account created! Redirecting...', 'success');
-            document.getElementById('authModal').remove(); window.location.reload();
+            try {
+                const { error } = await sb.auth.signUp({ email, password });
+                if (error) throw error;
+                showToast('Account created! Please check your email to confirm.', 'success');
+                const modal = document.getElementById('authModal');
+                if (modal) modal.remove();
+            } catch (err) {
+                showToast(err.message, 'error');
+            }
         }
 
-        async function logout() { AppState.isLoggingOut = true; await sb.auth.signOut(); window.location.reload(); }
+        async function logout() { 
+            AppState.isLoggingOut = true; 
+            await sb.auth.signOut(); 
+            window.location.reload(); 
+        }
 
         // ================================================================
         // ADMIN PANEL
         // ================================================================
         async function loadAdminPanel() {
             const container = document.getElementById('tabContentContainer');
-            if (!AppState.isAdmin) { container.innerHTML = '<div class="card"><h3>⛔ Access Denied</h3><p>Admin only.</p></div>'; return; }
+            if (!container) return;
+            
+            if (!AppState.isAdmin) { 
+                container.innerHTML = '<div class="card"><h3>⛔ Access Denied</h3><p>Admin only.</p></div>'; 
+                return; 
+            }
+            
             container.innerHTML = `
                 <div class="card"><h3>⚙️ T-Hub Admin Panel</h3><p style="color:var(--text-muted); margin-bottom:15px;">Manage content, teachers, payments, and consultations.</p></div>
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-bottom:20px;">
-                    <div class="card" onclick="adminAction('📂 Upload Files')"><div style="font-size:32px;">📂</div><h4>Upload Files</h4><p style="font-size:13px; color:var(--text-muted);">PDFs for Exams, Books & Smart Notes</p></div>
-                    <div class="card" onclick="adminAction('📝 Mock Exam')"><div style="font-size:32px;">📝</div><h4>Mock Exam</h4><p style="font-size:13px; color:var(--text-muted);">Create digital MCQ exams</p></div>
-                    <div class="card" onclick="adminAction('👨‍🏫 Verify Teachers')"><div style="font-size:32px;">👨‍🏫</div><h4>Verify Teachers</h4><p style="font-size:13px; color:var(--text-muted);">Approve pending educator accounts</p></div>
-                    <div class="card" onclick="showPricingPanel()"><div style="font-size:32px;">💰</div><h4>Set Prices</h4><p style="font-size:13px; color:var(--text-muted);">Premium subscription & item pricing</p></div>
-                    <div class="card" onclick="viewConsultations()"><div style="font-size:32px;">📋</div><h4>Consultations</h4><p style="font-size:13px; color:var(--text-muted);">Reply to patient medical requests</p></div>
-                    <div class="card" onclick="adminAction('📊 Analytics')"><div style="font-size:32px;">📊</div><h4>Analytics</h4><p style="font-size:13px; color:var(--text-muted);">Track users, revenue & growth</p></div>
+                    <div class="card" onclick="adminAction('📂 Upload Files')" style="cursor:pointer; transition:0.2s;">
+                        <div style="font-size:32px;">📂</div>
+                        <h4 data-key="upload_files">Upload Files</h4>
+                        <p style="font-size:13px; color:var(--text-muted);">PDFs for Exams, Books & Smart Notes</p>
+                    </div>
+                    <div class="card" onclick="adminAction('📝 Mock Exam')" style="cursor:pointer; transition:0.2s;">
+                        <div style="font-size:32px;">📝</div>
+                        <h4 data-key="mock_exam_mgmt">Mock Exam</h4>
+                        <p style="font-size:13px; color:var(--text-muted);">Create digital MCQ exams</p>
+                    </div>
+                    <div class="card" onclick="adminAction('👨‍🏫 Verify Teachers')" style="cursor:pointer; transition:0.2s;">
+                        <div style="font-size:32px;">👨‍🏫</div>
+                        <h4 data-key="verify_teachers">Verify Teachers</h4>
+                        <p style="font-size:13px; color:var(--text-muted);">Approve pending educator accounts</p>
+                    </div>
+                    <div class="card" onclick="showPricingPanel()" style="cursor:pointer; transition:0.2s;">
+                        <div style="font-size:32px;">💰</div>
+                        <h4 data-key="set_prices">Set Prices</h4>
+                        <p style="font-size:13px; color:var(--text-muted);">Premium subscription & item pricing</p>
+                    </div>
+                    <div class="card" onclick="viewConsultations()" style="cursor:pointer; transition:0.2s;">
+                        <div style="font-size:32px;">📋</div>
+                        <h4 data-key="consultations">Consultations</h4>
+                        <p style="font-size:13px; color:var(--text-muted);">Reply to patient medical requests</p>
+                    </div>
+                    <div class="card" onclick="adminAction('📊 Analytics')" style="cursor:pointer; transition:0.2s;">
+                        <div style="font-size:32px;">📊</div>
+                        <h4 data-key="analytics">Analytics</h4>
+                        <p style="font-size:13px; color:var(--text-muted);">Track users, revenue & growth</p>
+                    </div>
                 </div>
             `;
             translatePage();
         }
 
         function adminAction(action) {
-            if(action === '👨‍🏫 Verify Teachers') { showToast('👨‍🏫 Pending Teachers: Dr. Alemu, Dr. Smith. Click to verify.', 'info'); }
-            else { showToast(`${action} feature ready.`, 'info'); }
+            if(action === '👨‍🏫 Verify Teachers') { 
+                showToast('👨‍🏫 Pending Teachers: Dr. Alemu, Dr. Smith. Click to verify.', 'info'); 
+            } else { 
+                showToast(`${action} feature ready.`, 'info'); 
+            }
         }
 
         function showPricingPanel() {
             const container = document.getElementById('tabContentContainer');
-            container.innerHTML = `<div class="card"><h3>💰 Dynamic Pricing</h3><div class="form-group"><label>Premium Subscription (ETB)</label><input type="number" id="price_premium" value="600"></div><button class="btn btn-teal" onclick="showToast('Prices saved to database! (Simulated)', 'success')">💾 Save Prices</button><button class="btn" onclick="loadAdminPanel()">← Back to Admin</button></div>`;
+            if (!container) return;
+            container.innerHTML = `
+                <div class="card">
+                    <h3 data-key="set_prices">💰 Dynamic Pricing</h3>
+                    <div class="form-group">
+                        <label data-key="subscription">Premium Subscription (ETB)</label>
+                        <input type="number" id="price_premium" value="600" style="width:100%; padding:10px; border:1px solid #eee; border-radius:8px; margin-bottom:12px;">
+                    </div>
+                    <button class="btn btn-teal" onclick="showToast('Prices saved to database! (Simulated)', 'success')" data-key="save">💾 Save Prices</button>
+                    <button class="btn" onclick="loadAdminPanel()" style="margin-top:10px;">← Back to Admin</button>
+                </div>
+            `;
             translatePage();
         }
 
         function viewConsultations() {
             const container = document.getElementById('tabContentContainer');
-            container.innerHTML = `<div class="card"><h3>📋 Patient Consultations</h3><div style="padding:20px; text-align:center; color:var(--text-muted);"><div style="font-size:48px;">🩺</div><p>No pending consultations yet.</p></div><button class="btn" onclick="loadAdminPanel()">← Back to Admin</button></div>`;
+            if (!container) return;
+            container.innerHTML = `
+                <div class="card">
+                    <h3 data-key="consultations">📋 Patient Consultations</h3>
+                    <div style="padding:20px; text-align:center; color:var(--text-muted);">
+                        <div style="font-size:48px;">🩺</div>
+                        <p>No pending consultations yet.</p>
+                    </div>
+                    <button class="btn" onclick="loadAdminPanel()">← Back to Admin</button>
+                </div>
+            `;
             translatePage();
         }
 
         // ================================================================
-        // EDIT GROUP, ADD FILE, BUY COINS, WITHDRAW
+        // EDIT GROUP
         // ================================================================
         async function submitEditGroup() {
-            const name = document.getElementById('editGroupName').value; const desc = document.getElementById('editGroupDesc').value;
+            const nameInput = document.getElementById('editGroupName');
+            const descInput = document.getElementById('editGroupDesc');
+            
+            if (!nameInput) return showToast('Form not found.', 'error');
+            
+            const name = nameInput.value;
+            const desc = descInput ? descInput.value : '';
+            
             if(!name) return showToast('Group name cannot be empty.', 'error');
+            
             const groupId = AppState.groups[0]?.id;
             if(!groupId) return showToast('No group found to edit.', 'error');
-            const { error } = await sb.from('groups').update({ name, description: desc }).eq('id', groupId);
-            if(error) return showToast('Error updating group: ' + error.message, 'error');
-            showToast('✅ Group info updated!', 'success'); closeModal('editGroupModal'); openTabContent('class');
+            
+            try {
+                const { error } = await sb.from('groups').update({ 
+                    name, 
+                    description: desc 
+                }).eq('id', groupId);
+                
+                if(error) throw error;
+                
+                if (AppState.groups.length > 0) {
+                    AppState.groups[0].name = name;
+                    AppState.groups[0].description = desc;
+                }
+                
+                showToast('✅ Group info updated!', 'success');
+                closeModal('editGroupModal');
+                openTabContent('class');
+            } catch (err) {
+                showToast('Error updating group: ' + err.message, 'error');
+            }
         }
 
         // ================================================================
-        // SUBMIT ADD FILE (FULLY CORRECTED WITH LOGGING)
+        // SUBMIT ADD FILE
         // ================================================================
         async function submitAddFile() {
-            const type = document.getElementById('addFileType').value;
+            const typeSelect = document.getElementById('addFileType');
+            if (!typeSelect) return showToast('Form not found.', 'error');
+            
+            const type = typeSelect.value;
             const groupId = AppState.groups[0]?.id;
             if (!groupId) return showToast('You must be in a group to add content.', 'error');
             
-            // --- HANDLE MOCK EXAM ---
             if (type === 'exam') {
-                const title = document.getElementById('examTitle').value;
+                const titleInput = document.getElementById('examTitle');
+                if (!titleInput) return showToast('Exam title field not found.', 'error');
+                
+                const title = titleInput.value;
                 if (!title) return showToast('Please enter an Exam Title.', 'error');
 
                 const questions = [];
@@ -1403,8 +1723,7 @@
                     questions.push({ question: q, options: [a, b, c, d], answer: ans });
                 }
 
-                // ✅ Save exam to Supabase
-                console.log("📤 Attempting to save exam to Supabase...");
+                console.log("📤 Saving exam to Supabase...");
                 const { data, error } = await sb.from('mock_exams').insert({
                     group_id: groupId,
                     author_id: AppState.userId,
@@ -1412,53 +1731,89 @@
                     questions: questions
                 }).select();
 
-                // --- ERROR HANDLING ---
                 if (error) {
-                    console.error("❌ Supabase Error Details:", error);
+                    console.error("❌ Supabase Error:", error);
                     return showToast('Error saving exam: ' + error.message, 'error');
                 }
 
-                // --- SUCCESS BLOCK (Runs ONLY if no error) ---
-                console.log("✅ Exam saved successfully! Data:", data);
+                console.log("✅ Exam saved successfully!", data);
                 showToast(`📝 Exam '${title}' with ${questions.length} questions created!`, 'success');
                 closeModal('addFileModal');
-                examQuestionCount = 1; // Reset count
                 
-                // ✅ Refresh the exam list instantly
-                setTimeout(() => {
-                    loadExams();
-                }, 500);
+                examQuestionCount = 1;
+                if (titleInput) titleInput.value = '';
+                
+                if (AppState.currentGroupId) {
+                    loadGroupContent(AppState.currentGroupId, 'exam');
+                }
                 return;
             }
 
-            // --- HANDLE VIDEO / PPT ---
-            const title = document.getElementById('addFileTitle').value;
-            const url = document.getElementById('addFileUrl').value;
+            const titleInput = document.getElementById('addFileTitle');
+            const urlInput = document.getElementById('addFileUrl');
+            
+            if (!titleInput || !urlInput) return showToast('Form fields not found.', 'error');
+            
+            const title = titleInput.value;
+            const url = urlInput.value;
             
             if(!title) return showToast('Please enter a title.', 'error');
             if(!url) return showToast('Please upload a file first (click the Upload button).', 'error');
 
-            const { error } = await sb.from('group_content').insert({
-                group_id: groupId, author_id: AppState.userId, content_type: type, title: title, file_url: url, likes: 0
-            });
+            try {
+                const { error } = await sb.from('group_content').insert({
+                    group_id: groupId, 
+                    author_id: AppState.userId, 
+                    content_type: type, 
+                    title: title, 
+                    file_url: url, 
+                    likes: 0
+                });
 
-            if (error) return showToast('Error publishing content: ' + error.message, 'error');
+                if (error) throw error;
 
-            showToast(`📤 ${type === 'video' ? 'Video' : 'PPT'} published successfully!`, 'success');
-            closeModal('addFileModal');
-            document.getElementById('addFileInput').value = '';
-            document.getElementById('addFileUrl').value = '';
-            document.getElementById('uploadStatus').innerText = '⏳ No file selected';
+                showToast(`📤 ${type === 'video' ? 'Video' : 'PPT'} published successfully!`, 'success');
+                closeModal('addFileModal');
+                
+                titleInput.value = '';
+                urlInput.value = '';
+                const fileInput = document.getElementById('addFileInput');
+                if (fileInput) fileInput.value = '';
+                const statusDiv = document.getElementById('uploadStatus');
+                if (statusDiv) statusDiv.innerText = '⏳ No file selected';
+                
+                if (AppState.currentGroupId) {
+                    loadGroupContent(AppState.currentGroupId, type === 'video' ? 'videos' : 'ppts');
+                }
+            } catch (err) {
+                showToast('Error publishing content: ' + err.message, 'error');
+            }
         }
+
+        // ================================================================
+        // WITHDRAW
+        // ================================================================
         async function submitWithdraw() {
             const amountCoins = 100000;
-            if(AppState.coinBalance < amountCoins) { return showToast(`⚠️ Minimum withdrawal is ${amountCoins} Coins (10,000 ETB). You have ${AppState.coinBalance} Coins.`, 'error'); }
-            const { error } = await sb.from('withdrawal_requests').insert({ user_id: AppState.userId, amount: amountCoins, status: 'pending' });
-            if(error) return showToast('Error requesting withdrawal: ' + error.message, 'error');
-            showToast('📤 Withdrawal request sent to Admin! (100,000 Coins)', 'success'); closeModal('walletModal');
+            if(AppState.coinBalance < amountCoins) { 
+                return showToast(`⚠️ Minimum withdrawal is ${amountCoins} Coins (10,000 ETB). You have ${AppState.coinBalance} Coins.`, 'error'); 
+            }
+            try {
+                const { error } = await sb.from('withdrawal_requests').insert({ 
+                    user_id: AppState.userId, 
+                    amount: amountCoins, 
+                    status: 'pending' 
+                });
+                if(error) throw error;
+                showToast('📤 Withdrawal request sent to Admin! (100,000 Coins)', 'success'); 
+                closeModal('walletModal');
+            } catch (err) {
+                showToast('Error requesting withdrawal: ' + err.message, 'error');
+            }
         }
+
         // ================================================================
-        // FETCH AND DISPLAY EXAMS (ADD THIS MISSING FUNCTION)
+        // LOAD EXAMS
         // ================================================================
         async function loadExams() {
             const container = document.getElementById('examListContainer');
@@ -1467,14 +1822,13 @@
                 return;
             }
 
-            const groupId = AppState.groups[0]?.id;
+            const groupId = AppState.currentGroupId || AppState.groups[0]?.id;
             if (!groupId) {
                 container.innerHTML = '<div style="text-align:center; color:var(--text-muted);">No exams available. Create one using the "Add File" menu.</div>';
                 return;
             }
 
             try {
-                // Fetch exams from the 'mock_exams' table
                 const { data, error } = await sb
                     .from('mock_exams')
                     .select('*')
@@ -1488,7 +1842,6 @@
                     return;
                 }
 
-                // Render each exam as a clickable card
                 container.innerHTML = data.map(exam => `
                     <div class="content-card" onclick="startExam(${exam.id})" style="cursor:pointer;">
                         <div class="meta">
@@ -1496,10 +1849,11 @@
                             <p>${exam.questions ? exam.questions.length : 0} Questions • Created ${new Date(exam.created_at).toLocaleDateString()}</p>
                         </div>
                         <div class="actions">
-                            <button class="btn-sm btn-teal" style="margin:0;">▶️ Start Exam</button>
+                            <button class="btn-sm btn-teal" style="margin:0;" data-key="start">▶️ Start Exam</button>
                         </div>
                     </div>
                 `).join('');
+                translatePage();
 
             } catch (err) {
                 console.error("Error loading exams:", err);
@@ -1511,15 +1865,22 @@
         // TOGGLE CONTENT FIELDS & ADD EXAM QUESTIONS
         // ================================================================
         function toggleContentFields() {
-            const type = document.getElementById('addFileType').value;
-            const standard = document.getElementById('standardFields'); const examBuilder = document.getElementById('examBuilder');
-            if (type === 'exam') { standard.style.display = 'none'; examBuilder.style.display = 'block'; }
-            else { standard.style.display = 'block'; examBuilder.style.display = 'none'; }
+            const typeSelect = document.getElementById('addFileType');
+            if (!typeSelect) return;
+            
+            const type = typeSelect.value;
+            const standard = document.getElementById('standardFields');
+            const examBuilder = document.getElementById('examBuilder');
+            
+            if (standard) standard.style.display = type === 'exam' ? 'none' : 'block';
+            if (examBuilder) examBuilder.style.display = type === 'exam' ? 'block' : 'none';
         }
 
-        let examQuestionCount = 1;
         function addExamQuestion() {
-            examQuestionCount++; const container = document.getElementById('examBuilder');
+            examQuestionCount++;
+            const container = document.getElementById('examBuilder');
+            if (!container) return;
+            
             const newQ = document.createElement('div');
             newQ.style.cssText = "background:var(--bg-light); border-radius:12px; padding:12px; margin-bottom:12px;";
             newQ.innerHTML = `
@@ -1538,28 +1899,121 @@
                     </select>
                 </div>
             `;
-            container.insertBefore(newQ, container.lastElementChild);
+            const addBtn = container.lastElementChild;
+            container.insertBefore(newQ, addBtn);
         }
 
         // ================================================================
         // UPLOAD FILE TO SUPABASE STORAGE
         // ================================================================
         async function uploadFileToStorage() {
-            const fileInput = document.getElementById('addFileInput'); const file = fileInput.files[0]; const statusDiv = document.getElementById('uploadStatus');
+            const fileInput = document.getElementById('addFileInput');
+            const statusDiv = document.getElementById('uploadStatus');
+            
+            if (!fileInput || !statusDiv) return showToast('Upload elements not found.', 'error');
+            
+            const file = fileInput.files[0];
             if (!file) return showToast('Please select a file from your phone first.', 'error');
-            if (file.size > 50 * 1024 * 1024) { return showToast('File is too large. Max 50MB allowed.', 'error'); }
-            statusDiv.innerText = `⏳ Uploading ${file.name}...`; statusDiv.style.color = 'var(--gold)';
+            
+            if (file.size > 50 * 1024 * 1024) { 
+                return showToast('File is too large. Max 50MB allowed.', 'error'); 
+            }
+            
+            statusDiv.innerText = `⏳ Uploading ${file.name}...`; 
+            statusDiv.style.color = 'var(--gold)';
+            
             try {
-                const fileExt = file.name.split('.').pop(); const fileName = `uploads/${AppState.userId}_${Date.now()}.${fileExt}`;
-                const { data, error } = await sb.storage.from('t-hub-uploads').upload(fileName, file, { cacheControl: '3600', upsert: false });
+                const fileExt = file.name.split('.').pop(); 
+                const fileName = `uploads/${AppState.userId}_${Date.now()}.${fileExt}`;
+                
+                const { data, error } = await sb.storage.from('t-hub-uploads').upload(fileName, file, { 
+                    cacheControl: '3600', 
+                    upsert: false 
+                });
+                
                 if (error) throw error;
-                const { data: urlData } = sb.storage.from('t-hub-uploads').getPublicUrl(fileName); const publicUrl = urlData.publicUrl;
-                document.getElementById('addFileUrl').value = publicUrl; statusDiv.innerText = `✅ Uploaded ${file.name}!`; statusDiv.style.color = 'var(--green-success)';
+                
+                const { data: urlData } = sb.storage.from('t-hub-uploads').getPublicUrl(fileName);
+                const publicUrl = urlData.publicUrl;
+                
+                const urlInput = document.getElementById('addFileUrl');
+                if (urlInput) urlInput.value = publicUrl;
+                
+                statusDiv.innerText = `✅ Uploaded ${file.name}!`; 
+                statusDiv.style.color = 'var(--green-success)';
                 showToast('✅ File uploaded to T-Hub Cloud!', 'success');
             } catch (err) {
-                console.error(err); statusDiv.innerText = `❌ Upload failed: ${err.message}`; statusDiv.style.color = 'var(--red-error)'; showToast('Upload failed: ' + err.message, 'error');
+                console.error('Upload error:', err);
+                statusDiv.innerText = `❌ Upload failed: ${err.message}`; 
+                statusDiv.style.color = 'var(--red-error)'; 
+                showToast('Upload failed: ' + err.message, 'error');
             }
         }
+
+        // ================================================================
+        // BUY COINS
+        // ================================================================
+        async function submitBuyCoins() {
+            const amountInput = document.getElementById('buyCoinAmount');
+            const txInput = document.getElementById('buyCoinTxId');
+            
+            if (!amountInput || !txInput) return showToast('Form not found.', 'error');
+            
+            const amount = amountInput.value;
+            const txId = txInput.value;
+            
+            if (!amount || !txId) return showToast('Please fill all fields.', 'error');
+            if (isNaN(amount) || parseInt(amount) <= 0) return showToast('Please enter a valid amount.', 'error');
+            
+            showToast('💳 Coin purchase request sent! Admin will process within 24 hours.', 'success');
+            closeModal('buyCoinsModal');
+            amountInput.value = '';
+            txInput.value = '';
+        }
+
+        // ================================================================
+        // CLOSE DROPDOWNS ON OUTSIDE CLICK - FIXED
+        // ================================================================
+        document.addEventListener('click', function(e) {
+            // Close profile dropdown
+            const menu = document.getElementById('dropdownMenu');
+            if (menu && menu.classList.contains('show') && 
+                !e.target.closest('.profile-area')) {
+                menu.classList.remove('show');
+            }
+            
+            // Close notification dropdown
+            const dropdown = document.getElementById('notificationDropdown');
+            if (dropdown && dropdown.style.display === 'block' && 
+                !e.target.closest('.notification-bell-wrapper')) {
+                dropdown.style.display = 'none';
+            }
+            
+            // Close class header dropdown
+            document.querySelectorAll('.class-header-dropdown').forEach(d => d.classList.remove('active'));
+            
+            // Close class dropdown menu
+            const classMenu = document.getElementById('classDropdownMenu');
+            if (classMenu && classMenu.style.display === 'block' && 
+                !e.target.closest('#classDropdownMenu') && 
+                !e.target.closest('.class-tabs')) {
+                classMenu.style.display = 'none';
+            }
+        });
+
+        // ================================================================
+        // PROFILE AVATAR CLICK - FIXED
+        // ================================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            const avatar = document.getElementById('profileAvatar');
+            if (avatar) {
+                avatar.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const menu = document.getElementById('dropdownMenu');
+                    if (menu) menu.classList.toggle('show');
+                });
+            }
+        });
 
         // ================================================================
         // INITIALIZATION
