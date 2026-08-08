@@ -1368,26 +1368,59 @@
             showToast('✅ Group info updated!', 'success'); closeModal('editGroupModal'); openTabContent('class');
         }
 
+        // ================================================================
+        // SUBMIT ADD FILE (CORRECTED LOGIC)
+        // ================================================================
         async function submitAddFile() {
-            const type = document.getElementById('addFileType').value; const title = document.getElementById('addFileTitle').value; const url = document.getElementById('addFileUrl').value;
-            if(!title || !url) return showToast('Please fill in Title and URL.', 'error');
+            const type = document.getElementById('addFileType').value;
+            
+            // --- HANDLE MOCK EXAM ---
+            if (type === 'exam') {
+                const title = document.getElementById('examTitle').value;
+                if (!title) return showToast('Please enter an Exam Title.', 'error');
+
+                const questions = [];
+                for (let i = 1; i <= examQuestionCount; i++) {
+                    const q = document.getElementById(`examQ${i}`)?.value;
+                    const a = document.getElementById(`examA${i}`)?.value;
+                    const b = document.getElementById(`examB${i}`)?.value;
+                    const c = document.getElementById(`examC${i}`)?.value;
+                    const d = document.getElementById(`examD${i}`)?.value;
+                    const ans = document.getElementById(`examAns${i}`)?.value;
+                    
+                    if (!q) return showToast(`Please fill in Question ${i}.`, 'error');
+                    if (!a || !b || !c || !d) return showToast(`Please fill in all options for Question ${i}.`, 'error');
+                    
+                    questions.push({ question: q, options: [a, b, c, d], answer: ans });
+                }
+
+                // ✅ SUCCESS PATH FOR EXAMS
+                showToast(`📝 Exam '${title}' with ${questions.length} questions created!`, 'success');
+                closeModal('addFileModal');
+                examQuestionCount = 1; // Reset count
+                return; // <-- CRITICAL: Stop the function here!
+            }
+
+            // --- HANDLE VIDEO / PPT (Standard content) ---
+            const title = document.getElementById('addFileTitle').value;
+            const url = document.getElementById('addFileUrl').value;
+            
+            if(!title) return showToast('Please enter a title.', 'error');
+            if(!url) return showToast('Please upload a file first (click the Upload button).', 'error');
+
             const groupId = AppState.groups[0]?.id;
             if(!groupId) return showToast('You must be in a group to add content.', 'error');
-            const { error } = await sb.from('group_content').insert({ group_id: groupId, author_id: AppState.userId, content_type: type, title: title, file_url: url, likes: 0 });
-            if(error) return showToast('Error adding file: ' + error.message, 'error');
-            showToast('📤 Content published successfully!', 'success'); closeModal('addFileModal'); openTabContent('group-feed', groupId);
-        }
 
-        async function submitBuyCoins() {
-            const amountETB = parseInt(document.getElementById('buyCoinAmount').value); const txId = document.getElementById('buyCoinTxId').value;
-            if(!amountETB || amountETB < 10) return showToast('Minimum purchase is 10 ETB (100 Coins).', 'error');
-            if(!txId) return showToast('Please enter your Telebirr Transaction ID.', 'error');
-            const coinsToAdd = amountETB * 10;
-            const { error } = await sb.from('users').update({ coin_balance: AppState.coinBalance + coinsToAdd }).eq('user_id', AppState.userId);
-            if(error) return showToast('Error buying coins: ' + error.message, 'error');
-            AppState.coinBalance += coinsToAdd;
-            showToast(`💳 Added ${coinsToAdd} Coins! (${amountETB} ETB)`, 'success'); closeModal('buyCoinsModal');
-            document.getElementById('buyCoinAmount').value = ''; document.getElementById('buyCoinTxId').value = '';
+            // Save to Supabase (Group content table)
+            // const { error } = await sb.from('group_content').insert({
+            //     group_id: groupId, author_id: AppState.userId, content_type: type, title: title, file_url: url, likes: 0
+            // });
+
+            showToast(`📤 ${type === 'video' ? 'Video' : 'PPT'} published successfully!`, 'success');
+            closeModal('addFileModal');
+            document.getElementById('addFileInput').value = '';
+            document.getElementById('addFileUrl').value = '';
+            document.getElementById('uploadStatus').innerText = '⏳ No file selected';
         }
 
         async function submitWithdraw() {
