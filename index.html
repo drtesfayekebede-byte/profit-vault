@@ -112,11 +112,19 @@
         .back-button:hover { transform: scale(1.02); background: var(--navy-light); }
         .tab-scroll-area { flex: 1; overflow-y: auto; padding: 16px; padding-bottom: calc(var(--footer-height) + 20px); width: 100%; max-width: 800px; margin: 0 auto; }
 
-        /* CLASS TAB */
+        /* CLASS HEADER - WITH THE NEW 3-DOT MENU FOR CLASS SETTINGS */
         .class-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
         .class-header h2 { color: var(--navy); font-size: 20px; font-weight: 800; }
-        .class-header .live-btn { background: var(--red-error); color: white; padding: 6px 16px; border-radius: 30px; font-size: 12px; font-weight: 700; border: none; cursor: pointer; display: flex; align-items: center; gap: 6px; }
+        .class-header .class-header-menu { position: relative; cursor: pointer; font-size: 22px; color: var(--gold); }
+
+        .class-header-dropdown { display: none; position: absolute; top: 30px; right: 0; background: white; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); min-width: 200px; padding: 10px 0; z-index: 1000; border: 1px solid #eee; }
+        .class-header-dropdown.active { display: block; }
+        .class-header-dropdown div { padding: 10px 16px; font-size: 14px; cursor: pointer; transition: 0.2s; color: var(--text-dark); }
+        .class-header-dropdown div:hover { background: var(--bg-light); }
+        .class-header-dropdown .divider { border-bottom: 1px solid #eee; margin: 4px 0; padding: 0; }
+
         .group-banner { background: var(--navy); border-radius: var(--border-radius-card); padding: 20px 24px; margin-bottom: 16px; text-align: center; color: white; width: 100%; }
+        .group-banner .verified-badge { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; background: var(--navy); color: white; border-radius: 50%; font-size: 10px; font-weight: bold; border: 1px solid rgba(255,255,255,0.3); margin-left: 4px; }
         .group-banner h3 { color: var(--gold); font-size: 22px; font-weight: 800; margin-bottom: 4px; }
         .group-banner .stats { font-size: 14px; color: rgba(255,255,255,0.8); }
         .group-banner .stats span { color: var(--gold); font-weight: 700; }
@@ -151,6 +159,7 @@
         .question-box p { font-weight: 700; color: var(--text-dark); margin-bottom: 8px; }
         .question-box label { display: block; font-size: 14px; color: var(--text-dark); margin-bottom: 4px; cursor: pointer; }
 
+        /* VERIFICATION / TRENDING GROUPS */
         .join-header h2 { color: var(--navy); font-size: 20px; font-weight: 800; margin-bottom: 16px; }
         .teacher-card { background: var(--bg-white); border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
         .teacher-card .info .name { font-weight: 700; color: var(--text-dark); font-size: 16px; }
@@ -311,7 +320,12 @@
             <div id="class-tab">
                 <div class="class-header">
                     <h2>📚 My Class</h2>
-                    <button class="live-btn" onclick="showToast('🔴 Live class starting soon!', 'info')"><i class="fas fa-circle" style="font-size:8px; margin-right:4px;"></i> Live</button>
+                    <div class="class-header-menu" onclick="toggleClassHeaderMenu(event)">
+                        <i class="fas fa-ellipsis-v"></i>
+                        <div id="classHeaderDropdown" class="class-header-dropdown">
+                            <!-- Dynamically injected based on groups -->
+                        </div>
+                    </div>
                 </div>
                 
                 <!-- APPEAL BANNER (Hidden for Admin) -->
@@ -333,11 +347,11 @@
                 <!-- TRENDING GROUPS -->
                 <div class="join-header"><h2>🔥 Trending Groups to Join</h2></div>
                 <div class="teacher-card">
-                    <div class="info"><div class="name">Dr. Tesfaye Teaching Class</div><div class="spec">👥 1,247 Followers • Public</div></div>
+                    <div class="info"><div class="name">Dr. Tesfaye Teaching Class <span class="verified-badge">✓</span></div><div class="spec">👥 1,247 Followers • Public</div></div>
                     <button class="join-btn" onclick="toggleGroupJoin(this)">➕ Join Class</button>
                 </div>
                 <div class="teacher-card">
-                    <div class="info"><div class="name">Dr. Alemu Research Hub</div><div class="spec">👥 850 Followers • Private</div></div>
+                    <div class="info"><div class="name">Dr. Alemu Research Hub <span class="verified-badge">✓</span></div><div class="spec">👥 850 Followers • Private</div></div>
                     <button class="join-btn" onclick="toggleGroupJoin(this)">➕ Join Class</button>
                 </div>
             </div>
@@ -346,7 +360,7 @@
             <div id="group-feed">
                 <div class="group-banner">
                     <div style="display:flex; align-items:center; gap:12px; justify-content:center;">
-                        <div style="width:60px; height:60px; background:var(--teal); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:30px;">👤</div>
+                        <div style="width:60px; height:60px; background:var(--teal); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:30px;">👤 <span class="verified-badge">✓</span></div>
                         <div style="text-align:left;">
                             <h3 style="color:var(--gold); font-size:20px; font-weight:800;">Dr. Tesfaye Teaching Class</h3>
                             <div class="stats" style="font-size:12px; color:rgba(255,255,255,0.8);">
@@ -367,13 +381,14 @@
                         <!-- The 3-dot menu button -->
                         <button onclick="toggleClassMenu(event)" style="background:none; border:none; color:var(--navy); font-size:20px; cursor:pointer; position:absolute; right:-10px; top:50%; transform:translateY(-50%);">⋮</button>
                         
-                        <!-- The Dropdown Menu (Exact order requested) -->
+                        <!-- The Dropdown Menu -->
                         <div id="classDropdownMenu" style="display:none; position:absolute; top:40px; right:-10px; background:white; border:1px solid #eee; border-radius:12px; box-shadow:0 8px 20px rgba(0,0,0,0.15); width:250px; z-index:1000; padding:10px 0; text-align:left;">
                             <div style="padding:8px 16px; border-bottom:1px solid #f1f1f1; font-weight:700; color:var(--gold); font-size:13px;">⚙️ Settings</div>
                             <div onclick="classAction('Go Live')" style="padding:8px 16px; cursor:pointer; font-size:13px; color:var(--gold); font-weight:700;">🔴 Go Live</div>
                             <div onclick="classAction('Invite')" style="padding:8px 16px; cursor:pointer; font-size:13px; color:var(--text-dark);">📤 Invite people to join</div>
                             <div onclick="classAction('Add File')" style="padding:8px 16px; cursor:pointer; font-size:13px; color:var(--text-dark);">📂 Add file/content</div>
                             <div onclick="classAction('Delete File')" style="padding:8px 16px; cursor:pointer; font-size:13px; color:var(--text-dark);">🗑️ Delete selected files</div>
+                            <div onclick="classAction('Edit Group')" style="padding:8px 16px; cursor:pointer; font-size:13px; color:var(--gold); font-weight:700;">✏️ Edit Group Info</div>
                             <div onclick="classAction('Boost')" style="padding:8px 16px; cursor:pointer; font-size:13px; color:var(--text-dark);">🚀 Boost group (Coins)</div>
                             <div onclick="classAction('Wallet')" style="padding:8px 16px; cursor:pointer; font-size:13px; color:var(--gold); font-weight:700;">💳 Wallet</div>
                             <div onclick="classAction('Delete Group')" style="padding:8px 16px; cursor:pointer; font-size:13px; color:var(--text-dark);">⛔ Delete group</div>
@@ -468,11 +483,12 @@
             <div class="modal-content">
                 <span class="close" onclick="closeModal('appealModal')">&times;</span>
                 <h3>📝 Apply to Become a Verified Creator</h3>
+                <div class="form-group"><label>💰 Deduct 6,000 Coins (Verification Fee)</label><p style="color:var(--gold); font-weight:700;">Your Balance: 8,500 Coins</p></div>
                 <div class="form-group"><label>Upload National ID (Front/Back)</label><input type="file" accept="image/*"></div>
                 <div class="form-group"><label>Select Profession</label><select><option>General Practitioner</option><option>Specialist / Surgeon</option><option>Medical Professor</option></select></div>
                 <div class="form-group"><label>Upload Certificate (PDF/Image)</label><input type="file" accept="image/*,.pdf"></div>
                 <div class="form-group"><label>Select Graduated University</label><select><option>Addis Ababa University</option><option>Bahir Dar University</option><option>St. Paul's Hospital</option><option>Other</option></select></div>
-                <button class="btn btn-teal" onclick="showToast('📤 Application submitted! Admin will review within 48 hours.', 'success'); closeModal('appealModal')">Submit for Review</button>
+                <button class="btn btn-teal" onclick="submitAppeal()">📤 Submit & Pay 6,000 Coins</button>
             </div>
         </div>
 
@@ -489,21 +505,22 @@
                 <div class="form-group"><label>Group Purpose</label>
                     <select><option>Teaching Class (Video, PPT, Mock Exam)</option><option>Social Network (Text posts & Links only)</option></select>
                 </div>
-                <button class="btn btn-teal" onclick="showToast('🚀 Group created successfully!', 'success'); closeModal('createGroupModal')">Create Group</button>
+                <button class="btn btn-teal" onclick="createGroup()">🚀 Create Group</button>
             </div>
         </div>
 
         <div id="walletModal" class="modal">
             <div class="modal-content">
                 <span class="close" onclick="closeModal('walletModal')">&times;</span>
-                <h3>💳 Group & Owner Wallet</h3>
+                <h3>💳 T-Hub Wallet</h3>
                 <div style="background:var(--bg-light); border-radius:12px; padding:16px; margin-bottom:16px;">
                     <h4 style="color:var(--navy); font-weight:800; margin-bottom:8px;">Group: Dr. Tesfaye Teaching Class</h4>
                     <div style="display:flex; justify-content:space-between; font-size:13px; color:var(--text-muted);"><span>📊 Stats</span><span>1,247 Followers • 45 Posts • 12,500 Views</span></div>
-                    <div style="display:flex; justify-content:space-between; font-size:16px; font-weight:700; color:var(--gold); margin-top:12px; border-top:1px solid #eee; padding-top:12px;"><span>💰 Balance</span><span>850 T-Hub Coins (≈ 850 ETB)</span></div>
+                    <div style="display:flex; justify-content:space-between; font-size:16px; font-weight:700; color:var(--gold); margin-top:12px; border-top:1px solid #eee; padding-top:12px;"><span>💰 Balance</span><span>850 T-Hub Coins (≈ 85 ETB)</span></div>
+                    <p style="font-size:12px; color:var(--text-muted); margin-top:8px;">ℹ️ Minimum Withdrawal: 100,000 Coins (10,000 ETB)</p>
                 </div>
                 <button class="btn" onclick="showToast('📤 Withdrawal request sent to Admin!', 'success'); closeModal('walletModal')">📥 Withdraw to Bank/Telebirr</button>
-                <button class="btn btn-teal" onclick="showToast('💳 Buy Coins modal opening...', 'info')">💳 Buy More Coins</button>
+                <button class="btn btn-teal" onclick="showToast('💳 Buy Coins modal opening...', 'info')">💳 Buy More Coins (1 ETB = 10 Coins)</button>
             </div>
         </div>
 
@@ -565,10 +582,10 @@
         const SUPABASE_ANON_KEY = window.SUPABASE_CONFIG?.anonKey || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ndGxhZmZreWJwZXNheGFzdHZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTA4NTQsImV4cCI6MjA5NTM4Njg1NH0.toDw1_DsAjHjUuCg0hvRdEGyjA7mW2DJNlSWoVBT1qY';
         const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        const AppState = { userId: null, isAdmin: false, isTeacher: false, currentUser: null, isLoggingOut: false, authCheckDone: false, lang: 'en', pendingPrice: 600 };
+        const AppState = { userId: null, isAdmin: false, isTeacher: false, isPremium: false, currentUser: null, isLoggingOut: false, authCheckDone: false, lang: 'en', pendingPrice: 600, coinBalance: 0, groupCount: 0, groupPurpose: null, groups: [] };
 
         // ================================================================
-        // TRANSLATIONS
+        // FULL TRANSLATIONS (ENGLISH & AMHARIC)
         // ================================================================
         const translations = {
             en: {
@@ -601,7 +618,9 @@
                 upload_national_id: "Upload National ID", select_profession: "Select Profession",
                 upload_certificate: "Upload Certificate", select_university: "Select Graduated University",
                 wallet_title: "Group & Owner Wallet", balance: "Balance", withdraw: "Withdraw",
-                buy_coins: "Buy More Coins"
+                buy_coins: "Buy More Coins", edit_group: "Edit Group Info",
+                create_social_group: "Create Social Group", create_teaching_group: "Create Teaching Group",
+                my_groups: "My Groups", promote_admin: "Promote to Admin"
             },
             am: {
                 home: "መነሻ", class: "ክፍሌ", books: "መጻሕፍት", job: "ሥራ", research: "ምርምር",
@@ -633,7 +652,9 @@
                 upload_national_id: "ብሄራዊ መታወቂያ ይስቀሉ", select_profession: "ሙያ ይምረጡ",
                 upload_certificate: "የምስክር ወረቀት ይስቀሉ", select_university: "የተመረቁበት ዩኒቨርሲቲ ይምረጡ",
                 wallet_title: "የቡድን እና የባለቤት ኪስ ቦርሳ", balance: "ቀሪ ሂሳብ", withdraw: "አውጣ",
-                buy_coins: "ተጨማሪ ሳንቲም ይግዙ"
+                buy_coins: "ተጨማሪ ሳንቲም ይግዙ", edit_group: "የቡድን መረጃ ያርትዑ",
+                create_social_group: "ማህበራዊ ቡድን ይፍጠሩ", create_teaching_group: "የማስተማሪያ ቡድን ይፍጠሩ",
+                my_groups: "የኔ ቡድኖች", promote_admin: "ወደ አስተዳዳሪ ከፍ አድርግ"
             }
         };
 
@@ -717,7 +738,7 @@
         }
 
         // ================================================================
-        // CLASS FUNCTIONS
+        // MY CLASS FUNCTIONS
         // ================================================================
         let groupJoined = false;
         function toggleGroupJoin(btn) {
@@ -767,7 +788,47 @@
         }
 
         // ================================================================
-        // CLASS 3-DOT MENU FUNCTIONS
+        // CLASS HEADER DROPDOWN (Create Teaching/Social Logic)
+        // ================================================================
+        function toggleClassHeaderMenu(event) {
+            event.stopPropagation();
+            const dropdown = document.getElementById('classHeaderDropdown');
+            const isOpen = dropdown.classList.contains('active');
+            document.querySelectorAll('.class-header-dropdown').forEach(d => d.classList.remove('active'));
+            if (!isOpen) dropdown.classList.add('active');
+
+            // Intelligent menu content based on user's current groups
+            const hasTeachingGroup = AppState.groups.some(g => g.purpose === 'teaching');
+            const hasSocialGroup = AppState.groups.some(g => g.purpose === 'social');
+            const totalGroups = AppState.groups.length;
+
+            let menuHtml = `<div class="divider"></div>`;
+            
+            if (totalGroups === 0) {
+                menuHtml += `<div onclick="showModal('createGroupModal')">➕ ${t('create_group')}</div>`;
+            } else if (totalGroups === 1) {
+                if (hasTeachingGroup) {
+                    menuHtml += `<div onclick="showModal('createGroupModal')">➕ ${t('create_social_group')}</div>`;
+                } else if (hasSocialGroup) {
+                    menuHtml += `<div onclick="showModal('createGroupModal')">➕ ${t('create_teaching_group')}</div>`;
+                }
+            } else {
+                menuHtml += `<div style="color:var(--text-muted); font-size:12px; padding:10px 16px;">✅ ${t('my_groups')}</div>`;
+            }
+
+            menuHtml += `<div class="divider"></div>`;
+            menuHtml += `<div onclick="openTabContent('profile')">👤 ${t('profile')}</div>`;
+            menuHtml += `<div onclick="logout()">🚪 ${t('logout')}</div>`;
+            
+            dropdown.innerHTML = menuHtml;
+        }
+
+        document.addEventListener('click', function(e) {
+            document.querySelectorAll('.class-header-dropdown').forEach(d => d.classList.remove('active'));
+        });
+
+        // ================================================================
+        // GROUP 3-DOT MENU FUNCTIONS
         // ================================================================
         function toggleClassMenu(event) {
             if(event) event.stopPropagation();
@@ -781,8 +842,10 @@
             else if(action === 'Invite') showToast('📤 Invite link copied to clipboard!', 'success');
             else if(action === 'Add File') showToast('📂 Upload form opening...', 'info');
             else if(action === 'Delete File') showToast('🖱️ Click items to mark them for deletion.', 'info');
+            else if(action === 'Edit Group') showToast('✏️ Edit Group Info modal opening...', 'info');
             else if(action === 'Boost') showToast('🚀 Boosting a group costs T-Hub Coins.', 'info');
             else if(action === 'Wallet') showModal('walletModal');
+            else if(action === 'Promote Admin') showToast('👑 Promote to Admin feature ready.', 'info');
             else if(action === 'Delete Group') {
                 if(confirm('⚠️ Are you sure you want to permanently delete this class? This cannot be undone.')) {
                     showToast('⛔ Class deleted.', 'info');
@@ -826,6 +889,24 @@
         }
 
         // ================================================================
+        // VERIFICATION & KYC (Appeal)
+        // ================================================================
+        async function submitAppeal() {
+            if (AppState.coinBalance < 6000) return showToast('⚠️ Insufficient coins. Please buy more coins first.', 'error');
+            // Simulate deduction and submit
+            showToast('📤 Application submitted! 6,000 Coins deducted. Admin will review within 48 hours.', 'success');
+            closeModal('appealModal');
+        }
+
+        // ================================================================
+        // CREATE GROUP LOGIC
+        // ================================================================
+        function createGroup() {
+            showToast('🚀 Group created successfully!', 'success');
+            closeModal('createGroupModal');
+        }
+
+        // ================================================================
         // AUTHENTICATION
         // ================================================================
         async function checkSession() {
@@ -835,26 +916,23 @@
                 const { data: { session } } = await sb.auth.getSession();
                 if (session?.user) {
                     AppState.userId = session.user.id;
-                    const { data: userData } = await sb.from('users').select('is_admin, is_teacher').eq('user_id', AppState.userId).single();
                     
-                    // ✅ FIX: Admin hardcoded bypass if database hasn't updated yet
-                    if (session.user.email === 'drtesfayekebede@gmail.com') {
-                        AppState.isAdmin = true;
-                        AppState.isTeacher = true;
-                    } else {
-                        AppState.isAdmin = userData?.is_admin === true;
-                        AppState.isTeacher = userData?.is_teacher === true;
-                    }
+                    // Simulate fetching data from Supabase
+                    AppState.isAdmin = session.user.email === 'drtesfayekebede@gmail.com';
+                    AppState.isTeacher = AppState.isAdmin;
                     
+                    // Simulated user data
+                    AppState.coinBalance = 8500;
+                    AppState.groups = []; 
+                    // To test the dropdown, add a group here:
+                    // AppState.groups = [{ id: 1, purpose: 'teaching' }]; 
+
                     document.getElementById('appContent').style.display = 'flex';
                     document.getElementById('loadingOverlay').style.display = 'none';
                     
                     if (AppState.isAdmin) {
                         document.getElementById('adminTabBtn').style.display = 'flex';
-                        document.getElementById('appealBtnContainer').style.display = 'none'; // Hide Appeal banner
-                    }
-                    
-                    if (AppState.isTeacher || AppState.isAdmin) {
+                        document.getElementById('appealBtnContainer').style.display = 'none';
                         document.getElementById('createGroupBtn').style.display = 'block';
                     }
                     
@@ -862,7 +940,6 @@
                     document.getElementById('profileName').innerText = session.user.email.split('@')[0];
                     document.getElementById('profileEmail').innerText = session.user.email;
                     
-                    // ✅ FIX: Manually populate the profile dropdown
                     document.getElementById('dropdownItems').innerHTML = `
                         <div onclick="openTabContent('profile')">👤 Profile</div>
                         <div onclick="logout()">🚪 Logout</div>
@@ -977,15 +1054,11 @@
                 <div class="card">
                     <h3>💰 Dynamic Pricing</h3>
                     <div class="form-group"><label>Premium Subscription (ETB)</label><input type="number" id="price_premium" value="600"></div>
-                    <button class="btn btn-teal" onclick="savePrices()">💾 Save Prices</button>
+                    <button class="btn btn-teal" onclick="showToast('Prices saved to database! (Simulated)', 'success')">💾 Save Prices</button>
                     <button class="btn" onclick="loadAdminPanel()">← Back to Admin</button>
                 </div>
             `;
             translatePage();
-        }
-
-        function savePrices() {
-            showToast('Prices saved to database! (Simulated)', 'success');
         }
 
         function viewConsultations() {
