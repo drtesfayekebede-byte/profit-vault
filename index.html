@@ -973,7 +973,7 @@
         }
 
         // ================================================================
-        // TOGGLE GROUP JOIN - FIXED
+        // TOGGLE GROUP JOIN - FIXED (NO TYPOS)
         // ================================================================
         async function toggleGroupJoin(btn) {
             const isInGroupFeed = btn.closest('.group-banner') !== null;
@@ -1125,7 +1125,7 @@
         }
 
         // ================================================================
-        // LOAD GROUP CONTENT - FIXED
+        // LOAD GROUP CONTENT
         // ================================================================
         async function loadGroupContent(groupId, contentType) {
             const container = document.getElementById(contentType);
@@ -1282,7 +1282,6 @@
             
             const timerDisplay = document.getElementById('examTimerDisplay');
             if (!timerDisplay) {
-                // Create timer display if it doesn't exist
                 const container = document.getElementById('exam');
                 if (container) {
                     const timerHtml = `
@@ -1379,7 +1378,6 @@
                 
                 renderExamQuestion();
                 
-                // Start timer if in exam mode
                 if (examMode === 'exam') {
                     startExamTimer(currentExam.time_limit);
                 }
@@ -1424,8 +1422,8 @@
                         <span style="font-weight:700; color:var(--navy);" data-key="question">${t('question')} ${currentQuestionIndex+1}/${total}</span>
                     </div>
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                        <span style="font-weight:700; color:var(--green-success);" data-key="correct">✅ ${t('correct')}: ${correctCount}</span>
-                        <span style="font-weight:700; color:var(--red-error);" data-key="incorrect">❌ ${t('incorrect')}: ${incorrectCount}</span>
+                        <span id="examCorrectCount" style="font-weight:700; color:var(--green-success);" data-key="correct">✅ ${t('correct')}: ${correctCount}</span>
+                        <span id="examIncorrectCount" style="font-weight:700; color:var(--red-error);" data-key="incorrect">❌ ${t('incorrect')}: ${incorrectCount}</span>
                     </div>
                     <div class="progress-bar"><div class="progress-fill" style="width:${progress}%;"></div></div>
                 </div>
@@ -1436,7 +1434,7 @@
                         const letter = String.fromCharCode(65+idx);
                         const isSelected = selected === letter;
                         return `
-                            <label style="display:block; margin:8px 0; padding:12px; border:2px solid ${isSelected ? 'var(--gold)' : '#e2e8f0'}; border-radius:8px; cursor:${isExamMode ? 'pointer' : 'default'}; transition:0.2s; ${isSelected ? 'background:#fef9e7;' : ''}" onclick="${!examSubmitted && !isExamMode ? `answerExamQuestion('${letter}', this)` : ''}">
+                            <label style="display:block; margin:8px 0; padding:12px; border:2px solid ${isSelected ? 'var(--gold)' : '#e2e8f0'}; border-radius:8px; cursor:${isExamMode ? 'default' : 'pointer'}; transition:0.2s; ${isSelected ? 'background:#fef9e7;' : ''}" onclick="${!examSubmitted && !isExamMode ? `answerExamQuestion('${letter}', this)` : ''}">
                                 <input type="radio" name="examAnswer" value="${letter}" style="margin-right:10px;" ${isSelected ? 'checked' : ''} ${examSubmitted ? 'disabled' : ''}> 
                                 <span style="font-weight:600;">${letter}.</span> ${opt}
                             </label>
@@ -1463,7 +1461,7 @@
         }
 
         // ================================================================
-        // ANSWER EXAM QUESTION
+        // ANSWER EXAM QUESTION - FIXED (Uses IDs instead of query selectors)
         // ================================================================
         function answerExamQuestion(selected, labelEl) {
             if (examSubmitted || examMode === 'exam') return;
@@ -1471,14 +1469,11 @@
             const q = currentExam.questions[currentQuestionIndex];
             const isCorrect = selected === q.answer;
             
-            // Store the answer
             examAnswered[currentQuestionIndex] = selected;
             
-            // Update radio
             const radio = labelEl.querySelector('input[type="radio"]');
             if (radio) radio.checked = true;
             
-            // Update UI
             document.querySelectorAll('#exam .question-box label').forEach(l => {
                 l.style.pointerEvents = 'none';
             });
@@ -1499,7 +1494,6 @@
                 });
             }
 
-            // Show explanation
             const expDiv = document.getElementById('examExplanation');
             if (expDiv && q.explanation) {
                 expDiv.style.display = 'block';
@@ -1507,9 +1501,16 @@
                 expDiv.innerHTML = `<strong>${isCorrectText}</strong> ${q.explanation}`;
             }
             
-            // Update counters
-            document.querySelector('#exam .stats .correct')?.textContent = correctCount;
-            document.querySelector('#exam .stats .incorrect')?.textContent = incorrectCount;
+            // ✅ FIXED: Update counters using IDs
+            const correctSpan = document.getElementById('examCorrectCount');
+            const incorrectSpan = document.getElementById('examIncorrectCount');
+            
+            if (correctSpan) {
+                correctSpan.textContent = `✅ ${t('correct')}: ${correctCount}`;
+            }
+            if (incorrectSpan) {
+                incorrectSpan.textContent = `❌ ${t('incorrect')}: ${incorrectCount}`;
+            }
         }
 
         // ================================================================
@@ -1555,7 +1556,6 @@
         function submitExam(timeUp = false) {
             if (examSubmitted) return;
             
-            // Count unanswered questions
             const unanswered = examAnswered.filter(a => a === null).length;
             if (unanswered > 0 && !timeUp) {
                 if (!confirm(`You have ${unanswered} unanswered question(s). Submit anyway?`)) {
@@ -1566,7 +1566,6 @@
             stopExamTimer();
             examSubmitted = true;
             
-            // Calculate score
             const total = currentExam.questions.length;
             const score = Math.round((correctCount / total) * 100);
             
@@ -1582,8 +1581,6 @@
             }
             
             showToast(message, 'success');
-            
-            // Show results
             renderExamResult();
         }
 
@@ -1670,7 +1667,6 @@
                 btn.innerText = '🚫 Exam Mode';
                 btn.className = 'toggle-btn exam';
                 showToast('🔒 Exam Mode: Timer enabled, answers locked.', 'info');
-                // Restart current exam with timer if one is running
                 if (currentExam && !examSubmitted) {
                     startExamTimer(currentExam.time_limit);
                 }
@@ -2176,7 +2172,7 @@
         }
 
         // ================================================================
-        // SUBMIT ADD FILE - FIXED
+        // SUBMIT ADD FILE
         // ================================================================
         async function submitAddFile() {
             const typeSelect = document.getElementById('addFileType');
