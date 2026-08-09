@@ -960,16 +960,112 @@
             if (tabId === 'home') return goToHome();
             openTabContent(tabId);
         }
-
 // ================================================================
-// TOGGLE GROUP JOIN - FIXED
+// TOGGLE GROUP JOIN - COMPLETELY FIXED
 // ================================================================
 async function toggleGroupJoin(btn) {
+    // Check if we're in the group feed (banner) or group list (teacher-card)
+    const isInGroupFeed = btn.closest('.group-banner') !== null;
     const card = btn.closest('.teacher-card');
+    
+    // If in group feed, use the banner data
+    if (isInGroupFeed) {
+        console.log('📍 In group feed mode');
+        
+        // Get group info from the banner
+        const banner = btn.closest('.group-banner');
+        const titleEl = banner?.querySelector('h3');
+        
+        if (!titleEl) {
+            showToast('⚠️ Group information not found.', 'error');
+            return;
+        }
+        
+        let groupName = titleEl.textContent.trim();
+        console.log('🔍 Group name from banner:', groupName);
+        
+        // Find the group in AppState
+        let group = AppState.groups.find(g => {
+            const gName = g.name.toLowerCase().trim();
+            const bName = groupName.toLowerCase().trim();
+            return gName === bName || gName.includes(bName) || bName.includes(gName);
+        });
+        
+        // If group not found in AppState, try to get it from currentGroupId
+        if (!group && AppState.currentGroupId) {
+            group = AppState.groups.find(g => g.id === AppState.currentGroupId);
+        }
+        
+        if (!group) {
+            // If still not found, toggle the button state anyway
+            const isJoined = btn.innerText.includes('Joined') || btn.innerText.includes('✅');
+            if (isJoined) {
+                btn.innerText = '➕ Join Class';
+                btn.className = 'btn';
+                showToast('📌 Left the class.', 'info');
+            } else {
+                btn.innerText = '✅ Joined';
+                btn.className = 'btn joined';
+                showToast('📌 You are now following this group!', 'success');
+            }
+            return;
+        }
+        
+        // Toggle follow status for the group
+        const currentFollowers = group.followers || 0;
+        const isJoined = btn.innerText.includes('Joined') || btn.innerText.includes('✅');
+        
+        try {
+            if (!isJoined) {
+                // Join the group
+                const newFollowers = currentFollowers + 1;
+                const { error } = await sb.from('groups').update({ followers: newFollowers }).eq('id', group.id);
+                
+                if (error) throw error;
+                
+                group.followers = newFollowers;
+                btn.innerText = '✅ Joined';
+                btn.className = 'btn joined';
+                showToast('✅ You have joined this class!', 'success');
+                
+                // Update the banner stats
+                const statsSpans = banner?.querySelectorAll('.stats span');
+                if (statsSpans && statsSpans.length >= 2) {
+                    statsSpans[0].innerText = newFollowers;
+                }
+                
+            } else {
+                // Leave the group
+                const newFollowers = Math.max(0, currentFollowers - 1);
+                const { error } = await sb.from('groups').update({ followers: newFollowers }).eq('id', group.id);
+                
+                if (error) throw error;
+                
+                group.followers = newFollowers;
+                btn.innerText = '➕ Join Class';
+                btn.className = 'btn';
+                showToast('📌 Left the class.', 'info');
+                
+                const statsSpans = banner?.querySelectorAll('.stats span');
+                if (statsSpans && statsSpans.length >= 2) {
+                    statsSpans[0].innerText = newFollowers;
+                }
+            }
+        } catch (err) {
+            console.error('Error:', err);
+            showToast('❌ Operation failed: ' + err.message, 'error');
+        }
+        return;
+    }
+    
+    // If we're in the trending groups list (teacher-card)
     if (!card) {
+        console.log('❌ No teacher-card found');
         showToast('⚠️ Group card not found.', 'error');
         return;
     }
+    
+    console.log('📍 In trending groups mode');
     
     const nameEl = card.querySelector('.name');
     if (!nameEl) {
@@ -977,7 +1073,7 @@ async function toggleGroupJoin(btn) {
         return;
     }
     
-    // Extract group name (remove emojis and special chars)
+    // Extract group name
     let groupName = nameEl.textContent.trim();
     groupName = groupName.replace('✓', '').trim();
     groupName = groupName.replace(/\s+/g, ' ');
@@ -985,13 +1081,11 @@ async function toggleGroupJoin(btn) {
     console.log('🔍 Searching for group:', groupName);
     console.log('📚 Available groups:', AppState.groups.map(g => g.name));
     
-    // Find the group by name (case-insensitive)
+    // Find the group by name
     let group = AppState.groups.find(g => {
         const gName = g.name.toLowerCase().trim();
         const bName = groupName.toLowerCase().trim();
-        return gName === bName || 
-               gName.includes(bName) || 
-               bName.includes(gName);
+        return gName === bName || gName.includes(bName) || bName.includes(gName);
     });
     
     // If user owns this group (Owner button)
@@ -1002,13 +1096,21 @@ async function toggleGroupJoin(btn) {
     
     // If group not found in my groups
     if (!group) {
-        showToast('📌 You are now following this group!', 'success');
-        btn.innerText = '✅ Joined';
-        btn.className = 'join-btn joined';
+        // Check if this is a trending group not owned by user
+        const isJoined = btn.innerText.includes('Joined') || btn.innerText.includes('✅');
+        if (isJoined) {
+            btn.innerText = '➕ Join Class';
+            btn.className = 'join-btn';
+            showToast('📌 Left the trending group.', 'info');
+        } else {
+            btn.innerText = '✅ Joined';
+            btn.className = 'join-btn joined';
+            showToast('📌 You are now following this trending group!', 'success');
+        }
         return;
     }
 
-    const currentFollowers = group.followers || 0;
+    const currentFollowers = group.followors || 0;
     const isJoined = btn.innerText.includes('Joined') || btn.innerText.includes('✅');
     
     try {
@@ -1024,7 +1126,7 @@ async function toggleGroupJoin(btn) {
             btn.className = 'join-btn joined';
             showToast('✅ You have joined this class!', 'success');
             
-            // Update banner stats
+            // Update banner stats if visible
             const statsSpans = document.querySelectorAll('#group-feed .group-banner .stats span');
             if (statsSpans.length >= 2) {
                 statsSpans[0].innerText = newFollowers;
@@ -1052,7 +1154,6 @@ async function toggleGroupJoin(btn) {
         showToast('❌ Operation failed: ' + err.message, 'error');
     }
 }
-
 // ================================================================
 // LOAD GROUP CONTENT - COMPLETELY FIXED
 // ================================================================
