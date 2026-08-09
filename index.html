@@ -2171,118 +2171,132 @@
             }
         }
 
-        // ================================================================
-        // SUBMIT ADD FILE
-        // ================================================================
-        async function submitAddFile() {
-            const typeSelect = document.getElementById('addFileType');
-            if (!typeSelect) return showToast('Form not found.', 'error');
+// ================================================================
+// SUBMIT ADD FILE - FULLY FIXED
+// ================================================================
+async function submitAddFile() {
+    const typeSelect = document.getElementById('addFileType');
+    if (!typeSelect) return showToast('Form not found.', 'error');
+    
+    const type = typeSelect.value;
+    const groupId = AppState.groups[0]?.id;
+    if (!groupId) return showToast('You must be in a group to add content.', 'error');
+    
+    if (type === 'exam') {
+        const titleInput = document.getElementById('examTitle');
+        const timeLimitInput = document.getElementById('examTimeLimit');
+        
+        if (!titleInput) return showToast('Exam title field not found.', 'error');
+        
+        const title = titleInput.value;
+        let time_limit = parseInt(timeLimitInput?.value);
+        if (isNaN(time_limit) || time_limit < 1) {
+            time_limit = 5;
+        }
+        
+        if (!title) return showToast('Please enter an Exam Title.', 'error');
+
+        const questions = [];
+        for (let i = 1; i <= examQuestionCount; i++) {
+            const q = document.getElementById(`examQ${i}`)?.value;
+            const a = document.getElementById(`examA${i}`)?.value;
+            const b = document.getElementById(`examB${i}`)?.value;
+            const c = document.getElementById(`examC${i}`)?.value;
+            const d = document.getElementById(`examD${i}`)?.value;
+            const ans = document.getElementById(`examAns${i}`)?.value;
+            const exp = document.getElementById(`examExp${i}`)?.value;
             
-            const type = typeSelect.value;
-            const groupId = AppState.groups[0]?.id;
-            if (!groupId) return showToast('You must be in a group to add content.', 'error');
+            if (!q) return showToast(`Please fill in Question ${i}.`, 'error');
+            if (!a || !b || !c || !d) return showToast(`Please fill in all options for Question ${i}.`, 'error');
             
-            if (type === 'exam') {
-                const titleInput = document.getElementById('examTitle');
-                const timeLimitInput = document.getElementById('examTimeLimit');
-                
-                if (!titleInput) return showToast('Exam title field not found.', 'error');
-                
-                const title = titleInput.value;
-                const time_limit = parseInt(timeLimitInput?.value) || 5;
-                
-                if (!title) return showToast('Please enter an Exam Title.', 'error');
-
-                const questions = [];
-                for (let i = 1; i <= examQuestionCount; i++) {
-                    const q = document.getElementById(`examQ${i}`)?.value;
-                    const a = document.getElementById(`examA${i}`)?.value;
-                    const b = document.getElementById(`examB${i}`)?.value;
-                    const c = document.getElementById(`examC${i}`)?.value;
-                    const d = document.getElementById(`examD${i}`)?.value;
-                    const ans = document.getElementById(`examAns${i}`)?.value;
-                    const exp = document.getElementById(`examExp${i}`)?.value;
-                    
-                    if (!q) return showToast(`Please fill in Question ${i}.`, 'error');
-                    if (!a || !b || !c || !d) return showToast(`Please fill in all options for Question ${i}.`, 'error');
-                    
-                    questions.push({ 
-                        question: q, 
-                        options: [a, b, c, d], 
-                        answer: ans,
-                        explanation: exp || ''
-                    });
-                }
-
-                console.log("📤 Saving exam to Supabase...");
-                const { data, error } = await sb.from('mock_exams').insert({
-                    group_id: groupId,
-                    author_id: AppState.userId,
-                    title: title,
-                    questions: questions,
-                    time_limit: time_limit
-                }).select();
-
-                if (error) {
-                    console.error("❌ Supabase Error:", error);
-                    return showToast('Error saving exam: ' + error.message, 'error');
-                }
-
-                console.log("✅ Exam saved successfully!", data);
-                showToast(`📝 Exam '${title}' with ${questions.length} questions created!`, 'success');
-                closeModal('addFileModal');
-                
-                examQuestionCount = 1;
-                if (titleInput) titleInput.value = '';
-                if (timeLimitInput) timeLimitInput.value = '5';
-                
-                if (AppState.currentGroupId) {
-                    loadGroupContent(AppState.currentGroupId, 'exam');
-                }
-                return;
-            }
-
-            const titleInput = document.getElementById('addFileTitle');
-            const urlInput = document.getElementById('addFileUrl');
-            
-            if (!titleInput || !urlInput) return showToast('Form fields not found.', 'error');
-            
-            const title = titleInput.value;
-            const url = urlInput.value;
-            
-            if(!title) return showToast('Please enter a title.', 'error');
-            if(!url) return showToast('Please upload a file first (click the Upload button).', 'error');
-
-            try {
-                const { error } = await sb.from('group_content').insert({
-                    group_id: groupId, 
-                    author_id: AppState.userId, 
-                    content_type: type, 
-                    title: title, 
-                    file_url: url, 
-                    likes: 0
-                });
-
-                if (error) throw error;
-
-                showToast(`📤 ${type === 'video' ? 'Video' : 'PPT'} published successfully!`, 'success');
-                closeModal('addFileModal');
-                
-                titleInput.value = '';
-                urlInput.value = '';
-                const fileInput = document.getElementById('addFileInput');
-                if (fileInput) fileInput.value = '';
-                const statusDiv = document.getElementById('uploadStatus');
-                if (statusDiv) statusDiv.innerText = '⏳ No file selected';
-                
-                if (AppState.currentGroupId) {
-                    loadGroupContent(AppState.currentGroupId, type === 'video' ? 'videos' : 'ppts');
-                }
-            } catch (err) {
-                showToast('Error publishing content: ' + err.message, 'error');
-            }
+            questions.push({ 
+                question: q, 
+                options: [a, b, c, d], 
+                answer: ans,
+                explanation: exp || ''
+            });
         }
 
+        console.log("📤 Saving exam to Supabase...");
+        console.log("📊 Exam data:", { title, questions: questions.length, time_limit });
+        
+        try {
+            const { data, error } = await sb.from('mock_exams').insert({
+                group_id: groupId,
+                author_id: AppState.userId,
+                title: title,
+                questions: questions,
+                time_limit: time_limit
+            }).select();
+
+            if (error) {
+                console.error("❌ Supabase Error:", error);
+                return showToast('Error saving exam: ' + error.message, 'error');
+            }
+
+            console.log("✅ Exam saved successfully!", data);
+            showToast(`📝 Exam '${title}' with ${questions.length} questions created!`, 'success');
+            closeModal('addFileModal');
+            
+            examQuestionCount = 1;
+            if (titleInput) titleInput.value = '';
+            if (timeLimitInput) timeLimitInput.value = '5';
+            
+            // Clear exam builder fields
+            document.querySelectorAll('#examBuilder input[type="text"]').forEach(el => el.value = '');
+            
+            if (AppState.currentGroupId) {
+                loadGroupContent(AppState.currentGroupId, 'exam');
+            }
+        } catch (err) {
+            console.error("❌ Error:", err);
+            showToast('Error saving exam: ' + err.message, 'error');
+        }
+        return;
+    }
+
+    // Handle Video/PPT upload
+    const titleInput = document.getElementById('addFileTitle');
+    const urlInput = document.getElementById('addFileUrl');
+    
+    if (!titleInput || !urlInput) return showToast('Form fields not found.', 'error');
+    
+    const title = titleInput.value;
+    const url = urlInput.value;
+    
+    if(!title) return showToast('Please enter a title.', 'error');
+    if(!url) return showToast('Please upload a file first (click the Upload button).', 'error');
+
+    try {
+        const { error } = await sb.from('group_content').insert({
+            group_id: groupId, 
+            author_id: AppState.userId, 
+            content_type: type, 
+            title: title, 
+            file_url: url, 
+            likes: 0
+        });
+
+        if (error) throw error;
+
+        showToast(`📤 ${type === 'video' ? 'Video' : 'PPT'} published successfully!`, 'success');
+        closeModal('addFileModal');
+        
+        titleInput.value = '';
+        urlInput.value = '';
+        const fileInput = document.getElementById('addFileInput');
+        if (fileInput) fileInput.value = '';
+        const statusDiv = document.getElementById('uploadStatus');
+        if (statusDiv) statusDiv.innerText = '⏳ No file selected';
+        
+        if (AppState.currentGroupId) {
+            loadGroupContent(AppState.currentGroupId, type === 'video' ? 'videos' : 'ppts');
+        }
+    } catch (err) {
+        console.error("❌ Error:", err);
+        showToast('Error publishing content: ' + err.message, 'error');
+    }
+}
         // ================================================================
         // WITHDRAW
         // ================================================================
