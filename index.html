@@ -27,6 +27,7 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         @keyframes pulseRed { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+        @keyframes countdown { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
         html, body { height: 100dvh; width: 100%; margin: 0; padding: 0; overflow: hidden; background: var(--bg-white); font-family: var(--font-main); }
 
@@ -150,7 +151,7 @@
         .content-card .comment-list { margin-top: 12px; max-height: 150px; overflow-y: auto; }
         .content-card .comment-list .c-item { font-size: 13px; color: var(--text-dark); margin-bottom: 6px; border-bottom: 1px solid #f1f1f1; padding-bottom: 6px; }
 
-        .exam-toggle { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; }
+        .exam-toggle { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
         .exam-toggle span { font-weight: 700; color: var(--text-dark); }
         .toggle-btn { background: #e2e8f0; border: none; border-radius: 30px; padding: 6px 16px; font-weight: 700; font-size: 12px; cursor: pointer; transition: 0.2s; }
         .toggle-btn.study { background: var(--green-success); color: white; }
@@ -158,6 +159,17 @@
         .question-box { background: var(--bg-white); border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 10px; }
         .question-box p { font-weight: 700; color: var(--text-dark); margin-bottom: 8px; }
         .question-box label { display: block; font-size: 14px; color: var(--text-dark); margin-bottom: 4px; cursor: pointer; }
+        
+        /* Timer styles */
+        .exam-timer { display: flex; align-items: center; gap: 10px; padding: 8px 16px; background: var(--navy); border-radius: 30px; color: white; font-weight: 700; }
+        .exam-timer .timer { font-size: 20px; color: var(--gold); font-family: monospace; animation: countdown 1s infinite; }
+        .exam-timer.warning .timer { color: var(--red-error); }
+        
+        /* Explanation button */
+        .explanation-toggle { background: var(--navy-light); color: white; border: none; padding: 4px 12px; border-radius: 20px; font-size: 12px; cursor: pointer; transition: 0.2s; }
+        .explanation-toggle:hover { background: var(--navy); }
+        .explanation-content { display: none; margin-top: 10px; padding: 12px; background: #f0fdf4; border-radius: 8px; border-left: 4px solid var(--green-success); color: var(--text-dark); }
+        .explanation-content.visible { display: block; }
 
         /* VERIFICATION / TRENDING GROUPS */
         .join-header h2 { color: var(--navy); font-size: 20px; font-weight: 800; margin-bottom: 16px; }
@@ -221,17 +233,15 @@
         .btn:hover { background: var(--gold-dark); }
         .btn-teal { background: var(--teal); color: white; }
         .btn-danger { background: var(--red-error); color: white; }
+        .btn-sm { padding: 6px 16px; border: none; border-radius: 20px; font-weight: 700; cursor: pointer; font-size: 12px; transition: 0.2s; }
+        .btn-sm.btn-teal { background: var(--teal); color: white; }
+        .btn-sm:hover { transform: scale(1.02); }
+        .btn-sm:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
         .toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: var(--text-dark); color: white; border-left: 5px solid var(--gold); padding: 12px 20px; border-radius: 60px; font-weight: 700; display: none; z-index: 1001; white-space: nowrap; font-size: 14px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
         .toast.show { display: flex; animation: fadeIn 0.2s; }
         .toast.error { border-left-color: var(--red-error); }
         .toast.info { border-left-color: #3b82f6; background: #1e293b; }
-
-        /* ADDITIONAL FIXED STYLES */
-        .btn-sm { padding: 6px 16px; border: none; border-radius: 20px; font-weight: 700; cursor: pointer; font-size: 12px; transition: 0.2s; }
-        .btn-sm.btn-teal { background: var(--teal); color: white; }
-        .btn-sm:hover { transform: scale(1.02); }
-        .btn-sm:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
         .progress-bar { background: #eee; border-radius: 12px; height: 8px; margin-bottom: 16px; overflow: hidden; }
         .progress-fill { width: 0%; height: 100%; background: var(--gold); border-radius: 12px; transition: width 0.3s ease; }
@@ -247,8 +257,6 @@
         .card .form-group { margin-bottom: 12px; }
         .card label { display: block; font-weight: 600; margin-bottom: 4px; color: var(--text-dark); }
 
-        .notification-bell-wrapper { position: relative; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; }
-
         @media (max-width: 600px) {
             .app-logo h1 { font-size: 18px; }
             .logo-icon { font-size: 20px; }
@@ -263,6 +271,7 @@
             .app-footer-tab { padding: 3px 8px; min-width: 36px; font-size: 9px; }
             .app-footer-tab .tab-emoji { font-size: 18px; }
             .app-footer-tab .tab-label { font-size: 8px; }
+            .exam-timer .timer { font-size: 16px; }
         }
         @media (min-width: 601px) {
             .quick-actions { grid-template-columns: repeat(4, 1fr); gap: 16px; }
@@ -591,6 +600,7 @@
 
                 <div id="examBuilder" style="display:none;">
                     <div class="form-group"><label>Exam Title</label><input type="text" id="examTitle"></div>
+                    <div class="form-group"><label>Time Limit (minutes)</label><input type="number" id="examTimeLimit" value="5" min="1" max="60" placeholder="e.g. 5"></div>
                     
                     <div style="background:var(--bg-light); border-radius:12px; padding:12px; margin-bottom:12px;">
                         <p style="font-weight:700; color:var(--text-dark); margin-bottom:4px;">Q1: Question</p>
@@ -606,6 +616,10 @@
                             <select id="examAns1" style="padding:4px 8px; border-radius:6px; border:1px solid #eee;">
                                 <option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option>
                             </select>
+                        </div>
+                        <div style="margin-top:6px;">
+                            <label style="font-size:13px; font-weight:600;">Explanation (optional):</label>
+                            <input type="text" id="examExp1" placeholder="Explain why this is correct..." style="width:100%; padding:6px; border:1px solid #eee; border-radius:6px;">
                         </div>
                     </div>
 
@@ -641,7 +655,7 @@
         <div id="toast" class="toast"></div>
     </div>
 
-<script>
+    <script>
         // ================================================================
         // CONFIGURATION
         // ================================================================
@@ -676,6 +690,10 @@
         let incorrectCount = 0;
         let groupJoined = false;
         let examMode = 'study';
+        let examTimer = null;
+        let examTimeRemaining = 0;
+        let examAnswered = [];
+        let examSubmitted = false;
 
         // ================================================================
         // TRANSLATIONS
@@ -715,7 +733,10 @@
                 my_groups: "My Groups", promote_admin: "Promote to Admin", mode: "Mode:",
                 watch: "Watch", read: "Read", publish: "Publish", save: "Save Changes",
                 deduct_coins: "💰 Deduct 6,000 Coins (Verification Fee)",
-                start: "▶️ Start Exam"
+                start: "▶️ Start Exam", explanation: "See Explanation", time_left: "Time Left:",
+                exam_submitted: "Exam submitted! Score: ", question: "Question",
+                correct: "Correct", incorrect: "Incorrect", time_up: "⏰ Time's Up!",
+                see_result: "See Result", your_answer: "Your Answer:", correct_answer: "Correct Answer:"
             },
             am: {
                 home: "መነሻ", class: "ክፍሌ", books: "መጻሕፍት", job: "ሥራ", research: "ምርምር",
@@ -751,7 +772,10 @@
                 my_groups: "የኔ ቡድኖች", promote_admin: "ወደ አስተዳዳሪ ከፍ አድርግ", mode: "ሁኔታ:",
                 watch: "ተመልከት", read: "አንብብ", publish: "አሳትም", save: "አስቀምጥ",
                 deduct_coins: "💰 6,000 ሳንቲም ይቀንሱ (የማረጋገጫ ክፍያ)",
-                start: "▶️ ፈተና ጀምር"
+                start: "▶️ ፈተና ጀምር", explanation: "ማብራሪያ ይመልከቱ", time_left: "የተረፈ ጊዜ:",
+                exam_submitted: "ፈተናው ተልኳል! ውጤት: ", question: "ጥያቄ",
+                correct: "ትክክል", incorrect: "ስህተት", time_up: "⏰ ጊዜው አልቋል!",
+                see_result: "ውጤት ይመልከቱ", your_answer: "የእርስዎ መልስ:", correct_answer: "ትክክለኛው መልስ:"
             }
         };
 
@@ -761,7 +785,7 @@
         }
 
         // ================================================================
-        // LANGUAGE TOGGLE - FIXED
+        // LANGUAGE TOGGLE
         // ================================================================
         function toggleLanguage() {
             AppState.lang = AppState.lang === 'en' ? 'am' : 'en';
@@ -773,44 +797,30 @@
             showToast(AppState.lang === 'en' ? 'Switched to English' : 'ወደ አማርኛ ተቀይሯል', 'info');
         }
         
-        // ================================================================
-        // TRANSLATE PAGE - FIXED (Preserves original text)
-        // ================================================================
         function translatePage() {
-            // First pass: Store original text for ALL elements
             document.querySelectorAll('[data-key]').forEach(el => {
-                // Store original text if not already stored
                 if (!el.hasAttribute('data-original')) {
                     el.setAttribute('data-original', el.innerText);
                 }
             });
             
-            // Second pass: Apply translations
             document.querySelectorAll('[data-key]').forEach(el => {
                 const key = el.getAttribute('data-key');
                 const originalText = el.getAttribute('data-original') || el.innerText;
-                
-                // Get the translation for the current language
                 let translation = t(key);
                 
-                // If we're in English mode, restore original text
                 if (AppState.lang === 'en') {
                     el.innerText = originalText;
                     return;
                 }
                 
-                // For Amharic mode, apply translation
                 if (AppState.lang === 'am') {
-                    // Check if original text starts with an emoji
                     const emojiMatch = originalText.match(/^[^\w\s]+/);
-                    
                     if (emojiMatch && translation && translation !== key) {
-                        // Preserve the emoji and add translation
                         el.innerText = emojiMatch[0] + ' ' + translation;
                     } else if (translation && translation !== key) {
                         el.innerText = translation;
                     } else {
-                        // If no translation, keep original
                         el.innerText = originalText;
                     }
                 }
@@ -868,6 +878,7 @@
         // NAVIGATION
         // ================================================================
         function goToHome() {
+            stopExamTimer();
             document.getElementById('appMain').style.display = 'block';
             document.getElementById('tabContentWrapper').classList.remove('active');
             document.getElementById('backButton').classList.remove('visible');
@@ -879,6 +890,7 @@
         }
 
         function openTabContent(tabId, specificGroupId = null) {
+            stopExamTimer();
             document.getElementById('appMain').style.display = 'none';
             document.getElementById('tabContentWrapper').classList.add('active');
             document.getElementById('backButton').classList.add('visible');
@@ -901,7 +913,6 @@
             
             if (tabId === 'admin') loadAdminPanel();
             
-            // Store original text for all new elements
             setTimeout(() => {
                 translatePage();
             }, 50);
@@ -960,464 +971,518 @@
             if (tabId === 'home') return goToHome();
             openTabContent(tabId);
         }
-// ================================================================
-// TOGGLE GROUP JOIN - COMPLETELY FIXED
-// ================================================================
-async function toggleGroupJoin(btn) {
-    // Check if we're in the group feed (banner) or group list (teacher-card)
-    const isInGroupFeed = btn.closest('.group-banner') !== null;
-    const card = btn.closest('.teacher-card');
-    
-    // If in group feed, use the banner data
-    if (isInGroupFeed) {
-        console.log('📍 In group feed mode');
-        
-        // Get group info from the banner
-        const banner = btn.closest('.group-banner');
-        const titleEl = banner?.querySelector('h3');
-        
-        if (!titleEl) {
-            showToast('⚠️ Group information not found.', 'error');
-            return;
-        }
-        
-        let groupName = titleEl.textContent.trim();
-        console.log('🔍 Group name from banner:', groupName);
-        
-        // Find the group in AppState
-        let group = AppState.groups.find(g => {
-            const gName = g.name.toLowerCase().trim();
-            const bName = groupName.toLowerCase().trim();
-            return gName === bName || gName.includes(bName) || bName.includes(gName);
-        });
-        
-        // If group not found in AppState, try to get it from currentGroupId
-        if (!group && AppState.currentGroupId) {
-            group = AppState.groups.find(g => g.id === AppState.currentGroupId);
-        }
-        
-        if (!group) {
-            // If still not found, toggle the button state anyway
+
+        // ================================================================
+        // TOGGLE GROUP JOIN - FIXED
+        // ================================================================
+        async function toggleGroupJoin(btn) {
+            const isInGroupFeed = btn.closest('.group-banner') !== null;
+            const card = btn.closest('.teacher-card');
+            
+            if (isInGroupFeed) {
+                const banner = btn.closest('.group-banner');
+                const titleEl = banner?.querySelector('h3');
+                
+                if (!titleEl) {
+                    showToast('⚠️ Group information not found.', 'error');
+                    return;
+                }
+                
+                let groupName = titleEl.textContent.trim();
+                let group = AppState.groups.find(g => {
+                    const gName = g.name.toLowerCase().trim();
+                    const bName = groupName.toLowerCase().trim();
+                    return gName === bName || gName.includes(bName) || bName.includes(gName);
+                });
+                
+                if (!group && AppState.currentGroupId) {
+                    group = AppState.groups.find(g => g.id === AppState.currentGroupId);
+                }
+                
+                if (!group) {
+                    const isJoined = btn.innerText.includes('Joined') || btn.innerText.includes('✅');
+                    if (isJoined) {
+                        btn.innerText = '➕ Join Class';
+                        btn.className = 'btn';
+                        showToast('📌 Left the class.', 'info');
+                    } else {
+                        btn.innerText = '✅ Joined';
+                        btn.className = 'btn joined';
+                        showToast('📌 You are now following this group!', 'success');
+                    }
+                    return;
+                }
+                
+                const currentFollowers = group.followers || 0;
+                const isJoined = btn.innerText.includes('Joined') || btn.innerText.includes('✅');
+                
+                try {
+                    if (!isJoined) {
+                        const newFollowers = currentFollowers + 1;
+                        const { error } = await sb.from('groups').update({ followers: newFollowers }).eq('id', group.id);
+                        if (error) throw error;
+                        group.followers = newFollowers;
+                        btn.innerText = '✅ Joined';
+                        btn.className = 'btn joined';
+                        showToast('✅ You have joined this class!', 'success');
+                        const statsSpans = banner?.querySelectorAll('.stats span');
+                        if (statsSpans && statsSpans.length >= 2) {
+                            statsSpans[0].innerText = newFollowers;
+                        }
+                    } else {
+                        const newFollowers = Math.max(0, currentFollowers - 1);
+                        const { error } = await sb.from('groups').update({ followers: newFollowers }).eq('id', group.id);
+                        if (error) throw error;
+                        group.followers = newFollowers;
+                        btn.innerText = '➕ Join Class';
+                        btn.className = 'btn';
+                        showToast('📌 Left the class.', 'info');
+                        const statsSpans = banner?.querySelectorAll('.stats span');
+                        if (statsSpans && statsSpans.length >= 2) {
+                            statsSpans[0].innerText = newFollowers;
+                        }
+                    }
+                } catch (err) {
+                    console.error('Error:', err);
+                    showToast('❌ Operation failed: ' + err.message, 'error');
+                }
+                return;
+            }
+            
+            if (!card) {
+                showToast('⚠️ Group card not found.', 'error');
+                return;
+            }
+            
+            const nameEl = card.querySelector('.name');
+            if (!nameEl) {
+                showToast('⚠️ Group name not found.', 'error');
+                return;
+            }
+            
+            let groupName = nameEl.textContent.trim();
+            groupName = groupName.replace('✓', '').trim();
+            groupName = groupName.replace(/\s+/g, ' ');
+            
+            let group = AppState.groups.find(g => {
+                const gName = g.name.toLowerCase().trim();
+                const bName = groupName.toLowerCase().trim();
+                return gName === bName || gName.includes(bName) || bName.includes(gName);
+            });
+            
+            if (btn.innerText.includes('Owner')) {
+                showToast('📌 This is your group!', 'info');
+                return;
+            }
+            
+            if (!group) {
+                const isJoined = btn.innerText.includes('Joined') || btn.innerText.includes('✅');
+                if (isJoined) {
+                    btn.innerText = '➕ Join Class';
+                    btn.className = 'join-btn';
+                    showToast('📌 Left the trending group.', 'info');
+                } else {
+                    btn.innerText = '✅ Joined';
+                    btn.className = 'join-btn joined';
+                    showToast('📌 You are now following this trending group!', 'success');
+                }
+                return;
+            }
+
+            const currentFollowers = group.followers || 0;
             const isJoined = btn.innerText.includes('Joined') || btn.innerText.includes('✅');
-            if (isJoined) {
-                btn.innerText = '➕ Join Class';
-                btn.className = 'btn';
-                showToast('📌 Left the class.', 'info');
-            } else {
-                btn.innerText = '✅ Joined';
-                btn.className = 'btn joined';
-                showToast('📌 You are now following this group!', 'success');
+            
+            try {
+                if (!isJoined) {
+                    const newFollowers = currentFollowers + 1;
+                    const { error } = await sb.from('groups').update({ followers: newFollowers }).eq('id', group.id);
+                    if (error) throw error;
+                    group.followers = newFollowers;
+                    btn.innerText = '✅ Joined';
+                    btn.className = 'join-btn joined';
+                    showToast('✅ You have joined this class!', 'success');
+                    const statsSpans = document.querySelectorAll('#group-feed .group-banner .stats span');
+                    if (statsSpans.length >= 2) {
+                        statsSpans[0].innerText = newFollowers;
+                    }
+                } else {
+                    const newFollowers = Math.max(0, currentFollowers - 1);
+                    const { error } = await sb.from('groups').update({ followers: newFollowers }).eq('id', group.id);
+                    if (error) throw error;
+                    group.followers = newFollowers;
+                    btn.innerText = '➕ Join Class';
+                    btn.className = 'join-btn';
+                    showToast('📌 Left the class.', 'info');
+                    const statsSpans = document.querySelectorAll('#group-feed .group-banner .stats span');
+                    if (statsSpans.length >= 2) {
+                        statsSpans[0].innerText = newFollowers;
+                    }
+                }
+            } catch (err) {
+                console.error('Error:', err);
+                showToast('❌ Operation failed: ' + err.message, 'error');
             }
-            return;
         }
-        
-        // Toggle follow status for the group
-        const currentFollowers = group.followers || 0;
-        const isJoined = btn.innerText.includes('Joined') || btn.innerText.includes('✅');
-        
-        try {
-            if (!isJoined) {
-                // Join the group
-                const newFollowers = currentFollowers + 1;
-                const { error } = await sb.from('groups').update({ followers: newFollowers }).eq('id', group.id);
+
+        // ================================================================
+        // LOAD GROUP CONTENT - FIXED
+        // ================================================================
+        async function loadGroupContent(groupId, contentType) {
+            const container = document.getElementById(contentType);
+            if (!container) return;
+
+            container.innerHTML = `<div class="loading">Loading ${contentType}...</div>`;
+
+            try {
+                if (contentType === 'exam') {
+                    await loadExamsIntoContainer(container, groupId);
+                    return;
+                }
+
+                const { data, error } = await sb
+                    .from('group_content')
+                    .select('*')
+                    .eq('group_id', groupId)
+                    .eq('content_type', contentType === 'videos' ? 'video' : 'ppt')
+                    .order('created_at', { ascending: false });
+
+                if (error) {
+                    console.error('Load error:', error);
+                    container.innerHTML = `<div class="loading" style="color:var(--red-error);">Error loading content</div>`;
+                    return;
+                }
+
+                if (!data || data.length === 0) {
+                    container.innerHTML = `<div class="loading" style="color:var(--text-muted);">No ${contentType} uploaded yet.</div>`;
+                    return;
+                }
+
+                container.innerHTML = data.map(item => `
+                    <div class="content-card">
+                        <div class="thumbnail">
+                            ${item.file_url ? `<i class="fas fa-play-circle"></i><span class="duration">Content</span>` : `<i class="fas fa-file-alt"></i>`}
+                        </div>
+                        <div class="meta">
+                            <h4>${item.title}</h4>
+                            <p>Uploaded • ${new Date(item.created_at).toLocaleDateString()}</p>
+                        </div>
+                        <div class="actions">
+                            <button onclick="toggleLike(this)"><i class="fas fa-heart"></i> <span>${item.likes || 0}</span></button>
+                            <button onclick="toggleComment(this)"><i class="fas fa-comment"></i> <span>0</span></button>
+                            <button onclick="shareContent()"><i class="fas fa-share"></i> <span data-key="share">Share</span></button>
+                        </div>
+                        <div class="comment-section">
+                            <div class="comment-list"></div>
+                            <textarea placeholder="Add a comment..."></textarea>
+                            <button class="send-btn" onclick="showToast('Comment posted!', 'success')" data-key="post_comment">Post Comment</button>
+                        </div>
+                    </div>
+                `).join('');
+                setTimeout(() => translatePage(), 50);
                 
-                if (error) throw error;
+            } catch (err) {
+                console.error(err);
+                container.innerHTML = `<div class="loading" style="color:var(--red-error);">Failed to load content</div>`;
+            }
+        }
+
+        // ================================================================
+        // LOAD EXAMS INTO CONTAINER
+        // ================================================================
+        async function loadExamsIntoContainer(container, groupId) {
+            try {
+                const { data, error } = await sb
+                    .from('mock_exams')
+                    .select('*')
+                    .eq('group_id', groupId)
+                    .order('created_at', { ascending: false });
+
+                if (error) {
+                    console.error('Error loading exams:', error);
+                    container.innerHTML = `<div class="loading" style="color:var(--red-error);">Failed to load exams</div>`;
+                    return;
+                }
+
+                if (!data || data.length === 0) {
+                    container.innerHTML = `
+                        <div class="exam-toggle">
+                            <span data-key="mode">Mode:</span>
+                            <button class="toggle-btn study" id="examModeBtn" onclick="toggleExamMode()" data-key="study_mode">📖 Study Mode</button>
+                        </div>
+                        <div class="loading" style="color:var(--text-muted);">📝 No exams created yet.</div>
+                    `;
+                    setTimeout(() => translatePage(), 50);
+                    return;
+                }
+
+                container.innerHTML = `
+                    <div class="exam-toggle">
+                        <span data-key="mode">Mode:</span>
+                        <button class="toggle-btn study" id="examModeBtn" onclick="toggleExamMode()" data-key="study_mode">📖 Study Mode</button>
+                    </div>
+                    ${data.map(exam => `
+                        <div class="content-card" onclick="startExam(${exam.id})" style="cursor:pointer;">
+                            <div class="meta">
+                                <h4>📝 ${exam.title}</h4>
+                                <p>${exam.questions ? exam.questions.length : 0} Questions • ${exam.time_limit || 5} min • Created ${new Date(exam.created_at).toLocaleDateString()}</p>
+                            </div>
+                            <div class="actions">
+                                <button class="btn-sm btn-teal" style="margin:0;" data-key="start">▶️ Start Exam</button>
+                            </div>
+                        </div>
+                    `).join('')}
+                `;
+                setTimeout(() => translatePage(), 50);
                 
-                group.followers = newFollowers;
-                btn.innerText = '✅ Joined';
-                btn.className = 'btn joined';
-                showToast('✅ You have joined this class!', 'success');
-                
-                // Update the banner stats
-                const statsSpans = banner?.querySelectorAll('.stats span');
-                if (statsSpans && statsSpans.length >= 2) {
-                    statsSpans[0].innerText = newFollowers;
+            } catch (err) {
+                console.error('Error loading exams:', err);
+                container.innerHTML = `<div class="loading" style="color:var(--red-error);">Failed to load exams</div>`;
+            }
+        }
+
+        // ================================================================
+        // SWITCH GROUP TAB
+        // ================================================================
+        function switchGroupTab(tabId, btn) {
+            document.querySelectorAll('.class-tab').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+            document.querySelectorAll('.class-content').forEach(c => c.classList.remove('active'));
+            const content = document.getElementById(tabId);
+            if (content) content.classList.add('active');
+
+            if (AppState.currentGroupId) {
+                if (tabId === 'exam') {
+                    loadGroupContent(AppState.currentGroupId, 'exam');
+                } else if (tabId === 'videos') {
+                    loadGroupContent(AppState.currentGroupId, 'videos');
+                } else if (tabId === 'ppts') {
+                    loadGroupContent(AppState.currentGroupId, 'ppts');
+                }
+            } else {
+                const groupId = AppState.groups[0]?.id;
+                if (groupId) {
+                    if (tabId === 'exam') {
+                        loadGroupContent(groupId, 'exam');
+                    } else if (tabId === 'videos') {
+                        loadGroupContent(groupId, 'videos');
+                    } else if (tabId === 'ppts') {
+                        loadGroupContent(groupId, 'ppts');
+                    }
+                }
+            }
+        }
+
+        // ================================================================
+        // EXAM TIMER FUNCTIONS
+        // ================================================================
+        function startExamTimer(minutes) {
+            stopExamTimer();
+            examTimeRemaining = minutes * 60;
+            examSubmitted = false;
+            
+            const timerDisplay = document.getElementById('examTimerDisplay');
+            if (!timerDisplay) {
+                // Create timer display if it doesn't exist
+                const container = document.getElementById('exam');
+                if (container) {
+                    const timerHtml = `
+                        <div class="exam-timer" id="examTimerContainer">
+                            <span data-key="time_left">⏱️ Time Left:</span>
+                            <span class="timer" id="examTimerDisplay">${formatTime(examTimeRemaining)}</span>
+                        </div>
+                    `;
+                    container.insertAdjacentHTML('afterbegin', timerHtml);
+                }
+            }
+            
+            examTimer = setInterval(() => {
+                examTimeRemaining--;
+                const display = document.getElementById('examTimerDisplay');
+                if (display) {
+                    display.textContent = formatTime(examTimeRemaining);
+                    if (examTimeRemaining <= 60) {
+                        display.parentElement.classList.add('warning');
+                    }
+                    if (examTimeRemaining <= 10) {
+                        display.style.animation = 'countdown 0.5s infinite';
+                    }
                 }
                 
-            } else {
-                // Leave the group
-                const newFollowers = Math.max(0, currentFollowers - 1);
-                const { error } = await sb.from('groups').update({ followers: newFollowers }).eq('id', group.id);
-                
-                if (error) throw error;
-                
-                group.followers = newFollowers;
-                btn.innerText = '➕ Join Class';
-                btn.className = 'btn';
-                showToast('📌 Left the class.', 'info');
-                
-                const statsSpans = banner?.querySelectorAll('.stats span');
-                if (statsSpans && statsSpans.length >= 2) {
-                    statsSpans[0].innerText = newFollowers;
+                if (examTimeRemaining <= 0) {
+                    clearInterval(examTimer);
+                    examTimer = null;
+                    showToast('⏰ Time is up! Submitting exam...', 'info');
+                    submitExam(true);
                 }
-            }
-        } catch (err) {
-            console.error('Error:', err);
-            showToast('❌ Operation failed: ' + err.message, 'error');
+            }, 1000);
         }
-        return;
-    }
-    
-    // If we're in the trending groups list (teacher-card)
-    if (!card) {
-        console.log('❌ No teacher-card found');
-        showToast('⚠️ Group card not found.', 'error');
-        return;
-    }
-    
-    console.log('📍 In trending groups mode');
-    
-    const nameEl = card.querySelector('.name');
-    if (!nameEl) {
-        showToast('⚠️ Group name not found.', 'error');
-        return;
-    }
-    
-    // Extract group name
-    let groupName = nameEl.textContent.trim();
-    groupName = groupName.replace('✓', '').trim();
-    groupName = groupName.replace(/\s+/g, ' ');
-    
-    console.log('🔍 Searching for group:', groupName);
-    console.log('📚 Available groups:', AppState.groups.map(g => g.name));
-    
-    // Find the group by name
-    let group = AppState.groups.find(g => {
-        const gName = g.name.toLowerCase().trim();
-        const bName = groupName.toLowerCase().trim();
-        return gName === bName || gName.includes(bName) || bName.includes(gName);
-    });
-    
-    // If user owns this group (Owner button)
-    if (btn.innerText.includes('Owner')) {
-        showToast('📌 This is your group!', 'info');
-        return;
-    }
-    
-    // If group not found in my groups
-    if (!group) {
-        // Check if this is a trending group not owned by user
-        const isJoined = btn.innerText.includes('Joined') || btn.innerText.includes('✅');
-        if (isJoined) {
-            btn.innerText = '➕ Join Class';
-            btn.className = 'join-btn';
-            showToast('📌 Left the trending group.', 'info');
-        } else {
-            btn.innerText = '✅ Joined';
-            btn.className = 'join-btn joined';
-            showToast('📌 You are now following this trending group!', 'success');
-        }
-        return;
-    }
-
-    const currentFollowers = group.followors || 0;
-    const isJoined = btn.innerText.includes('Joined') || btn.innerText.includes('✅');
-    
-    try {
-        if (!isJoined) {
-            // Join the group
-            const newFollowers = currentFollowers + 1;
-            const { error } = await sb.from('groups').update({ followers: newFollowers }).eq('id', group.id);
-            
-            if (error) throw error;
-            
-            group.followers = newFollowers;
-            btn.innerText = '✅ Joined';
-            btn.className = 'join-btn joined';
-            showToast('✅ You have joined this class!', 'success');
-            
-            // Update banner stats if visible
-            const statsSpans = document.querySelectorAll('#group-feed .group-banner .stats span');
-            if (statsSpans.length >= 2) {
-                statsSpans[0].innerText = newFollowers;
-            }
-            
-        } else {
-            // Leave the group
-            const newFollowers = Math.max(0, currentFollowers - 1);
-            const { error } = await sb.from('groups').update({ followers: newFollowers }).eq('id', group.id);
-            
-            if (error) throw error;
-            
-            group.followers = newFollowers;
-            btn.innerText = '➕ Join Class';
-            btn.className = 'join-btn';
-            showToast('📌 Left the class.', 'info');
-            
-            const statsSpans = document.querySelectorAll('#group-feed .group-banner .stats span');
-            if (statsSpans.length >= 2) {
-                statsSpans[0].innerText = newFollowers;
-            }
-        }
-    } catch (err) {
-        console.error('Error:', err);
-        showToast('❌ Operation failed: ' + err.message, 'error');
-    }
-}
-// ================================================================
-// LOAD GROUP CONTENT - COMPLETELY FIXED
-// ================================================================
-async function loadGroupContent(groupId, contentType) {
-    const container = document.getElementById(contentType);
-    if (!container) return;
-
-    container.innerHTML = `<div class="loading">Loading ${contentType}...</div>`;
-
-    try {
-        // ✅ FIXED: Handle exams separately - don't query group_content
-        if (contentType === 'exam') {
-            // Load exams directly from mock_exams table
-            await loadExamsIntoContainer(container, groupId);
-            return;
-        }
-
-        // For videos and PPTs, query group_content
-        const { data, error } = await sb
-            .from('group_content')
-            .select('*')
-            .eq('group_id', groupId)
-            .eq('content_type', contentType === 'videos' ? 'video' : 'ppt')
-            .order('created_at', { ascending: false });
-
-        if (error) {
-            console.error('Load error:', error);
-            container.innerHTML = `<div class="loading" style="color:var(--red-error);">Error loading content</div>`;
-            return;
-        }
-
-        if (!data || data.length === 0) {
-            container.innerHTML = `<div class="loading" style="color:var(--text-muted);">No ${contentType} uploaded yet.</div>`;
-            return;
-        }
-
-        // Render videos or PPTs
-        container.innerHTML = data.map(item => `
-            <div class="content-card">
-                <div class="thumbnail">
-                    ${item.file_url ? `<i class="fas fa-play-circle"></i><span class="duration">Content</span>` : `<i class="fas fa-file-alt"></i>`}
-                </div>
-                <div class="meta">
-                    <h4>${item.title}</h4>
-                    <p>Uploaded • ${new Date(item.created_at).toLocaleDateString()}</p>
-                </div>
-                <div class="actions">
-                    <button onclick="toggleLike(this)"><i class="fas fa-heart"></i> <span>${item.likes || 0}</span></button>
-                    <button onclick="toggleComment(this)"><i class="fas fa-comment"></i> <span>0</span></button>
-                    <button onclick="shareContent()"><i class="fas fa-share"></i> <span data-key="share">Share</span></button>
-                </div>
-                <div class="comment-section">
-                    <div class="comment-list"></div>
-                    <textarea placeholder="Add a comment..."></textarea>
-                    <button class="send-btn" onclick="showToast('Comment posted!', 'success')" data-key="post_comment">Post Comment</button>
-                </div>
-            </div>
-        `).join('');
         
-        setTimeout(() => translatePage(), 50);
+        function stopExamTimer() {
+            if (examTimer) {
+                clearInterval(examTimer);
+                examTimer = null;
+            }
+            const timerContainer = document.getElementById('examTimerContainer');
+            if (timerContainer) {
+                timerContainer.remove();
+            }
+        }
         
-    } catch (err) {
-        console.error(err);
-        container.innerHTML = `<div class="loading" style="color:var(--red-error);">Failed to load content</div>`;
-    }
-}
-
-// ================================================================
-// LOAD EXAMS INTO CONTAINER - IMPROVED
-// ================================================================
-async function loadExamsIntoContainer(container, groupId) {
-    try {
-        const { data, error } = await sb
-            .from('mock_exams')
-            .select('*')
-            .eq('group_id', groupId)
-            .order('created_at', { ascending: false });
-
-        if (error) {
-            console.error('Error loading exams:', error);
-            container.innerHTML = `<div class="loading" style="color:var(--red-error);">Failed to load exams</div>`;
-            return;
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
         }
 
-        if (!data || data.length === 0) {
+        // ================================================================
+        // START EXAM - FETCHES FROM DATABASE
+        // ================================================================
+        async function startExam(examId) {
+            stopExamTimer();
+            showToast('📝 Loading exam...', 'info');
+            
+            try {
+                const { data, error } = await sb
+                    .from('mock_exams')
+                    .select('*')
+                    .eq('id', examId)
+                    .single();
+                
+                if (error) {
+                    console.error('Error fetching exam:', error);
+                    showToast('❌ Failed to load exam: ' + error.message, 'error');
+                    return;
+                }
+                
+                if (!data) {
+                    showToast('❌ Exam not found.', 'error');
+                    return;
+                }
+                
+                currentExam = {
+                    id: data.id,
+                    title: data.title,
+                    questions: data.questions || [],
+                    time_limit: data.time_limit || 5
+                };
+                
+                if (!currentExam.questions || currentExam.questions.length === 0) {
+                    showToast('❌ This exam has no questions.', 'error');
+                    return;
+                }
+                
+                currentQuestionIndex = 0;
+                correctCount = 0;
+                incorrectCount = 0;
+                examAnswered = new Array(currentExam.questions.length).fill(null);
+                examSubmitted = false;
+                
+                renderExamQuestion();
+                
+                // Start timer if in exam mode
+                if (examMode === 'exam') {
+                    startExamTimer(currentExam.time_limit);
+                }
+                
+            } catch (err) {
+                console.error('Error:', err);
+                showToast('❌ Failed to load exam.', 'error');
+            }
+        }
+
+        // ================================================================
+        // RENDER EXAM QUESTION
+        // ================================================================
+        function renderExamQuestion() {
+            const container = document.getElementById('exam');
+            if (!container) {
+                console.error('Exam container not found');
+                return;
+            }
+            
+            if (!currentExam || !currentExam.questions || currentExam.questions.length === 0) {
+                container.innerHTML = `<div class="loading" style="color:var(--text-muted);">No questions available for this exam.</div>`;
+                return;
+            }
+
+            const q = currentExam.questions[currentQuestionIndex];
+            const total = currentExam.questions.length;
+            const progress = Math.round(((currentQuestionIndex + 1) / total) * 100);
+            const selected = examAnswered[currentQuestionIndex];
+            const isExamMode = examMode === 'exam';
+
             container.innerHTML = `
-                <div class="exam-toggle">
-                    <span data-key="mode">Mode:</span>
-                    <button class="toggle-btn study" id="examModeBtn" onclick="toggleExamMode()" data-key="study_mode">📖 Study Mode</button>
+                <div style="margin-bottom:16px;">
+                    ${isExamMode ? `
+                        <div class="exam-timer" id="examTimerContainer">
+                            <span data-key="time_left">⏱️ Time Left:</span>
+                            <span class="timer" id="examTimerDisplay">${formatTime(examTimeRemaining)}</span>
+                        </div>
+                    ` : ''}
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; margin-top:8px;">
+                        <span style="font-weight:700; color:var(--navy); font-size:16px;">📝 ${currentExam.title}</span>
+                        <span style="font-weight:700; color:var(--navy);" data-key="question">${t('question')} ${currentQuestionIndex+1}/${total}</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                        <span style="font-weight:700; color:var(--green-success);" data-key="correct">✅ ${t('correct')}: ${correctCount}</span>
+                        <span style="font-weight:700; color:var(--red-error);" data-key="incorrect">❌ ${t('incorrect')}: ${incorrectCount}</span>
+                    </div>
+                    <div class="progress-bar"><div class="progress-fill" style="width:${progress}%;"></div></div>
                 </div>
-                <div class="loading" style="color:var(--text-muted);">📝 No exams created yet.</div>
+                
+                <div class="question-box">
+                    <p style="font-size:18px; font-weight:700; margin-bottom:12px;">${q.question}</p>
+                    ${q.options.map((opt, idx) => {
+                        const letter = String.fromCharCode(65+idx);
+                        const isSelected = selected === letter;
+                        return `
+                            <label style="display:block; margin:8px 0; padding:12px; border:2px solid ${isSelected ? 'var(--gold)' : '#e2e8f0'}; border-radius:8px; cursor:${isExamMode ? 'pointer' : 'default'}; transition:0.2s; ${isSelected ? 'background:#fef9e7;' : ''}" onclick="${!examSubmitted && !isExamMode ? `answerExamQuestion('${letter}', this)` : ''}">
+                                <input type="radio" name="examAnswer" value="${letter}" style="margin-right:10px;" ${isSelected ? 'checked' : ''} ${examSubmitted ? 'disabled' : ''}> 
+                                <span style="font-weight:600;">${letter}.</span> ${opt}
+                            </label>
+                        `;
+                    }).join('')}
+                    <div id="examExplanation" style="display:none; margin-top:12px; padding:12px; background:#f0fdf4; border-radius:8px; color:var(--text-dark); border-left:4px solid var(--green-success);"></div>
+                    ${!examSubmitted ? `
+                        <button class="explanation-toggle" onclick="toggleExplanation()" data-key="explanation">💡 See Explanation</button>
+                    ` : ''}
+                </div>
+                
+                <div style="display:flex; gap:10px; margin-top:16px;">
+                    <button class="btn-sm" onclick="prevExamQuestion()" style="flex:1; padding:10px; border:1px solid #e2e8f0; border-radius:8px; background:#f8fafc; cursor:pointer; font-weight:600;" ${currentQuestionIndex === 0 ? 'disabled style="opacity:0.5;"' : ''}>◀ Previous</button>
+                    <button class="btn-sm btn-teal" onclick="nextExamQuestion()" style="flex:1; padding:10px; border:none; border-radius:8px; background:var(--teal); color:white; cursor:pointer; font-weight:600;" ${currentQuestionIndex === total-1 ? 'disabled style="opacity:0.5;"' : ''}>Next ▶</button>
+                </div>
+                ${!examSubmitted ? `
+                    <button class="btn" onclick="submitExam(false)" style="margin-top:12px;" data-key="submit">📤 Submit Exam</button>
+                ` : `
+                    <button class="btn" onclick="finishExam()" style="margin-top:12px;" data-key="see_result">📊 ${t('see_result')}</button>
+                `}
             `;
+            
             setTimeout(() => translatePage(), 50);
-            return;
         }
 
-        container.innerHTML = `
-            <div class="exam-toggle">
-                <span data-key="mode">Mode:</span>
-                <button class="toggle-btn study" id="examModeBtn" onclick="toggleExamMode()" data-key="study_mode">📖 Study Mode</button>
-            </div>
-            ${data.map(exam => `
-                <div class="content-card" onclick="startExam(${exam.id})" style="cursor:pointer;">
-                    <div class="meta">
-                        <h4>📝 ${exam.title}</h4>
-                        <p>${exam.questions ? exam.questions.length : 0} Questions • Created ${new Date(exam.created_at).toLocaleDateString()}</p>
-                    </div>
-                    <div class="actions">
-                        <button class="btn-sm btn-teal" style="margin:0;" data-key="start">▶️ Start Exam</button>
-                    </div>
-                </div>
-            `).join('')}
-        `;
-        setTimeout(() => translatePage(), 50);
-        
-    } catch (err) {
-        console.error('Error loading exams:', err);
-        container.innerHTML = `<div class="loading" style="color:var(--red-error);">Failed to load exams</div>`;
-    }
-}
-
-// ================================================================
-// SWITCH GROUP TAB - FIXED
-// ================================================================
-function switchGroupTab(tabId, btn) {
-    document.querySelectorAll('.class-tab').forEach(t => t.classList.remove('active'));
-    btn.classList.add('active');
-    document.querySelectorAll('.class-content').forEach(c => c.classList.remove('active'));
-    const content = document.getElementById(tabId);
-    if (content) content.classList.add('active');
-
-    // ✅ FIXED: Reload content when switching to any tab
-    if (AppState.currentGroupId) {
-        if (tabId === 'exam') {
-            loadGroupContent(AppState.currentGroupId, 'exam');
-        } else if (tabId === 'videos') {
-            loadGroupContent(AppState.currentGroupId, 'videos');
-        } else if (tabId === 'ppts') {
-            loadGroupContent(AppState.currentGroupId, 'ppts');
-        }
-    } else {
-        // Try to get group ID from the URL or stored state
-        const groupId = AppState.groups[0]?.id;
-        if (groupId) {
-            if (tabId === 'exam') {
-                loadGroupContent(groupId, 'exam');
-            } else if (tabId === 'videos') {
-                loadGroupContent(groupId, 'videos');
-            } else if (tabId === 'ppts') {
-                loadGroupContent(groupId, 'ppts');
-            }
-        }
-    }
-}
-// ================================================================
-// START EXAM - FETCHES FROM DATABASE
-// ================================================================
-async function startExam(examId) {
-    showToast('📝 Loading exam...', 'info');
-    
-    try {
-        // Fetch the exam from Supabase
-        const { data, error } = await sb
-            .from('mock_exams')
-            .select('*')
-            .eq('id', examId)
-            .single();
-        
-        if (error) {
-            console.error('Error fetching exam:', error);
-            showToast('❌ Failed to load exam: ' + error.message, 'error');
-            return;
-        }
-        
-        if (!data) {
-            showToast('❌ Exam not found.', 'error');
-            return;
-        }
-        
-        // Set the current exam with questions from database
-        currentExam = {
-            id: data.id,
-            title: data.title,
-            questions: data.questions || []
-        };
-        
-        // Check if questions exist
-        if (!currentExam.questions || currentExam.questions.length === 0) {
-            showToast('❌ This exam has no questions.', 'error');
-            return;
-        }
-        
-        currentQuestionIndex = 0;
-        correctCount = 0;
-        incorrectCount = 0;
-        renderExamQuestion();
-        
-    } catch (err) {
-        console.error('Error:', err);
-        showToast('❌ Failed to load exam.', 'error');
-    }
-}
-// ================================================================
-// RENDER EXAM QUESTION - SHOWS ACTUAL QUESTIONS
-// ================================================================
-function renderExamQuestion() {
-    const container = document.getElementById('exam');
-    if (!container) {
-        console.error('Exam container not found');
-        return;
-    }
-    
-    if (!currentExam || !currentExam.questions || currentExam.questions.length === 0) {
-        container.innerHTML = `<div class="loading" style="color:var(--text-muted);">No questions available for this exam.</div>`;
-        return;
-    }
-
-    const q = currentExam.questions[currentQuestionIndex];
-    const total = currentExam.questions.length;
-    const progress = Math.round(((currentQuestionIndex + 1) / total) * 100);
-
-    container.innerHTML = `
-        <div style="margin-bottom:16px;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                <span style="font-weight:700; color:var(--navy); font-size:16px;">📝 ${currentExam.title}</span>
-                <span style="font-weight:700; color:var(--navy);">${currentQuestionIndex+1}/${total}</span>
-            </div>
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                <span style="font-weight:700; color:var(--green-success);">✅ ${correctCount}</span>
-                <span style="font-weight:700; color:var(--red-error);">❌ ${incorrectCount}</span>
-            </div>
-            <div class="progress-bar"><div class="progress-fill" style="width:${progress}%;"></div></div>
-        </div>
-        
-        <div class="question-box">
-            <p style="font-size:18px; font-weight:700; margin-bottom:12px;">${q.question}</p>
-            ${q.options.map((opt, idx) => `
-                <label style="display:block; margin:8px 0; padding:12px; border:2px solid #e2e8f0; border-radius:8px; cursor:pointer; transition:0.2s;" onclick="answerExamQuestion('${String.fromCharCode(65+idx)}', this)">
-                    <input type="radio" name="examAnswer" value="${String.fromCharCode(65+idx)}" style="margin-right:10px;"> 
-                    <span style="font-weight:600;">${String.fromCharCode(65+idx)}.</span> ${opt}
-                </label>
-            `).join('')}
-            <div id="examExplanation" style="display:none; margin-top:12px; padding:12px; background:#f0fdf4; border-radius:8px; color:var(--text-dark); border-left:4px solid var(--green-success);"></div>
-        </div>
-        
-        <div style="display:flex; gap:10px; margin-top:16px;">
-            <button class="btn-sm" onclick="prevExamQuestion()" style="flex:1; padding:10px; border:1px solid #e2e8f0; border-radius:8px; background:#f8fafc; cursor:pointer; font-weight:600;" ${currentQuestionIndex === 0 ? 'disabled style="opacity:0.5;"' : ''}>◀ Previous</button>
-            <button class="btn-sm btn-teal" onclick="nextExamQuestion()" style="flex:1; padding:10px; border:none; border-radius:8px; background:var(--teal); color:white; cursor:pointer; font-weight:600;" ${currentQuestionIndex === total-1 ? 'disabled style="opacity:0.5;"' : ''}>Next ▶</button>
-        </div>
-        ${currentQuestionIndex === total-1 ? `<button class="btn" onclick="finishExam()" style="margin-top:12px;">📊 Finish Exam & View Score</button>` : ''}
-    `;
-    
-    // Translate any translatable elements
-    setTimeout(() => translatePage(), 50);
-}
-
+        // ================================================================
+        // ANSWER EXAM QUESTION
+        // ================================================================
         function answerExamQuestion(selected, labelEl) {
+            if (examSubmitted || examMode === 'exam') return;
+            
             const q = currentExam.questions[currentQuestionIndex];
             const isCorrect = selected === q.answer;
+            
+            // Store the answer
+            examAnswered[currentQuestionIndex] = selected;
+            
+            // Update radio
             const radio = labelEl.querySelector('input[type="radio"]');
             if (radio) radio.checked = true;
-
-            document.querySelectorAll('#exam .question-box label').forEach(l => l.style.pointerEvents = 'none');
-
+            
+            // Update UI
+            document.querySelectorAll('#exam .question-box label').forEach(l => {
+                l.style.pointerEvents = 'none';
+            });
+            
             if (isCorrect) {
                 correctCount++;
                 labelEl.style.borderColor = 'var(--green-success)';
@@ -1434,13 +1499,42 @@ function renderExamQuestion() {
                 });
             }
 
+            // Show explanation
+            const expDiv = document.getElementById('examExplanation');
+            if (expDiv && q.explanation) {
+                expDiv.style.display = 'block';
+                const isCorrectText = isCorrect ? '✅ Correct!' : '❌ Incorrect.';
+                expDiv.innerHTML = `<strong>${isCorrectText}</strong> ${q.explanation}`;
+            }
+            
+            // Update counters
+            document.querySelector('#exam .stats .correct')?.textContent = correctCount;
+            document.querySelector('#exam .stats .incorrect')?.textContent = incorrectCount;
+        }
+
+        // ================================================================
+        // TOGGLE EXPLANATION
+        // ================================================================
+        function toggleExplanation() {
             const expDiv = document.getElementById('examExplanation');
             if (expDiv) {
-                expDiv.style.display = 'block';
-                expDiv.innerHTML = `<strong>${isCorrect ? '✅ Correct!' : '❌ Incorrect.'}</strong> ${q.explanation || ''}`;
+                if (expDiv.style.display === 'block') {
+                    expDiv.style.display = 'none';
+                } else {
+                    expDiv.style.display = 'block';
+                    const q = currentExam.questions[currentQuestionIndex];
+                    if (q.explanation) {
+                        expDiv.innerHTML = `<strong>💡 Explanation:</strong> ${q.explanation}`;
+                    } else {
+                        expDiv.innerHTML = '💡 No explanation provided for this question.';
+                    }
+                }
             }
         }
 
+        // ================================================================
+        // NEXT/PREVIOUS EXAM QUESTION
+        // ================================================================
         function nextExamQuestion() {
             if (currentQuestionIndex < currentExam.questions.length - 1) {
                 currentQuestionIndex++;
@@ -1455,53 +1549,146 @@ function renderExamQuestion() {
             }
         }
 
-// ================================================================
-// FINISH EXAM - SHOWS SCORE WITH MESSAGE
-// ================================================================
-function finishExam() {
-    const total = currentExam.questions.length;
-    const score = Math.round((correctCount / total) * 100);
-    let message = `📊 Exam Complete! Score: ${score}% (${correctCount}/${total} correct)`;
-    
-    if (score >= 80) {
-        message += ' 🎉 Excellent!';
-    } else if (score >= 60) {
-        message += ' 👍 Good job!';
-    } else {
-        message += ' 📚 Keep studying!';
-    }
-    
-    showToast(message, 'success');
-    currentExam = null;
-    currentQuestionIndex = 0;
-    correctCount = 0;
-    incorrectCount = 0;
-    
-    // Reload the exam list
-    if (AppState.currentGroupId) {
-        loadGroupContent(AppState.currentGroupId, 'exam');
-    }
-}
+        // ================================================================
+        // SUBMIT EXAM
+        // ================================================================
+        function submitExam(timeUp = false) {
+            if (examSubmitted) return;
+            
+            // Count unanswered questions
+            const unanswered = examAnswered.filter(a => a === null).length;
+            if (unanswered > 0 && !timeUp) {
+                if (!confirm(`You have ${unanswered} unanswered question(s). Submit anyway?`)) {
+                    return;
+                }
+            }
+            
+            stopExamTimer();
+            examSubmitted = true;
+            
+            // Calculate score
+            const total = currentExam.questions.length;
+            const score = Math.round((correctCount / total) * 100);
+            
+            let message = timeUp ? t('time_up') + ' ' : '';
+            message += t('exam_submitted') + `${score}% (${correctCount}/${total})`;
+            
+            if (score >= 80) {
+                message += ' 🎉 Excellent!';
+            } else if (score >= 60) {
+                message += ' 👍 Good job!';
+            } else {
+                message += ' 📚 Keep studying!';
+            }
+            
+            showToast(message, 'success');
+            
+            // Show results
+            renderExamResult();
+        }
 
         // ================================================================
-        // MISC INTERACTIONS
+        // RENDER EXAM RESULT
+        // ================================================================
+        function renderExamResult() {
+            const container = document.getElementById('exam');
+            if (!container) return;
+            
+            const total = currentExam.questions.length;
+            const score = Math.round((correctCount / total) * 100);
+            
+            let html = `
+                <div style="text-align:center; padding:20px; background:var(--navy); border-radius:var(--border-radius-card); color:white; margin-bottom:20px;">
+                    <div style="font-size:48px;">${score >= 80 ? '🎉' : score >= 60 ? '👍' : '📚'}</div>
+                    <h2 style="color:var(--gold); margin:10px 0;">${score}%</h2>
+                    <p style="color:rgba(255,255,255,0.8);">
+                        ${t('correct')}: ${correctCount} | ${t('incorrect')}: ${incorrectCount} | ${t('question')}: ${total}
+                    </p>
+                    <p style="color:rgba(255,255,255,0.6); margin-top:10px; font-size:14px;">
+                        ${score >= 80 ? '🌟 Excellent performance!' : score >= 60 ? '💪 Good job, keep practicing!' : '📚 Review the material and try again!'}
+                    </p>
+                </div>
+                <h3 style="color:var(--navy); margin-bottom:16px;" data-key="review">📝 Review Answers</h3>
+            `;
+            
+            currentExam.questions.forEach((q, idx) => {
+                const userAnswer = examAnswered[idx];
+                const isCorrect = userAnswer === q.answer;
+                const correctLetter = q.answer;
+                const correctText = q.options[correctLetter.charCodeAt(0) - 65];
+                
+                html += `
+                    <div class="content-card" style="border-left: 4px solid ${isCorrect ? 'var(--green-success)' : 'var(--red-error)'};">
+                        <div class="meta">
+                            <h4>Q${idx + 1}: ${q.question}</h4>
+                            <p>
+                                <span style="color:${isCorrect ? 'var(--green-success)' : 'var(--red-error)'}; font-weight:700;">
+                                    ${isCorrect ? '✅' : '❌'} ${t('your_answer')} ${userAnswer || 'Not answered'}
+                                </span>
+                                ${!isCorrect ? ` | ${t('correct_answer')} ${correctLetter}. ${correctText}` : ''}
+                                ${q.explanation ? ` | 💡 ${q.explanation}` : ''}
+                            </p>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += `
+                <button class="btn btn-teal" onclick="finishExam()" style="margin-top:12px;" data-key="back">🔙 Back to Exams</button>
+            `;
+            
+            container.innerHTML = html;
+            setTimeout(() => translatePage(), 50);
+        }
+
+        // ================================================================
+        // FINISH EXAM - Go back to exam list
+        // ================================================================
+        function finishExam() {
+            stopExamTimer();
+            currentExam = null;
+            currentQuestionIndex = 0;
+            correctCount = 0;
+            incorrectCount = 0;
+            examAnswered = [];
+            examSubmitted = false;
+            
+            if (AppState.currentGroupId) {
+                loadGroupContent(AppState.currentGroupId, 'exam');
+            }
+        }
+
+        // ================================================================
+        // TOGGLE EXAM MODE
         // ================================================================
         function toggleExamMode() {
             const btn = document.getElementById('examModeBtn');
             if (!btn) return;
+            
             if (examMode === 'study') { 
                 examMode = 'exam';
                 btn.innerText = '🚫 Exam Mode';
                 btn.className = 'toggle-btn exam';
-                showToast('🔒 Exam Mode locked. Answers hidden.', 'info'); 
+                showToast('🔒 Exam Mode: Timer enabled, answers locked.', 'info');
+                // Restart current exam with timer if one is running
+                if (currentExam && !examSubmitted) {
+                    startExamTimer(currentExam.time_limit);
+                }
             } else { 
                 examMode = 'study';
                 btn.innerText = '📖 Study Mode';
                 btn.className = 'toggle-btn study';
-                showToast('📖 Study Mode activated.', 'info'); 
+                showToast('📖 Study Mode: Learn at your own pace.', 'info');
+                stopExamTimer();
+                if (currentExam && !examSubmitted) {
+                    renderExamQuestion();
+                }
             }
         }
 
+        // ================================================================
+        // MISC INTERACTIONS
+        // ================================================================
         function toggleLike(btn) {
             btn.classList.toggle('liked');
             const span = btn.querySelector('span');
@@ -1683,7 +1870,7 @@ function finishExam() {
                     group_purpose: purpose,
                     profile_pic_url: 'default',
                     followers: 0,
-                    online: 0
+                    online: 1
                 }).select();
                 
                 if (error) throw error;
@@ -1791,7 +1978,6 @@ function finishExam() {
                         dropdownItems.innerHTML = `<div onclick="openTabContent('profile')">👤 Profile</div><div onclick="logout()">🚪 Logout</div>`;
                     }
                     
-                    // Store original text and translate
                     setTimeout(() => translatePage(), 100);
                     
                 } else { 
@@ -1990,7 +2176,7 @@ function finishExam() {
         }
 
         // ================================================================
-        // SUBMIT ADD FILE
+        // SUBMIT ADD FILE - FIXED
         // ================================================================
         async function submitAddFile() {
             const typeSelect = document.getElementById('addFileType');
@@ -2002,9 +2188,13 @@ function finishExam() {
             
             if (type === 'exam') {
                 const titleInput = document.getElementById('examTitle');
+                const timeLimitInput = document.getElementById('examTimeLimit');
+                
                 if (!titleInput) return showToast('Exam title field not found.', 'error');
                 
                 const title = titleInput.value;
+                const time_limit = parseInt(timeLimitInput?.value) || 5;
+                
                 if (!title) return showToast('Please enter an Exam Title.', 'error');
 
                 const questions = [];
@@ -2015,11 +2205,17 @@ function finishExam() {
                     const c = document.getElementById(`examC${i}`)?.value;
                     const d = document.getElementById(`examD${i}`)?.value;
                     const ans = document.getElementById(`examAns${i}`)?.value;
+                    const exp = document.getElementById(`examExp${i}`)?.value;
                     
                     if (!q) return showToast(`Please fill in Question ${i}.`, 'error');
                     if (!a || !b || !c || !d) return showToast(`Please fill in all options for Question ${i}.`, 'error');
                     
-                    questions.push({ question: q, options: [a, b, c, d], answer: ans });
+                    questions.push({ 
+                        question: q, 
+                        options: [a, b, c, d], 
+                        answer: ans,
+                        explanation: exp || ''
+                    });
                 }
 
                 console.log("📤 Saving exam to Supabase...");
@@ -2027,7 +2223,8 @@ function finishExam() {
                     group_id: groupId,
                     author_id: AppState.userId,
                     title: title,
-                    questions: questions
+                    questions: questions,
+                    time_limit: time_limit
                 }).select();
 
                 if (error) {
@@ -2041,6 +2238,7 @@ function finishExam() {
                 
                 examQuestionCount = 1;
                 if (titleInput) titleInput.value = '';
+                if (timeLimitInput) timeLimitInput.value = '5';
                 
                 if (AppState.currentGroupId) {
                     loadGroupContent(AppState.currentGroupId, 'exam');
@@ -2112,7 +2310,7 @@ function finishExam() {
         }
 
         // ================================================================
-        // LOAD EXAMS
+        // LOAD EXAMS - Called from exam tab
         // ================================================================
         async function loadExams() {
             const container = document.getElementById('examListContainer');
@@ -2145,7 +2343,7 @@ function finishExam() {
                     <div class="content-card" onclick="startExam(${exam.id})" style="cursor:pointer;">
                         <div class="meta">
                             <h4>📝 ${exam.title}</h4>
-                            <p>${exam.questions ? exam.questions.length : 0} Questions • Created ${new Date(exam.created_at).toLocaleDateString()}</p>
+                            <p>${exam.questions ? exam.questions.length : 0} Questions • ${exam.time_limit || 5} min • Created ${new Date(exam.created_at).toLocaleDateString()}</p>
                         </div>
                         <div class="actions">
                             <button class="btn-sm btn-teal" style="margin:0;" data-key="start">▶️ Start Exam</button>
@@ -2197,13 +2395,17 @@ function finishExam() {
                         <option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option>
                     </select>
                 </div>
+                <div style="margin-top:6px;">
+                    <label style="font-size:13px; font-weight:600;">Explanation (optional):</label>
+                    <input type="text" id="examExp${examQuestionCount}" placeholder="Explain why this is correct..." style="width:100%; padding:6px; border:1px solid #eee; border-radius:6px;">
+                </div>
             `;
             const addBtn = container.lastElementChild;
             container.insertBefore(newQ, addBtn);
         }
 
         // ================================================================
-        // UPLOAD FILE TO SUPABASE STORAGE
+        // UPLOAD FILE TO SUPABASE STORAGE - FIXED
         // ================================================================
         async function uploadFileToStorage() {
             const fileInput = document.getElementById('addFileInput');
@@ -2225,12 +2427,53 @@ function finishExam() {
                 const fileExt = file.name.split('.').pop(); 
                 const fileName = `uploads/${AppState.userId}_${Date.now()}.${fileExt}`;
                 
+                // Check if bucket exists first
+                const { data: buckets } = await sb.storage.listBuckets();
+                const bucketExists = buckets?.some(b => b.name === 't-hub-uploads');
+                
+                if (!bucketExists) {
+                    // Try to create the bucket
+                    const { error: createError } = await sb.storage.createBucket('t-hub-uploads', { public: true });
+                    if (createError) {
+                        console.error('Bucket creation error:', createError);
+                        // If we can't create, try using a different bucket name
+                        const altFileName = `uploads/${AppState.userId}_${Date.now()}.${fileExt}`;
+                        const { data: altData, error: altError } = await sb.storage.from('app-assets').upload(altFileName, file, { 
+                            cacheControl: '3600', 
+                            upsert: false 
+                        });
+                        if (altError) throw altError;
+                        const { data: altUrlData } = sb.storage.from('app-assets').getPublicUrl(altFileName);
+                        const urlInput = document.getElementById('addFileUrl');
+                        if (urlInput) urlInput.value = altUrlData.publicUrl;
+                        statusDiv.innerText = `✅ Uploaded ${file.name}!`; 
+                        statusDiv.style.color = 'var(--green-success)';
+                        showToast('✅ File uploaded to T-Hub Cloud!', 'success');
+                        return;
+                    }
+                }
+                
                 const { data, error } = await sb.storage.from('t-hub-uploads').upload(fileName, file, { 
                     cacheControl: '3600', 
                     upsert: false 
                 });
                 
-                if (error) throw error;
+                if (error) {
+                    // Try alternative bucket
+                    const altFileName = `uploads/${AppState.userId}_${Date.now()}.${fileExt}`;
+                    const { data: altData, error: altError } = await sb.storage.from('app-assets').upload(altFileName, file, { 
+                        cacheControl: '3600', 
+                        upsert: false 
+                    });
+                    if (altError) throw altError;
+                    const { data: altUrlData } = sb.storage.from('app-assets').getPublicUrl(altFileName);
+                    const urlInput = document.getElementById('addFileUrl');
+                    if (urlInput) urlInput.value = altUrlData.publicUrl;
+                    statusDiv.innerText = `✅ Uploaded ${file.name}!`; 
+                    statusDiv.style.color = 'var(--green-success)';
+                    showToast('✅ File uploaded to T-Hub Cloud!', 'success');
+                    return;
+                }
                 
                 const { data: urlData } = sb.storage.from('t-hub-uploads').getPublicUrl(fileName);
                 const publicUrl = urlData.publicUrl;
@@ -2317,6 +2560,6 @@ function finishExam() {
             document.getElementById('loadingOverlay').style.display = 'flex';
             checkSession();
         });
-</script>
+    </script>
 </body>
 </html>
