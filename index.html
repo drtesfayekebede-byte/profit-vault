@@ -2467,94 +2467,142 @@ async function submitAddFile() {
             container.insertBefore(newQ, addBtn);
         }
 
+// ================================================================
+// UPLOAD FILE TO SUPABASE STORAGE - COMPLETELY FIXED
+// ================================================================
+async function uploadFileToStorage() {
+    const fileInput = document.getElementById('addFileInput');
+    const statusDiv = document.getElementById('uploadStatus');
+    
+    if (!fileInput || !statusDiv) {
+        showToast('Upload elements not found.', 'error');
+        return;
+    }
+    
+    const file = fileInput.files[0];
+    if (!file) {
+        showToast('Please select a file first.', 'error');
+        return;
+    }
+    
+    // Check file size (50MB max)
+    if (file.size > 50 * 1024 * 1024) {
+        showToast('File is too large. Max 50MB allowed.', 'error');
+        return;
+    }
+    
+    // Log file info for debugging
+    console.log('📁 File info:', {
+        name: file.name,
+        type: file.type,
+        size: (file.size / 1024 / 1024).toFixed(2) + 'MB'
+    });
+    
+    statusDiv.innerText = `⏳ Uploading ${file.name}...`;
+    statusDiv.style.color = 'var(--gold)';
+    
+    try {
+        // Get file extension
+        const fileExt = file.name.split('.').pop().toLowerCase();
+        const fileName = `uploads/${AppState.userId}_${Date.now()}.${fileExt}`;
+        
+        console.log('📤 Uploading to:', fileName);
+        
         // ================================================================
-        // UPLOAD FILE TO SUPABASE STORAGE - FIXED
+        // METHOD 1: Try uploading to 't-hub-uploads' bucket
         // ================================================================
-        async function uploadFileToStorage() {
-            const fileInput = document.getElementById('addFileInput');
-            const statusDiv = document.getElementById('uploadStatus');
+        let publicUrl = null;
+        let uploadError = null;
+        
+        try {
+            // First, check if bucket exists and is public
+            const { data: buckets } = await sb.storage.listBuckets();
+            const bucketExists = buckets?.some(b => b.name === 't-hub-uploads');
             
-            if (!fileInput || !statusDiv) return showToast('Upload elements not found.', 'error');
-            
-            const file = fileInput.files[0];
-            if (!file) return showToast('Please select a file from your phone first.', 'error');
-            
-            if (file.size > 50 * 1024 * 1024) { 
-                return showToast('File is too large. Max 50MB allowed.', 'error'); 
-            }
-            
-            statusDiv.innerText = `⏳ Uploading ${file.name}...`; 
-            statusDiv.style.color = 'var(--gold)';
-            
-            try {
-                const fileExt = file.name.split('.').pop(); 
-                const fileName = `uploads/${AppState.userId}_${Date.now()}.${fileExt}`;
+            if (bucketExists) {
+                console.log('✅ Bucket "t-hub-uploads" exists');
                 
-                // Check if bucket exists first
-                const { data: buckets } = await sb.storage.listBuckets();
-                const bucketExists = buckets?.some(b => b.name === 't-hub-uploads');
-                
-                if (!bucketExists) {
-                    // Try to create the bucket
-                    const { error: createError } = await sb.storage.createBucket('t-hub-uploads', { public: true });
-                    if (createError) {
-                        console.error('Bucket creation error:', createError);
-                        // If we can't create, try using a different bucket name
-                        const altFileName = `uploads/${AppState.userId}_${Date.now()}.${fileExt}`;
-                        const { data: altData, error: altError } = await sb.storage.from('app-assets').upload(altFileName, file, { 
-                            cacheControl: '3600', 
-                            upsert: false 
-                        });
-                        if (altError) throw altError;
-                        const { data: altUrlData } = sb.storage.from('app-assets').getPublicUrl(altFileName);
-                        const urlInput = document.getElementById('addFileUrl');
-                        if (urlInput) urlInput.value = altUrlData.publicUrl;
-                        statusDiv.innerText = `✅ Uploaded ${file.name}!`; 
-                        statusDiv.style.color = 'var(--green-success)';
-                        showToast('✅ File uploaded to T-Hub Cloud!', 'success');
-                        return;
-                    }
-                }
-                
-                const { data, error } = await sb.storage.from('t-hub-uploads').upload(fileName, file, { 
-                    cacheControl: '3600', 
-                    upsert: false 
-                });
+                const { data, error } = await sb.storage
+                    .from('t-hub-uploads')
+                    .upload(fileName, file, {
+                        cacheControl: '3600',
+                        upsert: false,
+                        contentType: file.type || 'application/octet-stream'
+                    });
                 
                 if (error) {
-                    // Try alternative bucket
-                    const altFileName = `uploads/${AppState.userId}_${Date.now()}.${fileExt}`;
-                    const { data: altData, error: altError } = await sb.storage.from('app-assets').upload(altFileName, file, { 
-                        cacheControl: '3600', 
-                        upsert: false 
+                    console.error('❌ Upload to t-hub-uploads failed:', error);
+                    uploadError = error;
+                } else {
+                    console.log('✅ Upload to t-hub-uploads successful!');
+                    const { data: urlData } = sb.storage.from('t-hub-uploads').getPublicUrl(fileName);
+                    publicUrl = urlData.publicUrl;
+                }
+            } else {
+                console.log('⚠️ Bucket "t-hub-uploads" not found');
+                uploadError = new Error('Bucket not found');
+            }
+        } catch (err) {
+            console.error('❌ Error with t-hub-uploads:', err);
+            uploadError = err;
+        }
+        
+        // ================================================================
+        // METHOD 2: Fallback to 'app-assets' bucket
+        // ================================================================
+        if (!publicUrl) {
+            console.log('🔄 Trying fallback to "app-assets" bucket...');
+            
+            try {
+                const altFileName = `uploads/${AppState.userId}_${Date.now()}.${fileExt}`;
+                
+                const { data, error } = await sb.storage
+                    .from('app-assets')
+                    .upload(altFileName, file, {
+                        cacheControl: '3600',
+                        upsert: false,
+                        contentType: file.type || 'application/octet-stream'
                     });
-                    if (altError) throw altError;
-                    const { data: altUrlData } = sb.storage.from('app-assets').getPublicUrl(altFileName);
-                    const urlInput = document.getElementById('addFileUrl');
-                    if (urlInput) urlInput.value = altUrlData.publicUrl;
-                    statusDiv.innerText = `✅ Uploaded ${file.name}!`; 
-                    statusDiv.style.color = 'var(--green-success)';
-                    showToast('✅ File uploaded to T-Hub Cloud!', 'success');
-                    return;
+                
+                if (error) {
+                    console.error('❌ Upload to app-assets failed:', error);
+                    throw error;
                 }
                 
-                const { data: urlData } = sb.storage.from('t-hub-uploads').getPublicUrl(fileName);
-                const publicUrl = urlData.publicUrl;
+                console.log('✅ Upload to app-assets successful!');
+                const { data: urlData } = sb.storage.from('app-assets').getPublicUrl(altFileName);
+                publicUrl = urlData.publicUrl;
                 
-                const urlInput = document.getElementById('addFileUrl');
-                if (urlInput) urlInput.value = publicUrl;
-                
-                statusDiv.innerText = `✅ Uploaded ${file.name}!`; 
-                statusDiv.style.color = 'var(--green-success)';
-                showToast('✅ File uploaded to T-Hub Cloud!', 'success');
             } catch (err) {
-                console.error('Upload error:', err);
-                statusDiv.innerText = `❌ Upload failed: ${err.message}`; 
-                statusDiv.style.color = 'var(--red-error)'; 
-                showToast('Upload failed: ' + err.message, 'error');
+                console.error('❌ All upload methods failed:', err);
+                throw new Error('Upload failed: ' + (err.message || 'Unknown error'));
             }
         }
-
+        
+        // ================================================================
+        // SUCCESS - Update the URL field
+        // ================================================================
+        if (publicUrl) {
+            const urlInput = document.getElementById('addFileUrl');
+            if (urlInput) {
+                urlInput.value = publicUrl;
+                console.log('✅ File URL set:', publicUrl);
+            }
+            
+            statusDiv.innerText = `✅ Uploaded ${file.name}!`;
+            statusDiv.style.color = 'var(--green-success)';
+            showToast('✅ File uploaded to T-Hub Cloud!', 'success');
+        } else {
+            throw new Error('No public URL generated');
+        }
+        
+    } catch (err) {
+        console.error('❌ Upload error:', err);
+        statusDiv.innerText = `❌ Upload failed: ${err.message}`;
+        statusDiv.style.color = 'var(--red-error)';
+        showToast('Upload failed: ' + err.message, 'error');
+    }
+}
         // ================================================================
         // BUY COINS
         // ================================================================
