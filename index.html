@@ -1119,57 +1119,107 @@
                 loadGroupContent(AppState.currentGroupId, 'exam');
             }
         }
-
-        // ================================================================
-        // EXAM ENGINE
-        // ================================================================
-        function startExam(examId) {
-            showToast('📝 Loading exam...', 'info');
-            currentExam = {
-                id: examId,
-                title: "Sample Mock Exam",
-                questions: [
-                    { question: "What is the primary pacemaker of the heart?", options: ["SA Node", "AV Node", "Bundle of His", "Purkinje Fibers"], answer: "A", explanation: "The SA Node is the natural pacemaker of the heart." },
-                    { question: "Which organ is responsible for insulin production?", options: ["Liver", "Pancreas", "Kidney", "Stomach"], answer: "B", explanation: "The pancreas produces insulin." }
-                ]
-            };
-            currentQuestionIndex = 0;
-            correctCount = 0;
-            incorrectCount = 0;
-            renderExamQuestion();
+// ================================================================
+// START EXAM - FETCHES FROM DATABASE
+// ================================================================
+async function startExam(examId) {
+    showToast('📝 Loading exam...', 'info');
+    
+    try {
+        // Fetch the exam from Supabase
+        const { data, error } = await sb
+            .from('mock_exams')
+            .select('*')
+            .eq('id', examId)
+            .single();
+        
+        if (error) {
+            console.error('Error fetching exam:', error);
+            showToast('❌ Failed to load exam: ' + error.message, 'error');
+            return;
         }
-
-        function renderExamQuestion() {
-            const container = document.getElementById('exam');
-            if (!container || !currentExam) return;
-
-            const q = currentExam.questions[currentQuestionIndex];
-            const total = currentExam.questions.length;
-            const progress = Math.round(((currentQuestionIndex + 1) / total) * 100);
-
-            container.innerHTML = `
-                <div style="margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
-                    <span style="font-weight:700; color:var(--navy);">Question ${currentQuestionIndex+1} of ${total}</span>
-                    <span style="font-weight:700; color:var(--navy);">✅ ${correctCount} | ❌ ${incorrectCount}</span>
-                </div>
-                <div class="progress-bar"><div class="progress-fill" style="width:${progress}%;"></div></div>
-                <div class="question-box">
-                    <p style="font-size:18px;">${q.question}</p>
-                    ${q.options.map((opt, idx) => `
-                        <label style="display:block; margin:8px 0; padding:8px; border:1px solid #eee; border-radius:8px; cursor:pointer;" onclick="answerExamQuestion('${String.fromCharCode(65+idx)}', this)">
-                            <input type="radio" name="examAnswer" value="${String.fromCharCode(65+idx)}" style="margin-right:8px;"> 
-                            ${opt}
-                        </label>
-                    `).join('')}
-                    <div id="examExplanation" style="display:none; margin-top:12px; padding:12px; background:#f0fdf4; border-radius:8px; color:var(--text-dark);"></div>
-                </div>
-                <div style="display:flex; gap:10px; margin-top:12px;">
-                    <button class="btn-sm" onclick="prevExamQuestion()" style="flex:1; padding:8px; border:1px solid #eee; border-radius:8px; background:#f5f5f5; cursor:pointer;" ${currentQuestionIndex === 0 ? 'disabled style="opacity:0.5;"' : ''}>◀ Previous</button>
-                    <button class="btn-sm btn-teal" onclick="nextExamQuestion()" style="flex:1; padding:8px; border:none; border-radius:8px; background:var(--teal); color:white; cursor:pointer;" ${currentQuestionIndex === total-1 ? 'disabled style="opacity:0.5;"' : ''}>Next ▶</button>
-                </div>
-                ${currentQuestionIndex === total-1 ? `<button class="btn" onclick="finishExam()" style="margin-top:10px;">📊 Finish Exam & View Score</button>` : ''}
-            `;
+        
+        if (!data) {
+            showToast('❌ Exam not found.', 'error');
+            return;
         }
+        
+        // Set the current exam with questions from database
+        currentExam = {
+            id: data.id,
+            title: data.title,
+            questions: data.questions || []
+        };
+        
+        // Check if questions exist
+        if (!currentExam.questions || currentExam.questions.length === 0) {
+            showToast('❌ This exam has no questions.', 'error');
+            return;
+        }
+        
+        currentQuestionIndex = 0;
+        correctCount = 0;
+        incorrectCount = 0;
+        renderExamQuestion();
+        
+    } catch (err) {
+        console.error('Error:', err);
+        showToast('❌ Failed to load exam.', 'error');
+    }
+}
+// ================================================================
+// RENDER EXAM QUESTION - SHOWS ACTUAL QUESTIONS
+// ================================================================
+function renderExamQuestion() {
+    const container = document.getElementById('exam');
+    if (!container) {
+        console.error('Exam container not found');
+        return;
+    }
+    
+    if (!currentExam || !currentExam.questions || currentExam.questions.length === 0) {
+        container.innerHTML = `<div class="loading" style="color:var(--text-muted);">No questions available for this exam.</div>`;
+        return;
+    }
+
+    const q = currentExam.questions[currentQuestionIndex];
+    const total = currentExam.questions.length;
+    const progress = Math.round(((currentQuestionIndex + 1) / total) * 100);
+
+    container.innerHTML = `
+        <div style="margin-bottom:16px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <span style="font-weight:700; color:var(--navy); font-size:16px;">📝 ${currentExam.title}</span>
+                <span style="font-weight:700; color:var(--navy);">${currentQuestionIndex+1}/${total}</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <span style="font-weight:700; color:var(--green-success);">✅ ${correctCount}</span>
+                <span style="font-weight:700; color:var(--red-error);">❌ ${incorrectCount}</span>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" style="width:${progress}%;"></div></div>
+        </div>
+        
+        <div class="question-box">
+            <p style="font-size:18px; font-weight:700; margin-bottom:12px;">${q.question}</p>
+            ${q.options.map((opt, idx) => `
+                <label style="display:block; margin:8px 0; padding:12px; border:2px solid #e2e8f0; border-radius:8px; cursor:pointer; transition:0.2s;" onclick="answerExamQuestion('${String.fromCharCode(65+idx)}', this)">
+                    <input type="radio" name="examAnswer" value="${String.fromCharCode(65+idx)}" style="margin-right:10px;"> 
+                    <span style="font-weight:600;">${String.fromCharCode(65+idx)}.</span> ${opt}
+                </label>
+            `).join('')}
+            <div id="examExplanation" style="display:none; margin-top:12px; padding:12px; background:#f0fdf4; border-radius:8px; color:var(--text-dark); border-left:4px solid var(--green-success);"></div>
+        </div>
+        
+        <div style="display:flex; gap:10px; margin-top:16px;">
+            <button class="btn-sm" onclick="prevExamQuestion()" style="flex:1; padding:10px; border:1px solid #e2e8f0; border-radius:8px; background:#f8fafc; cursor:pointer; font-weight:600;" ${currentQuestionIndex === 0 ? 'disabled style="opacity:0.5;"' : ''}>◀ Previous</button>
+            <button class="btn-sm btn-teal" onclick="nextExamQuestion()" style="flex:1; padding:10px; border:none; border-radius:8px; background:var(--teal); color:white; cursor:pointer; font-weight:600;" ${currentQuestionIndex === total-1 ? 'disabled style="opacity:0.5;"' : ''}>Next ▶</button>
+        </div>
+        ${currentQuestionIndex === total-1 ? `<button class="btn" onclick="finishExam()" style="margin-top:12px;">📊 Finish Exam & View Score</button>` : ''}
+    `;
+    
+    // Translate any translatable elements
+    setTimeout(() => translatePage(), 50);
+}
 
         function answerExamQuestion(selected, labelEl) {
             const q = currentExam.questions[currentQuestionIndex];
@@ -1216,18 +1266,33 @@
             }
         }
 
-        function finishExam() {
-            const total = currentExam.questions.length;
-            const score = Math.round((correctCount / total) * 100);
-            showToast(`📊 Exam Complete! Score: ${score}% (${correctCount}/${total} correct)`, 'success');
-            currentExam = null;
-            currentQuestionIndex = 0;
-            correctCount = 0;
-            incorrectCount = 0;
-            if (AppState.currentGroupId) {
-                loadGroupContent(AppState.currentGroupId, 'exam');
-            }
-        }
+// ================================================================
+// FINISH EXAM - SHOWS SCORE WITH MESSAGE
+// ================================================================
+function finishExam() {
+    const total = currentExam.questions.length;
+    const score = Math.round((correctCount / total) * 100);
+    let message = `📊 Exam Complete! Score: ${score}% (${correctCount}/${total} correct)`;
+    
+    if (score >= 80) {
+        message += ' 🎉 Excellent!';
+    } else if (score >= 60) {
+        message += ' 👍 Good job!';
+    } else {
+        message += ' 📚 Keep studying!';
+    }
+    
+    showToast(message, 'success');
+    currentExam = null;
+    currentQuestionIndex = 0;
+    correctCount = 0;
+    incorrectCount = 0;
+    
+    // Reload the exam list
+    if (AppState.currentGroupId) {
+        loadGroupContent(AppState.currentGroupId, 'exam');
+    }
+}
 
         // ================================================================
         // MISC INTERACTIONS
