@@ -421,7 +421,10 @@
                 <div class="quick-actions">
                     <div class="quick-btn" onclick="openTabContent('class')"><span class="icon">📚</span><span class="label" data-key="class">Class</span></div>
                     <div class="quick-btn" onclick="openTabContent('bstore')"><span class="icon">📖</span><span class="label" data-key="bstore">B-Store</span></div>
-                    <div class="quick-btn" onclick="openTabContent('mcalculator')"><span class="icon">🧮</span><span class="label" data-key="mcalculator">M-Calculator</span></div>
+                    <div class="quick-btn" onclick="openTabContent('mcalc')">
+    <span class="icon">🧮</span>
+    <span class="label" data-key="mcalc">M-Calc</span>
+</div>
                     <div class="quick-btn" onclick="openTabContent('jobs')"><span class="icon">💼</span><span class="label" data-key="job">Job</span></div>
                     <div class="quick-btn" onclick="openTabContent('research')"><span class="icon">🔬</span><span class="label" data-key="research">Research</span></div>
                     <div class="quick-btn" onclick="openTabContent('wallet')"><span class="icon">💳</span><span class="label" data-key="wallet">Wallet</span></div>
@@ -568,8 +571,8 @@
             </div>
 
             <!-- MEDICAL CALCULATOR TAB -->
-            <div id="mcalculator-tab">
-                <div class="books-header"><h2 data-key="mcalculator">🧮 Medical Calculator</h2></div>
+            <div id="mcalc-tab">
+                <div class="books-header"><h2 data-key="mcalc">🧮 Medical Calculator</h2></div>
                 <div id="calculatorContainer"><div class="loading">Loading calculators...</div></div>
             </div>
 
@@ -852,7 +855,10 @@
                 <button class="app-footer-tab active" data-tab="home" onclick="footerTabClick('home')"><span class="tab-emoji">🏠</span><span class="tab-label" data-key="home">Home</span></button>
                 <button class="app-footer-tab" data-tab="class" onclick="footerTabClick('class')"><span class="tab-emoji">📚</span><span class="tab-label" data-key="class">Class</span></button>
                 <button class="app-footer-tab" data-tab="bstore" onclick="footerTabClick('bstore')"><span class="tab-emoji">📖</span><span class="tab-label" data-key="bstore">B-Store</span></button>
-                <button class="app-footer-tab" data-tab="mcalculator" onclick="footerTabClick('mcalculator')"><span class="tab-emoji">🧮</span><span class="tab-label" data-key="mcalculator">M-Calc</span></button>
+                <button class="app-footer-tab" data-tab="mcalc" onclick="footerTabClick('mcalc')">
+    <span class="tab-emoji">🧮</span>
+    <span class="tab-label" data-key="mcalc">M-Calc</span>
+</button>
                 <button class="app-footer-tab" data-tab="jobs" onclick="footerTabClick('jobs')"><span class="tab-emoji">💼</span><span class="tab-label" data-key="job">Job</span></button>
                 <button class="app-footer-tab" data-tab="research" onclick="footerTabClick('research')"><span class="tab-emoji">🔬</span><span class="tab-label" data-key="research">Research</span></button>
                 <button class="app-footer-tab" data-tab="wallet" onclick="footerTabClick('wallet')"><span class="tab-emoji">💳</span><span class="tab-label" data-key="wallet">Wallet</span></button>
@@ -917,7 +923,7 @@
         // ================================================================
         const translations = {
             en: {
-                home: "Home", class: "Class", bstore: "B-Store", mcalculator: "M-Calculator",
+                home: "Home", class: "Class", bstore: "B-Store", mcalc: "M-Calc",
                 job: "Job", research: "Research", wallet: "Wallet", ppt: "PPT",
                 mock_exam: "Mock Exam", welcome_title: "Welcome back!",
                 welcome_desc: "Your medical education ecosystem", apply_now: "Apply for Verification",
@@ -960,7 +966,7 @@
                 comment: "Comment", share: "Share", post_comment: "Post Comment"
             },
             am: {
-                home: "መነሻ", class: "ክፍሌ", bstore: "ቢ-ስቶር", mcalculator: "ኤም-ካልኩሌተር",
+                home: "መነሻ", class: "ክፍሌ", bstore: "ቢ-ስቶር", mcalc: "ኤም-ካልክ",
                 job: "ሥራ", research: "ምርምር", wallet: "ኪስ ቦርሳ", ppt: "ፒፒቲ",
                 mock_exam: "የሙከራ ፈተና", welcome_title: "እንኳን ደህና መጡ!",
                 welcome_desc: "የእርስዎ የህክምና ትምህርት ስነ-ምህዳር",
@@ -1115,7 +1121,7 @@
             
             if (tabId === 'class') id = 'class-tab';
             else if (tabId === 'bstore') id = 'bstore-tab';
-            else if (tabId === 'mcalculator') id = 'mcalculator-tab';
+            else if (tabId === 'mcalc') id = 'mcalc-tab';
             else if (tabId === 'jobs') id = 'jobs-tab';
             else if (tabId === 'research') id = 'research-tab';
             else if (tabId === 'profile') id = 'profile-tab';
@@ -1138,7 +1144,7 @@
             if (tabId === 'admin') loadAdminPanel();
             if (tabId === 'wallet') loadWallet();
             if (tabId === 'bstore') loadBStore();
-            if (tabId === 'mcalculator') loadCalculators();
+            if (tabId === 'mcalc') loadCalculators();
             if (tabId === 'profile') loadMyLibrary();
             
             setTimeout(() => {
@@ -3389,7 +3395,7 @@
                 const q = document.getElementById('globalSearch').value.toLowerCase();
                 if (q.includes('class') || q.includes('group')) openTabContent('class');
                 else if (q.includes('bstore') || q.includes('book')) openTabContent('bstore');
-                else if (q.includes('calc') || q.includes('calculator')) openTabContent('mcalculator');
+                else if (q.includes('calc') || q.includes('calculator')) openTabContent('mcalc');
                 else if (q.includes('job')) openTabContent('jobs');
                 else if (q.includes('research')) openTabContent('research');
                 else if (q.includes('wallet')) openTabContent('wallet');
