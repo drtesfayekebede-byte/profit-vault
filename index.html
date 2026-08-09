@@ -79,7 +79,6 @@
         .dropdown-menu div:hover { background: rgba(255, 255, 255, 0.05); }
         .dropdown-menu .logout-item { color: var(--red-error); border-top: 1px solid rgba(255,255,255,0.1); margin-top: 4px; padding-top: 12px; }
 
-        /* APP MAIN */
         .app-main { flex: 1; overflow-y: auto; padding: 16px; background: var(--bg-white); width: 100%; max-width: 800px; margin: 0 auto; padding-bottom: calc(var(--footer-height) + 20px); }
         .app-grid-wrapper { display: flex; flex-direction: column; gap: 16px; }
 
@@ -106,7 +105,6 @@
         .feed-card .info p { color: var(--text-muted); font-size: 13px; margin-top: 4px; font-weight: 700; }
         .feed-card .action-btn { background: var(--teal); color: white; padding: 6px 14px; border-radius: 30px; font-weight: 800; font-size: 12px; border: none; cursor: pointer; }
 
-        /* FOOTER */
         .app-footer { flex-shrink: 0; width: 100%; z-index: 99; background: var(--navy); box-shadow: 0 -4px 10px rgba(0,0,0,0.1); padding: 10px 16px; height: var(--footer-height); display: flex; align-items: center; }
         .app-footer-tabs { display: flex; justify-content: space-around; align-items: center; overflow-x: auto; padding: 4px 2px; max-width: 600px; margin: 0 auto; width: 100%; scrollbar-width: none; }
         .app-footer-tabs::-webkit-scrollbar { display: none; }
@@ -119,7 +117,6 @@
         .app-footer-tab .tab-badge { position: absolute; top: -2px; right: -4px; width: 8px; height: 8px; background-color: var(--red-error); border-radius: 50%; border: 1px solid var(--navy); display: none; }
         .app-footer-tab .tab-badge.show { display: block; }
 
-        /* TAB WRAPPER */
         .tab-content-wrapper { display: none; height: 100dvh; width: 100%; flex-direction: column; }
         .tab-content-wrapper.active { display: flex; }
         .back-button { display: none; color: white; font-size: 14px; font-weight: 800; padding: 10px 16px; cursor: pointer; background: var(--navy); border: none; border-radius: 40px; align-items: center; gap: 8px; width: auto; min-height: 42px; box-shadow: 0 4px 15px rgba(10, 37, 64, 0.2); transition: 0.3s; position: fixed; bottom: 90px; left: 16px; z-index: 50; }
@@ -129,7 +126,6 @@
         .tab-scroll-area { flex: 1; overflow-y: auto; padding: 16px; padding-bottom: calc(var(--footer-height) + 20px); width: 100%; max-width: 800px; margin: 0 auto; }
         .tab-scroll-area * { font-weight: 700; }
 
-        /* CLASS HEADER */
         .class-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
         .class-header h2 { color: var(--navy); font-size: 20px; font-weight: 900; }
         .class-header .class-header-menu { position: relative; cursor: pointer; font-size: 22px; color: var(--gold); }
@@ -158,7 +154,7 @@
         .class-content { display: none; }
         .class-content.active { display: block; }
 
-        .content-card { background: var(--bg-white); border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 16px; cursor: default; transition: 0.2s; }
+        .content-card { background: var(--bg-white); border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 16px; cursor: default; transition: 0.2s; position: relative; }
         .content-card .thumbnail { width: 100%; height: 160px; background: #1a1a2e; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 32px; margin-bottom: 12px; position: relative; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
         .content-card .thumbnail .duration { position: absolute; bottom: 10px; right: 10px; background: rgba(0,0,0,0.7); padding: 2px 8px; border-radius: 6px; font-size: 12px; font-weight: 700; }
         .content-card .meta h4 { font-size: 16px; font-weight: 800; color: var(--text-dark); margin-bottom: 4px; user-select: none; -webkit-user-select: none; }
@@ -195,7 +191,6 @@
         .exam-timer .timer { font-size: 20px; color: var(--gold); font-family: monospace; animation: countdown 1s infinite; font-weight: 900; }
         .exam-timer.warning .timer { color: var(--red-error); }
 
-        /* SOCIAL POSTS */
         .post-card { background: var(--bg-white); border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 16px; }
         .post-card .post-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
         .post-card .post-header .post-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--teal); display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 18px; overflow: hidden; }
@@ -214,7 +209,6 @@
         .post-card .post-comments .comment-input { width: 100%; padding: 8px; border: 1px solid #eee; border-radius: 8px; margin-top: 8px; font-size: 14px; font-weight: 700; }
         .post-card .post-comments .comment-send { background: var(--teal); color: white; border: none; padding: 4px 16px; border-radius: 20px; font-weight: 800; cursor: pointer; margin-top: 4px; }
 
-        /* TEACHER CARD */
         .join-header h2 { color: var(--navy); font-size: 20px; font-weight: 900; margin-bottom: 16px; }
         .teacher-card { background: var(--bg-white); border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
         .teacher-card .info .name { font-weight: 800; color: var(--text-dark); font-size: 16px; }
@@ -222,7 +216,6 @@
         .teacher-card .join-btn { background: var(--teal); color: white; border: none; padding: 6px 16px; border-radius: 30px; font-weight: 800; cursor: pointer; }
         .teacher-card .join-btn.joined { background: var(--green-success); }
 
-        /* BOOKS */
         .books-header h2 { color: var(--navy); font-size: 20px; font-weight: 900; margin-bottom: 12px; }
         .books-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
         .book-card { background: var(--bg-white); border: 1px solid #e2e8f0; border-radius: var(--border-radius-card); padding: 16px; text-align: center; position: relative; user-select: none; -webkit-user-select: none; }
@@ -237,7 +230,6 @@
         .book-card:hover .delete-btn { display: block; }
         .book-card .watermark { position: absolute; bottom: 8px; right: 12px; color: rgba(0,0,0,0.1); font-size: 8px; font-weight: 700; pointer-events: none; user-select: none; }
 
-        /* JOBS */
         .jobs-header h2 { color: var(--navy); font-size: 20px; font-weight: 900; margin-bottom: 16px; }
         .job-card { background: var(--bg-white); border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 12px; }
         .job-card .title { font-weight: 800; color: var(--text-dark); font-size: 16px; }
@@ -245,7 +237,6 @@
         .job-card .details span { background: #f8fafc; padding: 2px 8px; border-radius: 12px; }
         .job-card .apply-btn { background: var(--green-success); color: white; border: none; padding: 6px 16px; border-radius: 30px; font-weight: 800; cursor: pointer; margin-top: 8px; width: 100%; }
 
-        /* RESEARCH */
         .research-header h2 { color: var(--navy); font-size: 20px; font-weight: 900; margin-bottom: 16px; }
         .research-card { background: var(--bg-white); border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
         .research-card .info .title { font-weight: 800; color: var(--text-dark); font-size: 15px; }
@@ -255,7 +246,6 @@
         .research-card .tag.premium { background: var(--gold); color: var(--text-dark); }
         .research-card .read-btn { background: var(--teal); color: white; border: none; padding: 4px 14px; border-radius: 20px; font-weight: 800; cursor: pointer; }
 
-        /* PROFILE */
         .profile-card { background: var(--bg-white); border: 1px solid #e2e8f0; border-radius: var(--border-radius-card); padding: 20px; text-align: center; margin-bottom: 16px; }
         .profile-card .avatar-lg { width: 80px; height: 80px; border-radius: 50%; background: var(--navy); color: white; display: flex; align-items: center; justify-content: center; font-size: 40px; margin: 0 auto 12px; overflow: hidden; cursor: pointer; border: 3px solid var(--gold); }
         .profile-card .avatar-lg img { width: 100%; height: 100%; object-fit: cover; }
@@ -264,11 +254,9 @@
         .profile-actions .btn { background: var(--gold); color: var(--text-dark); border: none; padding: 12px; border-radius: 40px; font-weight: 800; width: 100%; margin-bottom: 10px; cursor: pointer; }
         .profile-actions .btn-logout { background: var(--red-error); color: white; }
 
-        /* ADMIN */
         #admin-tab .card { background: var(--bg-white); border-radius: var(--border-radius-card); padding: 20px; margin-bottom: 18px; border: 1px solid #e2e8f0; color: var(--text-dark); }
         #admin-tab .card h3 { margin-bottom: 15px; font-size: 20px; font-weight: 900; border-left: 4px solid var(--gold); padding-left: 12px; color: var(--navy); }
 
-        /* MODALS */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(5px); justify-content: center; align-items: center; z-index: 1000; }
         .modal.active { display: flex; animation: fadeIn 0.2s; }
         .modal-content { background: var(--bg-white); border-radius: var(--border-radius-card); padding: 25px; width: 90%; max-width: 420px; max-height: 85vh; overflow-y: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.2); color: var(--text-dark); }
@@ -312,7 +300,6 @@
         .card .form-group { margin-bottom: 12px; }
         .card label { display: block; font-weight: 800; margin-bottom: 4px; color: var(--text-dark); }
 
-        /* WALLET */
         .wallet-balance { background: var(--navy); border-radius: var(--border-radius-card); padding: 20px; text-align: center; color: white; margin-bottom: 16px; }
         .wallet-balance .amount { font-size: 36px; color: var(--gold); font-weight: 900; }
         .wallet-balance .label { font-size: 14px; color: rgba(255,255,255,0.7); font-weight: 700; }
@@ -737,58 +724,58 @@
                     <div class="form-group"><label>Time Limit (minutes)</label><input type="number" id="examTimeLimit" value="5" min="1" max="120"></div>
                     
                     <div style="background:var(--bg-light); border-radius:12px; padding:12px; margin-bottom:12px;">
-                        <p style="font-weight:800; color:var(--text-dark); margin-bottom:4px;">Q1: Question</p>
-                        <input type="text" id="examQ1" placeholder="Type your question..." style="width:100%; margin-bottom:6px; padding:8px; border:1px solid #eee; border-radius:8px;">
+                        <p style="font-weight:900; color:var(--text-dark); margin-bottom:4px;">Q1: Question</p>
+                        <input type="text" id="examQ1" placeholder="Type your question..." style="width:100%; margin-bottom:6px; padding:8px; border:1px solid #eee; border-radius:8px; font-weight:700;">
                         <div class="form-group">
-                            <label>Question Image (optional)</label>
+                            <label style="font-size:12px; font-weight:800;">Question Image (optional)</label>
                             <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-                                <input type="file" id="examQImg1" accept="image/*" style="flex:1; padding:6px; border:1px solid #eee; border-radius:6px;">
-                                <input type="text" id="examQImgUrl1" placeholder="Or paste image URL" style="flex:1; padding:6px; border:1px solid #eee; border-radius:6px;">
+                                <input type="file" id="examQImg1" accept="image/*" style="flex:1; padding:6px; border:1px solid #eee; border-radius:6px; font-weight:700;">
+                                <input type="text" id="examQImgUrl1" placeholder="Or paste image URL" style="flex:1; padding:6px; border:1px solid #eee; border-radius:6px; font-weight:700;">
                             </div>
                         </div>
                         <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
                             <div>
-                                <input type="text" id="examA1" placeholder="Option A" style="width:100%; padding:6px; border:1px solid #eee; border-radius:6px;">
+                                <input type="text" id="examA1" placeholder="Option A" style="width:100%; padding:6px; border:1px solid #eee; border-radius:6px; font-weight:700;">
                                 <div style="display:flex; gap:4px; margin-top:4px;">
-                                    <input type="file" id="examAImg1" accept="image/*" style="flex:1; padding:4px; border:1px solid #eee; border-radius:4px; font-size:11px;">
-                                    <input type="text" id="examAImgUrl1" placeholder="URL" style="flex:1; padding:4px; border:1px solid #eee; border-radius:4px; font-size:11px;">
+                                    <input type="file" id="examAImg1" accept="image/*" style="flex:1; padding:4px; border:1px solid #eee; border-radius:4px; font-size:11px; font-weight:700;">
+                                    <input type="text" id="examAImgUrl1" placeholder="URL" style="flex:1; padding:4px; border:1px solid #eee; border-radius:4px; font-size:11px; font-weight:700;">
                                 </div>
                             </div>
                             <div>
-                                <input type="text" id="examB1" placeholder="Option B" style="width:100%; padding:6px; border:1px solid #eee; border-radius:6px;">
+                                <input type="text" id="examB1" placeholder="Option B" style="width:100%; padding:6px; border:1px solid #eee; border-radius:6px; font-weight:700;">
                                 <div style="display:flex; gap:4px; margin-top:4px;">
-                                    <input type="file" id="examBImg1" accept="image/*" style="flex:1; padding:4px; border:1px solid #eee; border-radius:4px; font-size:11px;">
-                                    <input type="text" id="examBImgUrl1" placeholder="URL" style="flex:1; padding:4px; border:1px solid #eee; border-radius:4px; font-size:11px;">
+                                    <input type="file" id="examBImg1" accept="image/*" style="flex:1; padding:4px; border:1px solid #eee; border-radius:4px; font-size:11px; font-weight:700;">
+                                    <input type="text" id="examBImgUrl1" placeholder="URL" style="flex:1; padding:4px; border:1px solid #eee; border-radius:4px; font-size:11px; font-weight:700;">
                                 </div>
                             </div>
                             <div>
-                                <input type="text" id="examC1" placeholder="Option C" style="width:100%; padding:6px; border:1px solid #eee; border-radius:6px;">
+                                <input type="text" id="examC1" placeholder="Option C" style="width:100%; padding:6px; border:1px solid #eee; border-radius:6px; font-weight:700;">
                                 <div style="display:flex; gap:4px; margin-top:4px;">
-                                    <input type="file" id="examCImg1" accept="image/*" style="flex:1; padding:4px; border:1px solid #eee; border-radius:4px; font-size:11px;">
-                                    <input type="text" id="examCImgUrl1" placeholder="URL" style="flex:1; padding:4px; border:1px solid #eee; border-radius:4px; font-size:11px;">
+                                    <input type="file" id="examCImg1" accept="image/*" style="flex:1; padding:4px; border:1px solid #eee; border-radius:4px; font-size:11px; font-weight:700;">
+                                    <input type="text" id="examCImgUrl1" placeholder="URL" style="flex:1; padding:4px; border:1px solid #eee; border-radius:4px; font-size:11px; font-weight:700;">
                                 </div>
                             </div>
                             <div>
-                                <input type="text" id="examD1" placeholder="Option D" style="width:100%; padding:6px; border:1px solid #eee; border-radius:6px;">
+                                <input type="text" id="examD1" placeholder="Option D" style="width:100%; padding:6px; border:1px solid #eee; border-radius:6px; font-weight:700;">
                                 <div style="display:flex; gap:4px; margin-top:4px;">
-                                    <input type="file" id="examDImg1" accept="image/*" style="flex:1; padding:4px; border:1px solid #eee; border-radius:4px; font-size:11px;">
-                                    <input type="text" id="examDImgUrl1" placeholder="URL" style="flex:1; padding:4px; border:1px solid #eee; border-radius:4px; font-size:11px;">
+                                    <input type="file" id="examDImg1" accept="image/*" style="flex:1; padding:4px; border:1px solid #eee; border-radius:4px; font-size:11px; font-weight:700;">
+                                    <input type="text" id="examDImgUrl1" placeholder="URL" style="flex:1; padding:4px; border:1px solid #eee; border-radius:4px; font-size:11px; font-weight:700;">
                                 </div>
                             </div>
                         </div>
                         <div style="margin-top:6px; display:flex; gap:10px; flex-wrap:wrap;">
                             <div><label style="font-size:13px; font-weight:800;">Correct Answer:</label>
-                                <select id="examAns1" style="padding:4px 8px; border-radius:6px; border:1px solid #eee;">
+                                <select id="examAns1" style="padding:4px 8px; border-radius:6px; border:1px solid #eee; font-weight:700;">
                                     <option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option>
                                 </select>
                             </div>
                         </div>
                         <div style="margin-top:6px;">
                             <label style="font-size:13px; font-weight:800;">Explanation (optional):</label>
-                            <input type="text" id="examExp1" placeholder="Explain why this is correct..." style="width:100%; padding:6px; border:1px solid #eee; border-radius:6px;">
+                            <input type="text" id="examExp1" placeholder="Explain why this is correct..." style="width:100%; padding:6px; border:1px solid #eee; border-radius:6px; font-weight:700;">
                             <div style="display:flex; gap:4px; margin-top:4px;">
-                                <input type="file" id="examExpImg1" accept="image/*" style="flex:1; padding:4px; border:1px solid #eee; border-radius:4px; font-size:11px;">
-                                <input type="text" id="examExpImgUrl1" placeholder="Image URL" style="flex:1; padding:4px; border:1px solid #eee; border-radius:4px; font-size:11px;">
+                                <input type="file" id="examExpImg1" accept="image/*" style="flex:1; padding:4px; border:1px solid #eee; border-radius:4px; font-size:11px; font-weight:700;">
+                                <input type="text" id="examExpImgUrl1" placeholder="Image URL" style="flex:1; padding:4px; border:1px solid #eee; border-radius:4px; font-size:11px; font-weight:700;">
                             </div>
                         </div>
                     </div>
@@ -875,16 +862,93 @@
         // ================================================================
         // TRANSLATIONS
         // ================================================================
-        const translations = { ... }; // Full translations object - included in complete code
+        const translations = {
+            en: {
+                home: "Home", class: "Class", books: "Books", job: "Job", research: "Research",
+                wallet: "Wallet", welcome_title: "Welcome back!", welcome_desc: "Your medical education ecosystem",
+                go_to_class: "Go to Class", trending: "Trending Content", apply_now: "Apply Now",
+                become_teacher: "Want to become a Verified Teacher?",
+                start_application: "Start your application to create your own class.",
+                create_group: "Create New Group", join_class: "Join Class", joined: "Joined",
+                followers: "Followers", online: "Online", public: "Public", private: "Private",
+                video: "Video", books: "Books", exam: "Exam", settings: "Settings",
+                go_live: "Go Live", invite: "Invite people to join", add_file: "Add file/content",
+                delete_file: "Delete selected files", boost: "Boost group (Coins)", wallet: "Wallet",
+                delete_group: "Delete group", study_mode: "Study Mode", exam_mode: "Exam Mode", 
+                buy_now: "Buy Now", job_vacancies: "Job Vacancies", apply_now_job: "Apply Now",
+                research_journals: "Research Journals", free: "Free", premium: "Premium",
+                profile: "Profile", premium_sub: "Premium: 600 ETB/month", logout: "Logout",
+                admin_panel: "Admin Panel", upload_files: "Upload Files", mock_exam_mgmt: "Mock Exam",
+                verify_teachers: "Verify Teachers", set_prices: "Set Prices", consultations: "Consultations",
+                analytics: "Analytics", subscription: "Premium Subscription", subscribe: "Subscribe Now",
+                send_payment: "Send Payment", submit_approval: "Submit for Approval",
+                apply_job_form: "Apply for Job", submit_application: "Submit Application",
+                comment: "Comment", share: "Share", post_comment: "Post Comment",
+                apply_creator: "Apply to Become a Verified Creator", submit_review: "Submit for Review",
+                create_new_group: "Create a New Class Group", group_name: "Group Name", 
+                group_desc: "Group Description", group_type: "Group Type", group_purpose: "Group Purpose",
+                teaching_class: "Teaching Class (Video, Books, Exam)", social_network: "Social Network (Text posts & Links only)",
+                upload_national_id: "Upload National ID", select_profession: "Select Profession",
+                upload_certificate: "Upload Certificate", select_university: "Select Graduated University",
+                wallet_title: "Group & Owner Wallet", balance: "Balance", withdraw: "Withdraw",
+                buy_coins: "Buy More Coins", edit_group: "Edit Group Info",
+                create_social_group: "Create Social Group", create_teaching_group: "Create Teaching Group",
+                my_groups: "My Groups", promote_admin: "Promote to Admin", mode: "Mode:",
+                watch: "Watch", read: "Read", publish: "Publish", save: "Save Changes",
+                deduct_coins: "💰 Deduct 6,000 Coins (Verification Fee)",
+                start: "▶️ Start Exam", explanation: "See Explanation", time_left: "Time Left:",
+                exam_submitted: "Exam submitted! Score: ", question: "Question",
+                correct: "Correct", incorrect: "Incorrect", time_up: "⏰ Time's Up!",
+                see_result: "See Result", your_answer: "Your Answer:", correct_answer: "Correct Answer:"
+            },
+            am: {
+                home: "መነሻ", class: "ክፍሌ", books: "መጻሕፍት", job: "ሥራ", research: "ምርምር",
+                wallet: "ኪስ ቦርሳ", welcome_title: "እንኳን ደህና መጡ!", welcome_desc: "የእርስዎ የህክምና ትምህርት ስነ-ምህዳር",
+                go_to_class: "ወደ ክፍል ይሂዱ", trending: "ተወዳጅ ይዘት", apply_now: "አሁኑኑ ይተግብሩ",
+                become_teacher: "የተረጋገጠ መምህር መሆን ይፈልጋሉ?",
+                start_application: "የራስዎን ክፍል ለመፍጠር ማመልከቻዎን ይጀምሩ",
+                create_group: "አዲስ ቡድን ይፍጠሩ", join_class: "ክፍል ይቀላቀሉ", joined: "ተቀላቅለዋል",
+                followers: "ተከታዮች", online: "ኦንላይን", public: "ህዝባዊ", private: "የግል",
+                video: "ቪዲዮ", books: "መጻሕፍት", exam: "ፈተና", settings: "ቅንብሮች",
+                go_live: "ቀጥታ ስርጭት ይሂዱ", invite: "ሰዎችን ይጋብዙ", add_file: "ፋይል/ይዘት ይጨምሩ",
+                delete_file: "የተመረጡ ፋይሎች ይሰርዙ", boost: "ቡድን ያሳድጉ (ሳንቲም)", wallet: "ኪስ ቦርሳ",
+                delete_group: "ቡድን ይሰርዙ", study_mode: "የጥናት ሁኔታ", exam_mode: "የፈተና ሁኔታ", 
+                buy_now: "አሁኑኑ ይግዙ", job_vacancies: "የሥራ እድሎች", apply_now_job: "አሁኑኑ ይተግብሩ",
+                research_journals: "የምርምር መጽሔቶች", free: "ነጻ", premium: "ፕሪሚየም",
+                profile: "መገለጫ", premium_sub: "ፕሪሚየም: 600 ETB/በወር", logout: "ውጣ",
+                admin_panel: "የአስተዳዳሪ ፓነል", upload_files: "ፋይሎች ይስቀሉ", mock_exam_mgmt: "የሙከራ ፈተና",
+                verify_teachers: "መምህራን ያረጋግጡ", set_prices: "ዋጋ ያዘጋጁ", consultations: "ምክክር",
+                analytics: "ትንተና", subscription: "ፕሪሚየም ምዝገባ", subscribe: "አሁኑኑ ይመዝገቡ",
+                send_payment: "ክፍያ ይላኩ", submit_approval: "ለማጽደቅ ይላኩ",
+                apply_job_form: "ለሥራ ይተግብሩ", submit_application: "መጠይቅ ይላኩ",
+                comment: "አስተያየት", share: "ያጋሩ", post_comment: "አስተያየት ይለጥፉ",
+                apply_creator: "የተረጋገጠ ፈጣሪ ለመሆን ያመልክቱ", submit_review: "ለግምገማ ያስገቡ",
+                create_new_group: "አዲስ የክፍል ቡድን ይፍጠሩ", group_name: "የቡድን ስም", 
+                group_desc: "የቡድን መግለጫ", group_type: "የቡድን አይነት", group_purpose: "የቡድን ዓላማ",
+                teaching_class: "የማስተማሪያ ክፍል (ቪዲዮ፣ መጻሕፍት፣ ፈተና)", social_network: "ማህበራዊ አውታር (ጽሑፍ እና አገናኞች ብቻ)",
+                upload_national_id: "ብሄራዊ መታወቂያ ይስቀሉ", select_profession: "ሙያ ይምረጡ",
+                upload_certificate: "የምስክር ወረቀት ይስቀሉ", select_university: "የተመረቁበት ዩኒቨርሲቲ ይምረጡ",
+                wallet_title: "የቡድን እና የባለቤት ኪስ ቦርሳ", balance: "ቀሪ ሂሳብ", withdraw: "አውጣ",
+                buy_coins: "ተጨማሪ ሳንቲም ይግዙ", edit_group: "የቡድን መረጃ ያርትዑ",
+                create_social_group: "ማህበራዊ ቡድን ይፍጠሩ", create_teaching_group: "የማስተማሪያ ቡድን ይፍጠሩ",
+                my_groups: "የኔ ቡድኖች", promote_admin: "ወደ አስተዳዳሪ ከፍ አድርግ", mode: "ሁኔታ:",
+                watch: "ተመልከት", read: "አንብብ", publish: "አሳትም", save: "አስቀምጥ",
+                deduct_coins: "💰 6,000 ሳንቲም ይቀንሱ (የማረጋገጫ ክፍያ)",
+                start: "▶️ ፈተና ጀምር", explanation: "ማብራሪያ ይመልከቱ", time_left: "የተረፈ ጊዜ:",
+                exam_submitted: "ፈተናው ተልኳል! ውጤት: ", question: "ጥያቄ",
+                correct: "ትክክል", incorrect: "ስህተት", time_up: "⏰ ጊዜው አልቋል!",
+                see_result: "ውጤት ይመልከቱ", your_answer: "የእርስዎ መልስ:", correct_answer: "ትክክለኛው መልስ:"
+            }
+        };
 
-        // ================================================================
-        // UTILITY FUNCTIONS
-        // ================================================================
         function t(key) { 
             const translation = translations[AppState.lang]?.[key];
             return translation || key;
         }
 
+        // ================================================================
+        // UTILITY FUNCTIONS
+        // ================================================================
         function showToast(msg, type = 'success') {
             const t = document.getElementById('toast');
             if (!t) return;
@@ -987,7 +1051,6 @@
             else if (tabId === 'wallet') id = 'wallet-tab';
             else if (tabId === 'group-feed') {
                 id = 'group-feed';
-                // Check if group is social type
                 const group = AppState.groups.find(g => g.id === specificGroupId);
                 if (group && group.group_purpose === 'social') {
                     id = 'social-group-feed';
@@ -1030,18 +1093,14 @@
                         statsSpans[1].innerText = group.online || 0;
                     }
                     
-                    // Set up Go Live button
                     const goLiveBtn = document.getElementById(`${prefix}GoLiveBtn`);
                     if (goLiveBtn) {
                         goLiveBtn.style.display = AppState.isGroupOwner || AppState.isAdmin ? 'flex' : 'none';
                     }
                     
-                    // Show/hide tabs based on group type
                     if (isSocial) {
-                        // Social group - only show posts
                         loadSocialPosts(specificGroupId);
                     } else {
-                        // Teaching group - show video, books, exam tabs
                         loadGroupContent(specificGroupId, 'videos');
                         loadGroupContent(specificGroupId, 'books');
                         loadGroupContent(specificGroupId, 'exam');
@@ -1064,7 +1123,7 @@
         }
 
         // ================================================================
-        // AUTHENTICATION - COMPLETE FIX
+        // AUTHENTICATION
         // ================================================================
         async function checkSession() {
             if (AppState.authCheckDone) return;
@@ -1076,7 +1135,6 @@
                     AppState.userId = session.user.id;
                     AppState.currentUser = session.user;
                     
-                    // Check if user exists in users table
                     const { data: userData, error: userError } = await sb
                         .from('users')
                         .select('is_admin, is_teacher, coin_balance, profile_pic_url')
@@ -1084,7 +1142,6 @@
                         .single();
                     
                     if (userError && userError.code === 'PGRST116') {
-                        // User doesn't exist, create one
                         await sb.from('users').insert({
                             user_id: AppState.userId,
                             email: session.user.email,
@@ -1104,13 +1161,11 @@
                         AppState.profilePicUrl = userData.profile_pic_url || 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app-assets/1780156694418.png';
                     }
                     
-                    // Special admin override
                     if (session.user.email === 'drtesfayekebede@gmail.com') { 
                         AppState.isAdmin = true; 
                         AppState.isTeacher = true; 
                     }
                     
-                    // Load groups
                     const { data: groupData, error: groupError } = await sb
                         .from('groups')
                         .select('*')
@@ -1122,11 +1177,9 @@
                         AppState.groups = []; 
                     }
                     
-                    // Show app
                     document.getElementById('appContent').style.display = 'flex';
                     document.getElementById('loadingOverlay').style.display = 'none';
                     
-                    // Update UI based on role
                     const adminTab = document.getElementById('adminTabBtn');
                     if (adminTab) {
                         adminTab.style.display = AppState.isAdmin ? 'flex' : 'none';
@@ -1142,13 +1195,11 @@
                         el.style.display = (AppState.isAdmin || AppState.isTeacher) ? 'block' : 'none';
                     });
                     
-                    // Welcome message
                     const welcomeText = document.getElementById('welcomeText');
                     if (welcomeText) {
                         welcomeText.innerText = `👋 Welcome back, ${session.user.email.split('@')[0]}!`;
                     }
                     
-                    // Profile
                     const profileName = document.getElementById('profileName');
                     if (profileName) {
                         profileName.innerText = session.user.email.split('@')[0];
@@ -1169,7 +1220,6 @@
                         profileImageLarge.src = AppState.profilePicUrl;
                     }
                     
-                    // Dropdown menu with logout
                     const dropdownItems = document.getElementById('dropdownItems');
                     if (dropdownItems) {
                         dropdownItems.innerHTML = `
@@ -1179,12 +1229,10 @@
                         `;
                     }
                     
-                    // Start heartbeat
                     if (AppState.currentGroupId) {
                         startHeartbeat(AppState.currentGroupId);
                     }
                     
-                    // Start trending updates
                     startTrendingUpdates();
                     
                     setTimeout(() => translatePage(), 100);
@@ -1250,7 +1298,7 @@
         }
 
         // ================================================================
-        // LOGOUT - COMPLETE FIX
+        // LOGOUT
         // ================================================================
         async function logout() {
             if (AppState.isLoggingOut) return;
@@ -1259,10 +1307,8 @@
             showToast('Logging out...', 'info');
             
             try {
-                // Clear Supabase session
                 await sb.auth.signOut();
                 
-                // Clear AppState
                 AppState.userId = null;
                 AppState.isAdmin = false;
                 AppState.isTeacher = false;
@@ -1271,18 +1317,13 @@
                 AppState.currentGroupId = null;
                 AppState.coinBalance = 0;
                 
-                // Clear intervals
                 stopHeartbeat();
                 stopTrendingUpdates();
                 stopExamTimer();
                 
-                // Hide app content
                 document.getElementById('appContent').style.display = 'none';
-                
-                // Show auth modal
                 showAuthModal();
                 
-                // Clear toast
                 const toast = document.getElementById('toast');
                 if (toast) toast.classList.remove('show');
                 
@@ -1297,7 +1338,7 @@
         }
 
         // ================================================================
-        // HEARTBEAT FOR ONLINE COUNT
+        // HEARTBEAT
         // ================================================================
         function startHeartbeat(groupId) {
             stopHeartbeat();
@@ -1343,13 +1384,13 @@
         }
 
         // ================================================================
-        // TRENDING GROUPS - DYNAMIC RANKING
+        // TRENDING GROUPS
         // ================================================================
         function startTrendingUpdates() {
             stopTrendingUpdates();
             trendingUpdateInterval = setInterval(() => {
                 updateTrendingGroups();
-            }, 600000); // Every 10 minutes
+            }, 600000);
         }
         
         function stopTrendingUpdates() {
@@ -1415,7 +1456,6 @@
             try {
                 let profile_pic_url = 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app-assets/1780156694418.png';
                 
-                // Upload profile pic if selected
                 if (picInput && picInput.files && picInput.files[0]) {
                     const file = picInput.files[0];
                     const fileExt = file.name.split('.').pop();
@@ -1547,7 +1587,7 @@
         }
 
         // ================================================================
-        // LOAD GROUP CONTENT (Teaching Groups)
+        // LOAD GROUP CONTENT
         // ================================================================
         async function loadGroupContent(groupId, contentType) {
             const container = document.getElementById(contentType);
@@ -1582,7 +1622,7 @@
                 const isOwner = AppState.isGroupOwner || AppState.isAdmin;
 
                 container.innerHTML = data.map(item => `
-                    <div class="content-card" style="position:relative; ${contentType === 'videos' ? '' : ''}">
+                    <div class="content-card" style="position:relative;">
                         ${isOwner ? `<button class="delete-btn" onclick="deleteContent('${item.id}', '${contentType}')">✕</button>` : ''}
                         <div class="thumbnail" style="${item.cover_url ? `background: url('${item.cover_url}') center/cover;` : ''}">
                             ${contentType === 'videos' ? `<i class="fas fa-play-circle"></i>` : `<i class="fas fa-book"></i>`}
@@ -1622,7 +1662,6 @@
         // ================================================================
         async function loadExamsIntoContainer(container, groupId) {
             try {
-                // Get all 4 exam categories
                 const categories = ['mock_exams', 'exit_exams', 'ngat_exams', 'ermp_exams'];
                 const labels = ['Mock Exam', 'Exit Exam', 'NGAT Exam', 'ERMP Exam'];
                 const icons = ['📝', '🎓', '📊', '🏥'];
@@ -1659,7 +1698,6 @@
                     return;
                 }
                 
-                // Group by category for tabs
                 const grouped = {};
                 allExams.forEach(exam => {
                     if (!grouped[exam.category_label]) grouped[exam.category_label] = [];
@@ -1715,7 +1753,7 @@
         }
 
         // ================================================================
-        // START EXAM (Supports all 4 categories)
+        // START EXAM
         // ================================================================
         async function startExam(tableName, examId) {
             stopExamTimer();
@@ -1791,7 +1829,6 @@
             const selected = examAnswered[currentQuestionIndex];
             const isExamMode = examMode === 'exam';
 
-            // Build question HTML with images
             let questionHtml = q.question;
             if (q.questionImage) {
                 questionHtml += `<br><img src="${q.questionImage}" alt="Question image" style="max-width:100%; border-radius:8px; margin-top:8px;">`;
@@ -1894,7 +1931,6 @@
                 });
             }
 
-            // Show explanation in study mode
             const expDiv = document.getElementById('examExplanation');
             if (expDiv && examMode === 'study') {
                 expDiv.style.display = 'block';
@@ -1904,7 +1940,6 @@
                 expDiv.innerHTML = html;
             }
             
-            // Update counters
             const correctSpan = document.getElementById('examCorrectCount');
             const incorrectSpan = document.getElementById('examIncorrectCount');
             
@@ -2215,7 +2250,6 @@
                     </div>
                 `).join('');
                 
-                // Load comments for each post
                 data.forEach(post => {
                     loadPostComments(post.id);
                 });
@@ -2269,7 +2303,6 @@
             let image_url = null;
             let link_url = linkInput?.value || null;
             
-            // Upload image if selected
             if (imageInput && imageInput.files && imageInput.files[0]) {
                 const file = imageInput.files[0];
                 const fileExt = file.name.split('.').pop();
@@ -2353,7 +2386,7 @@
         }
 
         // ================================================================
-        // SUBMIT ADD FILE (Video, Book, Exam)
+        // SUBMIT ADD FILE
         // ================================================================
         async function submitAddFile() {
             const typeSelect = document.getElementById('addFileType');
@@ -2387,7 +2420,6 @@
                     const ans = document.getElementById(`examAns${i}`)?.value;
                     const exp = document.getElementById(`examExp${i}`)?.value;
                     
-                    // Get images
                     const qImgFile = document.getElementById(`examQImg${i}`)?.files[0];
                     const qImgUrl = document.getElementById(`examQImgUrl${i}`)?.value;
                     let qImg = qImgUrl || null;
@@ -2404,7 +2436,6 @@
                         }
                     }
                     
-                    // Get option images
                     const optionImages = [];
                     for (let optIdx = 0; optIdx < 4; optIdx++) {
                         const optLetter = String.fromCharCode(65+optIdx);
@@ -2425,7 +2456,6 @@
                         optionImages.push(img);
                     }
                     
-                    // Get explanation image
                     const expImgFile = document.getElementById(`examExpImg${i}`)?.files[0];
                     const expImgUrl = document.getElementById(`examExpImgUrl${i}`)?.value;
                     let expImg = expImgUrl || null;
@@ -2455,7 +2485,6 @@
                     });
                 }
 
-                // Map category to table name
                 const tableMap = {
                     'mock': 'mock_exams',
                     'exit': 'exit_exams',
@@ -2493,7 +2522,6 @@
                 return;
             }
 
-            // Handle Video/Book upload
             const titleInput = document.getElementById('addFileTitle');
             const urlInput = document.getElementById('addFileUrl');
             const authorInput = document.getElementById('addFileAuthor');
@@ -2562,7 +2590,7 @@
         }
 
         // ================================================================
-        // UPLOAD FILE TO STORAGE - FIXED
+        // UPLOAD FILE TO STORAGE
         // ================================================================
         async function uploadFileToStorage() {
             const fileInput = document.getElementById('addFileInput');
@@ -2586,12 +2614,10 @@
                 const fileExt = file.name.split('.').pop().toLowerCase();
                 const fileName = `uploads/${AppState.userId}_${Date.now()}.${fileExt}`;
                 
-                // Check if bucket exists
                 const { data: buckets } = await sb.storage.listBuckets();
                 const bucketExists = buckets?.some(b => b.name === 't-hub-uploads');
                 
                 if (!bucketExists) {
-                    // Try to create bucket
                     await sb.storage.createBucket('t-hub-uploads', { public: true });
                 }
                 
@@ -2604,7 +2630,6 @@
                     });
                 
                 if (error) {
-                    // Try fallback to app-assets
                     console.log('Trying fallback to app-assets...');
                     const altFileName = `uploads/${AppState.userId}_${Date.now()}.${fileExt}`;
                     const { data: altData, error: altError } = await sb.storage
@@ -2644,14 +2669,13 @@
         }
 
         // ================================================================
-        // GO LIVE - Google Meet + Notifications
+        // GO LIVE
         // ================================================================
         async function startGoLive() {
             const meetLink = 'https://meet.google.com/new';
             window.open(meetLink, '_blank');
             
             try {
-                // Create notification for all group members
                 const { error } = await sb.from('group_notifications').insert({
                     group_id: AppState.currentGroupId,
                     sender_id: AppState.userId,
@@ -2757,7 +2781,6 @@
                     .update({ is_read: true })
                     .eq('id', notifId);
                 
-                // Get the notification link
                 const { data } = await sb
                     .from('group_notifications')
                     .select('link')
@@ -2780,13 +2803,11 @@
         // ================================================================
         async function loadWallet() {
             try {
-                // Update balance
                 const balanceEl = document.getElementById('walletBalanceDisplay');
                 if (balanceEl) {
                     balanceEl.textContent = `${AppState.coinBalance || 0} T-Hub Coins`;
                 }
                 
-                // Load transactions
                 const { data, error } = await sb
                     .from('transactions')
                     .select('*')
@@ -2816,7 +2837,7 @@
         }
 
         // ================================================================
-        // PROFILE PICTURE - CHANGE
+        // PROFILE PICTURE
         // ================================================================
         function changeProfilePic() {
             const input = document.createElement('input');
@@ -2839,14 +2860,12 @@
                     const { data: urlData } = sb.storage.from('t-hub-uploads').getPublicUrl(fileName);
                     const profilePicUrl = urlData.publicUrl;
                     
-                    // Update database
                     await sb.from('users')
                         .update({ profile_pic_url: profilePicUrl })
                         .eq('user_id', AppState.userId);
                     
                     AppState.profilePicUrl = profilePicUrl;
                     
-                    // Update all profile images
                     document.querySelectorAll('#profileImage, #profileImageLarge, .post-avatar img').forEach(img => {
                         if (img) img.src = profilePicUrl;
                     });
@@ -2886,12 +2905,10 @@
                     const { data: urlData } = sb.storage.from('t-hub-uploads').getPublicUrl(fileName);
                     const profilePicUrl = urlData.publicUrl;
                     
-                    // Update database
                     await sb.from('groups')
                         .update({ profile_pic_url: profilePicUrl })
                         .eq('id', AppState.currentGroupId);
                     
-                    // Update group avatar images
                     document.querySelectorAll('#groupAvatarImg, #socialGroupAvatarImg').forEach(img => {
                         if (img) img.src = profilePicUrl;
                     });
@@ -2906,7 +2923,7 @@
         }
 
         // ================================================================
-        // DELETE CONTENT - Long Press / Click
+        // DELETE CONTENT
         // ================================================================
         async function deleteContent(contentId, contentType) {
             if (!AppState.isGroupOwner && !AppState.isAdmin) {
@@ -2928,7 +2945,6 @@
                 
                 showToast('🗑️ Content deleted successfully!', 'success');
                 
-                // Reload content
                 const groupId = AppState.currentGroupId;
                 if (groupId) {
                     loadGroupContent(groupId, contentType);
@@ -2944,7 +2960,6 @@
         // ================================================================
         async function toggleFavorite(contentId, contentType) {
             try {
-                // Check if already favorited
                 const { data, error } = await sb
                     .from('user_favorites')
                     .select('*')
@@ -2956,7 +2971,6 @@
                 if (error && error.code !== 'PGRST116') throw error;
                 
                 if (data) {
-                    // Remove favorite
                     await sb.from('user_favorites')
                         .delete()
                         .eq('user_id', AppState.userId)
@@ -2964,7 +2978,6 @@
                         .eq('content_id', contentId);
                     showToast('⭐ Removed from favorites', 'info');
                 } else {
-                    // Add favorite
                     await sb.from('user_favorites').insert({
                         user_id: AppState.userId,
                         content_type: contentType,
@@ -2992,7 +3005,6 @@
             if (standard) standard.style.display = type === 'exam' ? 'none' : 'block';
             if (examBuilder) examBuilder.style.display = type === 'exam' ? 'block' : 'none';
             
-            // Show/hide author field for books
             const authorField = document.getElementById('addFileAuthor')?.closest('.form-group');
             if (authorField) {
                 authorField.style.display = type === 'book' ? 'block' : 'none';
@@ -3203,10 +3215,6 @@
             }
         }
 
-        function filterBooks(category, btn) {
-            // Removed - books now show all together with search
-        }
-
         function showPaymentModal() {
             closeModal('depositModal');
             const payAmount = document.getElementById('payAmount');
@@ -3415,7 +3423,7 @@
         }
 
         // ================================================================
-        // CLOSE DROPDOWNS ON OUTSIDE CLICK
+        // CLOSE DROPDOWNS
         // ================================================================
         document.addEventListener('click', function(e) {
             const menu = document.getElementById('dropdownMenu');
@@ -3440,9 +3448,6 @@
             }
         });
 
-        // ================================================================
-        // PROFILE AVATAR CLICK
-        // ================================================================
         document.addEventListener('DOMContentLoaded', function() {
             const avatar = document.getElementById('profileAvatar');
             if (avatar) {
@@ -3453,7 +3458,6 @@
                 });
             }
             
-            // Check session on load
             document.getElementById('loadingOverlay').style.display = 'flex';
             checkSession();
         });
