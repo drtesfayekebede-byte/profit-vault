@@ -961,164 +961,252 @@
             openTabContent(tabId);
         }
 
-        // ================================================================
-        // MY CLASS FUNCTIONS
-        // ================================================================
-        async function toggleGroupJoin(btn) {
-            const card = btn.closest('.teacher-card');
-            if (!card) return showToast('Group not found.', 'error');
+// ================================================================
+// TOGGLE GROUP JOIN - FIXED
+// ================================================================
+async function toggleGroupJoin(btn) {
+    const card = btn.closest('.teacher-card');
+    if (!card) {
+        showToast('⚠️ Group card not found.', 'error');
+        return;
+    }
+    
+    const nameEl = card.querySelector('.name');
+    if (!nameEl) {
+        showToast('⚠️ Group name not found.', 'error');
+        return;
+    }
+    
+    // Extract group name (remove emojis and special chars)
+    let groupName = nameEl.textContent.trim();
+    groupName = groupName.replace('✓', '').trim();
+    groupName = groupName.replace(/\s+/g, ' ');
+    
+    console.log('🔍 Searching for group:', groupName);
+    console.log('📚 Available groups:', AppState.groups.map(g => g.name));
+    
+    // Find the group by name (case-insensitive)
+    let group = AppState.groups.find(g => {
+        const gName = g.name.toLowerCase().trim();
+        const bName = groupName.toLowerCase().trim();
+        return gName === bName || 
+               gName.includes(bName) || 
+               bName.includes(gName);
+    });
+    
+    // If user owns this group (Owner button)
+    if (btn.innerText.includes('Owner')) {
+        showToast('📌 This is your group!', 'info');
+        return;
+    }
+    
+    // If group not found in my groups
+    if (!group) {
+        showToast('📌 You are now following this group!', 'success');
+        btn.innerText = '✅ Joined';
+        btn.className = 'join-btn joined';
+        return;
+    }
+
+    const currentFollowers = group.followers || 0;
+    const isJoined = btn.innerText.includes('Joined') || btn.innerText.includes('✅');
+    
+    try {
+        if (!isJoined) {
+            // Join the group
+            const newFollowers = currentFollowers + 1;
+            const { error } = await sb.from('groups').update({ followers: newFollowers }).eq('id', group.id);
             
-            const nameEl = card.querySelector('.name');
-            if (!nameEl) return showToast('Group not found.', 'error');
+            if (error) throw error;
             
-            const groupName = nameEl.textContent.replace('✓', '').trim();
-            const group = AppState.groups.find(g => g.name === groupName);
+            group.followers = newFollowers;
+            btn.innerText = '✅ Joined';
+            btn.className = 'join-btn joined';
+            showToast('✅ You have joined this class!', 'success');
             
-            if (!group) {
-                showToast('📌 You are now following this group!', 'success');
-                btn.innerText = '✅ Joined';
-                btn.className = 'join-btn joined';
-                return;
+            // Update banner stats
+            const statsSpans = document.querySelectorAll('#group-feed .group-banner .stats span');
+            if (statsSpans.length >= 2) {
+                statsSpans[0].innerText = newFollowers;
             }
-
-            const currentFollowers = group.followers || 0;
-            const isJoined = btn.innerText.includes('Joined');
             
-            if (!isJoined) {
-                const newFollowers = currentFollowers + 1;
-                const { error } = await sb.from('groups').update({ followers: newFollowers }).eq('id', group.id);
-                if (!error) {
-                    group.followers = newFollowers;
-                    btn.innerText = '✅ Joined';
-                    btn.className = 'join-btn joined';
-                    showToast('You have joined this class!', 'success');
-                    const statsSpans = document.querySelectorAll('#group-feed .group-banner .stats span');
-                    if (statsSpans.length >= 2) statsSpans[0].innerText = newFollowers;
-                }
-            } else {
-                const newFollowers = Math.max(0, currentFollowers - 1);
-                const { error } = await sb.from('groups').update({ followers: newFollowers }).eq('id', group.id);
-                if (!error) {
-                    group.followers = newFollowers;
-                    btn.innerText = '➕ Join Class';
-                    btn.className = 'join-btn';
-                    showToast('Left the class.', 'info');
-                    const statsSpans = document.querySelectorAll('#group-feed .group-banner .stats span');
-                    if (statsSpans.length >= 2) statsSpans[0].innerText = newFollowers;
-                }
-            }
-        }
-
-        // ================================================================
-        // LOAD GROUP CONTENT
-        // ================================================================
-        async function loadGroupContent(groupId, contentType) {
-            const container = document.getElementById(contentType);
-            if (!container) return;
-
-            container.innerHTML = `<div class="loading">Loading ${contentType}...</div>`;
-
-            try {
-                const { data, error } = await sb
-                    .from('group_content')
-                    .select('*')
-                    .eq('group_id', groupId)
-                    .eq('content_type', contentType === 'exam' ? 'exam' : contentType === 'videos' ? 'video' : 'ppt')
-                    .order('created_at', { ascending: false });
-
-                if (error) {
-                    console.error('Load error:', error);
-                    container.innerHTML = `<div class="loading" style="color:var(--red-error);">Error loading content</div>`;
-                    return;
-                }
-
-                if (!data || data.length === 0) {
-                    container.innerHTML = `<div class="loading" style="color:var(--text-muted);">No ${contentType} uploaded yet.</div>`;
-                    return;
-                }
-
-                if (contentType === 'exam') {
-                    await loadExamsIntoContainer(container, groupId);
-                } else {
-                    container.innerHTML = data.map(item => `
-                        <div class="content-card">
-                            <div class="thumbnail">
-                                ${item.file_url ? `<i class="fas fa-play-circle"></i><span class="duration">Content</span>` : `<i class="fas fa-file-alt"></i>`}
-                            </div>
-                            <div class="meta">
-                                <h4>${item.title}</h4>
-                                <p>Uploaded • ${new Date(item.created_at).toLocaleDateString()}</p>
-                            </div>
-                            <div class="actions">
-                                <button onclick="toggleLike(this)"><i class="fas fa-heart"></i> <span>${item.likes || 0}</span></button>
-                                <button onclick="toggleComment(this)"><i class="fas fa-comment"></i> <span>0</span></button>
-                                <button onclick="shareContent()"><i class="fas fa-share"></i> <span data-key="share">Share</span></button>
-                            </div>
-                            <div class="comment-section">
-                                <div class="comment-list"></div>
-                                <textarea placeholder="Add a comment..."></textarea>
-                                <button class="send-btn" onclick="showToast('Comment posted!', 'success')" data-key="post_comment">Post Comment</button>
-                            </div>
-                        </div>
-                    `).join('');
-                }
-                setTimeout(() => translatePage(), 50);
-            } catch (err) {
-                console.error(err);
-                container.innerHTML = `<div class="loading" style="color:var(--red-error);">Failed to load content</div>`;
+        } else {
+            // Leave the group
+            const newFollowers = Math.max(0, currentFollowers - 1);
+            const { error } = await sb.from('groups').update({ followers: newFollowers }).eq('id', group.id);
+            
+            if (error) throw error;
+            
+            group.followers = newFollowers;
+            btn.innerText = '➕ Join Class';
+            btn.className = 'join-btn';
+            showToast('📌 Left the class.', 'info');
+            
+            const statsSpans = document.querySelectorAll('#group-feed .group-banner .stats span');
+            if (statsSpans.length >= 2) {
+                statsSpans[0].innerText = newFollowers;
             }
         }
+    } catch (err) {
+        console.error('Error:', err);
+        showToast('❌ Operation failed: ' + err.message, 'error');
+    }
+}
 
-        async function loadExamsIntoContainer(container, groupId) {
-            try {
-                const { data, error } = await sb
-                    .from('mock_exams')
-                    .select('*')
-                    .eq('group_id', groupId)
-                    .order('created_at', { ascending: false });
+// ================================================================
+// LOAD GROUP CONTENT - COMPLETELY FIXED
+// ================================================================
+async function loadGroupContent(groupId, contentType) {
+    const container = document.getElementById(contentType);
+    if (!container) return;
 
-                if (error) throw error;
+    container.innerHTML = `<div class="loading">Loading ${contentType}...</div>`;
 
-                if (!data || data.length === 0) {
-                    container.innerHTML = `<div class="loading" style="color:var(--text-muted);">📝 No exams created yet.</div>`;
-                    return;
-                }
+    try {
+        // ✅ FIXED: Handle exams separately - don't query group_content
+        if (contentType === 'exam') {
+            // Load exams directly from mock_exams table
+            await loadExamsIntoContainer(container, groupId);
+            return;
+        }
 
-                container.innerHTML = `
-                    <div class="exam-toggle">
-                        <span data-key="mode">Mode:</span>
-                        <button class="toggle-btn study" id="examModeBtn" onclick="toggleExamMode()" data-key="study_mode">📖 Study Mode</button>
+        // For videos and PPTs, query group_content
+        const { data, error } = await sb
+            .from('group_content')
+            .select('*')
+            .eq('group_id', groupId)
+            .eq('content_type', contentType === 'videos' ? 'video' : 'ppt')
+            .order('created_at', { ascending: false });
+
+        if (error) {
+            console.error('Load error:', error);
+            container.innerHTML = `<div class="loading" style="color:var(--red-error);">Error loading content</div>`;
+            return;
+        }
+
+        if (!data || data.length === 0) {
+            container.innerHTML = `<div class="loading" style="color:var(--text-muted);">No ${contentType} uploaded yet.</div>`;
+            return;
+        }
+
+        // Render videos or PPTs
+        container.innerHTML = data.map(item => `
+            <div class="content-card">
+                <div class="thumbnail">
+                    ${item.file_url ? `<i class="fas fa-play-circle"></i><span class="duration">Content</span>` : `<i class="fas fa-file-alt"></i>`}
+                </div>
+                <div class="meta">
+                    <h4>${item.title}</h4>
+                    <p>Uploaded • ${new Date(item.created_at).toLocaleDateString()}</p>
+                </div>
+                <div class="actions">
+                    <button onclick="toggleLike(this)"><i class="fas fa-heart"></i> <span>${item.likes || 0}</span></button>
+                    <button onclick="toggleComment(this)"><i class="fas fa-comment"></i> <span>0</span></button>
+                    <button onclick="shareContent()"><i class="fas fa-share"></i> <span data-key="share">Share</span></button>
+                </div>
+                <div class="comment-section">
+                    <div class="comment-list"></div>
+                    <textarea placeholder="Add a comment..."></textarea>
+                    <button class="send-btn" onclick="showToast('Comment posted!', 'success')" data-key="post_comment">Post Comment</button>
+                </div>
+            </div>
+        `).join('');
+        
+        setTimeout(() => translatePage(), 50);
+        
+    } catch (err) {
+        console.error(err);
+        container.innerHTML = `<div class="loading" style="color:var(--red-error);">Failed to load content</div>`;
+    }
+}
+
+// ================================================================
+// LOAD EXAMS INTO CONTAINER - IMPROVED
+// ================================================================
+async function loadExamsIntoContainer(container, groupId) {
+    try {
+        const { data, error } = await sb
+            .from('mock_exams')
+            .select('*')
+            .eq('group_id', groupId)
+            .order('created_at', { ascending: false });
+
+        if (error) {
+            console.error('Error loading exams:', error);
+            container.innerHTML = `<div class="loading" style="color:var(--red-error);">Failed to load exams</div>`;
+            return;
+        }
+
+        if (!data || data.length === 0) {
+            container.innerHTML = `
+                <div class="exam-toggle">
+                    <span data-key="mode">Mode:</span>
+                    <button class="toggle-btn study" id="examModeBtn" onclick="toggleExamMode()" data-key="study_mode">📖 Study Mode</button>
+                </div>
+                <div class="loading" style="color:var(--text-muted);">📝 No exams created yet.</div>
+            `;
+            setTimeout(() => translatePage(), 50);
+            return;
+        }
+
+        container.innerHTML = `
+            <div class="exam-toggle">
+                <span data-key="mode">Mode:</span>
+                <button class="toggle-btn study" id="examModeBtn" onclick="toggleExamMode()" data-key="study_mode">📖 Study Mode</button>
+            </div>
+            ${data.map(exam => `
+                <div class="content-card" onclick="startExam(${exam.id})" style="cursor:pointer;">
+                    <div class="meta">
+                        <h4>📝 ${exam.title}</h4>
+                        <p>${exam.questions ? exam.questions.length : 0} Questions • Created ${new Date(exam.created_at).toLocaleDateString()}</p>
                     </div>
-                    ${data.map(exam => `
-                        <div class="content-card" onclick="startExam(${exam.id})" style="cursor:pointer;">
-                            <div class="meta">
-                                <h4>📝 ${exam.title}</h4>
-                                <p>${exam.questions ? exam.questions.length : 0} Questions • Created ${new Date(exam.created_at).toLocaleDateString()}</p>
-                            </div>
-                            <div class="actions">
-                                <button class="btn-sm btn-teal" style="margin:0;" data-key="start">▶️ Start Exam</button>
-                            </div>
-                        </div>
-                    `).join('')}
-                `;
-                setTimeout(() => translatePage(), 50);
-            } catch (err) {
-                console.error('Error loading exams:', err);
-                container.innerHTML = `<div class="loading" style="color:var(--red-error);">Failed to load exams</div>`;
+                    <div class="actions">
+                        <button class="btn-sm btn-teal" style="margin:0;" data-key="start">▶️ Start Exam</button>
+                    </div>
+                </div>
+            `).join('')}
+        `;
+        setTimeout(() => translatePage(), 50);
+        
+    } catch (err) {
+        console.error('Error loading exams:', err);
+        container.innerHTML = `<div class="loading" style="color:var(--red-error);">Failed to load exams</div>`;
+    }
+}
+
+// ================================================================
+// SWITCH GROUP TAB - FIXED
+// ================================================================
+function switchGroupTab(tabId, btn) {
+    document.querySelectorAll('.class-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.class-content').forEach(c => c.classList.remove('active'));
+    const content = document.getElementById(tabId);
+    if (content) content.classList.add('active');
+
+    // ✅ FIXED: Reload content when switching to any tab
+    if (AppState.currentGroupId) {
+        if (tabId === 'exam') {
+            loadGroupContent(AppState.currentGroupId, 'exam');
+        } else if (tabId === 'videos') {
+            loadGroupContent(AppState.currentGroupId, 'videos');
+        } else if (tabId === 'ppts') {
+            loadGroupContent(AppState.currentGroupId, 'ppts');
+        }
+    } else {
+        // Try to get group ID from the URL or stored state
+        const groupId = AppState.groups[0]?.id;
+        if (groupId) {
+            if (tabId === 'exam') {
+                loadGroupContent(groupId, 'exam');
+            } else if (tabId === 'videos') {
+                loadGroupContent(groupId, 'videos');
+            } else if (tabId === 'ppts') {
+                loadGroupContent(groupId, 'ppts');
             }
         }
-
-        function switchGroupTab(tabId, btn) {
-            document.querySelectorAll('.class-tab').forEach(t => t.classList.remove('active'));
-            btn.classList.add('active');
-            document.querySelectorAll('.class-content').forEach(c => c.classList.remove('active'));
-            const content = document.getElementById(tabId);
-            if (content) content.classList.add('active');
-
-            if (tabId === 'exam' && AppState.currentGroupId) {
-                loadGroupContent(AppState.currentGroupId, 'exam');
-            }
-        }
+    }
+}
 // ================================================================
 // START EXAM - FETCHES FROM DATABASE
 // ================================================================
