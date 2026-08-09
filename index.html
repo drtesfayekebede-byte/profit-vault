@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>T-Hub | Complete Medical Ecosystem</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
@@ -21,6 +22,9 @@
             --border-radius-card: 28px; --border-radius-sm: 12px;
             --font-main: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
             --font-serif: 'Playfair Display', 'Times New Roman', Times, serif;
+            --card-bg: rgba(10, 37, 64, 0.04);
+            --card-border: rgba(10, 37, 64, 0.08);
+            --card-hover: rgba(10, 37, 64, 0.08);
         }
         @media (max-width: 600px) { :root { --header-height: 60px; --footer-height: 60px; } }
         @media (max-width: 400px) { :root { --header-height: 52px; --footer-height: 52px; } }
@@ -34,7 +38,6 @@
 
         html, body { height: 100dvh; width: 100%; margin: 0; padding: 0; overflow: hidden; background: var(--bg-white); font-family: var(--font-main); font-weight: 700; }
 
-        /* BOLD TEXT STYLING - EVERYWHERE */
         * { font-weight: 700; }
         h1, h2, h3, h4, h5, h6 { font-weight: 900 !important; }
         p, span, div, button, input, select, textarea, label { font-weight: 700 !important; }
@@ -92,21 +95,22 @@
         .ticker-text { display: inline-block; animation: slideIn 20s linear infinite; color: var(--gold); font-weight: 800; font-size: 13px; }
         .ticker-text span { margin: 0 40px; color: var(--text-light); font-weight: 700; }
 
-        .quick-actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+        .quick-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
         .quick-btn { background: var(--navy); border-radius: var(--border-radius-card); padding: 16px; text-align: center; cursor: pointer; transition: 0.2s; }
         .quick-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 16px rgba(10, 37, 64, 0.2); }
         .quick-btn .icon { font-size: 28px; color: var(--gold); display: block; margin-bottom: 6px; font-weight: 900; }
         .quick-btn .label { color: var(--text-light); font-weight: 800; font-size: 14px; }
-        .quick-btn.live { border: 2px solid var(--red-error); animation: pulseRed 2s infinite; }
 
         .feed-section h3 { color: var(--navy); font-size: 18px; font-weight: 900; margin-bottom: 12px; border-left: 4px solid var(--gold); padding-left: 10px; }
-        .feed-card { background: var(--bg-white); border: 1px solid #e2e8f0; border-radius: var(--border-radius-card); padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+
+        .feed-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--border-radius-card); padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; transition: all 0.3s ease; backdrop-filter: blur(2px); }
+        .feed-card:hover { background: var(--card-hover); box-shadow: 0 4px 12px rgba(10, 37, 64, 0.06); }
         .feed-card .info h4 { color: var(--text-dark); font-size: 15px; font-weight: 800; }
         .feed-card .info p { color: var(--text-muted); font-size: 13px; margin-top: 4px; font-weight: 700; }
         .feed-card .action-btn { background: var(--teal); color: white; padding: 6px 14px; border-radius: 30px; font-weight: 800; font-size: 12px; border: none; cursor: pointer; }
 
         .app-footer { flex-shrink: 0; width: 100%; z-index: 99; background: var(--navy); box-shadow: 0 -4px 10px rgba(0,0,0,0.1); padding: 10px 16px; height: var(--footer-height); display: flex; align-items: center; }
-        .app-footer-tabs { display: flex; justify-content: space-around; align-items: center; overflow-x: auto; padding: 4px 2px; max-width: 600px; margin: 0 auto; width: 100%; scrollbar-width: none; }
+        .app-footer-tabs { display: flex; justify-content: space-around; align-items: center; overflow-x: auto; padding: 4px 2px; max-width: 700px; margin: 0 auto; width: 100%; scrollbar-width: none; }
         .app-footer-tabs::-webkit-scrollbar { display: none; }
         .app-footer-tab { display: flex; flex-direction: column; align-items: center; justify-content: center; background: none; border: none; color: rgba(255,255,255,0.6); font-size: 10px; font-weight: 800; padding: 4px 12px; cursor: pointer; transition: all 0.3s ease; border-radius: 10px; min-width: 44px; position: relative; flex-shrink: 0; }
         .app-footer-tab .tab-emoji { font-size: 20px; line-height: 1; pointer-events: none; }
@@ -126,6 +130,7 @@
         .tab-scroll-area { flex: 1; overflow-y: auto; padding: 16px; padding-bottom: calc(var(--footer-height) + 20px); width: 100%; max-width: 800px; margin: 0 auto; }
         .tab-scroll-area * { font-weight: 700; }
 
+        /* CLASS HEADER */
         .class-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
         .class-header h2 { color: var(--navy); font-size: 20px; font-weight: 900; }
         .class-header .class-header-menu { position: relative; cursor: pointer; font-size: 22px; color: var(--gold); }
@@ -154,7 +159,22 @@
         .class-content { display: none; }
         .class-content.active { display: block; }
 
-        .content-card { background: var(--bg-white); border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 16px; cursor: default; transition: 0.2s; position: relative; }
+        /* CONTENT CARDS - LIGHT NAVY */
+        .content-card, .book-card, .job-card, .research-card, .teacher-card, .post-card, .question-box, .profile-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(2px);
+            position: relative;
+        }
+        .content-card:hover, .book-card:hover, .job-card:hover, .research-card:hover, .teacher-card:hover, .post-card:hover, .profile-card:hover {
+            background: var(--card-hover);
+            box-shadow: 0 4px 12px rgba(10, 37, 64, 0.06);
+        }
+
         .content-card .thumbnail { width: 100%; height: 160px; background: #1a1a2e; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 32px; margin-bottom: 12px; position: relative; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
         .content-card .thumbnail .duration { position: absolute; bottom: 10px; right: 10px; background: rgba(0,0,0,0.7); padding: 2px 8px; border-radius: 6px; font-size: 12px; font-weight: 700; }
         .content-card .meta h4 { font-size: 16px; font-weight: 800; color: var(--text-dark); margin-bottom: 4px; user-select: none; -webkit-user-select: none; }
@@ -170,7 +190,7 @@
         .content-card .comment-list .c-item { font-size: 13px; color: var(--text-dark); margin-bottom: 6px; border-bottom: 1px solid #f1f1f1; padding-bottom: 6px; font-weight: 700; }
         .content-card .favorite-btn { background: none; border: none; font-size: 18px; cursor: pointer; transition: 0.2s; }
         .content-card .favorite-btn.favorited { color: var(--gold); }
-        .content-card .delete-btn { display: none; position: absolute; top: 8px; right: 8px; background: var(--red-error); color: white; border: none; border-radius: 50%; width: 28px; height: 28px; font-size: 12px; cursor: pointer; font-weight: 900; }
+        .content-card .delete-btn { display: none; position: absolute; top: 8px; right: 8px; background: var(--red-error); color: white; border: none; border-radius: 50%; width: 28px; height: 28px; font-size: 12px; cursor: pointer; font-weight: 900; z-index: 10; }
         .content-card:hover .delete-btn { display: block; }
         .content-card .watermark { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); color: rgba(255,255,255,0.2); font-size: 10px; font-weight: 700; pointer-events: none; user-select: none; }
 
@@ -179,19 +199,16 @@
         .toggle-btn { background: #e2e8f0; border: none; border-radius: 30px; padding: 6px 16px; font-weight: 800; font-size: 12px; cursor: pointer; transition: 0.2s; }
         .toggle-btn.study { background: var(--green-success); color: white; }
         .toggle-btn.exam { background: var(--red-error); color: white; }
-        .question-box { background: var(--bg-white); border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 10px; user-select: none; -webkit-user-select: none; }
         .question-box p { font-weight: 800; color: var(--text-dark); margin-bottom: 8px; }
         .question-box label { display: block; font-size: 14px; color: var(--text-dark); margin-bottom: 4px; cursor: pointer; font-weight: 700; }
         .question-box img { max-width: 100%; border-radius: 8px; margin: 8px 0; }
         .question-box .explanation-toggle { background: var(--navy-light); color: white; border: none; padding: 4px 12px; border-radius: 20px; font-size: 12px; cursor: pointer; transition: 0.2s; font-weight: 700; margin-top: 8px; }
         .question-box .explanation-toggle:hover { background: var(--navy); }
-        .question-box .explanation-content { display: none; margin-top: 10px; padding: 12px; background: #f0fdf4; border-radius: 8px; border-left: 4px solid var(--green-success); color: var(--text-dark); font-weight: 700; }
-        .question-box .explanation-content.visible { display: block; }
         .exam-timer { display: flex; align-items: center; gap: 10px; padding: 8px 16px; background: var(--navy); border-radius: 30px; color: white; font-weight: 800; }
         .exam-timer .timer { font-size: 20px; color: var(--gold); font-family: monospace; animation: countdown 1s infinite; font-weight: 900; }
         .exam-timer.warning .timer { color: var(--red-error); }
 
-        .post-card { background: var(--bg-white); border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 16px; }
+        /* POST CARDS */
         .post-card .post-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
         .post-card .post-header .post-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--teal); display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 18px; overflow: hidden; }
         .post-card .post-header .post-avatar img { width: 100%; height: 100%; object-fit: cover; }
@@ -210,7 +227,7 @@
         .post-card .post-comments .comment-send { background: var(--teal); color: white; border: none; padding: 4px 16px; border-radius: 20px; font-weight: 800; cursor: pointer; margin-top: 4px; }
 
         .join-header h2 { color: var(--navy); font-size: 20px; font-weight: 900; margin-bottom: 16px; }
-        .teacher-card { background: var(--bg-white); border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .teacher-card { display: flex; justify-content: space-between; align-items: center; }
         .teacher-card .info .name { font-weight: 800; color: var(--text-dark); font-size: 16px; }
         .teacher-card .info .spec { color: var(--text-muted); font-size: 13px; font-weight: 700; }
         .teacher-card .join-btn { background: var(--teal); color: white; border: none; padding: 6px 16px; border-radius: 30px; font-weight: 800; cursor: pointer; }
@@ -218,7 +235,7 @@
 
         .books-header h2 { color: var(--navy); font-size: 20px; font-weight: 900; margin-bottom: 12px; }
         .books-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-        .book-card { background: var(--bg-white); border: 1px solid #e2e8f0; border-radius: var(--border-radius-card); padding: 16px; text-align: center; position: relative; user-select: none; -webkit-user-select: none; }
+        .book-card { text-align: center; user-select: none; -webkit-user-select: none; }
         .book-card .book-cover { width: 100%; height: 150px; background: var(--navy); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--gold); font-size: 48px; margin-bottom: 8px; overflow: hidden; }
         .book-card .book-cover img { width: 100%; height: 100%; object-fit: cover; }
         .book-card .title { font-weight: 800; color: var(--text-dark); font-size: 15px; }
@@ -226,19 +243,18 @@
         .book-card .description { font-size: 12px; color: var(--text-muted); font-weight: 700; margin: 4px 0; }
         .book-card .favorite-btn { position: absolute; top: 12px; right: 12px; background: none; border: none; font-size: 20px; cursor: pointer; transition: 0.2s; }
         .book-card .favorite-btn.favorited { color: var(--gold); }
-        .book-card .delete-btn { position: absolute; top: 12px; left: 12px; background: var(--red-error); color: white; border: none; border-radius: 50%; width: 24px; height: 24px; font-size: 12px; cursor: pointer; font-weight: 900; display: none; }
+        .book-card .delete-btn { position: absolute; top: 12px; left: 12px; background: var(--red-error); color: white; border: none; border-radius: 50%; width: 24px; height: 24px; font-size: 12px; cursor: pointer; font-weight: 900; display: none; z-index: 10; }
         .book-card:hover .delete-btn { display: block; }
         .book-card .watermark { position: absolute; bottom: 8px; right: 12px; color: rgba(0,0,0,0.1); font-size: 8px; font-weight: 700; pointer-events: none; user-select: none; }
 
         .jobs-header h2 { color: var(--navy); font-size: 20px; font-weight: 900; margin-bottom: 16px; }
-        .job-card { background: var(--bg-white); border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 12px; }
         .job-card .title { font-weight: 800; color: var(--text-dark); font-size: 16px; }
         .job-card .details { font-size: 13px; color: var(--text-muted); margin: 4px 0; display: flex; flex-wrap: wrap; gap: 8px; font-weight: 700; }
         .job-card .details span { background: #f8fafc; padding: 2px 8px; border-radius: 12px; }
         .job-card .apply-btn { background: var(--green-success); color: white; border: none; padding: 6px 16px; border-radius: 30px; font-weight: 800; cursor: pointer; margin-top: 8px; width: 100%; }
 
         .research-header h2 { color: var(--navy); font-size: 20px; font-weight: 900; margin-bottom: 16px; }
-        .research-card { background: var(--bg-white); border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+        .research-card { display: flex; justify-content: space-between; align-items: center; }
         .research-card .info .title { font-weight: 800; color: var(--text-dark); font-size: 15px; }
         .research-card .info .author { color: var(--text-muted); font-size: 13px; font-weight: 700; }
         .research-card .tag { font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 20px; }
@@ -246,7 +262,7 @@
         .research-card .tag.premium { background: var(--gold); color: var(--text-dark); }
         .research-card .read-btn { background: var(--teal); color: white; border: none; padding: 4px 14px; border-radius: 20px; font-weight: 800; cursor: pointer; }
 
-        .profile-card { background: var(--bg-white); border: 1px solid #e2e8f0; border-radius: var(--border-radius-card); padding: 20px; text-align: center; margin-bottom: 16px; }
+        .profile-card { text-align: center; }
         .profile-card .avatar-lg { width: 80px; height: 80px; border-radius: 50%; background: var(--navy); color: white; display: flex; align-items: center; justify-content: center; font-size: 40px; margin: 0 auto 12px; overflow: hidden; cursor: pointer; border: 3px solid var(--gold); }
         .profile-card .avatar-lg img { width: 100%; height: 100%; object-fit: cover; }
         .profile-card h3 { color: var(--text-dark); font-size: 20px; font-weight: 900; }
@@ -254,7 +270,8 @@
         .profile-actions .btn { background: var(--gold); color: var(--text-dark); border: none; padding: 12px; border-radius: 40px; font-weight: 800; width: 100%; margin-bottom: 10px; cursor: pointer; }
         .profile-actions .btn-logout { background: var(--red-error); color: white; }
 
-        #admin-tab .card { background: var(--bg-white); border-radius: var(--border-radius-card); padding: 20px; margin-bottom: 18px; border: 1px solid #e2e8f0; color: var(--text-dark); }
+        #admin-tab .card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--border-radius-card); padding: 20px; margin-bottom: 18px; transition: all 0.3s ease; backdrop-filter: blur(2px); }
+        #admin-tab .card:hover { background: var(--card-hover); box-shadow: 0 4px 12px rgba(10, 37, 64, 0.06); }
         #admin-tab .card h3 { margin-bottom: 15px; font-size: 20px; font-weight: 900; border-left: 4px solid var(--gold); padding-left: 12px; color: var(--navy); }
 
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(5px); justify-content: center; align-items: center; z-index: 1000; }
@@ -293,19 +310,41 @@
 
         .loading { text-align: center; padding: 20px; color: var(--text-muted); font-weight: 700; }
 
-        .card { background: var(--bg-white); border-radius: var(--border-radius-card); padding: 20px; margin-bottom: 18px; border: 1px solid #e2e8f0; color: var(--text-dark); transition: 0.2s; }
-        .card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-        .card h3 { margin-bottom: 15px; font-size: 20px; font-weight: 900; border-left: 4px solid var(--gold); padding-left: 12px; color: var(--navy); }
-        .card h4 { color: var(--text-dark); font-weight: 800; margin: 8px 0 4px; }
-        .card .form-group { margin-bottom: 12px; }
-        .card label { display: block; font-weight: 800; margin-bottom: 4px; color: var(--text-dark); }
-
         .wallet-balance { background: var(--navy); border-radius: var(--border-radius-card); padding: 20px; text-align: center; color: white; margin-bottom: 16px; }
         .wallet-balance .amount { font-size: 36px; color: var(--gold); font-weight: 900; }
         .wallet-balance .label { font-size: 14px; color: rgba(255,255,255,0.7); font-weight: 700; }
         .wallet-transaction { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #eee; font-weight: 700; }
         .wallet-transaction .positive { color: var(--green-success); }
         .wallet-transaction .negative { color: var(--red-error); }
+
+        /* B-STORE */
+        .bstore-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .bstore-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--border-radius-card); padding: 16px; text-align: center; transition: all 0.3s ease; backdrop-filter: blur(2px); position: relative; }
+        .bstore-card:hover { background: var(--card-hover); box-shadow: 0 4px 12px rgba(10, 37, 64, 0.06); }
+        .bstore-card .book-cover { width: 100%; height: 180px; background: var(--navy); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--gold); font-size: 48px; margin-bottom: 8px; overflow: hidden; }
+        .bstore-card .book-cover img { width: 100%; height: 100%; object-fit: cover; }
+        .bstore-card .title { font-weight: 800; color: var(--text-dark); font-size: 15px; }
+        .bstore-card .author { color: var(--text-muted); font-size: 13px; font-weight: 700; }
+        .bstore-card .price { font-size: 14px; color: var(--gold); font-weight: 800; margin: 8px 0; }
+        .bstore-card .status-badge { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 11px; font-weight: 800; margin-top: 4px; }
+        .bstore-card .status-badge.free { background: var(--green-success); color: white; }
+        .bstore-card .status-badge.paid { background: var(--gold); color: var(--text-dark); }
+        .bstore-card .status-badge.pending { background: #f59e0b; color: white; }
+        .bstore-card .status-badge.rejected { background: var(--red-error); color: white; }
+        .bstore-card .buy-btn { background: var(--teal); color: white; border: none; padding: 8px 16px; border-radius: 30px; font-weight: 800; cursor: pointer; width: 100%; margin-top: 8px; transition: 0.2s; }
+        .bstore-card .buy-btn:hover { background: var(--teal-light); transform: scale(1.02); }
+        .bstore-card .buy-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .bstore-card .delete-btn { position: absolute; top: 8px; right: 8px; background: var(--red-error); color: white; border: none; border-radius: 50%; width: 24px; height: 24px; font-size: 12px; cursor: pointer; font-weight: 900; display: none; z-index: 10; }
+        .bstore-card:hover .delete-btn { display: block; }
+
+        /* MEDICAL CALCULATOR */
+        .calc-result { padding: 16px; border-radius: 12px; margin-top: 12px; border: 2px solid var(--card-border); }
+        .calc-result .value { font-size: 24px; font-weight: 900; color: var(--navy); }
+        .calc-result .label { font-size: 14px; color: var(--text-muted); font-weight: 700; }
+        .calc-result .interpretation { padding: 12px; border-radius: 8px; margin-top: 8px; font-weight: 700; }
+        .calc-result .interpretation .emoji { font-size: 24px; margin-right: 8px; }
+        .calc-result .interpretation .rec { font-size: 14px; margin-top: 4px; }
+        .calc-result .interpretation .link { color: var(--teal); text-decoration: underline; font-weight: 700; cursor: pointer; }
 
         @media (max-width: 600px) {
             .app-logo h1 { font-size: 18px; }
@@ -315,8 +354,8 @@
             .profile-avatar { width: 34px; height: 34px; }
             .search-container { max-width: 130px; margin: 0 6px; }
             .search-container input { font-size: 11px; padding: 6px 12px; }
-            .quick-actions { grid-template-columns: 1fr 1fr; gap: 10px; }
-            .books-grid { grid-template-columns: 1fr; }
+            .quick-actions { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+            .books-grid, .bstore-grid { grid-template-columns: 1fr; }
             .app-footer { padding: 6px 12px; }
             .app-footer-tab { padding: 3px 8px; min-width: 36px; font-size: 9px; }
             .app-footer-tab .tab-emoji { font-size: 18px; }
@@ -324,20 +363,23 @@
             .exam-timer .timer { font-size: 16px; }
             .group-banner .go-live-btn { font-size: 10px; padding: 4px 10px; top: 8px; right: 8px; }
             .welcome-banner { flex-direction: column; text-align: center; }
+            .calc-result .value { font-size: 20px; }
         }
         @media (min-width: 601px) {
-            .quick-actions { grid-template-columns: repeat(4, 1fr); gap: 16px; }
+            .quick-actions { grid-template-columns: repeat(3, 1fr); gap: 16px; }
             .app-main { padding: 24px; }
             .tab-scroll-area { padding: 24px; }
         }
     </style>
 </head>
 <body>
+    <!-- LOADING OVERLAY -->
     <div id="loadingOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#ffffff; z-index:10000; justify-content:center; align-items:center; flex-direction:column;">
         <div style="font-size: 48px; color: var(--teal);">📚</div>
         <div style="margin-top: 20px; color: var(--teal); font-weight: 800; font-size: 18px;">Loading T-Hub...</div>
     </div>
 
+    <!-- APP CONTENT -->
     <div id="appContent" style="display: none;">
 
         <!-- HEADER -->
@@ -378,6 +420,8 @@
                 </div>
                 <div class="quick-actions">
                     <div class="quick-btn" onclick="openTabContent('class')"><span class="icon">📚</span><span class="label" data-key="class">Class</span></div>
+                    <div class="quick-btn" onclick="openTabContent('bstore')"><span class="icon">📖</span><span class="label" data-key="bstore">B-Store</span></div>
+                    <div class="quick-btn" onclick="openTabContent('mcalculator')"><span class="icon">🧮</span><span class="label" data-key="mcalculator">M-Calculator</span></div>
                     <div class="quick-btn" onclick="openTabContent('jobs')"><span class="icon">💼</span><span class="label" data-key="job">Job</span></div>
                     <div class="quick-btn" onclick="openTabContent('research')"><span class="icon">🔬</span><span class="label" data-key="research">Research</span></div>
                     <div class="quick-btn" onclick="openTabContent('wallet')"><span class="icon">💳</span><span class="label" data-key="wallet">Wallet</span></div>
@@ -386,6 +430,7 @@
                     <h3 data-key="trending">🔥 Trending Content</h3>
                     <div class="feed-card"><div class="info"><h4>Cardiology 101</h4><p>By Dr. Tesfaye • 1.2k views</p></div><button class="action-btn" onclick="openTabContent('class')" data-key="watch">Watch</button></div>
                     <div class="feed-card"><div class="info"><h4>Anatomy Note</h4><p>By Dr. Alemu • Premium</p></div><button class="action-btn" onclick="openTabContent('class')" data-key="read">Read</button></div>
+                    <div class="feed-card"><div class="info"><h4>Neurology Basics</h4><p>By Dr. Smith • 850 views</p></div><button class="action-btn" onclick="openTabContent('class')" data-key="watch">Watch</button></div>
                 </div>
             </div>
         </div>
@@ -396,7 +441,9 @@
             <div id="tabContentContainer" class="tab-scroll-area"></div>
         </div>
 
+        <!-- ================================================================ -->
         <!-- HIDDEN TEMPLATES -->
+        <!-- ================================================================ -->
         <div style="display:none;">
 
             <!-- CLASS TAB -->
@@ -408,7 +455,6 @@
                         <div id="classHeaderDropdown" class="class-header-dropdown"></div>
                     </div>
                 </div>
-                
                 <div id="appealBanner" style="background:var(--navy); border-radius:var(--border-radius-card); padding:16px 20px; margin-bottom:16px; display:flex; align-items:center; justify-content:space-between; width:100%; border:2px solid var(--gold);">
                     <div>
                         <h4 style="color:var(--gold); font-size:16px; font-weight:900;" data-key="become_teacher">👑 Want to become a Verified Teacher?</h4>
@@ -418,18 +464,15 @@
                         <button class="btn" style="width:auto; padding:4px 16px; font-size:12px; margin:0; background:var(--gold); color:var(--text-dark);" onclick="showModal('appealModal')" data-key="apply_now">📝 Apply Now</button>
                     </div>
                 </div>
-
                 <div id="createGroupBtn" style="display:none; margin-bottom:16px;">
                     <button class="btn btn-teal" onclick="showModal('createGroupModal')" data-key="create_group">➕ Create New Group</button>
                 </div>
-
                 <div id="myGroupsContainer" style="margin-bottom:16px;"></div>
-
                 <div class="join-header"><h2 data-key="trending">🔥 Trending Groups to Join</h2></div>
                 <div id="trendingGroupsContainer"></div>
             </div>
             
-            <!-- GROUP INTERNAL FEED -->
+            <!-- GROUP FEED (Teaching) -->
             <div id="group-feed">
                 <div class="group-banner" id="groupBanner">
                     <div style="display:flex; align-items:center; gap:12px; justify-content:center; flex-wrap:wrap;">
@@ -452,11 +495,10 @@
                         <button class="btn" style="width:auto; padding:4px 16px; font-size:12px; margin:0; background:var(--teal); color:white;" onclick="changeGroupProfilePic()">🖼️ Change Pic</button>
                     </div>
                 </div>
-
                 <div class="class-tabs" id="groupTabs">
                     <button class="class-tab active" onclick="switchGroupTab('videos', this)" data-key="video">📹 Video</button>
-                    <button class="class-tab" onclick="switchGroupTab('books', this)" data-key="books">📖 Books</button>
-                    <button class="class-tab" onclick="switchGroupTab('exam', this)" data-key="exam">📝 Exam</button>
+                    <button class="class-tab" onclick="switchGroupTab('ppts', this)" data-key="ppt">📊 PPT</button>
+                    <button class="class-tab" onclick="switchGroupTab('mockexam', this)" data-key="mock_exam">📝 Mock Exam</button>
                     <div style="position:relative; display:inline-block;">
                         <button onclick="toggleClassMenu(event)" style="background:none; border:none; color:var(--navy); font-size:20px; cursor:pointer;">⋮</button>
                         <div id="classDropdownMenu" style="display:none; position:absolute; top:30px; right:-10px; background:white; border:1px solid #eee; border-radius:12px; box-shadow:0 8px 20px rgba(0,0,0,0.15); width:200px; z-index:1000; padding:10px 0; text-align:left;">
@@ -469,16 +511,15 @@
                         </div>
                     </div>
                 </div>
-
                 <div id="videos" class="class-content active"></div>
-                <div id="books" class="class-content"></div>
-                <div id="exam" class="class-content">
+                <div id="ppts" class="class-content"></div>
+                <div id="mockexam" class="class-content">
                     <div class="exam-toggle">
                         <span data-key="mode">Mode:</span>
                         <button class="toggle-btn study" id="examModeBtn" onclick="toggleExamMode()" data-key="study_mode">📖 Study Mode</button>
                         <button class="toggle-btn" id="examModeBtnRight" onclick="toggleExamMode()" data-key="exam_mode" style="background:#e2e8f0; color:var(--text-dark);">🚫 Exam Mode</button>
                     </div>
-                    <div id="examListContainer"><div class="loading">Loading exams...</div></div>
+                    <div id="mockExamListContainer"><div class="loading">Loading exams...</div></div>
                 </div>
             </div>
 
@@ -505,12 +546,31 @@
                         <button class="btn" style="width:auto; padding:4px 16px; font-size:12px; margin:0; background:var(--teal); color:white;" onclick="changeGroupProfilePic()">🖼️ Change Pic</button>
                     </div>
                 </div>
-
                 <div style="margin-bottom:16px;">
                     <button class="btn btn-teal" onclick="showModal('createPostModal')" style="margin-bottom:8px;">📝 Create New Post</button>
                 </div>
-
                 <div id="socialPostsContainer"></div>
+            </div>
+
+            <!-- B-STORE TAB -->
+            <div id="bstore-tab">
+                <div class="books-header"><h2 data-key="bstore">📖 B-Store</h2></div>
+                <div style="display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap;">
+                    <input type="text" id="bstoreSearch" placeholder="Search books..." style="flex:1; padding:10px; border:1px solid var(--card-border); border-radius:30px; font-weight:700; min-width:150px;">
+                    <select id="bstoreFilter" style="padding:10px; border:1px solid var(--card-border); border-radius:30px; font-weight:700; background:white;">
+                        <option value="all">All Books</option>
+                        <option value="free">Free</option>
+                        <option value="paid">Paid</option>
+                    </select>
+                    <button class="btn-sm btn-teal" onclick="filterBStore()" style="margin:0; padding:8px 16px;">🔍 Search</button>
+                </div>
+                <div id="bstoreContainer"><div class="loading">Loading books...</div></div>
+            </div>
+
+            <!-- MEDICAL CALCULATOR TAB -->
+            <div id="mcalculator-tab">
+                <div class="books-header"><h2 data-key="mcalculator">🧮 Medical Calculator</h2></div>
+                <div id="calculatorContainer"><div class="loading">Loading calculators...</div></div>
             </div>
 
             <!-- JOBS TAB -->
@@ -536,9 +596,13 @@
                     <h3 id="profileName">Medical Student</h3>
                     <p id="profileEmail">student@email.com</p>
                     <button class="btn btn-teal" style="margin-top:8px;" onclick="changeProfilePic()">🖼️ Change Profile Picture</button>
+                    <button class="btn" style="margin-top:8px;" onclick="showModal('depositModal')" data-key="premium_sub">💳 Premium: 600 ETB/month</button>
+                    <button class="btn btn-danger btn-logout" onclick="logout()" data-key="logout">🚪 Logout</button>
                 </div>
-                <button class="btn" onclick="showModal('depositModal')" data-key="premium_sub">💳 Premium: 600 ETB/month</button>
-                <button class="btn btn-danger btn-logout" onclick="logout()" data-key="logout">🚪 Logout</button>
+                <div style="margin-top:16px;">
+                    <h3 style="color:var(--navy); font-weight:900; margin-bottom:12px;">📚 My Library</h3>
+                    <div id="myLibraryContainer"><div class="loading">Loading your library...</div></div>
+                </div>
             </div>
 
             <!-- WALLET TAB -->
@@ -556,19 +620,23 @@
                 </div>
             </div>
 
-            <!-- ADMIN PANEL -->
+            <!-- ADMIN TAB -->
             <div id="admin-tab">
                 <div class="loading" style="color:var(--text-muted);">Loading admin panel...</div>
             </div>
 
-        </div>
+        </div><!-- end hidden templates -->
 
+        <!-- ================================================================ -->
         <!-- MODALS -->
+        <!-- ================================================================ -->
+
+        <!-- Appeal Modal -->
         <div id="appealModal" class="modal">
             <div class="modal-content">
                 <span class="close" onclick="closeModal('appealModal')">&times;</span>
                 <h3 data-key="apply_creator">📝 Apply to Become a Verified Creator</h3>
-                <div class="form-group"><label data-key="deduct_coins">💰 Deduct 6,000 Coins (Verification Fee)</label><p style="color:var(--gold); font-weight:900;">Your Balance: 8,500 Coins</p></div>
+                <div class="form-group"><label data-key="deduct_coins">💰 Deduct 6,000 Coins (Verification Fee)</label><p style="color:var(--gold); font-weight:900;">Your Balance: <span id="appealBalance">8,500</span> Coins</p></div>
                 <div class="form-group"><label data-key="upload_national_id">Upload National ID (Front/Back)</label><input type="file" accept="image/*"></div>
                 <div class="form-group"><label data-key="select_profession">Select Profession</label><select><option>General Practitioner</option><option>Specialist / Surgeon</option><option>Medical Professor</option></select></div>
                 <div class="form-group"><label data-key="upload_certificate">Upload Certificate (PDF/Image)</label><input type="file" accept="image/*,.pdf"></div>
@@ -577,6 +645,7 @@
             </div>
         </div>
 
+        <!-- Create Group Modal -->
         <div id="createGroupModal" class="modal">
             <div class="modal-content">
                 <span class="close" onclick="closeModal('createGroupModal')">&times;</span>
@@ -585,21 +654,16 @@
                 <div class="form-group"><label>Upload Profile Pic</label><input type="file" id="createGroupPic" accept="image/*"></div>
                 <div class="form-group"><label data-key="group_desc">Group Description</label><textarea id="createGroupDesc" rows="2"></textarea></div>
                 <div class="form-group"><label data-key="group_type">Group Type</label>
-                    <select id="createGroupType">
-                        <option value="Private">Private (Only owner & admins can post)</option>
-                        <option value="Public">Public (Anyone can post)</option>
-                    </select>
+                    <select id="createGroupType"><option value="Private">Private (Only owner & admins can post)</option><option value="Public">Public (Anyone can post)</option></select>
                 </div>
                 <div class="form-group"><label data-key="group_purpose">Group Purpose</label>
-                    <select id="createGroupPurpose">
-                        <option value="teaching" data-key="teaching_class">Teaching Class (Video, Books, Exam)</option>
-                        <option value="social" data-key="social_network">Social Network (Text posts & Links only)</option>
-                    </select>
+                    <select id="createGroupPurpose"><option value="teaching" data-key="teaching_class">Teaching Class (Video, PPT, Mock Exam)</option><option value="social" data-key="social_network">Social Network (Text posts & Links only)</option></select>
                 </div>
                 <button class="btn btn-teal" onclick="createGroup()" data-key="create_group">🚀 Create Group</button>
             </div>
         </div>
 
+        <!-- Create Post Modal -->
         <div id="createPostModal" class="modal">
             <div class="modal-content">
                 <span class="close" onclick="closeModal('createPostModal')">&times;</span>
@@ -611,6 +675,7 @@
             </div>
         </div>
 
+        <!-- Wallet Modal -->
         <div id="walletModal" class="modal">
             <div class="modal-content">
                 <span class="close" onclick="closeModal('walletModal')">&times;</span>
@@ -626,6 +691,7 @@
             </div>
         </div>
 
+        <!-- Deposit Modal -->
         <div id="depositModal" class="modal">
             <div class="modal-content">
                 <span class="close" onclick="closeModal('depositModal')">&times;</span>
@@ -636,6 +702,7 @@
             </div>
         </div>
 
+        <!-- Payment Modal -->
         <div id="paymentModal" class="modal">
             <div class="modal-content">
                 <span class="close" onclick="closeModal('paymentModal')">&times;</span>
@@ -651,6 +718,7 @@
             </div>
         </div>
 
+        <!-- Job Apply Modal -->
         <div id="jobApplyModal" class="modal">
             <div class="modal-content">
                 <span class="close" onclick="closeModal('jobApplyModal')">&times;</span>
@@ -661,6 +729,7 @@
             </div>
         </div>
 
+        <!-- Edit Group Modal -->
         <div id="editGroupModal" class="modal">
             <div class="modal-content">
                 <span class="close" onclick="closeModal('editGroupModal')">&times;</span>
@@ -671,6 +740,7 @@
             </div>
         </div>
 
+        <!-- Add File Modal -->
         <div id="addFileModal" class="modal">
             <div class="modal-content">
                 <span class="close" onclick="closeModal('addFileModal')">&times;</span>
@@ -679,114 +749,56 @@
                     <label>Content Type</label>
                     <select id="addFileType" onchange="toggleContentFields()">
                         <option value="video" data-key="video">📹 Video</option>
-                        <option value="book" data-key="books">📖 Book</option>
-                        <option value="exam" data-key="exam">📝 Exam</option>
+                        <option value="ppt" data-key="ppt">📊 PPT</option>
+                        <option value="mockexam" data-key="mock_exam">📝 Mock Exam</option>
                     </select>
                 </div>
-                
                 <div id="standardFields">
                     <div class="form-group"><label>Title</label><input type="text" id="addFileTitle"></div>
-                    <div class="form-group"><label>Author (for books)</label><input type="text" id="addFileAuthor" placeholder="Author name..."></div>
                     <div class="form-group"><label>Description</label><textarea id="addFileDesc" rows="2" placeholder="Description..."></textarea></div>
-                    
                     <div class="form-group">
                         <label>Upload File</label>
                         <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-                            <input type="file" id="addFileInput" accept="video/*,.pdf,.epub,.doc,.docx,.txt" style="flex:1; padding:8px; border:1px solid #eee; border-radius:8px; background:var(--bg-light);">
+                            <input type="file" id="addFileInput" accept="video/*,.pdf,.ppt,.pptx" style="flex:1; padding:8px; border:1px solid #eee; border-radius:8px; background:var(--bg-light);">
                             <button class="btn-sm btn-teal" onclick="uploadFileToStorage()" style="margin:0; width:auto; padding:8px 16px;">📤 Upload</button>
                         </div>
                         <div id="uploadStatus" style="font-size:12px; color:var(--text-muted); margin-top:4px; font-weight:700;">⏳ No file selected</div>
                     </div>
-
                     <div class="form-group">
                         <label>File URL (Auto-filled after upload)</label>
                         <input type="text" id="addFileUrl" placeholder="Upload a file to generate the URL..." readonly style="background:#f9f9f9; color:#888;">
                     </div>
-                    
-                    <div class="form-group">
-                        <label>Cover Image (optional)</label>
-                        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-                            <input type="file" id="addFileCover" accept="image/*" style="flex:1; padding:8px; border:1px solid #eee; border-radius:8px; background:var(--bg-light);">
-                        </div>
-                    </div>
                 </div>
-
                 <div id="examBuilder" style="display:none;">
-                    <div class="form-group"><label>Exam Title</label><input type="text" id="examTitle"></div>
-                    <div class="form-group"><label>Exam Category</label>
-                        <select id="examCategory">
-                            <option value="mock">Mock Exam</option>
-                            <option value="exit">Exit Exam</option>
-                            <option value="ngat">NGAT Exam</option>
-                            <option value="ermp">ERMP Exam</option>
-                        </select>
-                    </div>
+                    <div class="form-group"><label>Mock Exam Title</label><input type="text" id="examTitle"></div>
                     <div class="form-group"><label>Time Limit (minutes)</label><input type="number" id="examTimeLimit" value="5" min="1" max="120"></div>
-                    
                     <div style="background:var(--bg-light); border-radius:12px; padding:12px; margin-bottom:12px;">
                         <p style="font-weight:900; color:var(--text-dark); margin-bottom:4px;">Q1: Question</p>
                         <input type="text" id="examQ1" placeholder="Type your question..." style="width:100%; margin-bottom:6px; padding:8px; border:1px solid #eee; border-radius:8px; font-weight:700;">
-                        <div class="form-group">
-                            <label style="font-size:12px; font-weight:800;">Question Image (optional)</label>
-                            <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-                                <input type="file" id="examQImg1" accept="image/*" style="flex:1; padding:6px; border:1px solid #eee; border-radius:6px; font-weight:700;">
-                                <input type="text" id="examQImgUrl1" placeholder="Or paste image URL" style="flex:1; padding:6px; border:1px solid #eee; border-radius:6px; font-weight:700;">
-                            </div>
-                        </div>
                         <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
-                            <div>
-                                <input type="text" id="examA1" placeholder="Option A" style="width:100%; padding:6px; border:1px solid #eee; border-radius:6px; font-weight:700;">
-                                <div style="display:flex; gap:4px; margin-top:4px;">
-                                    <input type="file" id="examAImg1" accept="image/*" style="flex:1; padding:4px; border:1px solid #eee; border-radius:4px; font-size:11px; font-weight:700;">
-                                    <input type="text" id="examAImgUrl1" placeholder="URL" style="flex:1; padding:4px; border:1px solid #eee; border-radius:4px; font-size:11px; font-weight:700;">
-                                </div>
-                            </div>
-                            <div>
-                                <input type="text" id="examB1" placeholder="Option B" style="width:100%; padding:6px; border:1px solid #eee; border-radius:6px; font-weight:700;">
-                                <div style="display:flex; gap:4px; margin-top:4px;">
-                                    <input type="file" id="examBImg1" accept="image/*" style="flex:1; padding:4px; border:1px solid #eee; border-radius:4px; font-size:11px; font-weight:700;">
-                                    <input type="text" id="examBImgUrl1" placeholder="URL" style="flex:1; padding:4px; border:1px solid #eee; border-radius:4px; font-size:11px; font-weight:700;">
-                                </div>
-                            </div>
-                            <div>
-                                <input type="text" id="examC1" placeholder="Option C" style="width:100%; padding:6px; border:1px solid #eee; border-radius:6px; font-weight:700;">
-                                <div style="display:flex; gap:4px; margin-top:4px;">
-                                    <input type="file" id="examCImg1" accept="image/*" style="flex:1; padding:4px; border:1px solid #eee; border-radius:4px; font-size:11px; font-weight:700;">
-                                    <input type="text" id="examCImgUrl1" placeholder="URL" style="flex:1; padding:4px; border:1px solid #eee; border-radius:4px; font-size:11px; font-weight:700;">
-                                </div>
-                            </div>
-                            <div>
-                                <input type="text" id="examD1" placeholder="Option D" style="width:100%; padding:6px; border:1px solid #eee; border-radius:6px; font-weight:700;">
-                                <div style="display:flex; gap:4px; margin-top:4px;">
-                                    <input type="file" id="examDImg1" accept="image/*" style="flex:1; padding:4px; border:1px solid #eee; border-radius:4px; font-size:11px; font-weight:700;">
-                                    <input type="text" id="examDImgUrl1" placeholder="URL" style="flex:1; padding:4px; border:1px solid #eee; border-radius:4px; font-size:11px; font-weight:700;">
-                                </div>
-                            </div>
+                            <div><input type="text" id="examA1" placeholder="Option A" style="width:100%; padding:6px; border:1px solid #eee; border-radius:6px; font-weight:700;"></div>
+                            <div><input type="text" id="examB1" placeholder="Option B" style="width:100%; padding:6px; border:1px solid #eee; border-radius:6px; font-weight:700;"></div>
+                            <div><input type="text" id="examC1" placeholder="Option C" style="width:100%; padding:6px; border:1px solid #eee; border-radius:6px; font-weight:700;"></div>
+                            <div><input type="text" id="examD1" placeholder="Option D" style="width:100%; padding:6px; border:1px solid #eee; border-radius:6px; font-weight:700;"></div>
                         </div>
-                        <div style="margin-top:6px; display:flex; gap:10px; flex-wrap:wrap;">
-                            <div><label style="font-size:13px; font-weight:800;">Correct Answer:</label>
-                                <select id="examAns1" style="padding:4px 8px; border-radius:6px; border:1px solid #eee; font-weight:700;">
-                                    <option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option>
-                                </select>
-                            </div>
+                        <div style="margin-top:6px;">
+                            <label style="font-size:13px; font-weight:800;">Correct Answer:</label>
+                            <select id="examAns1" style="padding:4px 8px; border-radius:6px; border:1px solid #eee; font-weight:700;">
+                                <option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option>
+                            </select>
                         </div>
                         <div style="margin-top:6px;">
                             <label style="font-size:13px; font-weight:800;">Explanation (optional):</label>
                             <input type="text" id="examExp1" placeholder="Explain why this is correct..." style="width:100%; padding:6px; border:1px solid #eee; border-radius:6px; font-weight:700;">
-                            <div style="display:flex; gap:4px; margin-top:4px;">
-                                <input type="file" id="examExpImg1" accept="image/*" style="flex:1; padding:4px; border:1px solid #eee; border-radius:4px; font-size:11px; font-weight:700;">
-                                <input type="text" id="examExpImgUrl1" placeholder="Image URL" style="flex:1; padding:4px; border:1px solid #eee; border-radius:4px; font-size:11px; font-weight:700;">
-                            </div>
                         </div>
                     </div>
-
                     <button class="btn-sm btn-teal" onclick="addExamQuestion()" style="width:100%; margin-bottom:12px;">➕ Add Another Question</button>
                 </div>
-
                 <button class="btn btn-teal" onclick="submitAddFile()" data-key="publish">📤 Publish</button>
             </div>
         </div>
 
+        <!-- Buy Coins Modal -->
         <div id="buyCoinsModal" class="modal">
             <div class="modal-content">
                 <span class="close" onclick="closeModal('buyCoinsModal')">&times;</span>
@@ -797,11 +809,50 @@
             </div>
         </div>
 
+        <!-- B-Store Upload Modal -->
+        <div id="bstoreUploadModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('bstoreUploadModal')">&times;</span>
+                <h3>📖 Upload Book to B-Store</h3>
+                <div class="form-group"><label>Book Title</label><input type="text" id="bstoreTitle"></div>
+                <div class="form-group"><label>Author Name</label><input type="text" id="bstoreAuthor"></div>
+                <div class="form-group"><label>Description</label><textarea id="bstoreDesc" rows="2"></textarea></div>
+                <div class="form-group"><label>Cover Image</label><input type="file" id="bstoreCover" accept="image/*"></div>
+                <div class="form-group"><label>Book File (PDF, EPUB, MOBI, DOC)</label><input type="file" id="bstoreFile" accept=".pdf,.epub,.mobi,.doc,.docx"></div>
+                <div class="form-group"><label>Monthly Price (Coins)</label><input type="number" id="bstorePriceMonthly" placeholder="0" min="0"></div>
+                <div class="form-group"><label>3 Months Price (Coins)</label><input type="number" id="bstorePrice3" placeholder="0" min="0"></div>
+                <div class="form-group"><label>6 Months Price (Coins)</label><input type="number" id="bstorePrice6" placeholder="0" min="0"></div>
+                <div class="form-group"><label>9 Months Price (Coins)</label><input type="number" id="bstorePrice9" placeholder="0" min="0"></div>
+                <div class="form-group"><label>1 Year Price (Coins)</label><input type="number" id="bstorePriceYearly" placeholder="0" min="0"></div>
+                <button class="btn btn-teal" onclick="submitBStoreBook()">📤 Upload Book</button>
+            </div>
+        </div>
+
+        <!-- Admin: Create Calculator Modal -->
+        <div id="createCalculatorModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('createCalculatorModal')">&times;</span>
+                <h3>🧮 Create Medical Calculator</h3>
+                <div class="form-group"><label>Calculator Name</label><input type="text" id="calcName"></div>
+                <div class="form-group"><label>Description</label><textarea id="calcDesc" rows="2"></textarea></div>
+                <div class="form-group"><label>Category</label><input type="text" id="calcCategory" placeholder="e.g. Nutrition, Cardiology"></div>
+                <div class="form-group"><label>Input Fields (JSON)</label>
+                    <textarea id="calcInputs" rows="4" style="font-size:13px;">[{"id":"weight","label":"Weight (kg)","type":"number","placeholder":"Enter weight","required":true},{"id":"height","label":"Height (cm)","type":"number","placeholder":"Enter height","required":true}]</textarea>
+                </div>
+                <div class="form-group"><label>Results (JSON)</label>
+                    <textarea id="calcResults" rows="6" style="font-size:13px;">[{"id":"bmi","label":"BMI","formula":"weight / (height / 100 * height / 100)","unit":"kg/m²","interpretations":[{"min":0,"max":18.5,"label":"Underweight","color":"#f59e0b","emoji":"⚠️","recommendation":"Consider healthy weight gain.","link":""},{"min":18.5,"max":25,"label":"Normal","color":"#10b981","emoji":"✅","recommendation":"Maintain healthy lifestyle.","link":""},{"min":25,"max":30,"label":"Overweight","color":"#f97316","emoji":"⚡","recommendation":"Consider balanced diet and exercise.","link":""},{"min":30,"max":100,"label":"Obese","color":"#ef4444","emoji":"🔴","recommendation":"Please consult a healthcare professional.","link":""}]}]</textarea>
+                </div>
+                <button class="btn btn-teal" onclick="createCalculator()">💾 Create Calculator</button>
+            </div>
+        </div>
+
         <!-- FOOTER -->
         <div class="app-footer" id="appFooter">
             <div class="app-footer-tabs" id="footerTabs">
                 <button class="app-footer-tab active" data-tab="home" onclick="footerTabClick('home')"><span class="tab-emoji">🏠</span><span class="tab-label" data-key="home">Home</span></button>
                 <button class="app-footer-tab" data-tab="class" onclick="footerTabClick('class')"><span class="tab-emoji">📚</span><span class="tab-label" data-key="class">Class</span></button>
+                <button class="app-footer-tab" data-tab="bstore" onclick="footerTabClick('bstore')"><span class="tab-emoji">📖</span><span class="tab-label" data-key="bstore">B-Store</span></button>
+                <button class="app-footer-tab" data-tab="mcalculator" onclick="footerTabClick('mcalculator')"><span class="tab-emoji">🧮</span><span class="tab-label" data-key="mcalculator">M-Calc</span></button>
                 <button class="app-footer-tab" data-tab="jobs" onclick="footerTabClick('jobs')"><span class="tab-emoji">💼</span><span class="tab-label" data-key="job">Job</span></button>
                 <button class="app-footer-tab" data-tab="research" onclick="footerTabClick('research')"><span class="tab-emoji">🔬</span><span class="tab-label" data-key="research">Research</span></button>
                 <button class="app-footer-tab" data-tab="wallet" onclick="footerTabClick('wallet')"><span class="tab-emoji">💳</span><span class="tab-label" data-key="wallet">Wallet</span></button>
@@ -812,6 +863,9 @@
         <div id="toast" class="toast"></div>
     </div>
 
+    <!-- ================================================================ -->
+    <!-- JAVASCRIPT -->
+    <!-- ================================================================ -->
     <script>
         // ================================================================
         // CONFIGURATION
@@ -854,7 +908,6 @@
         let examTimeRemaining = 0;
         let examAnswered = [];
         let examSubmitted = false;
-        let currentExamCategory = 'mock';
         let trendingUpdateInterval = null;
         let heartbeatInterval = null;
         let onlineUpdateInterval = null;
@@ -864,80 +917,97 @@
         // ================================================================
         const translations = {
             en: {
-                home: "Home", class: "Class", books: "Books", job: "Job", research: "Research",
-                wallet: "Wallet", welcome_title: "Welcome back!", welcome_desc: "Your medical education ecosystem",
-                go_to_class: "Go to Class", trending: "Trending Content", apply_now: "Apply Now",
+                home: "Home", class: "Class", bstore: "B-Store", mcalculator: "M-Calculator",
+                job: "Job", research: "Research", wallet: "Wallet", ppt: "PPT",
+                mock_exam: "Mock Exam", welcome_title: "Welcome back!",
+                welcome_desc: "Your medical education ecosystem", apply_now: "Apply for Verification",
                 become_teacher: "Want to become a Verified Teacher?",
                 start_application: "Start your application to create your own class.",
-                create_group: "Create New Group", join_class: "Join Class", joined: "Joined",
-                followers: "Followers", online: "Online", public: "Public", private: "Private",
-                video: "Video", books: "Books", exam: "Exam", settings: "Settings",
-                go_live: "Go Live", invite: "Invite people to join", add_file: "Add file/content",
-                delete_file: "Delete selected files", boost: "Boost group (Coins)", wallet: "Wallet",
-                delete_group: "Delete group", study_mode: "Study Mode", exam_mode: "Exam Mode", 
-                buy_now: "Buy Now", job_vacancies: "Job Vacancies", apply_now_job: "Apply Now",
-                research_journals: "Research Journals", free: "Free", premium: "Premium",
-                profile: "Profile", premium_sub: "Premium: 600 ETB/month", logout: "Logout",
-                admin_panel: "Admin Panel", upload_files: "Upload Files", mock_exam_mgmt: "Mock Exam",
-                verify_teachers: "Verify Teachers", set_prices: "Set Prices", consultations: "Consultations",
-                analytics: "Analytics", subscription: "Premium Subscription", subscribe: "Subscribe Now",
-                send_payment: "Send Payment", submit_approval: "Submit for Approval",
-                apply_job_form: "Apply for Job", submit_application: "Submit Application",
-                comment: "Comment", share: "Share", post_comment: "Post Comment",
-                apply_creator: "Apply to Become a Verified Creator", submit_review: "Submit for Review",
-                create_new_group: "Create a New Class Group", group_name: "Group Name", 
-                group_desc: "Group Description", group_type: "Group Type", group_purpose: "Group Purpose",
-                teaching_class: "Teaching Class (Video, Books, Exam)", social_network: "Social Network (Text posts & Links only)",
+                create_group: "Create New Group", join_class: "Join Class",
+                followers: "Followers", online: "Online", trending: "Trending Content",
+                watch: "Watch", read: "Read", study_mode: "Study Mode", exam_mode: "Exam Mode",
+                balance: "Balance", transactions: "Transactions", buy_coins: "Buy Coins",
+                withdraw: "Withdraw", logout: "Logout", admin_panel: "Admin Panel",
+                deduct_coins: "💰 Deduct 6,000 Coins (Verification Fee)",
                 upload_national_id: "Upload National ID", select_profession: "Select Profession",
                 upload_certificate: "Upload Certificate", select_university: "Select Graduated University",
-                wallet_title: "Group & Owner Wallet", balance: "Balance", withdraw: "Withdraw",
-                buy_coins: "Buy More Coins", edit_group: "Edit Group Info",
-                create_social_group: "Create Social Group", create_teaching_group: "Create Teaching Group",
-                my_groups: "My Groups", promote_admin: "Promote to Admin", mode: "Mode:",
-                watch: "Watch", read: "Read", publish: "Publish", save: "Save Changes",
-                deduct_coins: "💰 Deduct 6,000 Coins (Verification Fee)",
-                start: "▶️ Start Exam", explanation: "See Explanation", time_left: "Time Left:",
-                exam_submitted: "Exam submitted! Score: ", question: "Question",
-                correct: "Correct", incorrect: "Incorrect", time_up: "⏰ Time's Up!",
-                see_result: "See Result", your_answer: "Your Answer:", correct_answer: "Correct Answer:"
+                submit_review: "Submit & Pay 6,000 Coins", group_name: "Group Name",
+                group_desc: "Group Description", group_type: "Group Type",
+                group_purpose: "Group Purpose", teaching_class: "Teaching Class (Video, PPT, Mock Exam)",
+                social_network: "Social Network (Text posts & Links only)",
+                create_new_group: "Create a New Class Group",
+                apply_creator: "Apply to Become a Verified Creator",
+                subscription: "Premium Subscription", subscribe: "Subscribe Now",
+                send_payment: "Send Payment", submit_approval: "Submit for Approval",
+                apply_job_form: "Apply for Job", submit_application: "Submit Application",
+                edit_group: "Edit Group Info", add_file: "Add file/content",
+                delete_file: "Delete selected files", boost: "Boost group (Coins)",
+                delete_group: "Delete group", publish: "Publish", save: "Save Changes",
+                start: "▶️ Start Exam", question: "Question", correct: "Correct",
+                incorrect: "Incorrect", time_up: "⏰ Time's Up!",
+                see_result: "See Result", your_answer: "Your Answer:",
+                correct_answer: "Correct Answer:", explanation: "See Explanation",
+                time_left: "Time Left:", exam_submitted: "Exam submitted! Score: ",
+                wallet_title: "Group & Owner Wallet", job_vacancies: "Job Vacancies",
+                apply_now_job: "Apply Now", research_journals: "Research Journals",
+                free: "Free", premium: "Premium", profile: "Profile",
+                premium_sub: "Premium: 600 ETB/month", upload_files: "Upload Files",
+                mock_exam_mgmt: "Mock Exam", verify_teachers: "Verify Teachers",
+                set_prices: "Set Prices", consultations: "Consultations",
+                analytics: "Analytics", create_social_group: "Create Social Group",
+                create_teaching_group: "Create Teaching Group", my_groups: "My Groups",
+                promote_admin: "Promote to Admin", mode: "Mode:",
+                comment: "Comment", share: "Share", post_comment: "Post Comment"
             },
             am: {
-                home: "መነሻ", class: "ክፍሌ", books: "መጻሕፍት", job: "ሥራ", research: "ምርምር",
-                wallet: "ኪስ ቦርሳ", welcome_title: "እንኳን ደህና መጡ!", welcome_desc: "የእርስዎ የህክምና ትምህርት ስነ-ምህዳር",
-                go_to_class: "ወደ ክፍል ይሂዱ", trending: "ተወዳጅ ይዘት", apply_now: "አሁኑኑ ይተግብሩ",
+                home: "መነሻ", class: "ክፍሌ", bstore: "ቢ-ስቶር", mcalculator: "ኤም-ካልኩሌተር",
+                job: "ሥራ", research: "ምርምር", wallet: "ኪስ ቦርሳ", ppt: "ፒፒቲ",
+                mock_exam: "የሙከራ ፈተና", welcome_title: "እንኳን ደህና መጡ!",
+                welcome_desc: "የእርስዎ የህክምና ትምህርት ስነ-ምህዳር",
+                apply_now: "ለማረጋገጫ ይመልከቱ",
                 become_teacher: "የተረጋገጠ መምህር መሆን ይፈልጋሉ?",
                 start_application: "የራስዎን ክፍል ለመፍጠር ማመልከቻዎን ይጀምሩ",
-                create_group: "አዲስ ቡድን ይፍጠሩ", join_class: "ክፍል ይቀላቀሉ", joined: "ተቀላቅለዋል",
-                followers: "ተከታዮች", online: "ኦንላይን", public: "ህዝባዊ", private: "የግል",
-                video: "ቪዲዮ", books: "መጻሕፍት", exam: "ፈተና", settings: "ቅንብሮች",
-                go_live: "ቀጥታ ስርጭት ይሂዱ", invite: "ሰዎችን ይጋብዙ", add_file: "ፋይል/ይዘት ይጨምሩ",
-                delete_file: "የተመረጡ ፋይሎች ይሰርዙ", boost: "ቡድን ያሳድጉ (ሳንቲም)", wallet: "ኪስ ቦርሳ",
-                delete_group: "ቡድን ይሰርዙ", study_mode: "የጥናት ሁኔታ", exam_mode: "የፈተና ሁኔታ", 
-                buy_now: "አሁኑኑ ይግዙ", job_vacancies: "የሥራ እድሎች", apply_now_job: "አሁኑኑ ይተግብሩ",
-                research_journals: "የምርምር መጽሔቶች", free: "ነጻ", premium: "ፕሪሚየም",
-                profile: "መገለጫ", premium_sub: "ፕሪሚየም: 600 ETB/በወር", logout: "ውጣ",
-                admin_panel: "የአስተዳዳሪ ፓነል", upload_files: "ፋይሎች ይስቀሉ", mock_exam_mgmt: "የሙከራ ፈተና",
-                verify_teachers: "መምህራን ያረጋግጡ", set_prices: "ዋጋ ያዘጋጁ", consultations: "ምክክር",
-                analytics: "ትንተና", subscription: "ፕሪሚየም ምዝገባ", subscribe: "አሁኑኑ ይመዝገቡ",
+                create_group: "አዲስ ቡድን ይፍጠሩ", join_class: "ክፍል ይቀላቀሉ",
+                followers: "ተከታዮች", online: "ኦንላይን", trending: "ተወዳጅ ይዘት",
+                watch: "ተመልከት", read: "አንብብ", study_mode: "የጥናት ሁኔታ",
+                exam_mode: "የፈተና ሁኔታ", balance: "ቀሪ ሂሳብ",
+                transactions: "ግብይቶች", buy_coins: "ሳንቲም ይግዙ",
+                withdraw: "አውጣ", logout: "ውጣ", admin_panel: "የአስተዳዳሪ ፓነል",
+                deduct_coins: "💰 6,000 ሳንቲም ይቀንሱ (የማረጋገጫ ክፍያ)",
+                upload_national_id: "ብሄራዊ መታወቂያ ይስቀሉ",
+                select_profession: "ሙያ ይምረጡ",
+                upload_certificate: "የምስክር ወረቀት ይስቀሉ",
+                select_university: "የተመረቁበት ዩኒቨርሲቲ ይምረጡ",
+                submit_review: "📤 ያስገቡ እና 6,000 ሳንቲም ይክፈሉ",
+                group_name: "የቡድን ስም", group_desc: "የቡድን መግለጫ",
+                group_type: "የቡድን አይነት", group_purpose: "የቡድን ዓላማ",
+                teaching_class: "የማስተማሪያ ክፍል (ቪዲዮ፣ ፒፒቲ፣ ሙከራ ፈተና)",
+                social_network: "ማህበራዊ አውታር (ጽሑፍ እና አገናኞች ብቻ)",
+                create_new_group: "አዲስ የክፍል ቡድን ይፍጠሩ",
+                apply_creator: "የተረጋገጠ ፈጣሪ ለመሆን ያመልክቱ",
+                subscription: "ፕሪሚየም ምዝገባ", subscribe: "አሁኑኑ ይመዝገቡ",
                 send_payment: "ክፍያ ይላኩ", submit_approval: "ለማጽደቅ ይላኩ",
                 apply_job_form: "ለሥራ ይተግብሩ", submit_application: "መጠይቅ ይላኩ",
-                comment: "አስተያየት", share: "ያጋሩ", post_comment: "አስተያየት ይለጥፉ",
-                apply_creator: "የተረጋገጠ ፈጣሪ ለመሆን ያመልክቱ", submit_review: "ለግምገማ ያስገቡ",
-                create_new_group: "አዲስ የክፍል ቡድን ይፍጠሩ", group_name: "የቡድን ስም", 
-                group_desc: "የቡድን መግለጫ", group_type: "የቡድን አይነት", group_purpose: "የቡድን ዓላማ",
-                teaching_class: "የማስተማሪያ ክፍል (ቪዲዮ፣ መጻሕፍት፣ ፈተና)", social_network: "ማህበራዊ አውታር (ጽሑፍ እና አገናኞች ብቻ)",
-                upload_national_id: "ብሄራዊ መታወቂያ ይስቀሉ", select_profession: "ሙያ ይምረጡ",
-                upload_certificate: "የምስክር ወረቀት ይስቀሉ", select_university: "የተመረቁበት ዩኒቨርሲቲ ይምረጡ",
-                wallet_title: "የቡድን እና የባለቤት ኪስ ቦርሳ", balance: "ቀሪ ሂሳብ", withdraw: "አውጣ",
-                buy_coins: "ተጨማሪ ሳንቲም ይግዙ", edit_group: "የቡድን መረጃ ያርትዑ",
-                create_social_group: "ማህበራዊ ቡድን ይፍጠሩ", create_teaching_group: "የማስተማሪያ ቡድን ይፍጠሩ",
-                my_groups: "የኔ ቡድኖች", promote_admin: "ወደ አስተዳዳሪ ከፍ አድርግ", mode: "ሁኔታ:",
-                watch: "ተመልከት", read: "አንብብ", publish: "አሳትም", save: "አስቀምጥ",
-                deduct_coins: "💰 6,000 ሳንቲም ይቀንሱ (የማረጋገጫ ክፍያ)",
-                start: "▶️ ፈተና ጀምር", explanation: "ማብራሪያ ይመልከቱ", time_left: "የተረፈ ጊዜ:",
-                exam_submitted: "ፈተናው ተልኳል! ውጤት: ", question: "ጥያቄ",
-                correct: "ትክክል", incorrect: "ስህተት", time_up: "⏰ ጊዜው አልቋል!",
-                see_result: "ውጤት ይመልከቱ", your_answer: "የእርስዎ መልስ:", correct_answer: "ትክክለኛው መልስ:"
+                edit_group: "የቡድን መረጃ ያርትዑ", add_file: "ፋይል/ይዘት ይጨምሩ",
+                delete_file: "የተመረጡ ፋይሎች ይሰርዙ", boost: "ቡድን ያሳድጉ (ሳንቲም)",
+                delete_group: "ቡድን ይሰርዙ", publish: "አሳትም", save: "አስቀምጥ",
+                start: "▶️ ፈተና ጀምር", question: "ጥያቄ", correct: "ትክክል",
+                incorrect: "ስህተት", time_up: "⏰ ጊዜው አልቋል!",
+                see_result: "ውጤት ይመልከቱ", your_answer: "የእርስዎ መልስ:",
+                correct_answer: "ትክክለኛው መልስ:", explanation: "ማብራሪያ ይመልከቱ",
+                time_left: "የተረፈ ጊዜ:", exam_submitted: "ፈተናው ተልኳል! ውጤት: ",
+                wallet_title: "የቡድን እና የባለቤት ኪስ ቦርሳ",
+                job_vacancies: "የሥራ እድሎች", apply_now_job: "አሁኑኑ ይተግብሩ",
+                research_journals: "የምርምር መጽሔቶች", free: "ነጻ", premium: "ፕሪሚየም",
+                profile: "መገለጫ", premium_sub: "ፕሪሚየም: 600 ETB/በወር",
+                upload_files: "ፋይሎች ይስቀሉ", mock_exam_mgmt: "የሙከራ ፈተና",
+                verify_teachers: "መምህራን ያረጋግጡ", set_prices: "ዋጋ ያዘጋጁ",
+                consultations: "ምክክር", analytics: "ትንተና",
+                create_social_group: "ማህበራዊ ቡድን ይፍጠሩ",
+                create_teaching_group: "የማስተማሪያ ቡድን ይፍጠሩ",
+                my_groups: "የኔ ቡድኖች", promote_admin: "ወደ አስተዳዳሪ ከፍ አድርግ",
+                mode: "ሁኔታ:", comment: "አስተያየት", share: "ያጋሩ",
+                post_comment: "አስተያየት ይለጥፉ"
             }
         };
 
@@ -1044,6 +1114,8 @@
             let isSocial = false;
             
             if (tabId === 'class') id = 'class-tab';
+            else if (tabId === 'bstore') id = 'bstore-tab';
+            else if (tabId === 'mcalculator') id = 'mcalculator-tab';
             else if (tabId === 'jobs') id = 'jobs-tab';
             else if (tabId === 'research') id = 'research-tab';
             else if (tabId === 'profile') id = 'profile-tab';
@@ -1065,6 +1137,9 @@
             
             if (tabId === 'admin') loadAdminPanel();
             if (tabId === 'wallet') loadWallet();
+            if (tabId === 'bstore') loadBStore();
+            if (tabId === 'mcalculator') loadCalculators();
+            if (tabId === 'profile') loadMyLibrary();
             
             setTimeout(() => {
                 translatePage();
@@ -1102,8 +1177,8 @@
                         loadSocialPosts(specificGroupId);
                     } else {
                         loadGroupContent(specificGroupId, 'videos');
-                        loadGroupContent(specificGroupId, 'books');
-                        loadGroupContent(specificGroupId, 'exam');
+                        loadGroupContent(specificGroupId, 'ppts');
+                        loadGroupContent(specificGroupId, 'mockexam');
                     }
                 }
             }
@@ -1338,7 +1413,7 @@
         }
 
         // ================================================================
-        // HEARTBEAT
+        // HEARTBEAT (Real-time Online)
         // ================================================================
         function startHeartbeat(groupId) {
             stopHeartbeat();
@@ -1596,8 +1671,8 @@
             container.innerHTML = `<div class="loading">Loading ${contentType}...</div>`;
 
             try {
-                if (contentType === 'exam') {
-                    await loadExamsIntoContainer(container, groupId);
+                if (contentType === 'mockexam') {
+                    await loadMockExamsIntoContainer(container, groupId);
                     return;
                 }
 
@@ -1605,7 +1680,7 @@
                     .from('group_content')
                     .select('*')
                     .eq('group_id', groupId)
-                    .eq('content_type', contentType === 'videos' ? 'video' : 'book')
+                    .eq('content_type', contentType === 'videos' ? 'video' : 'ppt')
                     .order('created_at', { ascending: false });
 
                 if (error) {
@@ -1625,13 +1700,12 @@
                     <div class="content-card" style="position:relative;">
                         ${isOwner ? `<button class="delete-btn" onclick="deleteContent('${item.id}', '${contentType}')">✕</button>` : ''}
                         <div class="thumbnail" style="${item.cover_url ? `background: url('${item.cover_url}') center/cover;` : ''}">
-                            ${contentType === 'videos' ? `<i class="fas fa-play-circle"></i>` : `<i class="fas fa-book"></i>`}
-                            <span class="duration">${contentType === 'videos' ? 'Video' : 'Book'}</span>
+                            ${contentType === 'videos' ? `<i class="fas fa-play-circle"></i>` : `<i class="fas fa-file-powerpoint"></i>`}
+                            <span class="duration">${contentType === 'videos' ? 'Video' : 'PPT'}</span>
                             <span class="watermark">© T-Hub</span>
                         </div>
                         <div class="meta">
                             <h4>${item.title}</h4>
-                            ${item.author ? `<p>By ${item.author}</p>` : ''}
                             ${item.description ? `<p style="font-size:12px;">${item.description}</p>` : ''}
                             <p>Uploaded • ${new Date(item.created_at).toLocaleDateString()}</p>
                         </div>
@@ -1639,7 +1713,7 @@
                             <button onclick="toggleLike(this, '${item.id}')"><i class="fas fa-heart"></i> <span>${item.likes || 0}</span></button>
                             <button onclick="toggleComment(this)"><i class="fas fa-comment"></i> <span>0</span></button>
                             <button onclick="shareContent()"><i class="fas fa-share"></i> <span data-key="share">Share</span></button>
-                            <button class="favorite-btn" onclick="toggleFavorite('${item.id}', '${contentType === 'videos' ? 'video' : 'book'}')">⭐</button>
+                            <button class="favorite-btn" onclick="toggleFavorite('${item.id}', '${contentType === 'videos' ? 'video' : 'ppt'}')">⭐</button>
                         </div>
                         <div class="comment-section">
                             <div class="comment-list"></div>
@@ -1658,82 +1732,53 @@
         }
 
         // ================================================================
-        // LOAD EXAMS INTO CONTAINER
+        // LOAD MOCK EXAMS
         // ================================================================
-        async function loadExamsIntoContainer(container, groupId) {
+        async function loadMockExamsIntoContainer(container, groupId) {
             try {
-                const categories = ['mock_exams', 'exit_exams', 'ngat_exams', 'ermp_exams'];
-                const labels = ['Mock Exam', 'Exit Exam', 'NGAT Exam', 'ERMP Exam'];
-                const icons = ['📝', '🎓', '📊', '🏥'];
-                
-                let allExams = [];
-                
-                for (let i = 0; i < categories.length; i++) {
-                    const { data, error } = await sb
-                        .from(categories[i])
-                        .select('*')
-                        .eq('group_id', groupId)
-                        .order('created_at', { ascending: false });
-                    
-                    if (!error && data) {
-                        data.forEach(exam => {
-                            exam.category_label = labels[i];
-                            exam.category_icon = icons[i];
-                            exam.category_table = categories[i];
-                            allExams.push(exam);
-                        });
-                    }
+                const { data, error } = await sb
+                    .from('mock_exams')
+                    .select('*')
+                    .eq('group_id', groupId)
+                    .order('created_at', { ascending: false });
+
+                if (error) {
+                    console.error('Error loading exams:', error);
+                    container.innerHTML = `<div class="loading" style="color:var(--red-error);">Failed to load exams</div>`;
+                    return;
                 }
-                
-                if (allExams.length === 0) {
+
+                if (!data || data.length === 0) {
                     container.innerHTML = `
                         <div class="exam-toggle">
                             <span data-key="mode">Mode:</span>
                             <button class="toggle-btn study" id="examModeBtn" onclick="toggleExamMode()" data-key="study_mode">📖 Study Mode</button>
                             <button class="toggle-btn" id="examModeBtnRight" onclick="toggleExamMode()" data-key="exam_mode" style="background:#e2e8f0; color:var(--text-dark);">🚫 Exam Mode</button>
                         </div>
-                        <div class="loading" style="color:var(--text-muted);">📝 No exams created yet.</div>
+                        <div class="loading" style="color:var(--text-muted);">📝 No mock exams created yet.</div>
                     `;
                     setTimeout(() => translatePage(), 50);
                     return;
                 }
-                
-                const grouped = {};
-                allExams.forEach(exam => {
-                    if (!grouped[exam.category_label]) grouped[exam.category_label] = [];
-                    grouped[exam.category_label].push(exam);
-                });
-                
-                const categoryKeys = Object.keys(grouped);
-                
+
                 container.innerHTML = `
                     <div class="exam-toggle">
                         <span data-key="mode">Mode:</span>
                         <button class="toggle-btn study" id="examModeBtn" onclick="toggleExamMode()" data-key="study_mode">📖 Study Mode</button>
                         <button class="toggle-btn" id="examModeBtnRight" onclick="toggleExamMode()" data-key="exam_mode" style="background:#e2e8f0; color:var(--text-dark);">🚫 Exam Mode</button>
                     </div>
-                    <div class="class-tabs" style="border-bottom: 2px solid var(--gold);">
-                        ${categoryKeys.map((key, idx) => `
-                            <button class="class-tab ${idx === 0 ? 'active' : ''}" onclick="switchExamCategory('${key}', this)" style="font-weight:800;">${key}</button>
-                        `).join('')}
-                    </div>
-                    <div id="examCategoryContainer">
-                        ${categoryKeys.map((key, idx) => `
-                            <div id="examCategory_${key.replace(/\s/g, '_')}" class="class-content ${idx === 0 ? 'active' : ''}">
-                                ${grouped[key].map(exam => `
-                                    <div class="content-card" onclick="startExam('${exam.category_table}', ${exam.id})" style="cursor:pointer; position:relative;">
-                                        <div class="meta">
-                                            <h4>${exam.category_icon} ${exam.title}</h4>
-                                            <p>${exam.questions ? exam.questions.length : 0} Questions • ${exam.time_limit || 5} min • Created ${new Date(exam.created_at).toLocaleDateString()}</p>
-                                        </div>
-                                        <div class="actions">
-                                            <button class="btn-sm btn-teal" style="margin:0;" data-key="start">▶️ Start Exam</button>
-                                        </div>
-                                    </div>
-                                `).join('')}
+                    ${data.map(exam => `
+                        <div class="content-card" onclick="startMockExam(${exam.id})" style="cursor:pointer; position:relative;">
+                            ${AppState.isGroupOwner || AppState.isAdmin ? `<button class="delete-btn" onclick="event.stopPropagation(); deleteMockExam(${exam.id})">✕</button>` : ''}
+                            <div class="meta">
+                                <h4>📝 ${exam.title}</h4>
+                                <p>${exam.questions ? exam.questions.length : 0} Questions • ${exam.time_limit || 5} min • Created ${new Date(exam.created_at).toLocaleDateString()}</p>
                             </div>
-                        `).join('')}
-                    </div>
+                            <div class="actions">
+                                <button class="btn-sm btn-teal" style="margin:0;" data-key="start">▶️ Start Exam</button>
+                            </div>
+                        </div>
+                    `).join('')}
                 `;
                 
                 setTimeout(() => translatePage(), 50);
@@ -1744,24 +1789,16 @@
             }
         }
 
-        function switchExamCategory(category, btn) {
-            document.querySelectorAll('#exam .class-tab').forEach(t => t.classList.remove('active'));
-            btn.classList.add('active');
-            document.querySelectorAll('#examCategoryContainer .class-content').forEach(c => c.classList.remove('active'));
-            const target = document.getElementById(`examCategory_${category.replace(/\s/g, '_')}`);
-            if (target) target.classList.add('active');
-        }
-
         // ================================================================
-        // START EXAM
+        // START MOCK EXAM
         // ================================================================
-        async function startExam(tableName, examId) {
+        async function startMockExam(examId) {
             stopExamTimer();
             showToast('📝 Loading exam...', 'info');
             
             try {
                 const { data, error } = await sb
-                    .from(tableName)
+                    .from('mock_exams')
                     .select('*')
                     .eq('id', examId)
                     .single();
@@ -1782,7 +1819,7 @@
                     title: data.title,
                     questions: data.questions || [],
                     time_limit: data.time_limit || 5,
-                    table: tableName
+                    table: 'mock_exams'
                 };
                 
                 if (!currentExam.questions || currentExam.questions.length === 0) {
@@ -1796,7 +1833,7 @@
                 examAnswered = new Array(currentExam.questions.length).fill(null);
                 examSubmitted = false;
                 
-                renderExamQuestion();
+                renderMockExamQuestion();
                 
                 if (examMode === 'exam') {
                     startExamTimer(currentExam.time_limit);
@@ -1809,10 +1846,10 @@
         }
 
         // ================================================================
-        // RENDER EXAM QUESTION
+        // RENDER MOCK EXAM QUESTION
         // ================================================================
-        function renderExamQuestion() {
-            const container = document.getElementById('exam');
+        function renderMockExamQuestion() {
+            const container = document.getElementById('mockexam');
             if (!container) {
                 console.error('Exam container not found');
                 return;
@@ -1828,11 +1865,6 @@
             const progress = Math.round(((currentQuestionIndex + 1) / total) * 100);
             const selected = examAnswered[currentQuestionIndex];
             const isExamMode = examMode === 'exam';
-
-            let questionHtml = q.question;
-            if (q.questionImage) {
-                questionHtml += `<br><img src="${q.questionImage}" alt="Question image" style="max-width:100%; border-radius:8px; margin-top:8px;">`;
-            }
 
             container.innerHTML = `
                 <div style="margin-bottom:16px;">
@@ -1854,18 +1886,14 @@
                 </div>
                 
                 <div class="question-box">
-                    <p style="font-size:18px; font-weight:900; margin-bottom:12px;">${questionHtml}</p>
+                    <p style="font-size:18px; font-weight:900; margin-bottom:12px;">${q.question}</p>
                     ${q.options.map((opt, idx) => {
                         const letter = String.fromCharCode(65+idx);
                         const isSelected = selected === letter;
-                        let optionHtml = `<span style="font-weight:800;">${letter}.</span> ${opt}`;
-                        if (q.optionImages && q.optionImages[idx]) {
-                            optionHtml += `<br><img src="${q.optionImages[idx]}" alt="Option ${letter}" style="max-width:100%; border-radius:8px; margin-top:4px;">`;
-                        }
                         return `
-                            <label style="display:block; margin:8px 0; padding:12px; border:2px solid ${isSelected ? 'var(--gold)' : '#e2e8f0'}; border-radius:8px; cursor:${isExamMode ? 'default' : 'pointer'}; transition:0.2s; ${isSelected ? 'background:#fef9e7;' : ''}" onclick="${!examSubmitted && !isExamMode ? `answerExamQuestion('${letter}', this)` : ''}">
+                            <label style="display:block; margin:8px 0; padding:12px; border:2px solid ${isSelected ? 'var(--gold)' : '#e2e8f0'}; border-radius:8px; cursor:${isExamMode ? 'default' : 'pointer'}; transition:0.2s; ${isSelected ? 'background:#fef9e7;' : ''}" onclick="${!examSubmitted && !isExamMode ? `answerMockExamQuestion('${letter}', this)` : ''}">
                                 <input type="radio" name="examAnswer" value="${letter}" style="margin-right:10px;" ${isSelected ? 'checked' : ''} ${examSubmitted ? 'disabled' : ''}> 
-                                ${optionHtml}
+                                <span style="font-weight:800;">${letter}.</span> ${opt}
                             </label>
                         `;
                     }).join('')}
@@ -1873,7 +1901,7 @@
                     <div id="examExplanation" style="display:none; margin-top:12px; padding:12px; background:#f0fdf4; border-radius:8px; color:var(--text-dark); border-left:4px solid var(--green-success);"></div>
                     
                     ${!examSubmitted && !isExamMode ? `
-                        <button class="explanation-toggle" onclick="toggleExplanation()" data-key="explanation">💡 See Explanation</button>
+                        <button class="explanation-toggle" onclick="toggleMockExamExplanation()" data-key="explanation">💡 See Explanation</button>
                     ` : ''}
                     
                     ${isExamMode && !examSubmitted ? `
@@ -1884,13 +1912,13 @@
                 </div>
                 
                 <div style="display:flex; gap:10px; margin-top:16px;">
-                    <button class="btn-sm" onclick="prevExamQuestion()" style="flex:1; padding:10px; border:1px solid #e2e8f0; border-radius:8px; background:#f8fafc; cursor:pointer; font-weight:800;" ${currentQuestionIndex === 0 ? 'disabled style="opacity:0.5;"' : ''}>◀ Previous</button>
-                    <button class="btn-sm btn-teal" onclick="nextExamQuestion()" style="flex:1; padding:10px; border:none; border-radius:8px; background:var(--teal); color:white; cursor:pointer; font-weight:800;" ${currentQuestionIndex === total-1 ? 'disabled style="opacity:0.5;"' : ''}>Next ▶</button>
+                    <button class="btn-sm" onclick="prevMockExamQuestion()" style="flex:1; padding:10px; border:1px solid #e2e8f0; border-radius:8px; background:#f8fafc; cursor:pointer; font-weight:800;" ${currentQuestionIndex === 0 ? 'disabled style="opacity:0.5;"' : ''}>◀ Previous</button>
+                    <button class="btn-sm btn-teal" onclick="nextMockExamQuestion()" style="flex:1; padding:10px; border:none; border-radius:8px; background:var(--teal); color:white; cursor:pointer; font-weight:800;" ${currentQuestionIndex === total-1 ? 'disabled style="opacity:0.5;"' : ''}>Next ▶</button>
                 </div>
                 ${!examSubmitted ? `
-                    <button class="btn" onclick="submitExam(false)" style="margin-top:12px;" data-key="submit">📤 Submit Exam</button>
+                    <button class="btn" onclick="submitMockExam(false)" style="margin-top:12px;" data-key="submit">📤 Submit Exam</button>
                 ` : `
-                    <button class="btn" onclick="finishExam()" style="margin-top:12px;" data-key="see_result">📊 ${t('see_result')}</button>
+                    <button class="btn" onclick="finishMockExam()" style="margin-top:12px;" data-key="see_result">📊 ${t('see_result')}</button>
                 `}
             `;
             
@@ -1898,9 +1926,9 @@
         }
 
         // ================================================================
-        // ANSWER EXAM QUESTION
+        // ANSWER MOCK EXAM QUESTION
         // ================================================================
-        function answerExamQuestion(selected, labelEl) {
+        function answerMockExamQuestion(selected, labelEl) {
             if (examSubmitted || examMode === 'exam') return;
             
             const q = currentExam.questions[currentQuestionIndex];
@@ -1911,7 +1939,7 @@
             const radio = labelEl.querySelector('input[type="radio"]');
             if (radio) radio.checked = true;
             
-            document.querySelectorAll('#exam .question-box label').forEach(l => {
+            document.querySelectorAll('#mockexam .question-box label').forEach(l => {
                 l.style.pointerEvents = 'none';
             });
             
@@ -1923,7 +1951,7 @@
                 incorrectCount++;
                 labelEl.style.borderColor = 'var(--red-error)';
                 labelEl.style.background = '#fef2f2';
-                document.querySelectorAll('#exam .question-box label').forEach((l, idx) => {
+                document.querySelectorAll('#mockexam .question-box label').forEach((l, idx) => {
                     if (String.fromCharCode(65+idx) === q.answer) {
                         l.style.borderColor = 'var(--green-success)';
                         l.style.background = '#f0fdf4';
@@ -1936,7 +1964,6 @@
                 expDiv.style.display = 'block';
                 let html = `<strong>${isCorrect ? '✅ Correct!' : '❌ Incorrect.'}</strong>`;
                 if (q.explanation) html += `<br><br>💡 ${q.explanation}`;
-                if (q.explanationImage) html += `<br><img src="${q.explanationImage}" alt="Explanation" style="max-width:100%; border-radius:8px; margin-top:8px;">`;
                 expDiv.innerHTML = html;
             }
             
@@ -1952,9 +1979,9 @@
         }
 
         // ================================================================
-        // TOGGLE EXPLANATION
+        // TOGGLE MOCK EXAM EXPLANATION
         // ================================================================
-        function toggleExplanation() {
+        function toggleMockExamExplanation() {
             if (examMode !== 'study') {
                 showToast('📖 Switch to Study Mode to see explanations.', 'info');
                 return;
@@ -1978,30 +2005,29 @@
                 const isCorrect = userAnswer === q.answer;
                 let html = `<strong>${isCorrect ? '✅ Correct!' : '❌ Incorrect.'}</strong>`;
                 if (q.explanation) html += `<br><br>💡 ${q.explanation}`;
-                if (q.explanationImage) html += `<br><img src="${q.explanationImage}" alt="Explanation" style="max-width:100%; border-radius:8px; margin-top:8px;">`;
                 html += `<br><br><span style="font-size:13px; color:var(--text-muted); font-weight:700;">Your answer: ${userAnswer} | Correct answer: ${q.answer}</span>`;
                 expDiv.innerHTML = html;
             }
         }
 
-        function nextExamQuestion() {
+        function nextMockExamQuestion() {
             if (currentQuestionIndex < currentExam.questions.length - 1) {
                 currentQuestionIndex++;
-                renderExamQuestion();
+                renderMockExamQuestion();
             }
         }
 
-        function prevExamQuestion() {
+        function prevMockExamQuestion() {
             if (currentQuestionIndex > 0) {
                 currentQuestionIndex--;
-                renderExamQuestion();
+                renderMockExamQuestion();
             }
         }
 
         // ================================================================
-        // SUBMIT EXAM
+        // SUBMIT MOCK EXAM
         // ================================================================
-        function submitExam(timeUp = false) {
+        function submitMockExam(timeUp = false) {
             if (examSubmitted) return;
             
             const unanswered = examAnswered.filter(a => a === null).length;
@@ -2029,14 +2055,14 @@
             }
             
             showToast(message, 'success');
-            renderExamResult();
+            renderMockExamResult();
         }
 
         // ================================================================
-        // RENDER EXAM RESULT
+        // RENDER MOCK EXAM RESULT
         // ================================================================
-        function renderExamResult() {
-            const container = document.getElementById('exam');
+        function renderMockExamResult() {
+            const container = document.getElementById('mockexam');
             if (!container) return;
             
             const total = currentExam.questions.length;
@@ -2062,15 +2088,10 @@
                 const correctLetter = q.answer;
                 const correctText = q.options[correctLetter.charCodeAt(0) - 65];
                 
-                let questionDisplay = q.question;
-                if (q.questionImage) {
-                    questionDisplay += `<br><img src="${q.questionImage}" alt="Question" style="max-width:100%; border-radius:8px; margin-top:8px;">`;
-                }
-                
                 html += `
                     <div class="content-card" style="border-left: 4px solid ${isCorrect ? 'var(--green-success)' : 'var(--red-error)'};">
                         <div class="meta">
-                            <h4>Q${idx + 1}: ${questionDisplay}</h4>
+                            <h4>Q${idx + 1}: ${q.question}</h4>
                             <p style="font-weight:700;">
                                 <span style="color:${isCorrect ? 'var(--green-success)' : 'var(--red-error)'}; font-weight:900;">
                                     ${isCorrect ? '✅' : '❌'} ${t('your_answer')} ${userAnswer || 'Not answered'}
@@ -2084,7 +2105,7 @@
             });
             
             html += `
-                <button class="btn btn-teal" onclick="finishExam()" style="margin-top:12px;" data-key="back">🔙 Back to Exams</button>
+                <button class="btn btn-teal" onclick="finishMockExam()" style="margin-top:12px;" data-key="back">🔙 Back to Exams</button>
             `;
             
             container.innerHTML = html;
@@ -2092,9 +2113,9 @@
         }
 
         // ================================================================
-        // FINISH EXAM
+        // FINISH MOCK EXAM
         // ================================================================
-        function finishExam() {
+        function finishMockExam() {
             stopExamTimer();
             currentExam = null;
             currentQuestionIndex = 0;
@@ -2104,7 +2125,7 @@
             examSubmitted = false;
             
             if (AppState.currentGroupId) {
-                loadGroupContent(AppState.currentGroupId, 'exam');
+                loadGroupContent(AppState.currentGroupId, 'mockexam');
             }
         }
 
@@ -2140,13 +2161,13 @@
                 showToast('📖 Study Mode: Learn at your own pace.', 'info');
                 stopExamTimer();
                 if (currentExam && !examSubmitted) {
-                    renderExamQuestion();
+                    renderMockExamQuestion();
                 }
             }
         }
 
         // ================================================================
-        // EXAM TIMER FUNCTIONS
+        // EXAM TIMER
         // ================================================================
         function startExamTimer(minutes) {
             stopExamTimer();
@@ -2155,7 +2176,7 @@
             
             const timerDisplay = document.getElementById('examTimerDisplay');
             if (!timerDisplay) {
-                const container = document.getElementById('exam');
+                const container = document.getElementById('mockexam');
                 if (container) {
                     const timerHtml = `
                         <div class="exam-timer" id="examTimerContainer">
@@ -2184,7 +2205,7 @@
                     clearInterval(examTimer);
                     examTimer = null;
                     showToast('⏰ Time is up! Submitting exam...', 'info');
-                    submitExam(true);
+                    submitMockExam(true);
                 }
             }, 1000);
         }
@@ -2396,19 +2417,17 @@
             const groupId = AppState.currentGroupId;
             if (!groupId) return showToast('You must be in a group to add content.', 'error');
             
-            if (type === 'exam') {
+            if (type === 'mockexam') {
                 const titleInput = document.getElementById('examTitle');
-                const categorySelect = document.getElementById('examCategory');
                 const timeLimitInput = document.getElementById('examTimeLimit');
                 
-                if (!titleInput) return showToast('Exam title field not found.', 'error');
+                if (!titleInput) return showToast('Mock Exam title field not found.', 'error');
                 
                 const title = titleInput.value;
-                const category = categorySelect ? categorySelect.value : 'mock';
                 let time_limit = parseInt(timeLimitInput?.value);
                 if (isNaN(time_limit) || time_limit < 1) time_limit = 5;
                 
-                if (!title) return showToast('Please enter an Exam Title.', 'error');
+                if (!title) return showToast('Please enter a Mock Exam Title.', 'error');
 
                 const questions = [];
                 for (let i = 1; i <= examQuestionCount; i++) {
@@ -2420,82 +2439,18 @@
                     const ans = document.getElementById(`examAns${i}`)?.value;
                     const exp = document.getElementById(`examExp${i}`)?.value;
                     
-                    const qImgFile = document.getElementById(`examQImg${i}`)?.files[0];
-                    const qImgUrl = document.getElementById(`examQImgUrl${i}`)?.value;
-                    let qImg = qImgUrl || null;
-                    
-                    if (qImgFile) {
-                        const fileExt = qImgFile.name.split('.').pop();
-                        const fileName = `exam_images/${AppState.userId}_${Date.now()}_q${i}.${fileExt}`;
-                        const { data: uploadData, error: uploadError } = await sb.storage
-                            .from('t-hub-uploads')
-                            .upload(fileName, qImgFile, { cacheControl: '3600', upsert: false });
-                        if (!uploadError) {
-                            const { data: urlData } = sb.storage.from('t-hub-uploads').getPublicUrl(fileName);
-                            qImg = urlData.publicUrl;
-                        }
-                    }
-                    
-                    const optionImages = [];
-                    for (let optIdx = 0; optIdx < 4; optIdx++) {
-                        const optLetter = String.fromCharCode(65+optIdx);
-                        const imgFile = document.getElementById(`exam${optLetter}Img${i}`)?.files[0];
-                        const imgUrl = document.getElementById(`exam${optLetter}ImgUrl${i}`)?.value;
-                        let img = imgUrl || null;
-                        if (imgFile) {
-                            const fileExt = imgFile.name.split('.').pop();
-                            const fileName = `exam_images/${AppState.userId}_${Date.now()}_${optLetter}${i}.${fileExt}`;
-                            const { data: uploadData, error: uploadError } = await sb.storage
-                                .from('t-hub-uploads')
-                                .upload(fileName, imgFile, { cacheControl: '3600', upsert: false });
-                            if (!uploadError) {
-                                const { data: urlData } = sb.storage.from('t-hub-uploads').getPublicUrl(fileName);
-                                img = urlData.publicUrl;
-                            }
-                        }
-                        optionImages.push(img);
-                    }
-                    
-                    const expImgFile = document.getElementById(`examExpImg${i}`)?.files[0];
-                    const expImgUrl = document.getElementById(`examExpImgUrl${i}`)?.value;
-                    let expImg = expImgUrl || null;
-                    if (expImgFile) {
-                        const fileExt = expImgFile.name.split('.').pop();
-                        const fileName = `exam_images/${AppState.userId}_${Date.now()}_exp${i}.${fileExt}`;
-                        const { data: uploadData, error: uploadError } = await sb.storage
-                            .from('t-hub-uploads')
-                            .upload(fileName, expImgFile, { cacheControl: '3600', upsert: false });
-                        if (!uploadError) {
-                            const { data: urlData } = sb.storage.from('t-hub-uploads').getPublicUrl(fileName);
-                            expImg = urlData.publicUrl;
-                        }
-                    }
-                    
                     if (!q) return showToast(`Please fill in Question ${i}.`, 'error');
                     if (!a || !b || !c || !d) return showToast(`Please fill in all options for Question ${i}.`, 'error');
                     
                     questions.push({ 
                         question: q,
-                        questionImage: qImg,
                         options: [a, b, c, d],
-                        optionImages: optionImages,
                         answer: ans,
-                        explanation: exp || '',
-                        explanationImage: expImg
+                        explanation: exp || ''
                     });
                 }
 
-                const tableMap = {
-                    'mock': 'mock_exams',
-                    'exit': 'exit_exams',
-                    'ngat': 'ngat_exams',
-                    'ermp': 'ermp_exams'
-                };
-                const tableName = tableMap[category] || 'mock_exams';
-
-                console.log(`📤 Saving ${category} exam to ${tableName}...`);
-                
-                const { data, error } = await sb.from(tableName).insert({
+                const { data, error } = await sb.from('mock_exams').insert({
                     group_id: groupId,
                     author_id: AppState.userId,
                     title: title,
@@ -2505,11 +2460,10 @@
 
                 if (error) {
                     console.error("❌ Supabase Error:", error);
-                    return showToast('Error saving exam: ' + error.message, 'error');
+                    return showToast('Error saving mock exam: ' + error.message, 'error');
                 }
 
-                console.log("✅ Exam saved successfully!", data);
-                showToast(`📝 ${category} Exam '${title}' with ${questions.length} questions created!`, 'success');
+                showToast(`📝 Mock Exam '${title}' with ${questions.length} questions created!`, 'success');
                 closeModal('addFileModal');
                 
                 examQuestionCount = 1;
@@ -2517,40 +2471,24 @@
                 if (timeLimitInput) timeLimitInput.value = '5';
                 
                 if (AppState.currentGroupId) {
-                    loadGroupContent(AppState.currentGroupId, 'exam');
+                    loadGroupContent(AppState.currentGroupId, 'mockexam');
                 }
                 return;
             }
 
+            // Handle Video/PPT upload
             const titleInput = document.getElementById('addFileTitle');
             const urlInput = document.getElementById('addFileUrl');
-            const authorInput = document.getElementById('addFileAuthor');
             const descInput = document.getElementById('addFileDesc');
-            const coverInput = document.getElementById('addFileCover');
             
             if (!titleInput || !urlInput) return showToast('Form fields not found.', 'error');
             
             const title = titleInput.value;
             const url = urlInput.value;
-            const author = authorInput ? authorInput.value : '';
             const description = descInput ? descInput.value : '';
             
             if(!title) return showToast('Please enter a title.', 'error');
             if(!url) return showToast('Please upload a file first (click the Upload button).', 'error');
-
-            let cover_url = null;
-            if (coverInput && coverInput.files && coverInput.files[0]) {
-                const file = coverInput.files[0];
-                const fileExt = file.name.split('.').pop();
-                const fileName = `covers/${AppState.userId}_${Date.now()}.${fileExt}`;
-                const { data: uploadData, error: uploadError } = await sb.storage
-                    .from('t-hub-uploads')
-                    .upload(fileName, file, { cacheControl: '3600', upsert: false });
-                if (!uploadError) {
-                    const { data: urlData } = sb.storage.from('t-hub-uploads').getPublicUrl(fileName);
-                    cover_url = urlData.publicUrl;
-                }
-            }
 
             try {
                 const { error } = await sb.from('group_content').insert({
@@ -2558,30 +2496,26 @@
                     author_id: AppState.userId, 
                     content_type: type, 
                     title: title,
-                    author: author,
                     description: description,
                     file_url: url,
-                    cover_url: cover_url,
                     likes: 0
                 });
 
                 if (error) throw error;
 
-                showToast(`📤 ${type === 'video' ? 'Video' : 'Book'} published successfully!`, 'success');
+                showToast(`📤 ${type === 'video' ? 'Video' : 'PPT'} published successfully!`, 'success');
                 closeModal('addFileModal');
                 
                 titleInput.value = '';
                 urlInput.value = '';
-                if (authorInput) authorInput.value = '';
                 if (descInput) descInput.value = '';
                 const fileInput = document.getElementById('addFileInput');
                 if (fileInput) fileInput.value = '';
-                if (coverInput) coverInput.value = '';
                 const statusDiv = document.getElementById('uploadStatus');
                 if (statusDiv) statusDiv.innerText = '⏳ No file selected';
                 
                 if (AppState.currentGroupId) {
-                    loadGroupContent(AppState.currentGroupId, type === 'video' ? 'videos' : 'books');
+                    loadGroupContent(AppState.currentGroupId, type === 'video' ? 'videos' : 'ppts');
                 }
             } catch (err) {
                 console.error("❌ Error:", err);
@@ -2847,15 +2781,52 @@
                 const file = e.target.files[0];
                 if (!file) return;
                 
+                showToast('📤 Uploading profile picture...', 'info');
+                
                 try {
+                    if (file.size > 5 * 1024 * 1024) {
+                        showToast('❌ File too large. Max 5MB allowed.', 'error');
+                        return;
+                    }
+                    
                     const fileExt = file.name.split('.').pop();
                     const fileName = `profile_pics/${AppState.userId}_${Date.now()}.${fileExt}`;
                     
-                    const { data, error } = await sb.storage
+                    const { data: uploadData, error: uploadError } = await sb.storage
                         .from('t-hub-uploads')
-                        .upload(fileName, file, { cacheControl: '3600', upsert: true });
+                        .upload(fileName, file, { 
+                            cacheControl: '3600', 
+                            upsert: true,
+                            contentType: file.type
+                        });
                     
-                    if (error) throw error;
+                    if (uploadError) {
+                        console.error('Upload error:', uploadError);
+                        const altFileName = `profile_pics/${AppState.userId}_${Date.now()}.${fileExt}`;
+                        const { data: altData, error: altError } = await sb.storage
+                            .from('app-assets')
+                            .upload(altFileName, file, { 
+                                cacheControl: '3600', 
+                                upsert: true,
+                                contentType: file.type
+                            });
+                        if (altError) throw altError;
+                        const { data: altUrlData } = sb.storage.from('app-assets').getPublicUrl(altFileName);
+                        const profilePicUrl = altUrlData.publicUrl;
+                        
+                        await sb.from('users')
+                            .update({ profile_pic_url: profilePicUrl })
+                            .eq('user_id', AppState.userId);
+                        
+                        AppState.profilePicUrl = profilePicUrl;
+                        
+                        document.querySelectorAll('#profileImage, #profileImageLarge, .post-avatar img, .profile-avatar img').forEach(img => {
+                            if (img) img.src = profilePicUrl;
+                        });
+                        
+                        showToast('✅ Profile picture updated!', 'success');
+                        return;
+                    }
                     
                     const { data: urlData } = sb.storage.from('t-hub-uploads').getPublicUrl(fileName);
                     const profilePicUrl = urlData.publicUrl;
@@ -2866,20 +2837,26 @@
                     
                     AppState.profilePicUrl = profilePicUrl;
                     
-                    document.querySelectorAll('#profileImage, #profileImageLarge, .post-avatar img').forEach(img => {
+                    document.querySelectorAll('#profileImage, #profileImageLarge, .post-avatar img, .profile-avatar img').forEach(img => {
                         if (img) img.src = profilePicUrl;
                     });
                     
                     showToast('✅ Profile picture updated!', 'success');
+                    
                 } catch (err) {
                     console.error('Profile pic upload error:', err);
-                    showToast('Error updating profile picture: ' + err.message, 'error');
+                    showToast('❌ Error updating profile picture: ' + err.message, 'error');
                 }
             };
             input.click();
         }
 
         function changeGroupProfilePic() {
+            if (!AppState.isGroupOwner && !AppState.isAdmin) {
+                showToast('❌ Only the group owner or admin can change the profile picture.', 'error');
+                return;
+            }
+            
             const input = document.createElement('input');
             input.type = 'file';
             input.accept = 'image/*';
@@ -2887,20 +2864,50 @@
                 const file = e.target.files[0];
                 if (!file) return;
                 
-                if (!AppState.isGroupOwner && !AppState.isAdmin) {
-                    showToast('Only the group owner can change the profile picture.', 'error');
-                    return;
-                }
+                showToast('📤 Uploading group picture...', 'info');
                 
                 try {
+                    if (file.size > 5 * 1024 * 1024) {
+                        showToast('❌ File too large. Max 5MB allowed.', 'error');
+                        return;
+                    }
+                    
                     const fileExt = file.name.split('.').pop();
                     const fileName = `group_pics/${AppState.currentGroupId}_${Date.now()}.${fileExt}`;
                     
-                    const { data, error } = await sb.storage
+                    const { data: uploadData, error: uploadError } = await sb.storage
                         .from('t-hub-uploads')
-                        .upload(fileName, file, { cacheControl: '3600', upsert: true });
+                        .upload(fileName, file, { 
+                            cacheControl: '3600', 
+                            upsert: true,
+                            contentType: file.type
+                        });
                     
-                    if (error) throw error;
+                    if (uploadError) {
+                        console.error('Upload error:', uploadError);
+                        const altFileName = `group_pics/${AppState.currentGroupId}_${Date.now()}.${fileExt}`;
+                        const { data: altData, error: altError } = await sb.storage
+                            .from('app-assets')
+                            .upload(altFileName, file, { 
+                                cacheControl: '3600', 
+                                upsert: true,
+                                contentType: file.type
+                            });
+                        if (altError) throw altError;
+                        const { data: altUrlData } = sb.storage.from('app-assets').getPublicUrl(altFileName);
+                        const profilePicUrl = altUrlData.publicUrl;
+                        
+                        await sb.from('groups')
+                            .update({ profile_pic_url: profilePicUrl })
+                            .eq('id', AppState.currentGroupId);
+                        
+                        document.querySelectorAll('#groupAvatarImg, #socialGroupAvatarImg').forEach(img => {
+                            if (img) img.src = profilePicUrl;
+                        });
+                        
+                        showToast('✅ Group profile picture updated!', 'success');
+                        return;
+                    }
                     
                     const { data: urlData } = sb.storage.from('t-hub-uploads').getPublicUrl(fileName);
                     const profilePicUrl = urlData.publicUrl;
@@ -2914,9 +2921,10 @@
                     });
                     
                     showToast('✅ Group profile picture updated!', 'success');
+                    
                 } catch (err) {
                     console.error('Group pic upload error:', err);
-                    showToast('Error updating group picture: ' + err.message, 'error');
+                    showToast('❌ Error updating group picture: ' + err.message, 'error');
                 }
             };
             input.click();
@@ -2952,6 +2960,36 @@
             } catch (err) {
                 console.error('Delete error:', err);
                 showToast('Error deleting content: ' + err.message, 'error');
+            }
+        }
+
+        async function deleteMockExam(examId) {
+            if (!AppState.isGroupOwner && !AppState.isAdmin) {
+                showToast('Only the group owner can delete exams.', 'error');
+                return;
+            }
+            
+            if (!confirm('⚠️ Are you sure you want to permanently delete this mock exam? This cannot be undone.')) {
+                return;
+            }
+            
+            try {
+                const { error } = await sb
+                    .from('mock_exams')
+                    .delete()
+                    .eq('id', examId);
+                
+                if (error) throw error;
+                
+                showToast('🗑️ Mock exam deleted successfully!', 'success');
+                
+                const groupId = AppState.currentGroupId;
+                if (groupId) {
+                    loadGroupContent(groupId, 'mockexam');
+                }
+            } catch (err) {
+                console.error('Delete exam error:', err);
+                showToast('Error deleting exam: ' + err.message, 'error');
             }
         }
 
@@ -3002,13 +3040,8 @@
             const standard = document.getElementById('standardFields');
             const examBuilder = document.getElementById('examBuilder');
             
-            if (standard) standard.style.display = type === 'exam' ? 'none' : 'block';
-            if (examBuilder) examBuilder.style.display = type === 'exam' ? 'block' : 'none';
-            
-            const authorField = document.getElementById('addFileAuthor')?.closest('.form-group');
-            if (authorField) {
-                authorField.style.display = type === 'book' ? 'block' : 'none';
-            }
+            if (standard) standard.style.display = type === 'mockexam' ? 'none' : 'block';
+            if (examBuilder) examBuilder.style.display = type === 'mockexam' ? 'block' : 'none';
         }
 
         // ================================================================
@@ -3024,57 +3057,21 @@
             newQ.innerHTML = `
                 <p style="font-weight:900; color:var(--text-dark); margin-bottom:4px;">Q${examQuestionCount}: Question</p>
                 <input type="text" id="examQ${examQuestionCount}" placeholder="Type your question..." style="width:100%; margin-bottom:6px; padding:8px; border:1px solid #eee; border-radius:8px; font-weight:700;">
-                <div class="form-group">
-                    <label style="font-size:12px; font-weight:800;">Question Image (optional)</label>
-                    <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-                        <input type="file" id="examQImg${examQuestionCount}" accept="image/*" style="flex:1; padding:6px; border:1px solid #eee; border-radius:6px; font-weight:700;">
-                        <input type="text" id="examQImgUrl${examQuestionCount}" placeholder="Or paste image URL" style="flex:1; padding:6px; border:1px solid #eee; border-radius:6px; font-weight:700;">
-                    </div>
-                </div>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
-                    <div>
-                        <input type="text" id="examA${examQuestionCount}" placeholder="Option A" style="width:100%; padding:6px; border:1px solid #eee; border-radius:6px; font-weight:700;">
-                        <div style="display:flex; gap:4px; margin-top:4px;">
-                            <input type="file" id="examAImg${examQuestionCount}" accept="image/*" style="flex:1; padding:4px; border:1px solid #eee; border-radius:4px; font-size:11px; font-weight:700;">
-                            <input type="text" id="examAImgUrl${examQuestionCount}" placeholder="URL" style="flex:1; padding:4px; border:1px solid #eee; border-radius:4px; font-size:11px; font-weight:700;">
-                        </div>
-                    </div>
-                    <div>
-                        <input type="text" id="examB${examQuestionCount}" placeholder="Option B" style="width:100%; padding:6px; border:1px solid #eee; border-radius:6px; font-weight:700;">
-                        <div style="display:flex; gap:4px; margin-top:4px;">
-                            <input type="file" id="examBImg${examQuestionCount}" accept="image/*" style="flex:1; padding:4px; border:1px solid #eee; border-radius:4px; font-size:11px; font-weight:700;">
-                            <input type="text" id="examBImgUrl${examQuestionCount}" placeholder="URL" style="flex:1; padding:4px; border:1px solid #eee; border-radius:4px; font-size:11px; font-weight:700;">
-                        </div>
-                    </div>
-                    <div>
-                        <input type="text" id="examC${examQuestionCount}" placeholder="Option C" style="width:100%; padding:6px; border:1px solid #eee; border-radius:6px; font-weight:700;">
-                        <div style="display:flex; gap:4px; margin-top:4px;">
-                            <input type="file" id="examCImg${examQuestionCount}" accept="image/*" style="flex:1; padding:4px; border:1px solid #eee; border-radius:4px; font-size:11px; font-weight:700;">
-                            <input type="text" id="examCImgUrl${examQuestionCount}" placeholder="URL" style="flex:1; padding:4px; border:1px solid #eee; border-radius:4px; font-size:11px; font-weight:700;">
-                        </div>
-                    </div>
-                    <div>
-                        <input type="text" id="examD${examQuestionCount}" placeholder="Option D" style="width:100%; padding:6px; border:1px solid #eee; border-radius:6px; font-weight:700;">
-                        <div style="display:flex; gap:4px; margin-top:4px;">
-                            <input type="file" id="examDImg${examQuestionCount}" accept="image/*" style="flex:1; padding:4px; border:1px solid #eee; border-radius:4px; font-size:11px; font-weight:700;">
-                            <input type="text" id="examDImgUrl${examQuestionCount}" placeholder="URL" style="flex:1; padding:4px; border:1px solid #eee; border-radius:4px; font-size:11px; font-weight:700;">
-                        </div>
-                    </div>
+                    <div><input type="text" id="examA${examQuestionCount}" placeholder="Option A" style="width:100%; padding:6px; border:1px solid #eee; border-radius:6px; font-weight:700;"></div>
+                    <div><input type="text" id="examB${examQuestionCount}" placeholder="Option B" style="width:100%; padding:6px; border:1px solid #eee; border-radius:6px; font-weight:700;"></div>
+                    <div><input type="text" id="examC${examQuestionCount}" placeholder="Option C" style="width:100%; padding:6px; border:1px solid #eee; border-radius:6px; font-weight:700;"></div>
+                    <div><input type="text" id="examD${examQuestionCount}" placeholder="Option D" style="width:100%; padding:6px; border:1px solid #eee; border-radius:6px; font-weight:700;"></div>
                 </div>
-                <div style="margin-top:6px; display:flex; gap:10px; flex-wrap:wrap;">
-                    <div><label style="font-size:13px; font-weight:800;">Correct Answer:</label>
-                        <select id="examAns${examQuestionCount}" style="padding:4px 8px; border-radius:6px; border:1px solid #eee; font-weight:700;">
-                            <option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option>
-                        </select>
-                    </div>
+                <div style="margin-top:6px;">
+                    <label style="font-size:13px; font-weight:800;">Correct Answer:</label>
+                    <select id="examAns${examQuestionCount}" style="padding:4px 8px; border-radius:6px; border:1px solid #eee; font-weight:700;">
+                        <option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option>
+                    </select>
                 </div>
                 <div style="margin-top:6px;">
                     <label style="font-size:13px; font-weight:800;">Explanation (optional):</label>
                     <input type="text" id="examExp${examQuestionCount}" placeholder="Explain why this is correct..." style="width:100%; padding:6px; border:1px solid #eee; border-radius:6px; font-weight:700;">
-                    <div style="display:flex; gap:4px; margin-top:4px;">
-                        <input type="file" id="examExpImg${examQuestionCount}" accept="image/*" style="flex:1; padding:4px; border:1px solid #eee; border-radius:4px; font-size:11px; font-weight:700;">
-                        <input type="text" id="examExpImgUrl${examQuestionCount}" placeholder="Image URL" style="flex:1; padding:4px; border:1px solid #eee; border-radius:4px; font-size:11px; font-weight:700;">
-                    </div>
                 </div>
             `;
             const addBtn = container.lastElementChild;
@@ -3120,7 +3117,7 @@
         }
 
         // ================================================================
-        // GROUP 3-DOT MENU FUNCTIONS
+        // GROUP 3-DOT MENU
         // ================================================================
         function toggleClassMenu(event) {
             if(event) event.stopPropagation();
@@ -3133,23 +3130,90 @@
             const menu = document.getElementById('classDropdownMenu');
             if (menu) menu.style.display = 'none';
             
-            if(action === 'Add File') showModal('addFileModal');
-            else if(action === 'Delete File') showToast('🖱️ Click items to mark them for deletion.', 'info');
+            if(action === 'Add File') {
+                showModal('addFileModal');
+            }
+            else if(action === 'Delete File') {
+                showToast('🖱️ Click items to mark them for deletion.', 'info');
+            }
             else if(action === 'Edit Group') {
                 if(AppState.groups.length > 0) {
+                    const group = AppState.groups.find(g => g.id === AppState.currentGroupId) || AppState.groups[0];
                     const nameInput = document.getElementById('editGroupName');
                     const descInput = document.getElementById('editGroupDesc');
-                    if (nameInput) nameInput.value = AppState.groups[0].name;
-                    if (descInput) descInput.value = AppState.groups[0].description || '';
+                    if (nameInput) nameInput.value = group?.name || '';
+                    if (descInput) descInput.value = group?.description || '';
                 }
                 showModal('editGroupModal');
             }
-            else if(action === 'Boost') showToast('🚀 Boosting a group costs T-Hub Coins. Feature coming soon.', 'info');
-            else if(action === 'Wallet') showModal('walletModal');
+            else if(action === 'Boost') {
+                showToast('🚀 Boosting a group costs T-Hub Coins. Feature coming soon.', 'info');
+            }
+            else if(action === 'Wallet') {
+                showModal('walletModal');
+            }
             else if(action === 'Delete Group') {
-                if(confirm('⚠️ Are you sure you want to permanently delete this class? This cannot be undone.')) {
-                    showToast('⛔ Class deleted.', 'info');
+                if (AppState.groups.length > 0) {
+                    const groupId = AppState.currentGroupId || AppState.groups[0]?.id;
+                    if (groupId) {
+                        deleteGroup(groupId);
+                    } else {
+                        showToast('❌ No group found to delete.', 'error');
+                    }
+                } else {
+                    showToast('❌ No group found to delete.', 'error');
                 }
+            }
+        }
+
+        // ================================================================
+        // DELETE GROUP
+        // ================================================================
+        async function deleteGroup(groupId) {
+            const group = AppState.groups.find(g => g.id === groupId);
+            if (!group) {
+                showToast('❌ Group not found.', 'error');
+                return;
+            }
+            
+            if (group.owner_id !== AppState.userId && !AppState.isAdmin) {
+                showToast('❌ Only the group owner or admin can delete this group.', 'error');
+                return;
+            }
+            
+            if (!confirm('⚠️ Are you sure you want to permanently delete this group?\n\nThis will also delete ALL content, exams, posts, and notifications. This cannot be undone!')) {
+                return;
+            }
+            
+            showToast('🗑️ Deleting group...', 'info');
+            
+            try {
+                await sb.from('group_content').delete().eq('group_id', groupId);
+                await sb.from('mock_exams').delete().eq('group_id', groupId);
+                await sb.from('social_posts').delete().eq('group_id', groupId);
+                await sb.from('group_notifications').delete().eq('group_id', groupId);
+                await sb.from('group_active_users').delete().eq('group_id', groupId);
+                
+                const { error } = await sb.from('groups').delete().eq('id', groupId);
+                if (error) throw error;
+                
+                AppState.groups = AppState.groups.filter(g => g.id !== groupId);
+                AppState.groupCount = AppState.groups.length;
+                
+                if (AppState.currentGroupId === groupId) {
+                    AppState.currentGroupId = null;
+                    AppState.currentGroupType = null;
+                    AppState.currentGroupName = null;
+                    AppState.isGroupOwner = false;
+                }
+                
+                showToast('✅ Group deleted successfully!', 'success');
+                openTabContent('class');
+                updateTrendingGroups();
+                
+            } catch (err) {
+                console.error('Delete group error:', err);
+                showToast('❌ Error deleting group: ' + err.message, 'error');
             }
         }
 
@@ -3164,12 +3228,12 @@
             if (content) content.classList.add('active');
 
             if (AppState.currentGroupId) {
-                if (tabId === 'exam') {
-                    loadGroupContent(AppState.currentGroupId, 'exam');
+                if (tabId === 'mockexam') {
+                    loadGroupContent(AppState.currentGroupId, 'mockexam');
                 } else if (tabId === 'videos') {
                     loadGroupContent(AppState.currentGroupId, 'videos');
-                } else if (tabId === 'books') {
-                    loadGroupContent(AppState.currentGroupId, 'books');
+                } else if (tabId === 'ppts') {
+                    loadGroupContent(AppState.currentGroupId, 'ppts');
                 }
             }
         }
@@ -3238,7 +3302,7 @@
 
         async function submitAppeal() {
             if (AppState.isAdmin) {
-                showToast('👑 Admin automatically verified!', 'success');
+                showToast('👑 Admin is already verified! No payment required.', 'success');
                 closeModal('appealModal');
                 return;
             }
@@ -3324,6 +3388,8 @@
             if (event.key === 'Enter') {
                 const q = document.getElementById('globalSearch').value.toLowerCase();
                 if (q.includes('class') || q.includes('group')) openTabContent('class');
+                else if (q.includes('bstore') || q.includes('book')) openTabContent('bstore');
+                else if (q.includes('calc') || q.includes('calculator')) openTabContent('mcalculator');
                 else if (q.includes('job')) openTabContent('jobs');
                 else if (q.includes('research')) openTabContent('research');
                 else if (q.includes('wallet')) openTabContent('wallet');
@@ -3343,37 +3409,92 @@
                 return; 
             }
             
+            // Get platform stats
+            let platformBalance = 0;
+            let totalBooksSold = 0;
+            let totalCoinsSold = 0;
+            let totalCommission = 0;
+            
+            try {
+                const { data: walletData } = await sb.from('platform_wallet').select('balance').single();
+                if (walletData) platformBalance = walletData.balance || 0;
+                
+                const { count: booksCount } = await sb.from('bstore_purchases').select('*', { count: 'exact' });
+                totalBooksSold = booksCount || 0;
+                
+                const { data: coinData } = await sb.from('transactions')
+                    .select('amount')
+                    .eq('type', 'buy')
+                    .eq('status', 'completed');
+                if (coinData) {
+                    totalCoinsSold = coinData.reduce((sum, t) => sum + t.amount, 0);
+                }
+                
+                const { data: commissionData } = await sb.from('platform_transactions')
+                    .select('amount')
+                    .eq('type', 'commission');
+                if (commissionData) {
+                    totalCommission = commissionData.reduce((sum, t) => sum + t.amount, 0);
+                }
+            } catch (err) {
+                console.error('Error loading platform stats:', err);
+            }
+            
             container.innerHTML = `
                 <div class="card"><h3>⚙️ T-Hub Admin Panel</h3><p style="color:var(--text-muted); margin-bottom:15px; font-weight:700;">Manage content, teachers, payments, and consultations.</p></div>
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-bottom:20px;">
-                    <div class="card" onclick="adminAction('📂 Upload Files')" style="cursor:pointer; transition:0.2s;">
-                        <div style="font-size:32px;">📂</div>
-                        <h4 data-key="upload_files" style="font-weight:900;">Upload Files</h4>
-                        <p style="font-size:13px; color:var(--text-muted); font-weight:700;">PDFs for Exams, Books & Smart Notes</p>
+                
+                <div class="card" style="border:2px solid var(--gold);">
+                    <h3 style="color:var(--gold);">💳 Platform Wallet & Stats</h3>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                        <div style="background:var(--card-bg); padding:12px; border-radius:12px; text-align:center;">
+                            <div style="font-size:12px; color:var(--text-muted); font-weight:700;">💰 Balance</div>
+                            <div style="font-size:20px; font-weight:900; color:var(--gold);">${platformBalance} Coins</div>
+                        </div>
+                        <div style="background:var(--card-bg); padding:12px; border-radius:12px; text-align:center;">
+                            <div style="font-size:12px; color:var(--text-muted); font-weight:700;">📚 Books Sold</div>
+                            <div style="font-size:20px; font-weight:900; color:var(--teal);">${totalBooksSold}</div>
+                        </div>
+                        <div style="background:var(--card-bg); padding:12px; border-radius:12px; text-align:center;">
+                            <div style="font-size:12px; color:var(--text-muted); font-weight:700;">🪙 Coins Sold</div>
+                            <div style="font-size:20px; font-weight:900; color:var(--gold);">${totalCoinsSold}</div>
+                        </div>
+                        <div style="background:var(--card-bg); padding:12px; border-radius:12px; text-align:center;">
+                            <div style="font-size:12px; color:var(--text-muted); font-weight:700;">📊 Commission Earned</div>
+                            <div style="font-size:20px; font-weight:900; color:var(--green-success);">${totalCommission} Coins</div>
+                        </div>
                     </div>
-                    <div class="card" onclick="adminAction('📝 Mock Exam')" style="cursor:pointer; transition:0.2s;">
+                    <button class="btn" style="margin-top:12px;" onclick="showModal('platformWithdrawModal')">📥 Withdraw Platform Funds</button>
+                </div>
+                
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-bottom:20px;">
+                    <div class="card" onclick="showModal('bstoreUploadModal')" style="cursor:pointer; transition:0.2s;">
+                        <div style="font-size:32px;">📖</div>
+                        <h4 style="font-weight:900;">Upload to B-Store</h4>
+                        <p style="font-size:13px; color:var(--text-muted); font-weight:700;">Add medical books to the library</p>
+                    </div>
+                    <div class="card" onclick="loadBStoreAppeals()" style="cursor:pointer; transition:0.2s;">
                         <div style="font-size:32px;">📝</div>
-                        <h4 data-key="mock_exam_mgmt" style="font-weight:900;">Mock Exam</h4>
-                        <p style="font-size:13px; color:var(--text-muted); font-weight:700;">Create digital MCQ exams</p>
+                        <h4 style="font-weight:900;">Approve Books</h4>
+                        <p style="font-size:13px; color:var(--text-muted); font-weight:700;">Review teacher book submissions</p>
+                    </div>
+                    <div class="card" onclick="showModal('createCalculatorModal')" style="cursor:pointer; transition:0.2s;">
+                        <div style="font-size:32px;">🧮</div>
+                        <h4 style="font-weight:900;">Create Calculator</h4>
+                        <p style="font-size:13px; color:var(--text-muted); font-weight:700;">Add new medical calculator</p>
                     </div>
                     <div class="card" onclick="adminAction('👨‍🏫 Verify Teachers')" style="cursor:pointer; transition:0.2s;">
                         <div style="font-size:32px;">👨‍🏫</div>
-                        <h4 data-key="verify_teachers" style="font-weight:900;">Verify Teachers</h4>
+                        <h4 style="font-weight:900;">Verify Teachers</h4>
                         <p style="font-size:13px; color:var(--text-muted); font-weight:700;">Approve pending educator accounts</p>
                     </div>
                     <div class="card" onclick="showPricingPanel()" style="cursor:pointer; transition:0.2s;">
                         <div style="font-size:32px;">💰</div>
-                        <h4 data-key="set_prices" style="font-weight:900;">Set Prices</h4>
+                        <h4 style="font-weight:900;">Set Prices</h4>
                         <p style="font-size:13px; color:var(--text-muted); font-weight:700;">Premium subscription & item pricing</p>
-                    </div>
-                    <div class="card" onclick="viewConsultations()" style="cursor:pointer; transition:0.2s;">
-                        <div style="font-size:32px;">📋</div>
-                        <h4 data-key="consultations" style="font-weight:900;">Consultations</h4>
-                        <p style="font-size:13px; color:var(--text-muted); font-weight:700;">Reply to patient medical requests</p>
                     </div>
                     <div class="card" onclick="adminAction('📊 Analytics')" style="cursor:pointer; transition:0.2s;">
                         <div style="font-size:32px;">📊</div>
-                        <h4 data-key="analytics" style="font-weight:900;">Analytics</h4>
+                        <h4 style="font-weight:900;">Analytics</h4>
                         <p style="font-size:13px; color:var(--text-muted); font-weight:700;">Track users, revenue & growth</p>
                     </div>
                 </div>
@@ -3394,32 +3515,642 @@
             if (!container) return;
             container.innerHTML = `
                 <div class="card">
-                    <h3 data-key="set_prices" style="font-weight:900;">💰 Dynamic Pricing</h3>
+                    <h3 style="font-weight:900;">💰 Dynamic Pricing</h3>
                     <div class="form-group">
-                        <label data-key="subscription" style="font-weight:800;">Premium Subscription (ETB)</label>
+                        <label style="font-weight:800;">Premium Subscription (ETB)</label>
                         <input type="number" id="price_premium" value="600" style="width:100%; padding:10px; border:1px solid #eee; border-radius:8px; font-weight:700; margin-bottom:12px;">
                     </div>
-                    <button class="btn btn-teal" onclick="showToast('Prices saved to database! (Simulated)', 'success')" data-key="save">💾 Save Prices</button>
+                    <button class="btn btn-teal" onclick="showToast('Prices saved to database! (Simulated)', 'success')">💾 Save Prices</button>
                     <button class="btn" onclick="loadAdminPanel()" style="margin-top:10px;">← Back to Admin</button>
                 </div>
             `;
             setTimeout(() => translatePage(), 50);
         }
 
-        function viewConsultations() {
-            const container = document.getElementById('tabContentContainer');
+        // ================================================================
+        // B-STORE FUNCTIONS
+        // ================================================================
+        async function loadBStore() {
+            const container = document.getElementById('bstoreContainer');
             if (!container) return;
-            container.innerHTML = `
-                <div class="card">
-                    <h3 data-key="consultations" style="font-weight:900;">📋 Patient Consultations</h3>
-                    <div style="padding:20px; text-align:center; color:var(--text-muted); font-weight:700;">
-                        <div style="font-size:48px;">🩺</div>
-                        <p>No pending consultations yet.</p>
+            
+            container.innerHTML = '<div class="loading">Loading books...</div>';
+            
+            try {
+                const { data, error } = await sb
+                    .from('bstore_books')
+                    .select('*')
+                    .eq('status', 'approved')
+                    .order('created_at', { ascending: false });
+                
+                if (error) throw error;
+                
+                if (!data || data.length === 0) {
+                    container.innerHTML = '<div class="loading" style="color:var(--text-muted);">No books available in B-Store yet.</div>';
+                    return;
+                }
+                
+                container.innerHTML = `
+                    <div class="bstore-grid">
+                        ${data.map(book => `
+                            <div class="bstore-card">
+                                <div class="book-cover">
+                                    ${book.cover_url ? `<img src="${book.cover_url}" alt="${book.title}">` : '📖'}
+                                </div>
+                                <div class="title">${book.title}</div>
+                                <div class="author">By ${book.author}</div>
+                                <div style="font-size:12px; color:var(--text-muted); font-weight:700;">${book.description || ''}</div>
+                                <div class="price">💰 Monthly: ${book.price_monthly || 0} Coins</div>
+                                <div style="display:flex; gap:4px; flex-wrap:wrap; justify-content:center; margin:4px 0;">
+                                    <span class="status-badge ${book.price_monthly === 0 ? 'free' : 'paid'}">${book.price_monthly === 0 ? 'FREE' : 'Paid'}</span>
+                                </div>
+                                <button class="buy-btn" onclick="subscribeToBook(${book.id})">📖 Subscribe</button>
+                            </div>
+                        `).join('')}
                     </div>
-                    <button class="btn" onclick="loadAdminPanel()">← Back to Admin</button>
+                `;
+                
+                translatePage();
+            } catch (err) {
+                console.error('Load B-Store error:', err);
+                container.innerHTML = '<div class="loading" style="color:var(--red-error);">Failed to load books</div>';
+            }
+        }
+
+        function filterBStore() {
+            const search = document.getElementById('bstoreSearch')?.value?.toLowerCase() || '';
+            const filter = document.getElementById('bstoreFilter')?.value || 'all';
+            
+            document.querySelectorAll('.bstore-card').forEach(card => {
+                const title = card.querySelector('.title')?.textContent?.toLowerCase() || '';
+                const author = card.querySelector('.author')?.textContent?.toLowerCase() || '';
+                const price = card.querySelector('.price')?.textContent || '';
+                const isFree = price.includes('FREE');
+                
+                let visible = true;
+                if (search && !title.includes(search) && !author.includes(search)) visible = false;
+                if (filter === 'free' && !isFree) visible = false;
+                if (filter === 'paid' && isFree) visible = false;
+                
+                card.style.display = visible ? 'block' : 'none';
+            });
+        }
+
+        async function subscribeToBook(bookId) {
+            if (!AppState.userId) {
+                showToast('Please login first.', 'error');
+                return;
+            }
+            
+            // Show subscription options modal
+            const modal = document.createElement('div');
+            modal.className = 'modal active';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <span class="close" onclick="this.closest('.modal').remove()">&times;</span>
+                    <h3>📖 Choose Subscription</h3>
+                    <p style="color:var(--text-muted); margin-bottom:12px; font-weight:700;">Select your subscription plan</p>
+                    <button class="btn btn-teal" onclick="processSubscription(${bookId}, 'monthly')">Monthly</button>
+                    <button class="btn" onclick="processSubscription(${bookId}, '3months')">3 Months</button>
+                    <button class="btn" onclick="processSubscription(${bookId}, '6months')">6 Months</button>
+                    <button class="btn" onclick="processSubscription(${bookId}, '9months')">9 Months</button>
+                    <button class="btn" onclick="processSubscription(${bookId}, 'yearly')">1 Year</button>
                 </div>
             `;
-            setTimeout(() => translatePage(), 50);
+            document.body.appendChild(modal);
+        }
+
+        async function processSubscription(bookId, tier) {
+            try {
+                // Get book price
+                const { data: book, error: bookError } = await sb
+                    .from('bstore_books')
+                    .select(`price_${tier}`)
+                    .eq('id', bookId)
+                    .single();
+                
+                if (bookError) throw bookError;
+                
+                const price = book[`price_${tier}`] || 0;
+                if (price === 0) {
+                    // Free book
+                    await sb.from('bstore_subscriptions').insert({
+                        book_id: bookId,
+                        user_id: AppState.userId,
+                        tier: tier,
+                        amount_paid: 0,
+                        expires_at: new Date(Date.now() + getTierDuration(tier)).toISOString()
+                    });
+                    showToast('✅ Book added to your library!', 'success');
+                } else {
+                    // Check balance
+                    if (AppState.coinBalance < price) {
+                        showToast(`⚠️ Insufficient coins. Need ${price} coins.`, 'error');
+                        return;
+                    }
+                    
+                    // Deduct coins
+                    await sb.from('users')
+                        .update({ coin_balance: AppState.coinBalance - price })
+                        .eq('user_id', AppState.userId);
+                    
+                    AppState.coinBalance -= price;
+                    
+                    // Create subscription
+                    await sb.from('bstore_subscriptions').insert({
+                        book_id: bookId,
+                        user_id: AppState.userId,
+                        tier: tier,
+                        amount_paid: price,
+                        expires_at: new Date(Date.now() + getTierDuration(tier)).toISOString()
+                    });
+                    
+                    // Record transaction
+                    await sb.from('transactions').insert({
+                        user_id: AppState.userId,
+                        type: 'spend',
+                        amount: price,
+                        description: `B-Store subscription: ${tier}`
+                    });
+                    
+                    showToast(`✅ Subscribed! ${price} coins deducted.`, 'success');
+                }
+                
+                // Close modal
+                document.querySelectorAll('.modal.active').forEach(m => m.remove());
+                loadBStore();
+                loadWallet();
+                
+            } catch (err) {
+                console.error('Subscription error:', err);
+                showToast('Error processing subscription: ' + err.message, 'error');
+            }
+        }
+
+        function getTierDuration(tier) {
+            const durations = {
+                'monthly': 30 * 24 * 60 * 60 * 1000,
+                '3months': 90 * 24 * 60 * 60 * 1000,
+                '6months': 180 * 24 * 60 * 60 * 1000,
+                '9months': 270 * 24 * 60 * 60 * 1000,
+                'yearly': 365 * 24 * 60 * 60 * 1000
+            };
+            return durations[tier] || durations['monthly'];
+        }
+
+        async function loadBStoreAppeals() {
+            if (!AppState.isAdmin) {
+                showToast('Admin access required.', 'error');
+                return;
+            }
+            
+            try {
+                const { data, error } = await sb
+                    .from('bstore_appeals')
+                    .select('*')
+                    .eq('status', 'pending')
+                    .order('created_at', { ascending: false });
+                
+                if (error) throw error;
+                
+                const container = document.getElementById('tabContentContainer');
+                if (!container) return;
+                
+                if (!data || data.length === 0) {
+                    container.innerHTML = `
+                        <div class="card">
+                            <h3>📝 Book Appeals</h3>
+                            <div class="loading" style="color:var(--text-muted);">No pending book appeals.</div>
+                            <button class="btn" onclick="loadAdminPanel()" style="margin-top:12px;">← Back to Admin</button>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                let html = `
+                    <div class="card">
+                        <h3>📝 Book Appeals (${data.length} pending)</h3>
+                `;
+                
+                data.forEach(appeal => {
+                    html += `
+                        <div style="border:1px solid var(--card-border); border-radius:12px; padding:12px; margin-bottom:12px; background:var(--card-bg);">
+                            <h4 style="font-weight:900;">${appeal.title}</h4>
+                            <p style="font-weight:700;">By ${appeal.author}</p>
+                            <p style="font-size:13px; color:var(--text-muted); font-weight:700;">${appeal.description || ''}</p>
+                            <p style="font-size:13px; font-weight:700;">Price: Monthly ${appeal.price_monthly || 0} Coins</p>
+                            <div style="display:flex; gap:8px; margin-top:8px;">
+                                <button class="btn-sm btn-teal" onclick="approveBookAppeal(${appeal.id})" style="margin:0;">✅ Approve</button>
+                                <button class="btn-sm" onclick="rejectBookAppeal(${appeal.id})" style="margin:0; background:var(--red-error); color:white;">❌ Reject</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                html += `
+                        <button class="btn" onclick="loadAdminPanel()" style="margin-top:12px;">← Back to Admin</button>
+                    </div>
+                `;
+                
+                container.innerHTML = html;
+                translatePage();
+                
+            } catch (err) {
+                console.error('Load appeals error:', err);
+                showToast('Error loading appeals: ' + err.message, 'error');
+            }
+        }
+
+        async function approveBookAppeal(appealId) {
+            try {
+                const { data: appeal, error: appealError } = await sb
+                    .from('bstore_appeals')
+                    .select('*')
+                    .eq('id', appealId)
+                    .single();
+                
+                if (appealError) throw appealError;
+                
+                // Create book in bstore_books
+                const { error: insertError } = await sb.from('bstore_books').insert({
+                    title: appeal.title,
+                    author: appeal.author,
+                    description: appeal.description,
+                    cover_url: appeal.cover_url,
+                    file_url: appeal.file_url,
+                    file_type: appeal.file_type,
+                    price_monthly: appeal.price_monthly,
+                    price_3months: appeal.price_3months,
+                    price_6months: appeal.price_6months,
+                    price_9months: appeal.price_9months,
+                    price_yearly: appeal.price_yearly,
+                    teacher_id: appeal.teacher_id,
+                    status: 'approved'
+                });
+                
+                if (insertError) throw insertError;
+                
+                // Update appeal status
+                await sb.from('bstore_appeals')
+                    .update({ status: 'approved' })
+                    .eq('id', appealId);
+                
+                showToast('✅ Book approved and added to B-Store!', 'success');
+                loadBStoreAppeals();
+                
+            } catch (err) {
+                console.error('Approve error:', err);
+                showToast('Error approving book: ' + err.message, 'error');
+            }
+        }
+
+        async function rejectBookAppeal(appealId) {
+            if (!confirm('Reject this book appeal?')) return;
+            
+            try {
+                await sb.from('bstore_appeals')
+                    .update({ status: 'rejected' })
+                    .eq('id', appealId);
+                
+                showToast('❌ Book appeal rejected.', 'info');
+                loadBStoreAppeals();
+                
+            } catch (err) {
+                console.error('Reject error:', err);
+                showToast('Error rejecting book: ' + err.message, 'error');
+            }
+        }
+
+        async function submitBStoreBook() {
+            if (!AppState.isAdmin && !AppState.isTeacher) {
+                showToast('Only Admin or Verified Teachers can upload books.', 'error');
+                return;
+            }
+            
+            const title = document.getElementById('bstoreTitle')?.value;
+            const author = document.getElementById('bstoreAuthor')?.value;
+            const desc = document.getElementById('bstoreDesc')?.value;
+            const coverInput = document.getElementById('bstoreCover');
+            const fileInput = document.getElementById('bstoreFile');
+            const priceMonthly = parseInt(document.getElementById('bstorePriceMonthly')?.value) || 0;
+            const price3 = parseInt(document.getElementById('bstorePrice3')?.value) || 0;
+            const price6 = parseInt(document.getElementById('bstorePrice6')?.value) || 0;
+            const price9 = parseInt(document.getElementById('bstorePrice9')?.value) || 0;
+            const priceYearly = parseInt(document.getElementById('bstorePriceYearly')?.value) || 0;
+            
+            if (!title || !author || !fileInput || !fileInput.files[0]) {
+                showToast('Please fill in all required fields.', 'error');
+                return;
+            }
+            
+            try {
+                // Upload cover
+                let cover_url = null;
+                if (coverInput && coverInput.files && coverInput.files[0]) {
+                    const file = coverInput.files[0];
+                    const fileExt = file.name.split('.').pop();
+                    const fileName = `bstore_covers/${AppState.userId}_${Date.now()}.${fileExt}`;
+                    const { data: uploadData, error: uploadError } = await sb.storage
+                        .from('t-hub-uploads')
+                        .upload(fileName, file, { cacheControl: '3600', upsert: false });
+                    if (!uploadError) {
+                        const { data: urlData } = sb.storage.from('t-hub-uploads').getPublicUrl(fileName);
+                        cover_url = urlData.publicUrl;
+                    }
+                }
+                
+                // Upload book file
+                const file = fileInput.files[0];
+                const fileExt = file.name.split('.').pop().toLowerCase();
+                const fileName = `bstore_books/${AppState.userId}_${Date.now()}.${fileExt}`;
+                const { data: uploadData, error: uploadError } = await sb.storage
+                    .from('t-hub-uploads')
+                    .upload(fileName, file, { cacheControl: '3600', upsert: false });
+                
+                if (uploadError) throw uploadError;
+                
+                const { data: urlData } = sb.storage.from('t-hub-uploads').getPublicUrl(fileName);
+                const file_url = urlData.publicUrl;
+                
+                if (AppState.isAdmin) {
+                    // Admin uploads directly
+                    const { error: insertError } = await sb.from('bstore_books').insert({
+                        title: title,
+                        author: author,
+                        description: desc,
+                        cover_url: cover_url,
+                        file_url: file_url,
+                        file_type: fileExt,
+                        price_monthly: priceMonthly,
+                        price_3months: price3,
+                        price_6months: price6,
+                        price_9months: price9,
+                        price_yearly: priceYearly,
+                        teacher_id: AppState.userId,
+                        status: 'approved'
+                    });
+                    if (insertError) throw insertError;
+                    showToast('✅ Book uploaded to B-Store!', 'success');
+                } else {
+                    // Teacher submits for review
+                    const { error: insertError } = await sb.from('bstore_appeals').insert({
+                        teacher_id: AppState.userId,
+                        title: title,
+                        author: author,
+                        description: desc,
+                        cover_url: cover_url,
+                        file_url: file_url,
+                        file_type: fileExt,
+                        price_monthly: priceMonthly,
+                        price_3months: price3,
+                        price_6months: price6,
+                        price_9months: price9,
+                        price_yearly: priceYearly,
+                        status: 'pending'
+                    });
+                    if (insertError) throw insertError;
+                    showToast('📤 Book submitted for admin review!', 'success');
+                }
+                
+                closeModal('bstoreUploadModal');
+                loadBStore();
+                
+            } catch (err) {
+                console.error('Upload book error:', err);
+                showToast('Error uploading book: ' + err.message, 'error');
+            }
+        }
+
+        // ================================================================
+        // MY LIBRARY
+        // ================================================================
+        async function loadMyLibrary() {
+            const container = document.getElementById('myLibraryContainer');
+            if (!container) return;
+            
+            container.innerHTML = '<div class="loading">Loading your library...</div>';
+            
+            try {
+                const { data, error } = await sb
+                    .from('bstore_subscriptions')
+                    .select('*, bstore_books(*)')
+                    .eq('user_id', AppState.userId)
+                    .eq('is_active', true)
+                    .order('expires_at', { ascending: true });
+                
+                if (error) throw error;
+                
+                if (!data || data.length === 0) {
+                    container.innerHTML = '<div class="loading" style="color:var(--text-muted);">No books in your library yet. Visit B-Store to subscribe!</div>';
+                    return;
+                }
+                
+                container.innerHTML = data.map(sub => {
+                    const book = sub.bstore_books;
+                    const daysLeft = Math.ceil((new Date(sub.expires_at) - new Date()) / (1000 * 60 * 60 * 24));
+                    const isExpiring = daysLeft <= 3;
+                    const isExpired = daysLeft <= 0;
+                    
+                    return `
+                        <div class="content-card" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
+                            <div>
+                                <h4 style="font-weight:900;">${book.title}</h4>
+                                <p style="font-weight:700;">By ${book.author}</p>
+                                <p style="font-size:13px; color:${isExpired ? 'var(--red-error)' : isExpiring ? 'var(--gold)' : 'var(--text-muted)'}; font-weight:700;">
+                                    ${isExpired ? '⏰ EXPIRED' : isExpiring ? `⚠️ Expires in ${daysLeft} days` : `✅ Active (${daysLeft} days left)`}
+                                </p>
+                            </div>
+                            <div style="display:flex; gap:8px;">
+                                ${!isExpired ? `<button class="btn-sm btn-teal" onclick="openBook(${book.id})" style="margin:0;">📖 Read</button>` : ''}
+                                ${isExpired || isExpiring ? `<button class="btn-sm" onclick="subscribeToBook(${book.id})" style="margin:0; background:var(--gold); color:var(--text-dark);">🔄 Renew</button>` : ''}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                translatePage();
+                
+            } catch (err) {
+                console.error('Load library error:', err);
+                container.innerHTML = '<div class="loading" style="color:var(--red-error);">Failed to load library</div>';
+            }
+        }
+
+        function openBook(bookId) {
+            showToast('📖 Opening book... (Reader coming soon)', 'info');
+        }
+
+        // ================================================================
+        // MEDICAL CALCULATOR
+        // ================================================================
+        async function loadCalculators() {
+            const container = document.getElementById('calculatorContainer');
+            if (!container) return;
+            
+            container.innerHTML = '<div class="loading">Loading calculators...</div>';
+            
+            try {
+                const { data, error } = await sb
+                    .from('m_calculators')
+                    .select('*')
+                    .eq('status', 'active')
+                    .order('created_at', { ascending: false });
+                
+                if (error) throw error;
+                
+                if (!data || data.length === 0) {
+                    container.innerHTML = '<div class="loading" style="color:var(--text-muted);">No calculators available yet.</div>';
+                    return;
+                }
+                
+                container.innerHTML = data.map(calc => `
+                    <div class="content-card" onclick="openCalculator(${calc.id})" style="cursor:pointer;">
+                        <div class="meta">
+                            <h4>🧮 ${calc.name}</h4>
+                            <p>${calc.description || ''}</p>
+                            <p style="font-size:12px; color:var(--text-muted); font-weight:700;">Category: ${calc.category || 'General'}</p>
+                        </div>
+                        <div class="actions">
+                            <button class="btn-sm btn-teal" style="margin:0;" onclick="event.stopPropagation(); openCalculator(${calc.id})">▶️ Open</button>
+                        </div>
+                    </div>
+                `).join('');
+                
+                translatePage();
+                
+            } catch (err) {
+                console.error('Load calculators error:', err);
+                container.innerHTML = '<div class="loading" style="color:var(--red-error);">Failed to load calculators</div>';
+            }
+        }
+
+        function openCalculator(calcId) {
+            showModal('calculatorModal');
+            loadCalculatorData(calcId);
+        }
+
+        async function loadCalculatorData(calcId) {
+            try {
+                const { data, error } = await sb
+                    .from('m_calculators')
+                    .select('*')
+                    .eq('id', calcId)
+                    .single();
+                
+                if (error) throw error;
+                
+                const container = document.getElementById('calculatorModalContent');
+                if (!container) return;
+                
+                let inputsHtml = '';
+                data.inputs.forEach(input => {
+                    inputsHtml += `
+                        <div class="form-group">
+                            <label>${input.label}</label>
+                            <input type="${input.type || 'text'}" id="calc_input_${input.id}" placeholder="${input.placeholder || ''}" ${input.required ? 'required' : ''}>
+                        </div>
+                    `;
+                });
+                
+                container.innerHTML = `
+                    <h3 style="font-weight:900;">🧮 ${data.name}</h3>
+                    <p style="color:var(--text-muted); font-weight:700;">${data.description || ''}</p>
+                    ${inputsHtml}
+                    <button class="btn btn-teal" onclick="calculateResult(${data.id})">📊 Calculate</button>
+                    <div id="calcResultContainer" style="margin-top:12px; display:none;"></div>
+                    <button class="btn" onclick="closeModal('calculatorModal')" style="margin-top:8px;">Close</button>
+                `;
+                
+            } catch (err) {
+                console.error('Load calculator data error:', err);
+                showToast('Error loading calculator: ' + err.message, 'error');
+            }
+        }
+
+        function calculateResult(calcId) {
+            // This will be implemented with math.js evaluation
+            showToast('🧮 Calculating...', 'info');
+            // Placeholder - will be implemented with full formula evaluation
+            const container = document.getElementById('calcResultContainer');
+            if (container) {
+                container.style.display = 'block';
+                container.innerHTML = `
+                    <div style="padding:16px; border-radius:12px; border:2px solid var(--gold);">
+                        <h4 style="font-weight:900;">📊 Result</h4>
+                        <p style="font-size:20px; font-weight:900; color:var(--navy);">Coming soon!</p>
+                        <p style="color:var(--text-muted); font-weight:700;">Formula evaluation will be available with full implementation.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // ================================================================
+        // CREATE CALCULATOR (Admin)
+        // ================================================================
+        async function createCalculator() {
+            const name = document.getElementById('calcName')?.value;
+            const description = document.getElementById('calcDesc')?.value;
+            const category = document.getElementById('calcCategory')?.value;
+            const inputs = document.getElementById('calcInputs')?.value;
+            const results = document.getElementById('calcResults')?.value;
+            
+            if (!name || !inputs || !results) {
+                showToast('Please fill in all required fields.', 'error');
+                return;
+            }
+            
+            try {
+                const { data, error } = await sb.from('m_calculators').insert({
+                    name: name,
+                    description: description,
+                    category: category || 'General',
+                    inputs: JSON.parse(inputs),
+                    results: JSON.parse(results),
+                    status: 'active',
+                    created_by: AppState.userId
+                });
+                
+                if (error) throw error;
+                
+                showToast('✅ Calculator created successfully!', 'success');
+                closeModal('createCalculatorModal');
+                loadCalculators();
+                loadAdminPanel();
+                
+            } catch (err) {
+                console.error('Create calculator error:', err);
+                showToast('Error creating calculator: ' + err.message, 'error');
+            }
+        }
+
+        // ================================================================
+        // PLATFORM WITHDRAWAL
+        // ================================================================
+        async function submitPlatformWithdraw() {
+            const amount = parseInt(document.getElementById('platformWithdrawAmount')?.value);
+            if (!amount || amount < 10000) {
+                showToast('Minimum withdrawal is 10,000 Coins.', 'error');
+                return;
+            }
+            
+            try {
+                const { error } = await sb.from('platform_transactions').insert({
+                    type: 'withdraw',
+                    amount: amount,
+                    description: 'Platform withdrawal requested',
+                    status: 'pending'
+                });
+                
+                if (error) throw error;
+                
+                showToast('📤 Withdrawal request sent!', 'success');
+                closeModal('platformWithdrawModal');
+                loadAdminPanel();
+                
+            } catch (err) {
+                console.error('Withdraw error:', err);
+                showToast('Error processing withdrawal: ' + err.message, 'error');
+            }
         }
 
         // ================================================================
@@ -3448,6 +4179,9 @@
             }
         });
 
+        // ================================================================
+        // INITIALIZATION
+        // ================================================================
         document.addEventListener('DOMContentLoaded', function() {
             const avatar = document.getElementById('profileAvatar');
             if (avatar) {
