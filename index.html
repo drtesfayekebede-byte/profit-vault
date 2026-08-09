@@ -1388,150 +1388,203 @@
             }
         }
 
-        // ================================================================
-        // RENDER EXAM QUESTION
-        // ================================================================
-        function renderExamQuestion() {
-            const container = document.getElementById('exam');
-            if (!container) {
-                console.error('Exam container not found');
-                return;
-            }
+// ================================================================
+// RENDER EXAM QUESTION - FULLY FIXED
+// ================================================================
+function renderExamQuestion() {
+    const container = document.getElementById('exam');
+    if (!container) {
+        console.error('Exam container not found');
+        return;
+    }
+    
+    if (!currentExam || !currentExam.questions || currentExam.questions.length === 0) {
+        container.innerHTML = `<div class="loading" style="color:var(--text-muted);">No questions available for this exam.</div>`;
+        return;
+    }
+
+    const q = currentExam.questions[currentQuestionIndex];
+    const total = currentExam.questions.length;
+    const progress = Math.round(((currentQuestionIndex + 1) / total) * 100);
+    const selected = examAnswered[currentQuestionIndex];
+    const isExamMode = examMode === 'exam';
+    const isAnswered = selected !== null;
+
+    container.innerHTML = `
+        <div style="margin-bottom:16px;">
+            ${isExamMode ? `
+                <div class="exam-timer" id="examTimerContainer">
+                    <span data-key="time_left">⏱️ Time Left:</span>
+                    <span class="timer" id="examTimerDisplay">${formatTime(examTimeRemaining)}</span>
+                </div>
+            ` : ''}
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; margin-top:8px;">
+                <span style="font-weight:700; color:var(--navy); font-size:16px;">📝 ${currentExam.title}</span>
+                <span style="font-weight:700; color:var(--navy);" data-key="question">${t('question')} ${currentQuestionIndex+1}/${total}</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <span id="examCorrectCount" style="font-weight:700; color:var(--green-success);" data-key="correct">✅ ${t('correct')}: ${correctCount}</span>
+                <span id="examIncorrectCount" style="font-weight:700; color:var(--red-error);" data-key="incorrect">❌ ${t('incorrect')}: ${incorrectCount}</span>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" style="width:${progress}%;"></div></div>
+        </div>
+        
+        <div class="question-box">
+            <p style="font-size:18px; font-weight:700; margin-bottom:12px;">${q.question}</p>
+            ${q.options.map((opt, idx) => {
+                const letter = String.fromCharCode(65+idx);
+                const isSelected = selected === letter;
+                return `
+                    <label style="display:block; margin:8px 0; padding:12px; border:2px solid ${isSelected ? 'var(--gold)' : '#e2e8f0'}; border-radius:8px; cursor:${isExamMode ? 'default' : 'pointer'}; transition:0.2s; ${isSelected ? 'background:#fef9e7;' : ''}" onclick="${!examSubmitted && !isExamMode ? `answerExamQuestion('${letter}', this)` : ''}">
+                        <input type="radio" name="examAnswer" value="${letter}" style="margin-right:10px;" ${isSelected ? 'checked' : ''} ${examSubmitted ? 'disabled' : ''}> 
+                        <span style="font-weight:600;">${letter}.</span> ${opt}
+                    </label>
+                `;
+            }).join('')}
             
-            if (!currentExam || !currentExam.questions || currentExam.questions.length === 0) {
-                container.innerHTML = `<div class="loading" style="color:var(--text-muted);">No questions available for this exam.</div>`;
-                return;
+            <!-- ✅ FIXED: Explanation - Only in Study Mode and after answering -->
+            <div id="examExplanation" style="display:none; margin-top:12px; padding:12px; background:#f0fdf4; border-radius:8px; color:var(--text-dark); border-left:4px solid var(--green-success);"></div>
+            
+            ${!examSubmitted && !isExamMode ? `
+                <button class="explanation-toggle" onclick="toggleExplanation()" data-key="explanation">
+                    💡 See Explanation
+                </button>
+            ` : ''}
+            
+            ${isExamMode && !examSubmitted ? `
+                <div style="margin-top:10px; font-size:13px; color:var(--text-muted);">
+                    🔒 Explanations are hidden in Exam Mode. Switch to Study Mode to see explanations.
+                </div>
+            ` : ''}
+            
+            ${!examSubmitted && isExamMode ? `
+                <div style="margin-top:10px; font-size:13px; color:var(--text-muted);">
+                    ⏱️ Timer is running. Submit before time runs out!
+                </div>
+            ` : ''}
+        </div>
+        
+        <div style="display:flex; gap:10px; margin-top:16px;">
+            <button class="btn-sm" onclick="prevExamQuestion()" style="flex:1; padding:10px; border:1px solid #e2e8f0; border-radius:8px; background:#f8fafc; cursor:pointer; font-weight:600;" ${currentQuestionIndex === 0 ? 'disabled style="opacity:0.5;"' : ''}>◀ Previous</button>
+            <button class="btn-sm btn-teal" onclick="nextExamQuestion()" style="flex:1; padding:10px; border:none; border-radius:8px; background:var(--teal); color:white; cursor:pointer; font-weight:600;" ${currentQuestionIndex === total-1 ? 'disabled style="opacity:0.5;"' : ''}>Next ▶</button>
+        </div>
+        ${!examSubmitted ? `
+            <button class="btn" onclick="submitExam(false)" style="margin-top:12px;" data-key="submit">📤 Submit Exam</button>
+        ` : `
+            <button class="btn" onclick="finishExam()" style="margin-top:12px;" data-key="see_result">📊 ${t('see_result')}</button>
+        `}
+    `;
+    
+    setTimeout(() => translatePage(), 50);
+}
+// ================================================================
+// ANSWER EXAM QUESTION - FIXED
+// ================================================================
+function answerExamQuestion(selected, labelEl) {
+    if (examSubmitted || examMode === 'exam') return;
+    
+    const q = currentExam.questions[currentQuestionIndex];
+    const isCorrect = selected === q.answer;
+    
+    examAnswered[currentQuestionIndex] = selected;
+    
+    const radio = labelEl.querySelector('input[type="radio"]');
+    if (radio) radio.checked = true;
+    
+    document.querySelectorAll('#exam .question-box label').forEach(l => {
+        l.style.pointerEvents = 'none';
+    });
+    
+    if (isCorrect) {
+        correctCount++;
+        labelEl.style.borderColor = 'var(--green-success)';
+        labelEl.style.background = '#f0fdf4';
+    } else {
+        incorrectCount++;
+        labelEl.style.borderColor = 'var(--red-error)';
+        labelEl.style.background = '#fef2f2';
+        document.querySelectorAll('#exam .question-box label').forEach((l, idx) => {
+            if (String.fromCharCode(65+idx) === q.answer) {
+                l.style.borderColor = 'var(--green-success)';
+                l.style.background = '#f0fdf4';
             }
+        });
+    }
 
-            const q = currentExam.questions[currentQuestionIndex];
-            const total = currentExam.questions.length;
-            const progress = Math.round(((currentQuestionIndex + 1) / total) * 100);
-            const selected = examAnswered[currentQuestionIndex];
-            const isExamMode = examMode === 'exam';
-
-            container.innerHTML = `
-                <div style="margin-bottom:16px;">
-                    ${isExamMode ? `
-                        <div class="exam-timer" id="examTimerContainer">
-                            <span data-key="time_left">⏱️ Time Left:</span>
-                            <span class="timer" id="examTimerDisplay">${formatTime(examTimeRemaining)}</span>
-                        </div>
-                    ` : ''}
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; margin-top:8px;">
-                        <span style="font-weight:700; color:var(--navy); font-size:16px;">📝 ${currentExam.title}</span>
-                        <span style="font-weight:700; color:var(--navy);" data-key="question">${t('question')} ${currentQuestionIndex+1}/${total}</span>
-                    </div>
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                        <span id="examCorrectCount" style="font-weight:700; color:var(--green-success);" data-key="correct">✅ ${t('correct')}: ${correctCount}</span>
-                        <span id="examIncorrectCount" style="font-weight:700; color:var(--red-error);" data-key="incorrect">❌ ${t('incorrect')}: ${incorrectCount}</span>
-                    </div>
-                    <div class="progress-bar"><div class="progress-fill" style="width:${progress}%;"></div></div>
-                </div>
-                
-                <div class="question-box">
-                    <p style="font-size:18px; font-weight:700; margin-bottom:12px;">${q.question}</p>
-                    ${q.options.map((opt, idx) => {
-                        const letter = String.fromCharCode(65+idx);
-                        const isSelected = selected === letter;
-                        return `
-                            <label style="display:block; margin:8px 0; padding:12px; border:2px solid ${isSelected ? 'var(--gold)' : '#e2e8f0'}; border-radius:8px; cursor:${isExamMode ? 'default' : 'pointer'}; transition:0.2s; ${isSelected ? 'background:#fef9e7;' : ''}" onclick="${!examSubmitted && !isExamMode ? `answerExamQuestion('${letter}', this)` : ''}">
-                                <input type="radio" name="examAnswer" value="${letter}" style="margin-right:10px;" ${isSelected ? 'checked' : ''} ${examSubmitted ? 'disabled' : ''}> 
-                                <span style="font-weight:600;">${letter}.</span> ${opt}
-                            </label>
-                        `;
-                    }).join('')}
-                    <div id="examExplanation" style="display:none; margin-top:12px; padding:12px; background:#f0fdf4; border-radius:8px; color:var(--text-dark); border-left:4px solid var(--green-success);"></div>
-                    ${!examSubmitted ? `
-                        <button class="explanation-toggle" onclick="toggleExplanation()" data-key="explanation">💡 See Explanation</button>
-                    ` : ''}
-                </div>
-                
-                <div style="display:flex; gap:10px; margin-top:16px;">
-                    <button class="btn-sm" onclick="prevExamQuestion()" style="flex:1; padding:10px; border:1px solid #e2e8f0; border-radius:8px; background:#f8fafc; cursor:pointer; font-weight:600;" ${currentQuestionIndex === 0 ? 'disabled style="opacity:0.5;"' : ''}>◀ Previous</button>
-                    <button class="btn-sm btn-teal" onclick="nextExamQuestion()" style="flex:1; padding:10px; border:none; border-radius:8px; background:var(--teal); color:white; cursor:pointer; font-weight:600;" ${currentQuestionIndex === total-1 ? 'disabled style="opacity:0.5;"' : ''}>Next ▶</button>
-                </div>
-                ${!examSubmitted ? `
-                    <button class="btn" onclick="submitExam(false)" style="margin-top:12px;" data-key="submit">📤 Submit Exam</button>
-                ` : `
-                    <button class="btn" onclick="finishExam()" style="margin-top:12px;" data-key="see_result">📊 ${t('see_result')}</button>
-                `}
+    // ✅ FIXED: Show explanation automatically in Study Mode after answering
+    const expDiv = document.getElementById('examExplanation');
+    if (expDiv && examMode === 'study') {
+        expDiv.style.display = 'block';
+        if (q.explanation) {
+            const resultText = isCorrect ? '✅ Correct!' : '❌ Incorrect.';
+            expDiv.innerHTML = `
+                <strong>${resultText}</strong><br>
+                <strong>💡 Explanation:</strong> ${q.explanation}
+                <br><br>
+                <span style="font-size:13px; color:var(--text-muted);">
+                    Your answer: ${selected} | Correct answer: ${q.answer}
+                </span>
             `;
-            
-            setTimeout(() => translatePage(), 50);
+        } else {
+            expDiv.innerHTML = '💡 No explanation provided for this question.';
         }
+    }
+    
+    // Update counters
+    const correctSpan = document.getElementById('examCorrectCount');
+    const incorrectSpan = document.getElementById('examIncorrectCount');
+    
+    if (correctSpan) {
+        correctSpan.textContent = `✅ ${t('correct')}: ${correctCount}`;
+    }
+    if (incorrectSpan) {
+        incorrectSpan.textContent = `❌ ${t('incorrect')}: ${incorrectCount}`;
+    }
+}
 
-        // ================================================================
-        // ANSWER EXAM QUESTION - FIXED (Uses IDs instead of query selectors)
-        // ================================================================
-        function answerExamQuestion(selected, labelEl) {
-            if (examSubmitted || examMode === 'exam') return;
-            
-            const q = currentExam.questions[currentQuestionIndex];
-            const isCorrect = selected === q.answer;
-            
-            examAnswered[currentQuestionIndex] = selected;
-            
-            const radio = labelEl.querySelector('input[type="radio"]');
-            if (radio) radio.checked = true;
-            
-            document.querySelectorAll('#exam .question-box label').forEach(l => {
-                l.style.pointerEvents = 'none';
-            });
-            
-            if (isCorrect) {
-                correctCount++;
-                labelEl.style.borderColor = 'var(--green-success)';
-                labelEl.style.background = '#f0fdf4';
-            } else {
-                incorrectCount++;
-                labelEl.style.borderColor = 'var(--red-error)';
-                labelEl.style.background = '#fef2f2';
-                document.querySelectorAll('#exam .question-box label').forEach((l, idx) => {
-                    if (String.fromCharCode(65+idx) === q.answer) {
-                        l.style.borderColor = 'var(--green-success)';
-                        l.style.background = '#f0fdf4';
-                    }
-                });
-            }
-
-            const expDiv = document.getElementById('examExplanation');
-            if (expDiv && q.explanation) {
-                expDiv.style.display = 'block';
-                const isCorrectText = isCorrect ? '✅ Correct!' : '❌ Incorrect.';
-                expDiv.innerHTML = `<strong>${isCorrectText}</strong> ${q.explanation}`;
-            }
-            
-            // ✅ FIXED: Update counters using IDs
-            const correctSpan = document.getElementById('examCorrectCount');
-            const incorrectSpan = document.getElementById('examIncorrectCount');
-            
-            if (correctSpan) {
-                correctSpan.textContent = `✅ ${t('correct')}: ${correctCount}`;
-            }
-            if (incorrectSpan) {
-                incorrectSpan.textContent = `❌ ${t('incorrect')}: ${incorrectCount}`;
-            }
+// ================================================================
+// TOGGLE EXPLANATION - FIXED (Only in Study Mode & After Answering)
+// ================================================================
+function toggleExplanation() {
+    // ✅ Check: Only work in Study Mode
+    if (examMode !== 'study') {
+        showToast('📖 Switch to Study Mode to see explanations.', 'info');
+        return;
+    }
+    
+    // ✅ Check: User must have answered the question
+    const userAnswer = examAnswered[currentQuestionIndex];
+    if (userAnswer === null) {
+        showToast('⚠️ Please answer the question first to see the explanation.', 'info');
+        return;
+    }
+    
+    const expDiv = document.getElementById('examExplanation');
+    if (!expDiv) return;
+    
+    const q = currentExam.questions[currentQuestionIndex];
+    
+    if (expDiv.style.display === 'block') {
+        expDiv.style.display = 'none';
+    } else {
+        expDiv.style.display = 'block';
+        if (q.explanation) {
+            // Show if the user was correct or incorrect
+            const isCorrect = userAnswer === q.answer;
+            const resultText = isCorrect ? '✅ Correct!' : '❌ Incorrect.';
+            expDiv.innerHTML = `
+                <strong>${resultText}</strong><br>
+                <strong>💡 Explanation:</strong> ${q.explanation}
+                <br><br>
+                <span style="font-size:13px; color:var(--text-muted);">
+                    Your answer: ${userAnswer} | Correct answer: ${q.answer}
+                </span>
+            `;
+        } else {
+            expDiv.innerHTML = '💡 No explanation provided for this question.';
         }
-
-        // ================================================================
-        // TOGGLE EXPLANATION
-        // ================================================================
-        function toggleExplanation() {
-            const expDiv = document.getElementById('examExplanation');
-            if (expDiv) {
-                if (expDiv.style.display === 'block') {
-                    expDiv.style.display = 'none';
-                } else {
-                    expDiv.style.display = 'block';
-                    const q = currentExam.questions[currentQuestionIndex];
-                    if (q.explanation) {
-                        expDiv.innerHTML = `<strong>💡 Explanation:</strong> ${q.explanation}`;
-                    } else {
-                        expDiv.innerHTML = '💡 No explanation provided for this question.';
-                    }
-                }
-            }
-        }
+    }
+}
 
         // ================================================================
         // NEXT/PREVIOUS EXAM QUESTION
