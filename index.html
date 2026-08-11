@@ -90,6 +90,7 @@
         .welcome-banner p { color: rgba(255,255,255,0.8); font-size: 14px; font-weight: 700; }
         .welcome-banner .btn-go { background: var(--gold); color: var(--text-dark); padding: 8px 16px; border-radius: 30px; font-weight: 800; font-size: 13px; border: none; cursor: pointer; transition: 0.2s; }
         .welcome-banner .btn-go:hover { background: var(--gold-dark); transform: scale(1.02); }
+        .welcome-banner .verification-status { display: none; color: var(--gold); font-weight: 800; font-size: 14px; }
 
         .ticker-container { background: var(--navy-light); border-radius: 12px; padding: 8px 16px; overflow: hidden; white-space: nowrap; width: 100%; }
         .ticker-text { display: inline-block; animation: slideIn 20s linear infinite; color: var(--gold); font-weight: 800; font-size: 13px; }
@@ -183,6 +184,7 @@
         .content-card .actions button { background: none; border: none; font-size: 14px; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 4px; transition: 0.2s; font-weight: 700; }
         .content-card .actions button:hover { color: var(--navy); }
         .content-card .actions button.liked { color: var(--red-error); }
+        .content-card .actions button.disliked { color: #8b5cf6; }
         .content-card .comment-section { margin-top: 12px; display: none; }
         .content-card .comment-section textarea { width: 100%; padding: 10px; border: 1px solid #eee; border-radius: 8px; resize: none; font-size: 14px; margin-bottom: 8px; font-weight: 700; }
         .content-card .comment-section .send-btn { background: var(--teal); color: white; border: none; padding: 6px 16px; border-radius: 20px; font-weight: 800; cursor: pointer; }
@@ -193,6 +195,46 @@
         .content-card .delete-btn { display: none; position: absolute; top: 8px; right: 8px; background: var(--red-error); color: white; border: none; border-radius: 50%; width: 28px; height: 28px; font-size: 12px; cursor: pointer; font-weight: 900; z-index: 10; }
         .content-card:hover .delete-btn { display: block; }
         .content-card .watermark { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); color: rgba(255,255,255,0.2); font-size: 10px; font-weight: 700; pointer-events: none; user-select: none; }
+
+        /* POST CARDS - SOCIAL & TEACHING */
+        .post-card .post-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+        .post-card .post-header .post-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--teal); display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 18px; overflow: hidden; }
+        .post-card .post-header .post-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .post-card .post-header .post-name { font-weight: 800; color: var(--text-dark); }
+        .post-card .post-header .post-time { font-size: 12px; color: var(--text-muted); font-weight: 700; }
+        .post-card .post-header .post-actions-btn { background: none; border: none; font-size: 16px; cursor: pointer; color: var(--text-muted); }
+        .post-card .post-content { font-size: 15px; color: var(--text-dark); margin-bottom: 10px; font-weight: 700; word-wrap: break-word; }
+        .post-card .post-content .read-more { color: var(--teal); cursor: pointer; font-weight: 800; }
+        .post-card .post-image { width: 100%; border-radius: 8px; margin-bottom: 10px; max-height: 400px; object-fit: cover; }
+        .post-card .post-link { color: var(--teal); text-decoration: underline; font-weight: 700; word-break: break-all; }
+        .post-card .post-actions { display: flex; gap: 12px; border-top: 1px solid #eee; padding-top: 10px; flex-wrap: wrap; }
+        .post-card .post-actions button { background: none; border: none; font-size: 14px; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 4px; font-weight: 700; transition: 0.2s; }
+        .post-card .post-actions button:hover { color: var(--navy); }
+        .post-card .post-actions button.liked { color: var(--red-error); }
+        .post-card .post-actions button.disliked { color: #8b5cf6; }
+        .post-card .post-actions .share-btn { position: relative; }
+        .post-card .post-actions .share-options { display: none; position: absolute; bottom: 30px; background: white; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); padding: 8px; z-index: 100; min-width: 150px; }
+        .post-card .post-actions .share-options.show { display: block; }
+        .post-card .post-actions .share-options div { padding: 8px 12px; cursor: pointer; font-weight: 700; font-size: 13px; border-bottom: 1px solid #f1f1f1; }
+        .post-card .post-actions .share-options div:last-child { border-bottom: none; }
+        .post-card .post-actions .share-options div:hover { background: #f8fafc; }
+        .post-card .post-actions .pin-btn { color: var(--gold); }
+        .post-card .post-actions .report-btn { color: var(--red-error); }
+        .post-card .post-comments { margin-top: 12px; display: none; }
+        .post-card .post-comments .comment-item { font-size: 13px; color: var(--text-dark); margin-bottom: 6px; padding: 6px 0; border-bottom: 1px solid #f1f1f1; font-weight: 700; }
+        .post-card .post-comments .comment-input { width: 100%; padding: 8px; border: 1px solid #eee; border-radius: 8px; margin-top: 8px; font-size: 14px; font-weight: 700; }
+        .post-card .post-comments .comment-send { background: var(--teal); color: white; border: none; padding: 4px 16px; border-radius: 20px; font-weight: 800; cursor: pointer; margin-top: 4px; }
+        .post-card .post-edit { display: none; margin-top: 8px; }
+        .post-card .post-edit textarea { width: 100%; padding: 8px; border: 1px solid #eee; border-radius: 8px; font-weight: 700; }
+        .post-card .post-edit input[type="file"] { margin-top: 4px; }
+        .post-card .post-edit .save-edit-btn { background: var(--gold); color: var(--text-dark); border: none; padding: 4px 16px; border-radius: 20px; font-weight: 800; cursor: pointer; margin-top: 4px; }
+        .post-card .post-edit .cancel-edit-btn { background: #e2e8f0; color: var(--text-dark); border: none; padding: 4px 16px; border-radius: 20px; font-weight: 800; cursor: pointer; margin-top: 4px; margin-left: 4px; }
+        .post-card .viral-badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: 900; margin-left: 8px; }
+        .post-card .viral-badge.super { background: linear-gradient(135deg, #f59e0b, #ef4444); color: white; }
+        .post-card .viral-badge.viral { background: #8b5cf6; color: white; }
+        .post-card .viral-badge.trending { background: #f97316; color: white; }
+        .post-card .viral-badge.rising { background: #f59e0b; color: white; }
+        .post-card .pinned-badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: 900; background: var(--gold); color: var(--text-dark); margin-left: 8px; }
 
         .exam-toggle { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
         .exam-toggle span { font-weight: 800; color: var(--text-dark); }
@@ -207,24 +249,6 @@
         .exam-timer { display: flex; align-items: center; gap: 10px; padding: 8px 16px; background: var(--navy); border-radius: 30px; color: white; font-weight: 800; }
         .exam-timer .timer { font-size: 20px; color: var(--gold); font-family: monospace; animation: countdown 1s infinite; font-weight: 900; }
         .exam-timer.warning .timer { color: var(--red-error); }
-
-        /* POST CARDS */
-        .post-card .post-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
-        .post-card .post-header .post-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--teal); display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 18px; overflow: hidden; }
-        .post-card .post-header .post-avatar img { width: 100%; height: 100%; object-fit: cover; }
-        .post-card .post-header .post-name { font-weight: 800; color: var(--text-dark); }
-        .post-card .post-header .post-time { font-size: 12px; color: var(--text-muted); font-weight: 700; }
-        .post-card .post-content { font-size: 15px; color: var(--text-dark); margin-bottom: 10px; font-weight: 700; }
-        .post-card .post-image { width: 100%; border-radius: 8px; margin-bottom: 10px; max-height: 300px; object-fit: cover; }
-        .post-card .post-link { color: var(--teal); text-decoration: underline; font-weight: 700; word-break: break-all; }
-        .post-card .post-actions { display: flex; gap: 16px; border-top: 1px solid #eee; padding-top: 10px; }
-        .post-card .post-actions button { background: none; border: none; font-size: 14px; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 4px; font-weight: 700; transition: 0.2s; }
-        .post-card .post-actions button:hover { color: var(--navy); }
-        .post-card .post-actions button.liked { color: var(--red-error); }
-        .post-card .post-comments { margin-top: 12px; display: none; }
-        .post-card .post-comments .comment-item { font-size: 13px; color: var(--text-dark); margin-bottom: 6px; padding: 6px 0; border-bottom: 1px solid #f1f1f1; font-weight: 700; }
-        .post-card .post-comments .comment-input { width: 100%; padding: 8px; border: 1px solid #eee; border-radius: 8px; margin-top: 8px; font-size: 14px; font-weight: 700; }
-        .post-card .post-comments .comment-send { background: var(--teal); color: white; border: none; padding: 4px 16px; border-radius: 20px; font-weight: 800; cursor: pointer; margin-top: 4px; }
 
         .join-header h2 { color: var(--navy); font-size: 20px; font-weight: 900; margin-bottom: 16px; }
         .teacher-card { display: flex; justify-content: space-between; align-items: center; }
@@ -246,21 +270,36 @@
         .book-card .delete-btn { position: absolute; top: 12px; left: 12px; background: var(--red-error); color: white; border: none; border-radius: 50%; width: 24px; height: 24px; font-size: 12px; cursor: pointer; font-weight: 900; display: none; z-index: 10; }
         .book-card:hover .delete-btn { display: block; }
         .book-card .watermark { position: absolute; bottom: 8px; right: 12px; color: rgba(0,0,0,0.1); font-size: 8px; font-weight: 700; pointer-events: none; user-select: none; }
+        .book-card .status-badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 10px; font-weight: 800; margin-top: 4px; }
+        .book-card .status-badge.pending { background: #f59e0b; color: white; }
+        .book-card .status-badge.approved { background: var(--green-success); color: white; }
+        .book-card .status-badge.rejected { background: var(--red-error); color: white; }
 
-        .jobs-header h2 { color: var(--navy); font-size: 20px; font-weight: 900; margin-bottom: 16px; }
+        .jobs-header h2 { color: var(--navy); font-size: 20px; font-weight: 900; margin-bottom: 12px; }
         .job-card .title { font-weight: 800; color: var(--text-dark); font-size: 16px; }
         .job-card .details { font-size: 13px; color: var(--text-muted); margin: 4px 0; display: flex; flex-wrap: wrap; gap: 8px; font-weight: 700; }
         .job-card .details span { background: #f8fafc; padding: 2px 8px; border-radius: 12px; }
         .job-card .apply-btn { background: var(--green-success); color: white; border: none; padding: 6px 16px; border-radius: 30px; font-weight: 800; cursor: pointer; margin-top: 8px; width: 100%; }
+        .job-card .job-actions { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+        .job-card .job-actions button { background: none; border: none; font-size: 13px; cursor: pointer; font-weight: 700; padding: 4px 12px; border-radius: 20px; transition: 0.2s; }
+        .job-card .job-actions .edit-job { background: var(--gold); color: var(--text-dark); }
+        .job-card .job-actions .delete-job { background: var(--red-error); color: white; }
+        .job-card .job-actions .manage-apps { background: var(--teal); color: white; }
+        .job-card .expired-badge { background: var(--red-error); color: white; padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: 800; }
 
-        .research-header h2 { color: var(--navy); font-size: 20px; font-weight: 900; margin-bottom: 16px; }
-        .research-card { display: flex; justify-content: space-between; align-items: center; }
+        .research-card { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
         .research-card .info .title { font-weight: 800; color: var(--text-dark); font-size: 15px; }
         .research-card .info .author { color: var(--text-muted); font-size: 13px; font-weight: 700; }
+        .research-card .info .category { font-size: 12px; color: var(--teal); font-weight: 700; }
         .research-card .tag { font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 20px; }
         .research-card .tag.free { background: var(--green-success); color: white; }
         .research-card .tag.premium { background: var(--gold); color: var(--text-dark); }
+        .research-card .tag.pending { background: #f59e0b; color: white; }
         .research-card .read-btn { background: var(--teal); color: white; border: none; padding: 4px 14px; border-radius: 20px; font-weight: 800; cursor: pointer; }
+        .research-card .research-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+        .research-card .research-actions button { background: none; border: none; font-size: 12px; cursor: pointer; font-weight: 700; padding: 4px 12px; border-radius: 20px; transition: 0.2s; }
+        .research-card .research-actions .edit-research { background: var(--gold); color: var(--text-dark); }
+        .research-card .research-actions .delete-research { background: var(--red-error); color: white; }
 
         .profile-card { text-align: center; }
         .profile-card .avatar-lg { width: 80px; height: 80px; border-radius: 50%; background: var(--navy); color: white; display: flex; align-items: center; justify-content: center; font-size: 40px; margin: 0 auto 12px; overflow: hidden; cursor: pointer; border: 3px solid var(--gold); }
@@ -326,10 +365,9 @@
         .bstore-card .title { font-weight: 800; color: var(--text-dark); font-size: 15px; }
         .bstore-card .author { color: var(--text-muted); font-size: 13px; font-weight: 700; }
         .bstore-card .price { font-size: 14px; color: var(--gold); font-weight: 800; margin: 8px 0; }
-        .bstore-card .status-badge { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 11px; font-weight: 800; margin-top: 4px; }
-        .bstore-card .status-badge.free { background: var(--green-success); color: white; }
-        .bstore-card .status-badge.paid { background: var(--gold); color: var(--text-dark); }
+        .bstore-card .status-badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: 800; margin-top: 4px; }
         .bstore-card .status-badge.pending { background: #f59e0b; color: white; }
+        .bstore-card .status-badge.approved { background: var(--green-success); color: white; }
         .bstore-card .status-badge.rejected { background: var(--red-error); color: white; }
         .bstore-card .buy-btn { background: var(--teal); color: white; border: none; padding: 8px 16px; border-radius: 30px; font-weight: 800; cursor: pointer; width: 100%; margin-top: 8px; transition: 0.2s; }
         .bstore-card .buy-btn:hover { background: var(--teal-light); transform: scale(1.02); }
@@ -345,6 +383,18 @@
         .calc-result .interpretation .emoji { font-size: 24px; margin-right: 8px; }
         .calc-result .interpretation .rec { font-size: 14px; margin-top: 4px; }
         .calc-result .interpretation .link { color: var(--teal); text-decoration: underline; font-weight: 700; cursor: pointer; }
+
+        /* VIRAL BADGE ANIMATION */
+        @keyframes glow { 0% { box-shadow: 0 0 5px rgba(139, 92, 246, 0.3); } 50% { box-shadow: 0 0 20px rgba(139, 92, 246, 0.6); } 100% { box-shadow: 0 0 5px rgba(139, 92, 246, 0.3); } }
+        .viral-glow { animation: glow 2s infinite; }
+
+        /* THREE-DOT MENU */
+        .three-dot-menu { position: relative; cursor: pointer; font-size: 20px; color: var(--navy); }
+        .three-dot-dropdown { display: none; position: absolute; top: 30px; right: 0; background: white; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); min-width: 180px; padding: 8px 0; z-index: 100; border: 1px solid #eee; }
+        .three-dot-dropdown.show { display: block; }
+        .three-dot-dropdown div { padding: 10px 16px; font-size: 13px; cursor: pointer; transition: 0.2s; color: var(--text-dark); font-weight: 700; border-bottom: 1px solid #f1f1f1; }
+        .three-dot-dropdown div:last-child { border-bottom: none; }
+        .three-dot-dropdown div:hover { background: #f8fafc; }
 
         @media (max-width: 600px) {
             .app-logo h1 { font-size: 18px; }
@@ -364,6 +414,8 @@
             .group-banner .go-live-btn { font-size: 10px; padding: 4px 10px; top: 8px; right: 8px; }
             .welcome-banner { flex-direction: column; text-align: center; }
             .calc-result .value { font-size: 20px; }
+            .post-card .post-actions { gap: 8px; }
+            .post-card .post-actions button { font-size: 12px; }
         }
         @media (min-width: 601px) {
             .quick-actions { grid-template-columns: repeat(3, 1fr); gap: 16px; }
@@ -408,8 +460,12 @@
         <div id="appMain" class="app-main">
             <div class="app-grid-wrapper">
                 <div class="welcome-banner">
-                    <div><h2 id="welcomeText" data-key="welcome_title">👋 Welcome back!</h2><p data-key="welcome_desc">Your medical education ecosystem</p></div>
-                    <button class="btn-go" onclick="showModal('appealModal')" data-key="apply_now">📝 Apply for Verification</button>
+                    <div>
+                        <h2 id="welcomeText" data-key="welcome_title">👋 Welcome back!</h2>
+                        <p data-key="welcome_desc">Your medical education ecosystem</p>
+                        <div class="verification-status" id="verificationStatus">✅ Verified Account</div>
+                    </div>
+                    <button class="btn-go" id="appealBtnContainer" onclick="showModal('appealModal')" data-key="apply_now">📝 Apply for Verification</button>
                 </div>
                 <div class="ticker-container">
                     <div class="ticker-text">
@@ -421,19 +477,14 @@
                 <div class="quick-actions">
                     <div class="quick-btn" onclick="openTabContent('class')"><span class="icon">📚</span><span class="label" data-key="class">Class</span></div>
                     <div class="quick-btn" onclick="openTabContent('bstore')"><span class="icon">📖</span><span class="label" data-key="bstore">B-Store</span></div>
-                    <div class="quick-btn" onclick="openTabContent('mcalc')">
-    <span class="icon">🧮</span>
-    <span class="label" data-key="mcalc">M-Calc</span>
-</div>
+                    <div class="quick-btn" onclick="openTabContent('mcalc')"><span class="icon">🧮</span><span class="label" data-key="mcalc">M-Calc</span></div>
                     <div class="quick-btn" onclick="openTabContent('jobs')"><span class="icon">💼</span><span class="label" data-key="job">Job</span></div>
                     <div class="quick-btn" onclick="openTabContent('research')"><span class="icon">🔬</span><span class="label" data-key="research">Research</span></div>
                     <div class="quick-btn" onclick="openTabContent('wallet')"><span class="icon">💳</span><span class="label" data-key="wallet">Wallet</span></div>
                 </div>
                 <div class="feed-section">
                     <h3 data-key="trending">🔥 Trending Content</h3>
-                    <div class="feed-card"><div class="info"><h4>Cardiology 101</h4><p>By Dr. Tesfaye • 1.2k views</p></div><button class="action-btn" onclick="openTabContent('class')" data-key="watch">Watch</button></div>
-                    <div class="feed-card"><div class="info"><h4>Anatomy Note</h4><p>By Dr. Alemu • Premium</p></div><button class="action-btn" onclick="openTabContent('class')" data-key="read">Read</button></div>
-                    <div class="feed-card"><div class="info"><h4>Neurology Basics</h4><p>By Dr. Smith • 850 views</p></div><button class="action-btn" onclick="openTabContent('class')" data-key="watch">Watch</button></div>
+                    <div id="globalTrendingContainer"></div>
                 </div>
             </div>
         </div>
@@ -463,7 +514,7 @@
                         <h4 style="color:var(--gold); font-size:16px; font-weight:900;" data-key="become_teacher">👑 Want to become a Verified Teacher?</h4>
                         <p style="color:rgba(255,255,255,0.8); font-size:13px; font-weight:700;" data-key="start_application">Start your application to create your own class.</p>
                     </div>
-                    <div id="appealBtnContainer">
+                    <div id="appealBtnContainerClass">
                         <button class="btn" style="width:auto; padding:4px 16px; font-size:12px; margin:0; background:var(--gold); color:var(--text-dark);" onclick="showModal('appealModal')" data-key="apply_now">📝 Apply Now</button>
                     </div>
                 </div>
@@ -483,10 +534,10 @@
                             <img id="groupAvatarImg" src="https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app-assets/1780156694418.png" alt="Group">
                         </div>
                         <div style="text-align:left;">
-                            <h3 id="groupBannerTitle" style="color:var(--gold); font-size:20px; font-weight:900;">Dr. Tesfaye Teaching Class</h3>
+                            <h3 id="groupBannerTitle" style="color:var(--gold); font-size:20px; font-weight:900;">Teaching Class</h3>
                             <div class="stats" style="font-size:12px; color:rgba(255,255,255,0.8);">
-                                <span style="color:var(--gold); font-weight:900;" id="groupFollowers">1,247</span> <span data-key="followers">Followers</span> • 
-                                <span style="color:var(--gold); font-weight:900;" id="groupOnline">300</span> <span data-key="online">Online</span>
+                                <span style="color:var(--gold); font-weight:900;" id="groupFollowers">0</span> <span data-key="followers">Followers</span> • 
+                                <span style="color:var(--gold); font-weight:900;" id="groupOnline">0</span> <span data-key="online">Online</span>
                             </div>
                         </div>
                     </div>
@@ -534,10 +585,10 @@
                             <img id="socialGroupAvatarImg" src="https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app-assets/1780156694418.png" alt="Group">
                         </div>
                         <div style="text-align:left;">
-                            <h3 id="socialGroupBannerTitle" style="color:var(--gold); font-size:20px; font-weight:900;">Medical Students Hangout</h3>
+                            <h3 id="socialGroupBannerTitle" style="color:var(--gold); font-size:20px; font-weight:900;">Social Group</h3>
                             <div class="stats" style="font-size:12px; color:rgba(255,255,255,0.8);">
-                                <span style="color:var(--gold); font-weight:900;" id="socialGroupFollowers">850</span> <span data-key="followers">Followers</span> • 
-                                <span style="color:var(--gold); font-weight:900;" id="socialGroupOnline">45</span> <span data-key="online">Online</span>
+                                <span style="color:var(--gold); font-weight:900;" id="socialGroupFollowers">0</span> <span data-key="followers">Followers</span> • 
+                                <span style="color:var(--gold); font-weight:900;" id="socialGroupOnline">0</span> <span data-key="online">Online</span>
                             </div>
                         </div>
                     </div>
@@ -557,14 +608,18 @@
 
             <!-- B-STORE TAB -->
             <div id="bstore-tab">
-                <div class="books-header"><h2 data-key="bstore">📖 B-Store</h2></div>
+                <div class="books-header">
+                    <h2 data-key="bstore">📖 B-Store</h2>
+                    <div class="three-dot-menu" onclick="toggleThreeDotMenu('bstore')">
+                        <i class="fas fa-ellipsis-v"></i>
+                        <div id="bstoreThreeDotDropdown" class="three-dot-dropdown">
+                            <div onclick="showModal('bstoreUploadModal')">📤 Upload Book</div>
+                            <div onclick="showModal('bstoreManageModal')">📋 My Books</div>
+                        </div>
+                    </div>
+                </div>
                 <div style="display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap;">
                     <input type="text" id="bstoreSearch" placeholder="Search books..." style="flex:1; padding:10px; border:1px solid var(--card-border); border-radius:30px; font-weight:700; min-width:150px;">
-                    <select id="bstoreFilter" style="padding:10px; border:1px solid var(--card-border); border-radius:30px; font-weight:700; background:white;">
-                        <option value="all">All Books</option>
-                        <option value="free">Free</option>
-                        <option value="paid">Paid</option>
-                    </select>
                     <button class="btn-sm btn-teal" onclick="filterBStore()" style="margin:0; padding:8px 16px;">🔍 Search</button>
                 </div>
                 <div id="bstoreContainer"><div class="loading">Loading books...</div></div>
@@ -572,22 +627,51 @@
 
             <!-- MEDICAL CALCULATOR TAB -->
             <div id="mcalc-tab">
-                <div class="books-header"><h2 data-key="mcalc">🧮 Medical Calculator</h2></div>
+                <div class="books-header"><h2 data-key="mcalc">🧮 M-Calc</h2></div>
                 <div id="calculatorContainer"><div class="loading">Loading calculators...</div></div>
             </div>
 
             <!-- JOBS TAB -->
             <div id="jobs-tab">
-                <div class="jobs-header"><h2 data-key="job_vacancies">💼 Job Vacancies</h2></div>
-                <div class="job-card"><div class="title">Senior Cardiologist</div><div class="details"><span>🏥 Full-time</span><span>📍 Addis Ababa</span><span>📅 End: Dec 30</span></div><div class="details" style="margin-top:4px;">Requirement: 5+ years experience</div><button class="apply-btn" onclick="showModal('jobApplyModal')" data-key="apply_now_job">Apply Now</button></div>
-                <div class="job-card"><div class="title">Neurology Resident</div><div class="details"><span>🎓 Part-time</span><span>📍 Bahir Dar</span><span>📅 End: Jan 15</span></div><div class="details" style="margin-top:4px;">Requirement: Completed internship</div><button class="apply-btn" onclick="showModal('jobApplyModal')" data-key="apply_now_job">Apply Now</button></div>
+                <div class="jobs-header">
+                    <h2 data-key="job_vacancies">💼 Job Vacancies</h2>
+                    <div class="three-dot-menu" onclick="toggleThreeDotMenu('jobs')">
+                        <i class="fas fa-ellipsis-v"></i>
+                        <div id="jobsThreeDotDropdown" class="three-dot-dropdown">
+                            <div onclick="showModal('addJobModal')">➕ Add Job</div>
+                            <div onclick="loadMyJobs()">📋 My Jobs</div>
+                        </div>
+                    </div>
+                </div>
+                <div style="display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap;">
+                    <input type="text" id="jobSearch" placeholder="Search jobs..." style="flex:1; padding:10px; border:1px solid var(--card-border); border-radius:30px; font-weight:700; min-width:150px;">
+                    <select id="jobFilter" style="padding:10px; border:1px solid var(--card-border); border-radius:30px; font-weight:700; background:white;">
+                        <option value="all">All Jobs</option>
+                        <option value="active">Active</option>
+                        <option value="expired">Expired</option>
+                    </select>
+                    <button class="btn-sm btn-teal" onclick="filterJobs()" style="margin:0; padding:8px 16px;">🔍 Search</button>
+                </div>
+                <div id="jobsContainer"><div class="loading">Loading jobs...</div></div>
             </div>
 
             <!-- RESEARCH TAB -->
             <div id="research-tab">
-                <div class="research-header"><h2 data-key="research_journals">🔬 Research Journals</h2></div>
-                <div class="research-card"><div class="info"><div class="title">Malaria Prevention in Ethiopia</div><div class="author">By Dr. Alemu • Dec 2024</div></div><div><span class="tag free" data-key="free">Free</span><button class="read-btn" onclick="showToast('📖 Opening journal...', 'success')" data-key="read">Read</button></div></div>
-                <div class="research-card"><div class="info"><div class="title">Advanced Cardiology Techniques</div><div class="author">By Dr. Tesfaye • Nov 2024</div></div><div><span class="tag premium" data-key="premium">Premium</span><button class="read-btn" onclick="showToast('🔓 Premium required', 'info')" data-key="read">Read</button></div></div>
+                <div class="research-header">
+                    <h2 data-key="research_journals">🔬 Research Journals</h2>
+                    <div class="three-dot-menu" onclick="toggleThreeDotMenu('research')">
+                        <i class="fas fa-ellipsis-v"></i>
+                        <div id="researchThreeDotDropdown" class="three-dot-dropdown">
+                            <div onclick="showModal('uploadResearchModal')">📤 Upload Research</div>
+                            <div onclick="loadMyResearch()">📋 My Research</div>
+                        </div>
+                    </div>
+                </div>
+                <div style="display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap;">
+                    <input type="text" id="researchSearch" placeholder="Search research..." style="flex:1; padding:10px; border:1px solid var(--card-border); border-radius:30px; font-weight:700; min-width:150px;">
+                    <button class="btn-sm btn-teal" onclick="filterResearch()" style="margin:0; padding:8px 16px;">🔍 Search</button>
+                </div>
+                <div id="researchContainer"><div class="loading">Loading research...</div></div>
             </div>
 
             <!-- PROFILE TAB -->
@@ -726,9 +810,12 @@
             <div class="modal-content">
                 <span class="close" onclick="closeModal('jobApplyModal')">&times;</span>
                 <h3 data-key="apply_job_form">📄 Apply for Job</h3>
-                <div class="form-group"><label>Full Name</label><input type="text"></div>
-                <div class="form-group"><label>Upload CV (PDF)</label><input type="file" accept=".pdf"></div>
-                <button class="btn btn-teal" onclick="showToast('✅ Application sent!', 'success'); closeModal('jobApplyModal')" data-key="submit_application">Submit Application</button>
+                <div class="form-group"><label>Full Name</label><input type="text" id="jobApplyName"></div>
+                <div class="form-group"><label>Email</label><input type="email" id="jobApplyEmail"></div>
+                <div class="form-group"><label>Phone</label><input type="tel" id="jobApplyPhone"></div>
+                <div class="form-group"><label>Upload CV (PDF)</label><input type="file" id="jobApplyCv" accept=".pdf,.doc,.docx"></div>
+                <div class="form-group"><label>Cover Letter (optional)</label><textarea id="jobApplyLetter" rows="3"></textarea></div>
+                <button class="btn btn-teal" onclick="submitJobApplication()" data-key="submit_application">Submit Application</button>
             </div>
         </div>
 
@@ -820,6 +907,15 @@
                 <div class="form-group"><label>Book Title</label><input type="text" id="bstoreTitle"></div>
                 <div class="form-group"><label>Author Name</label><input type="text" id="bstoreAuthor"></div>
                 <div class="form-group"><label>Description</label><textarea id="bstoreDesc" rows="2"></textarea></div>
+                <div class="form-group"><label>Category</label>
+                    <select id="bstoreCategory">
+                        <option value="textbook">Textbook</option>
+                        <option value="reference">Reference</option>
+                        <option value="case_studies">Case Studies</option>
+                        <option value="review">Review</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
                 <div class="form-group"><label>Cover Image</label><input type="file" id="bstoreCover" accept="image/*"></div>
                 <div class="form-group"><label>Book File (PDF, EPUB, MOBI, DOC)</label><input type="file" id="bstoreFile" accept=".pdf,.epub,.mobi,.doc,.docx"></div>
                 <div class="form-group"><label>Monthly Price (Coins)</label><input type="number" id="bstorePriceMonthly" placeholder="0" min="0"></div>
@@ -828,6 +924,15 @@
                 <div class="form-group"><label>9 Months Price (Coins)</label><input type="number" id="bstorePrice9" placeholder="0" min="0"></div>
                 <div class="form-group"><label>1 Year Price (Coins)</label><input type="number" id="bstorePriceYearly" placeholder="0" min="0"></div>
                 <button class="btn btn-teal" onclick="submitBStoreBook()">📤 Upload Book</button>
+            </div>
+        </div>
+
+        <!-- B-Store Manage Modal -->
+        <div id="bstoreManageModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('bstoreManageModal')">&times;</span>
+                <h3>📋 My Books</h3>
+                <div id="bstoreManageContainer"><div class="loading">Loading your books...</div></div>
             </div>
         </div>
 
@@ -849,16 +954,74 @@
             </div>
         </div>
 
+        <!-- Add Job Modal -->
+        <div id="addJobModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('addJobModal')">&times;</span>
+                <h3>➕ Add Job Vacancy</h3>
+                <div class="form-group"><label>Job Title</label><input type="text" id="jobTitle"></div>
+                <div class="form-group"><label>Company/Employer</label><input type="text" id="jobCompany"></div>
+                <div class="form-group"><label>Location</label><input type="text" id="jobLocation"></div>
+                <div class="form-group"><label>Job Type</label>
+                    <select id="jobType">
+                        <option value="Full-time">Full-time</option>
+                        <option value="Part-time">Part-time</option>
+                        <option value="Contract">Contract</option>
+                        <option value="Internship">Internship</option>
+                        <option value="Freelance">Freelance</option>
+                    </select>
+                </div>
+                <div class="form-group"><label>Description</label><textarea id="jobDescription" rows="3"></textarea></div>
+                <div class="form-group"><label>Requirements</label><textarea id="jobRequirements" rows="2"></textarea></div>
+                <div class="form-group"><label>Salary Range</label><input type="text" id="jobSalary" placeholder="e.g. 50,000 - 70,000 ETB or Negotiable"></div>
+                <div class="form-group"><label>Application Deadline</label><input type="datetime-local" id="jobDeadline"></div>
+                <div class="form-group"><label>Contact Email</label><input type="email" id="jobContactEmail"></div>
+                <div class="form-group"><label>Contact Phone (optional)</label><input type="tel" id="jobContactPhone"></div>
+                <button class="btn btn-teal" onclick="submitJob()">📤 Post Job</button>
+            </div>
+        </div>
+
+        <!-- Manage Job Applications Modal -->
+        <div id="manageJobAppsModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('manageJobAppsModal')">&times;</span>
+                <h3>📬 Job Applications</h3>
+                <div id="jobAppsContainer"><div class="loading">Loading applications...</div></div>
+            </div>
+        </div>
+
+        <!-- Upload Research Modal -->
+        <div id="uploadResearchModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('uploadResearchModal')">&times;</span>
+                <h3>📤 Upload Research Paper</h3>
+                <div class="form-group"><label>Title</label><input type="text" id="researchTitle"></div>
+                <div class="form-group"><label>Author Name</label><input type="text" id="researchAuthor"></div>
+                <div class="form-group"><label>Description</label><textarea id="researchDesc" rows="2"></textarea></div>
+                <div class="form-group"><label>Category</label>
+                    <select id="researchCategory">
+                        <option value="cardiology">Cardiology</option>
+                        <option value="neurology">Neurology</option>
+                        <option value="public_health">Public Health</option>
+                        <option value="pediatrics">Pediatrics</option>
+                        <option value="surgery">Surgery</option>
+                        <option value="pharmacology">Pharmacology</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group"><label>Cover Image (optional)</label><input type="file" id="researchCover" accept="image/*"></div>
+                <div class="form-group"><label>Research PDF</label><input type="file" id="researchFile" accept=".pdf"></div>
+                <button class="btn btn-teal" onclick="submitResearch()">📤 Upload Research</button>
+            </div>
+        </div>
+
         <!-- FOOTER -->
         <div class="app-footer" id="appFooter">
             <div class="app-footer-tabs" id="footerTabs">
                 <button class="app-footer-tab active" data-tab="home" onclick="footerTabClick('home')"><span class="tab-emoji">🏠</span><span class="tab-label" data-key="home">Home</span></button>
                 <button class="app-footer-tab" data-tab="class" onclick="footerTabClick('class')"><span class="tab-emoji">📚</span><span class="tab-label" data-key="class">Class</span></button>
                 <button class="app-footer-tab" data-tab="bstore" onclick="footerTabClick('bstore')"><span class="tab-emoji">📖</span><span class="tab-label" data-key="bstore">B-Store</span></button>
-                <button class="app-footer-tab" data-tab="mcalc" onclick="footerTabClick('mcalc')">
-    <span class="tab-emoji">🧮</span>
-    <span class="tab-label" data-key="mcalc">M-Calc</span>
-</button>
+                <button class="app-footer-tab" data-tab="mcalc" onclick="footerTabClick('mcalc')"><span class="tab-emoji">🧮</span><span class="tab-label" data-key="mcalc">M-Calc</span></button>
                 <button class="app-footer-tab" data-tab="jobs" onclick="footerTabClick('jobs')"><span class="tab-emoji">💼</span><span class="tab-label" data-key="job">Job</span></button>
                 <button class="app-footer-tab" data-tab="research" onclick="footerTabClick('research')"><span class="tab-emoji">🔬</span><span class="tab-label" data-key="research">Research</span></button>
                 <button class="app-footer-tab" data-tab="wallet" onclick="footerTabClick('wallet')"><span class="tab-emoji">💳</span><span class="tab-label" data-key="wallet">Wallet</span></button>
@@ -870,7 +1033,7 @@
     </div>
 
     <!-- ================================================================ -->
-    <!-- JAVASCRIPT -->
+    <!-- JAVASCRIPT - COMPLETE -->
     <!-- ================================================================ -->
     <script>
         // ================================================================
@@ -901,7 +1064,8 @@
             currentGroupType: null,
             currentGroupName: null,
             isGroupOwner: false,
-            profilePicUrl: null
+            profilePicUrl: null,
+            currentJobId: null
         };
         
         let examQuestionCount = 1;
@@ -1052,6 +1216,24 @@
         }
 
         // ================================================================
+        // THREE-DOT MENU FUNCTIONS
+        // ================================================================
+        function toggleThreeDotMenu(type) {
+            const dropdown = document.getElementById(`${type}ThreeDotDropdown`);
+            if (!dropdown) return;
+            dropdown.classList.toggle('show');
+        }
+
+        // Close three-dot menus on outside click
+        document.addEventListener('click', function(e) {
+            document.querySelectorAll('.three-dot-dropdown').forEach(d => {
+                if (!e.target.closest('.three-dot-menu') && !e.target.closest('.three-dot-dropdown')) {
+                    d.classList.remove('show');
+                }
+            });
+        });
+
+        // ================================================================
         // LANGUAGE TOGGLE
         // ================================================================
         function toggleLanguage() {
@@ -1146,6 +1328,8 @@
             if (tabId === 'bstore') loadBStore();
             if (tabId === 'mcalc') loadCalculators();
             if (tabId === 'profile') loadMyLibrary();
+            if (tabId === 'jobs') loadJobs();
+            if (tabId === 'research') loadResearch();
             
             setTimeout(() => {
                 translatePage();
@@ -1266,9 +1450,16 @@
                         adminTab.style.display = AppState.isAdmin ? 'flex' : 'none';
                     }
                     
-                    const appealBtnContainers = document.querySelectorAll('#appealBtnContainer');
+                    // Hide "Apply for Verification" for admin and verified teachers
+                    const appealBtnContainers = document.querySelectorAll('#appealBtnContainer, #appealBtnContainerClass');
                     appealBtnContainers.forEach(el => {
-                        el.style.display = (AppState.isAdmin || AppState.isTeacher) ? 'none' : 'block';
+                        if (AppState.isAdmin || AppState.isTeacher) {
+                            el.style.display = 'none';
+                            document.getElementById('verificationStatus').style.display = 'block';
+                        } else {
+                            el.style.display = 'block';
+                            document.getElementById('verificationStatus').style.display = 'none';
+                        }
                     });
                     
                     const createGroupBtns = document.querySelectorAll('#createGroupBtn');
@@ -2228,7 +2419,7 @@
         }
 
         // ================================================================
-        // SOCIAL POSTS
+        // SOCIAL POSTS - COMPLETE WITH ALL FEATURES
         // ================================================================
         async function loadSocialPosts(groupId) {
             const container = document.getElementById('socialPostsContainer');
@@ -2250,36 +2441,7 @@
                     return;
                 }
                 
-                container.innerHTML = data.map(post => `
-                    <div class="post-card">
-                        <div class="post-header">
-                            <div class="post-avatar">
-                                <img src="${AppState.profilePicUrl || 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app-assets/1780156694418.png'}" alt="User">
-                            </div>
-                            <div>
-                                <div class="post-name">${post.user_id === AppState.userId ? 'You' : 'User'}</div>
-                                <div class="post-time">${new Date(post.created_at).toLocaleDateString()} ${new Date(post.created_at).toLocaleTimeString()}</div>
-                            </div>
-                        </div>
-                        <div class="post-content">${post.content}</div>
-                        ${post.image_url ? `<img src="${post.image_url}" alt="Post image" class="post-image">` : ''}
-                        ${post.link_url ? `<a href="${post.link_url}" target="_blank" class="post-link">🔗 ${post.link_url}</a>` : ''}
-                        <div class="post-actions">
-                            <button onclick="togglePostLike(this, '${post.id}')"><i class="fas fa-heart"></i> <span>${post.likes || 0}</span></button>
-                            <button onclick="togglePostComment(this)"><i class="fas fa-comment"></i> <span>${post.comment_count || 0}</span></button>
-                            <button onclick="shareContent()"><i class="fas fa-share"></i> Share</button>
-                        </div>
-                        <div class="post-comments">
-                            <div id="postComments_${post.id}"></div>
-                            <input type="text" class="comment-input" placeholder="Write a comment...">
-                            <button class="comment-send" onclick="addPostComment('${post.id}', this)">Post</button>
-                        </div>
-                    </div>
-                `).join('');
-                
-                data.forEach(post => {
-                    loadPostComments(post.id);
-                });
+                container.innerHTML = data.map(post => renderPostCard(post)).join('');
                 
                 translatePage();
             } catch (err) {
@@ -2288,6 +2450,349 @@
             }
         }
 
+        function renderPostCard(post) {
+            const isOwner = post.user_id === AppState.userId;
+            const isAdmin = AppState.isAdmin;
+            const isGroupOwner = AppState.isGroupOwner;
+            const canModerate = isOwner || isAdmin || isGroupOwner;
+            
+            // Text truncation
+            const maxLength = 150;
+            let contentDisplay = post.content;
+            let showReadMore = false;
+            if (post.content && post.content.length > maxLength) {
+                contentDisplay = post.content.substring(0, maxLength) + '...';
+                showReadMore = true;
+            }
+            
+            // Viral badges
+            let viralBadge = '';
+            if (post.viral_level === 'super_viral') {
+                viralBadge = `<span class="viral-badge super">⭐ Super Viral</span>`;
+            } else if (post.viral_level === 'viral') {
+                viralBadge = `<span class="viral-badge viral">💎 Viral</span>`;
+            } else if (post.viral_level === 'trending') {
+                viralBadge = `<span class="viral-badge trending">🔥 Trending</span>`;
+            } else if (post.viral_level === 'rising') {
+                viralBadge = `<span class="viral-badge rising">⬆️ Rising</span>`;
+            }
+            
+            // Pinned badge
+            let pinnedBadge = post.is_pinned ? `<span class="pinned-badge">📌 Pinned</span>` : '';
+            
+            // Share count display
+            const shareCount = post.share_count || 0;
+            
+            // Viral glow for super viral
+            const viralGlow = post.viral_level === 'super_viral' || post.viral_level === 'viral' ? 'viral-glow' : '';
+            
+            return `
+                <div class="post-card ${viralGlow}" id="post-${post.id}">
+                    <div class="post-header">
+                        <div class="post-avatar">
+                            <img src="${AppState.profilePicUrl || 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app-assets/1780156694418.png'}" alt="User">
+                        </div>
+                        <div>
+                            <div class="post-name">${post.user_id === AppState.userId ? 'You' : 'User'} ${viralBadge} ${pinnedBadge}</div>
+                            <div class="post-time">${new Date(post.created_at).toLocaleDateString()} ${new Date(post.created_at).toLocaleTimeString()}</div>
+                        </div>
+                        ${canModerate ? `
+                            <div style="margin-left:auto;">
+                                <button class="post-actions-btn" onclick="togglePostMenu('${post.id}')">⋮</button>
+                                <div id="postMenu-${post.id}" style="display:none; position:absolute; right:0; background:white; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.1); padding:4px 0; z-index:20; min-width:120px;">
+                                    ${isOwner ? `<div style="padding:6px 12px; cursor:pointer; font-weight:700; font-size:13px;" onclick="editPost('${post.id}')">✏️ Edit</div>` : ''}
+                                    ${isOwner ? `<div style="padding:6px 12px; cursor:pointer; font-weight:700; font-size:13px; color:var(--red-error);" onclick="deletePost('${post.id}')">🗑️ Delete</div>` : ''}
+                                    ${(isAdmin || isGroupOwner) ? `<div style="padding:6px 12px; cursor:pointer; font-weight:700; font-size:13px; color:var(--gold);" onclick="togglePinPost('${post.id}')">${post.is_pinned ? '📌 Unpin' : '📌 Pin'}</div>` : ''}
+                                    ${isAdmin ? `<div style="padding:6px 12px; cursor:pointer; font-weight:700; font-size:13px; color:var(--red-error);" onclick="reportPost('${post.id}')">🚨 Report</div>` : ''}
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                    
+                    <div class="post-content">
+                        <span id="postContent-${post.id}">${contentDisplay}</span>
+                        ${showReadMore ? `<span class="read-more" onclick="togglePostContent('${post.id}')">Read More</span>` : ''}
+                    </div>
+                    
+                    ${post.image_url ? `<img src="${post.image_url}" alt="Post image" class="post-image">` : ''}
+                    ${post.link_url ? `<a href="${post.link_url}" target="_blank" class="post-link">🔗 ${post.link_url}</a>` : ''}
+                    
+                    <div class="post-actions">
+                        <button onclick="toggleLikePost('${post.id}')" id="likeBtn-${post.id}">
+                            <i class="fas fa-heart"></i> <span id="likeCount-${post.id}">${post.likes || 0}</span>
+                        </button>
+                        <button onclick="toggleDislikePost('${post.id}')" id="dislikeBtn-${post.id}">
+                            <i class="fas fa-thumbs-down"></i> <span id="dislikeCount-${post.id}">${post.dislikes || 0}</span>
+                        </button>
+                        <button onclick="togglePostComment(this)">
+                            <i class="fas fa-comment"></i> <span id="commentCount-${post.id}">${post.comment_count || 0}</span>
+                        </button>
+                        <div class="share-btn">
+                            <button onclick="toggleShareOptions('${post.id}')">
+                                <i class="fas fa-share"></i> <span id="shareCount-${post.id}">${shareCount}</span>
+                            </button>
+                            <div id="shareOptions-${post.id}" class="share-options">
+                                <div onclick="sharePost('${post.id}', 'external')">📤 Share External</div>
+                                <div onclick="sharePost('${post.id}', 'group')">📬 Repost to Group</div>
+                            </div>
+                        </div>
+                        <button onclick="shareContent()"><i class="fas fa-link"></i> Link</button>
+                    </div>
+                    
+                    <div class="post-comments" id="comments-${post.id}">
+                        <div id="commentList-${post.id}"></div>
+                        <input type="text" class="comment-input" placeholder="Write a comment..." id="commentInput-${post.id}">
+                        <button class="comment-send" onclick="addPostComment('${post.id}', this)">Post</button>
+                    </div>
+                    
+                    <div class="post-edit" id="editPost-${post.id}">
+                        <textarea id="editContent-${post.id}" rows="3">${post.content}</textarea>
+                        <input type="file" id="editImage-${post.id}" accept="image/*">
+                        <input type="url" id="editLink-${post.id}" placeholder="Link URL" value="${post.link_url || ''}">
+                        <button class="save-edit-btn" onclick="savePostEdit('${post.id}')">Save</button>
+                        <button class="cancel-edit-btn" onclick="cancelPostEdit('${post.id}')">Cancel</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ================================================================
+        // POST INTERACTIONS
+        // ================================================================
+        function togglePostContent(postId) {
+            const contentSpan = document.getElementById(`postContent-${postId}`);
+            const post = document.querySelector(`#post-${postId}`);
+            if (!contentSpan || !post) return;
+            
+            const fullContent = post.dataset.fullContent || contentSpan.textContent;
+            if (contentSpan.textContent.includes('...')) {
+                contentSpan.textContent = fullContent;
+                post.dataset.fullContent = '';
+            } else {
+                post.dataset.fullContent = contentSpan.textContent;
+                contentSpan.textContent = contentSpan.textContent.substring(0, 150) + '...';
+            }
+        }
+
+        async function toggleLikePost(postId) {
+            try {
+                const btn = document.getElementById(`likeBtn-${postId}`);
+                const countSpan = document.getElementById(`likeCount-${postId}`);
+                if (!btn || !countSpan) return;
+                
+                btn.classList.toggle('liked');
+                let count = parseInt(countSpan.textContent) || 0;
+                
+                if (btn.classList.contains('liked')) {
+                    count++;
+                    await sb.from('social_posts').update({ likes: count }).eq('id', postId);
+                } else {
+                    count--;
+                    await sb.from('social_posts').update({ likes: count }).eq('id', postId);
+                }
+                countSpan.textContent = count;
+                updateViralScore(postId);
+            } catch (err) {
+                console.error('Like error:', err);
+                showToast('Error updating like', 'error');
+            }
+        }
+
+        async function toggleDislikePost(postId) {
+            try {
+                const btn = document.getElementById(`dislikeBtn-${postId}`);
+                const countSpan = document.getElementById(`dislikeCount-${postId}`);
+                if (!btn || !countSpan) return;
+                
+                btn.classList.toggle('disliked');
+                let count = parseInt(countSpan.textContent) || 0;
+                
+                if (btn.classList.contains('disliked')) {
+                    count++;
+                    await sb.from('social_posts').update({ dislikes: count }).eq('id', postId);
+                } else {
+                    count--;
+                    await sb.from('social_posts').update({ dislikes: count }).eq('id', postId);
+                }
+                countSpan.textContent = count;
+                updateViralScore(postId);
+            } catch (err) {
+                console.error('Dislike error:', err);
+                showToast('Error updating dislike', 'error');
+            }
+        }
+
+        function togglePostComment(btn) {
+            const section = btn.closest('.post-card').querySelector('.post-comments');
+            if (!section) return;
+            section.style.display = section.style.display === 'block' ? 'none' : 'block';
+            if (section.style.display === 'block') {
+                loadPostComments(section.id.replace('comments-', ''));
+            }
+        }
+
+        function toggleShareOptions(postId) {
+            const options = document.getElementById(`shareOptions-${postId}`);
+            if (!options) return;
+            options.classList.toggle('show');
+        }
+
+        async function sharePost(postId, type) {
+            try {
+                if (type === 'external') {
+                    if (navigator.share) {
+                        await navigator.share({
+                            title: 'Check out this post on T-Hub!',
+                            url: window.location.href
+                        });
+                    } else {
+                        await navigator.clipboard.writeText(window.location.href);
+                        showToast('📋 Link copied to clipboard!', 'success');
+                    }
+                } else if (type === 'group') {
+                    // Repost to user's own group
+                    const userGroups = AppState.groups.filter(g => g.owner_id === AppState.userId);
+                    if (userGroups.length === 0) {
+                        showToast('⚠️ You need to own a group to repost.', 'error');
+                        return;
+                    }
+                    
+                    // Get original post data
+                    const { data: post, error } = await sb
+                        .from('social_posts')
+                        .select('*')
+                        .eq('id', postId)
+                        .single();
+                    
+                    if (error) throw error;
+                    
+                    // Create repost in user's first group
+                    const newPost = {
+                        group_id: userGroups[0].id,
+                        user_id: AppState.userId,
+                        content: `🔄 Shared from "${post.group_id}" by ${post.user_id}\n\n${post.content}`,
+                        image_url: post.image_url,
+                        link_url: post.link_url,
+                        is_repost: true,
+                        original_post_id: postId,
+                        likes: 0,
+                        dislikes: 0,
+                        share_count: 0,
+                        comment_count: 0
+                    };
+                    
+                    await sb.from('social_posts').insert(newPost);
+                    
+                    // Increment share count on original
+                    await sb.from('social_posts')
+                        .update({ share_count: (post.share_count || 0) + 1 })
+                        .eq('id', postId);
+                    
+                    showToast('✅ Post shared to your group!', 'success');
+                    loadSocialPosts(AppState.currentGroupId);
+                }
+            } catch (err) {
+                console.error('Share error:', err);
+                showToast('Error sharing post: ' + err.message, 'error');
+            }
+        }
+
+        function togglePostMenu(postId) {
+            const menu = document.getElementById(`postMenu-${postId}`);
+            if (!menu) return;
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function editPost(postId) {
+            const editDiv = document.getElementById(`editPost-${postId}`);
+            if (!editDiv) return;
+            editDiv.style.display = editDiv.style.display === 'block' ? 'none' : 'block';
+            document.getElementById(`postMenu-${postId}`).style.display = 'none';
+        }
+
+        function cancelPostEdit(postId) {
+            document.getElementById(`editPost-${postId}`).style.display = 'none';
+        }
+
+        async function savePostEdit(postId) {
+            try {
+                const content = document.getElementById(`editContent-${postId}`).value;
+                const link = document.getElementById(`editLink-${postId}`).value;
+                const imageInput = document.getElementById(`editImage-${postId}`);
+                
+                let imageUrl = null;
+                if (imageInput && imageInput.files && imageInput.files[0]) {
+                    const file = imageInput.files[0];
+                    const fileExt = file.name.split('.').pop();
+                    const fileName = `post_edits/${AppState.userId}_${Date.now()}.${fileExt}`;
+                    const { data, error } = await sb.storage
+                        .from('t-hub-uploads')
+                        .upload(fileName, file, { cacheControl: '3600', upsert: false });
+                    if (!error) {
+                        const { data: urlData } = sb.storage.from('t-hub-uploads').getPublicUrl(fileName);
+                        imageUrl = urlData.publicUrl;
+                    }
+                }
+                
+                await sb.from('social_posts')
+                    .update({
+                        content: content,
+                        link_url: link || null,
+                        image_url: imageUrl || undefined,
+                        is_edited: true,
+                        edited_at: new Date()
+                    })
+                    .eq('id', postId);
+                
+                showToast('✅ Post updated!', 'success');
+                loadSocialPosts(AppState.currentGroupId);
+            } catch (err) {
+                console.error('Edit error:', err);
+                showToast('Error updating post: ' + err.message, 'error');
+            }
+        }
+
+        async function deletePost(postId) {
+            if (!confirm('⚠️ Are you sure you want to permanently delete this post?')) return;
+            
+            try {
+                await sb.from('social_posts').delete().eq('id', postId);
+                showToast('🗑️ Post deleted.', 'info');
+                loadSocialPosts(AppState.currentGroupId);
+            } catch (err) {
+                console.error('Delete error:', err);
+                showToast('Error deleting post: ' + err.message, 'error');
+            }
+        }
+
+        async function togglePinPost(postId) {
+            try {
+                const { data: post } = await sb
+                    .from('social_posts')
+                    .select('is_pinned')
+                    .eq('id', postId)
+                    .single();
+                
+                await sb.from('social_posts')
+                    .update({ is_pinned: !post.is_pinned })
+                    .eq('id', postId);
+                
+                showToast(post.is_pinned ? '📌 Post unpinned' : '📌 Post pinned!', 'success');
+                loadSocialPosts(AppState.currentGroupId);
+            } catch (err) {
+                console.error('Pin error:', err);
+                showToast('Error: ' + err.message, 'error');
+            }
+        }
+
+        function reportPost(postId) {
+            showToast('🚨 Post reported to admin for review.', 'info');
+            // In production, this would create a report record
+        }
+
+        // ================================================================
+        // POST COMMENTS
+        // ================================================================
         async function loadPostComments(postId) {
             try {
                 const { data, error } = await sb
@@ -2298,7 +2803,7 @@
                 
                 if (error) throw error;
                 
-                const container = document.getElementById(`postComments_${postId}`);
+                const container = document.getElementById(`commentList-${postId}`);
                 if (!container) return;
                 
                 if (!data || data.length === 0) {
@@ -2317,6 +2822,44 @@
             }
         }
 
+        async function addPostComment(postId, btn) {
+            const input = btn.closest('.post-comments').querySelector('.comment-input');
+            if (!input || !input.value) return;
+            
+            try {
+                const { data, error } = await sb.from('social_comments').insert({
+                    post_id: postId,
+                    user_id: AppState.userId,
+                    comment: input.value
+                });
+                
+                if (error) throw error;
+                
+                // Update comment count
+                const { data: post } = await sb
+                    .from('social_posts')
+                    .select('comment_count')
+                    .eq('id', postId)
+                    .single();
+                
+                await sb.from('social_posts')
+                    .update({ comment_count: (post.comment_count || 0) + 1 })
+                    .eq('id', postId);
+                
+                input.value = '';
+                loadPostComments(postId);
+                document.getElementById(`commentCount-${postId}`).textContent = (post.comment_count || 0) + 1;
+                showToast('Comment added!', 'success');
+                updateViralScore(postId);
+            } catch (err) {
+                console.error('Add comment error:', err);
+                showToast('Error adding comment: ' + err.message, 'error');
+            }
+        }
+
+        // ================================================================
+        // CREATE POST
+        // ================================================================
         async function createPost() {
             const content = document.getElementById('postContent');
             const imageInput = document.getElementById('postImage');
@@ -2334,11 +2877,9 @@
                 const file = imageInput.files[0];
                 const fileExt = file.name.split('.').pop();
                 const fileName = `post_images/${AppState.userId}_${Date.now()}.${fileExt}`;
-                
                 const { data, error } = await sb.storage
                     .from('t-hub-uploads')
                     .upload(fileName, file, { cacheControl: '3600', upsert: false });
-                
                 if (!error) {
                     const { data: urlData } = sb.storage.from('t-hub-uploads').getPublicUrl(fileName);
                     image_url = urlData.publicUrl;
@@ -2352,7 +2893,14 @@
                     content: content.value,
                     image_url: image_url,
                     link_url: link_url,
-                    likes: 0
+                    likes: 0,
+                    dislikes: 0,
+                    share_count: 0,
+                    comment_count: 0,
+                    is_pinned: false,
+                    is_edited: false,
+                    viral_level: 'normal',
+                    viral_score: 0
                 });
                 
                 if (error) throw error;
@@ -2370,372 +2918,834 @@
             }
         }
 
-        function togglePostLike(btn, postId) {
-            btn.classList.toggle('liked');
-            const span = btn.querySelector('span');
-            if (!span) return;
-            let count = parseInt(span.innerText) || 0;
-            if (btn.classList.contains('liked')) { 
-                count++;
-                span.innerText = count; 
-            } else { 
-                count--;
-                span.innerText = count; 
-            }
-        }
-
-        function togglePostComment(btn) {
-            const section = btn.closest('.post-card').querySelector('.post-comments');
-            if (!section) return;
-            section.style.display = section.style.display === 'block' ? 'none' : 'block';
-        }
-
-        async function addPostComment(postId, btn) {
-            const input = btn.closest('.post-comments').querySelector('.comment-input');
-            if (!input || !input.value) return;
-            
+        // ================================================================
+        // VIRAL ALGORITHM
+        // ================================================================
+        async function updateViralScore(postId) {
             try {
-                const { data, error } = await sb.from('social_comments').insert({
-                    post_id: postId,
-                    user_id: AppState.userId,
-                    comment: input.value
-                });
+                const { data: post, error } = await sb
+                    .from('social_posts')
+                    .select('*')
+                    .eq('id', postId)
+                    .single();
                 
                 if (error) throw error;
                 
-                input.value = '';
-                loadPostComments(postId);
-                showToast('Comment added!', 'success');
+                // Engagement Score (40%)
+                const engagementScore = (post.likes || 0) + (post.comment_count || 0) * 2 + (post.share_count || 0) * 3;
+                
+                // View Score (30%)
+                const viewScore = post.views || 0;
+                
+                // Time Score (30%)
+                const hoursSincePost = (Date.now() - new Date(post.created_at).getTime()) / (1000 * 60 * 60);
+                let timeScore = 100 - (hoursSincePost / 24) * 10; // 10% decay per day
+                timeScore = Math.max(0, timeScore);
+                
+                // Raw Score
+                let rawScore = (engagementScore * 0.40) + (viewScore * 0.30) + (timeScore * 0.30);
+                
+                // Dislike Penalty (VERY WEAK)
+                let penalty = 0;
+                if (post.dislikes > 100) penalty = 0.10;
+                else if (post.dislikes > 50) penalty = 0.05;
+                // If dislikes > likes * 0.5, small penalty
+                if (post.dislikes > post.likes * 0.5 && post.dislikes > 5) {
+                    penalty = Math.max(penalty, 0.05);
+                }
+                
+                const finalScore = rawScore * (1 - penalty);
+                
+                // Determine viral level
+                let viralLevel = 'normal';
+                if (finalScore > 1000) viralLevel = 'super_viral';
+                else if (finalScore > 600) viralLevel = 'viral';
+                else if (finalScore > 300) viralLevel = 'trending';
+                else if (finalScore > 100) viralLevel = 'rising';
+                
+                await sb.from('social_posts')
+                    .update({
+                        viral_score: Math.round(finalScore),
+                        viral_level: viralLevel
+                    })
+                    .eq('id', postId);
+                
+                // If viral, add to global trending
+                if (viralLevel === 'viral' || viralLevel === 'super_viral') {
+                    await sb.from('global_trending_posts').upsert({
+                        post_id: postId,
+                        viral_score: Math.round(finalScore),
+                        last_updated: new Date()
+                    });
+                }
+                
+                // Update UI
+                loadSocialPosts(AppState.currentGroupId);
+                loadGlobalTrending();
+                
             } catch (err) {
-                console.error('Add comment error:', err);
-                showToast('Error adding comment: ' + err.message, 'error');
+                console.error('Viral score update error:', err);
+            }
+        }
+
+        async function loadGlobalTrending() {
+            try {
+                const { data, error } = await sb
+                    .from('global_trending_posts')
+                    .select('*, social_posts(*)')
+                    .order('viral_score', { ascending: false })
+                    .limit(5);
+                
+                if (error) throw error;
+                
+                const container = document.getElementById('globalTrendingContainer');
+                if (!container) return;
+                
+                if (!data || data.length === 0) {
+                    container.innerHTML = '<div class="loading" style="color:var(--text-muted);">No trending content yet.</div>';
+                    return;
+                }
+                
+                container.innerHTML = data.map(item => {
+                    const post = item.social_posts;
+                    return `
+                        <div class="feed-card" onclick="openTabContent('group-feed', ${post.group_id})" style="cursor:pointer;">
+                            <div class="info">
+                                <h4>🔥 ${post.content ? post.content.substring(0, 40) + '...' : 'Trending Post'}</h4>
+                                <p>${post.viral_level || 'Viral'} • ${post.likes || 0} likes • ${post.comment_count || 0} comments</p>
+                            </div>
+                            <button class="action-btn">View</button>
+                        </div>
+                    `;
+                }).join('');
+                
+            } catch (err) {
+                console.error('Global trending error:', err);
             }
         }
 
         // ================================================================
-        // SUBMIT ADD FILE
+        // B-STORE FUNCTIONS
         // ================================================================
-        async function submitAddFile() {
-            const typeSelect = document.getElementById('addFileType');
-            if (!typeSelect) return showToast('Form not found.', 'error');
+        async function loadBStore() {
+            const container = document.getElementById('bstoreContainer');
+            if (!container) return;
             
-            const type = typeSelect.value;
-            const groupId = AppState.currentGroupId;
-            if (!groupId) return showToast('You must be in a group to add content.', 'error');
+            container.innerHTML = '<div class="loading">Loading books...</div>';
             
-            if (type === 'mockexam') {
-                const titleInput = document.getElementById('examTitle');
-                const timeLimitInput = document.getElementById('examTimeLimit');
+            try {
+                const { data, error } = await sb
+                    .from('bstore_books')
+                    .select('*')
+                    .eq('status', 'approved')
+                    .order('created_at', { ascending: false });
                 
-                if (!titleInput) return showToast('Mock Exam title field not found.', 'error');
+                if (error) throw error;
                 
-                const title = titleInput.value;
-                let time_limit = parseInt(timeLimitInput?.value);
-                if (isNaN(time_limit) || time_limit < 1) time_limit = 5;
-                
-                if (!title) return showToast('Please enter a Mock Exam Title.', 'error');
-
-                const questions = [];
-                for (let i = 1; i <= examQuestionCount; i++) {
-                    const q = document.getElementById(`examQ${i}`)?.value;
-                    const a = document.getElementById(`examA${i}`)?.value;
-                    const b = document.getElementById(`examB${i}`)?.value;
-                    const c = document.getElementById(`examC${i}`)?.value;
-                    const d = document.getElementById(`examD${i}`)?.value;
-                    const ans = document.getElementById(`examAns${i}`)?.value;
-                    const exp = document.getElementById(`examExp${i}`)?.value;
-                    
-                    if (!q) return showToast(`Please fill in Question ${i}.`, 'error');
-                    if (!a || !b || !c || !d) return showToast(`Please fill in all options for Question ${i}.`, 'error');
-                    
-                    questions.push({ 
-                        question: q,
-                        options: [a, b, c, d],
-                        answer: ans,
-                        explanation: exp || ''
-                    });
+                if (!data || data.length === 0) {
+                    container.innerHTML = '<div class="loading" style="color:var(--text-muted);">No books available in B-Store yet.</div>';
+                    return;
                 }
-
-                const { data, error } = await sb.from('mock_exams').insert({
-                    group_id: groupId,
-                    author_id: AppState.userId,
-                    title: title,
-                    questions: questions,
-                    time_limit: time_limit
-                }).select();
-
-                if (error) {
-                    console.error("❌ Supabase Error:", error);
-                    return showToast('Error saving mock exam: ' + error.message, 'error');
-                }
-
-                showToast(`📝 Mock Exam '${title}' with ${questions.length} questions created!`, 'success');
-                closeModal('addFileModal');
                 
-                examQuestionCount = 1;
-                if (titleInput) titleInput.value = '';
-                if (timeLimitInput) timeLimitInput.value = '5';
+                container.innerHTML = `
+                    <div class="bstore-grid">
+                        ${data.map(book => `
+                            <div class="bstore-card">
+                                <div class="book-cover">
+                                    ${book.cover_url ? `<img src="${book.cover_url}" alt="${book.title}">` : '📖'}
+                                </div>
+                                <div class="title">${book.title}</div>
+                                <div class="author">By ${book.author}</div>
+                                <div style="font-size:12px; color:var(--text-muted); font-weight:700;">${book.category || ''}</div>
+                                <div class="price">💰 Monthly: ${book.price_monthly || 0} Coins</div>
+                                <button class="buy-btn" onclick="subscribeToBook(${book.id})">📖 Subscribe</button>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
                 
-                if (AppState.currentGroupId) {
-                    loadGroupContent(AppState.currentGroupId, 'mockexam');
-                }
+                translatePage();
+            } catch (err) {
+                console.error('Load B-Store error:', err);
+                container.innerHTML = '<div class="loading" style="color:var(--red-error);">Failed to load books</div>';
+            }
+        }
+
+        function filterBStore() {
+            const search = document.getElementById('bstoreSearch')?.value?.toLowerCase() || '';
+            
+            document.querySelectorAll('.bstore-card').forEach(card => {
+                const title = card.querySelector('.title')?.textContent?.toLowerCase() || '';
+                const author = card.querySelector('.author')?.textContent?.toLowerCase() || '';
+                const visible = !search || title.includes(search) || author.includes(search);
+                card.style.display = visible ? 'block' : 'none';
+            });
+        }
+
+        async function subscribeToBook(bookId) {
+            if (!AppState.userId) {
+                showToast('Please login first.', 'error');
                 return;
             }
-
-            // Handle Video/PPT upload
-            const titleInput = document.getElementById('addFileTitle');
-            const urlInput = document.getElementById('addFileUrl');
-            const descInput = document.getElementById('addFileDesc');
             
-            if (!titleInput || !urlInput) return showToast('Form fields not found.', 'error');
-            
-            const title = titleInput.value;
-            const url = urlInput.value;
-            const description = descInput ? descInput.value : '';
-            
-            if(!title) return showToast('Please enter a title.', 'error');
-            if(!url) return showToast('Please upload a file first (click the Upload button).', 'error');
-
-            try {
-                const { error } = await sb.from('group_content').insert({
-                    group_id: groupId, 
-                    author_id: AppState.userId, 
-                    content_type: type, 
-                    title: title,
-                    description: description,
-                    file_url: url,
-                    likes: 0
-                });
-
-                if (error) throw error;
-
-                showToast(`📤 ${type === 'video' ? 'Video' : 'PPT'} published successfully!`, 'success');
-                closeModal('addFileModal');
-                
-                titleInput.value = '';
-                urlInput.value = '';
-                if (descInput) descInput.value = '';
-                const fileInput = document.getElementById('addFileInput');
-                if (fileInput) fileInput.value = '';
-                const statusDiv = document.getElementById('uploadStatus');
-                if (statusDiv) statusDiv.innerText = '⏳ No file selected';
-                
-                if (AppState.currentGroupId) {
-                    loadGroupContent(AppState.currentGroupId, type === 'video' ? 'videos' : 'ppts');
-                }
-            } catch (err) {
-                console.error("❌ Error:", err);
-                showToast('Error publishing content: ' + err.message, 'error');
-            }
+            // Show subscription options modal
+            const modal = document.createElement('div');
+            modal.className = 'modal active';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <span class="close" onclick="this.closest('.modal').remove()">&times;</span>
+                    <h3>📖 Choose Subscription</h3>
+                    <p style="color:var(--text-muted); margin-bottom:12px; font-weight:700;">Select your subscription plan</p>
+                    <button class="btn btn-teal" onclick="processSubscription(${bookId}, 'monthly')">Monthly</button>
+                    <button class="btn" onclick="processSubscription(${bookId}, '3months')">3 Months</button>
+                    <button class="btn" onclick="processSubscription(${bookId}, '6months')">6 Months</button>
+                    <button class="btn" onclick="processSubscription(${bookId}, '9months')">9 Months</button>
+                    <button class="btn" onclick="processSubscription(${bookId}, 'yearly')">1 Year</button>
+                </div>
+            `;
+            document.body.appendChild(modal);
         }
 
-        // ================================================================
-        // UPLOAD FILE TO STORAGE
-        // ================================================================
-        async function uploadFileToStorage() {
-            const fileInput = document.getElementById('addFileInput');
-            const statusDiv = document.getElementById('uploadStatus');
-            
-            if (!fileInput || !statusDiv) return showToast('Upload elements not found.', 'error');
-            
-            const file = fileInput.files[0];
-            if (!file) return showToast('Please select a file first.', 'error');
-            
-            if (file.size > 50 * 1024 * 1024) { 
-                return showToast('File is too large. Max 50MB allowed.', 'error'); 
-            }
-            
-            console.log('📁 Uploading:', { name: file.name, type: file.type, size: (file.size/1024/1024).toFixed(2) + 'MB' });
-            
-            statusDiv.innerText = `⏳ Uploading ${file.name}...`;
-            statusDiv.style.color = 'var(--gold)';
-            
+        async function processSubscription(bookId, tier) {
             try {
-                const fileExt = file.name.split('.').pop().toLowerCase();
-                const fileName = `uploads/${AppState.userId}_${Date.now()}.${fileExt}`;
+                const { data: book, error: bookError } = await sb
+                    .from('bstore_books')
+                    .select(`price_${tier}`)
+                    .eq('id', bookId)
+                    .single();
                 
-                const { data: buckets } = await sb.storage.listBuckets();
-                const bucketExists = buckets?.some(b => b.name === 't-hub-uploads');
+                if (bookError) throw bookError;
                 
-                if (!bucketExists) {
-                    await sb.storage.createBucket('t-hub-uploads', { public: true });
-                }
-                
-                const { data, error } = await sb.storage
-                    .from('t-hub-uploads')
-                    .upload(fileName, file, { 
-                        cacheControl: '3600', 
-                        upsert: false,
-                        contentType: file.type || 'application/octet-stream'
+                const price = book[`price_${tier}`] || 0;
+                if (price === 0) {
+                    await sb.from('bstore_subscriptions').insert({
+                        book_id: bookId,
+                        user_id: AppState.userId,
+                        tier: tier,
+                        amount_paid: 0,
+                        expires_at: new Date(Date.now() + getTierDuration(tier)).toISOString()
                     });
-                
-                if (error) {
-                    console.log('Trying fallback to app-assets...');
-                    const altFileName = `uploads/${AppState.userId}_${Date.now()}.${fileExt}`;
-                    const { data: altData, error: altError } = await sb.storage
-                        .from('app-assets')
-                        .upload(altFileName, file, { 
-                            cacheControl: '3600', 
-                            upsert: false,
-                            contentType: file.type || 'application/octet-stream'
-                        });
+                    showToast('✅ Book added to your library!', 'success');
+                } else {
+                    if (AppState.coinBalance < price) {
+                        showToast(`⚠️ Insufficient coins. Need ${price} coins.`, 'error');
+                        return;
+                    }
                     
-                    if (altError) throw altError;
+                    await sb.from('users')
+                        .update({ coin_balance: AppState.coinBalance - price })
+                        .eq('user_id', AppState.userId);
                     
-                    const { data: altUrlData } = sb.storage.from('app-assets').getPublicUrl(altFileName);
-                    const urlInput = document.getElementById('addFileUrl');
-                    if (urlInput) urlInput.value = altUrlData.publicUrl;
+                    AppState.coinBalance -= price;
                     
-                    statusDiv.innerText = `✅ Uploaded ${file.name}!`;
-                    statusDiv.style.color = 'var(--green-success)';
-                    showToast('✅ File uploaded to T-Hub Cloud!', 'success');
-                    return;
+                    await sb.from('bstore_subscriptions').insert({
+                        book_id: bookId,
+                        user_id: AppState.userId,
+                        tier: tier,
+                        amount_paid: price,
+                        expires_at: new Date(Date.now() + getTierDuration(tier)).toISOString()
+                    });
+                    
+                    await sb.from('transactions').insert({
+                        user_id: AppState.userId,
+                        type: 'spend',
+                        amount: price,
+                        description: `B-Store subscription: ${tier}`
+                    });
+                    
+                    showToast(`✅ Subscribed! ${price} coins deducted.`, 'success');
                 }
                 
-                const { data: urlData } = sb.storage.from('t-hub-uploads').getPublicUrl(fileName);
-                const urlInput = document.getElementById('addFileUrl');
-                if (urlInput) urlInput.value = urlData.publicUrl;
-                
-                statusDiv.innerText = `✅ Uploaded ${file.name}!`;
-                statusDiv.style.color = 'var(--green-success)';
-                showToast('✅ File uploaded to T-Hub Cloud!', 'success');
+                document.querySelectorAll('.modal.active').forEach(m => m.remove());
+                loadBStore();
+                loadWallet();
                 
             } catch (err) {
-                console.error('Upload error:', err);
-                statusDiv.innerText = `❌ Upload failed: ${err.message}`;
-                statusDiv.style.color = 'var(--red-error)';
-                showToast('Upload failed: ' + err.message, 'error');
+                console.error('Subscription error:', err);
+                showToast('Error processing subscription: ' + err.message, 'error');
             }
         }
 
-        // ================================================================
-        // GO LIVE
-        // ================================================================
-        async function startGoLive() {
-            const meetLink = 'https://meet.google.com/new';
-            window.open(meetLink, '_blank');
+        function getTierDuration(tier) {
+            const durations = {
+                'monthly': 30 * 24 * 60 * 60 * 1000,
+                '3months': 90 * 24 * 60 * 60 * 1000,
+                '6months': 180 * 24 * 60 * 60 * 1000,
+                '9months': 270 * 24 * 60 * 60 * 1000,
+                'yearly': 365 * 24 * 60 * 60 * 1000
+            };
+            return durations[tier] || durations['monthly'];
+        }
+
+        async function submitBStoreBook() {
+            if (!AppState.isAdmin && !AppState.isTeacher) {
+                showToast('Only Admin or Verified Teachers can upload books.', 'error');
+                return;
+            }
+            
+            const title = document.getElementById('bstoreTitle')?.value;
+            const author = document.getElementById('bstoreAuthor')?.value;
+            const desc = document.getElementById('bstoreDesc')?.value;
+            const category = document.getElementById('bstoreCategory')?.value;
+            const coverInput = document.getElementById('bstoreCover');
+            const fileInput = document.getElementById('bstoreFile');
+            const priceMonthly = parseInt(document.getElementById('bstorePriceMonthly')?.value) || 0;
+            const price3 = parseInt(document.getElementById('bstorePrice3')?.value) || 0;
+            const price6 = parseInt(document.getElementById('bstorePrice6')?.value) || 0;
+            const price9 = parseInt(document.getElementById('bstorePrice9')?.value) || 0;
+            const priceYearly = parseInt(document.getElementById('bstorePriceYearly')?.value) || 0;
+            
+            if (!title || !author || !fileInput || !fileInput.files[0]) {
+                showToast('Please fill in all required fields.', 'error');
+                return;
+            }
             
             try {
-                const { error } = await sb.from('group_notifications').insert({
-                    group_id: AppState.currentGroupId,
-                    sender_id: AppState.userId,
-                    type: 'live_start',
-                    title: '🎥 Live Session Started!',
-                    message: `${AppState.currentUser?.email?.split('@')[0] || 'Someone'} is LIVE! Click to join the meeting.`,
-                    link: meetLink
-                });
-                
-                if (error) throw error;
-                
-                showToast('🔴 Live session started! Members have been notified.', 'success');
-                updateNotificationBadge();
-            } catch (err) {
-                console.error('Notification error:', err);
-                showToast('🔴 Live session started! (Notification failed)', 'info');
-            }
-        }
-
-        // ================================================================
-        // NOTIFICATIONS
-        // ================================================================
-        async function updateNotificationBadge() {
-            try {
-                const groupIds = AppState.groups.map(g => g.id);
-                if (groupIds.length === 0) return;
-                
-                const { count, error } = await sb
-                    .from('group_notifications')
-                    .select('*', { count: 'exact', head: true })
-                    .in('group_id', groupIds)
-                    .eq('is_read', false);
-                
-                if (error) throw error;
-                
-                const badge = document.getElementById('notificationBadge');
-                if (badge) {
-                    if (count > 0) {
-                        badge.textContent = count > 99 ? '99+' : count;
-                        badge.classList.add('has-notifications');
-                    } else {
-                        badge.classList.remove('has-notifications');
+                let cover_url = null;
+                if (coverInput && coverInput.files && coverInput.files[0]) {
+                    const file = coverInput.files[0];
+                    const fileExt = file.name.split('.').pop();
+                    const fileName = `bstore_covers/${AppState.userId}_${Date.now()}.${fileExt}`;
+                    const { data: uploadData, error: uploadError } = await sb.storage
+                        .from('t-hub-uploads')
+                        .upload(fileName, file, { cacheControl: '3600', upsert: false });
+                    if (!uploadError) {
+                        const { data: urlData } = sb.storage.from('t-hub-uploads').getPublicUrl(fileName);
+                        cover_url = urlData.publicUrl;
                     }
                 }
+                
+                const file = fileInput.files[0];
+                const fileExt = file.name.split('.').pop().toLowerCase();
+                const fileName = `bstore_books/${AppState.userId}_${Date.now()}.${fileExt}`;
+                const { data: uploadData, error: uploadError } = await sb.storage
+                    .from('t-hub-uploads')
+                    .upload(fileName, file, { cacheControl: '3600', upsert: false });
+                
+                if (uploadError) throw uploadError;
+                
+                const { data: urlData } = sb.storage.from('t-hub-uploads').getPublicUrl(fileName);
+                const file_url = urlData.publicUrl;
+                
+                const bookData = {
+                    title: title,
+                    author: author,
+                    description: desc,
+                    category: category || 'other',
+                    cover_url: cover_url,
+                    file_url: file_url,
+                    file_type: fileExt,
+                    price_monthly: priceMonthly,
+                    price_3months: price3,
+                    price_6months: price6,
+                    price_9months: price9,
+                    price_yearly: priceYearly,
+                    teacher_id: AppState.userId,
+                    status: AppState.isAdmin ? 'approved' : 'pending'
+                };
+                
+                const { error: insertError } = await sb.from('bstore_books').insert(bookData);
+                if (insertError) throw insertError;
+                
+                if (AppState.isAdmin) {
+                    showToast('✅ Book uploaded to B-Store!', 'success');
+                } else {
+                    showToast('📤 Book submitted for admin review!', 'success');
+                }
+                
+                closeModal('bstoreUploadModal');
+                loadBStore();
+                
             } catch (err) {
-                console.error('Badge update error:', err);
+                console.error('Upload book error:', err);
+                showToast('Error uploading book: ' + err.message, 'error');
             }
         }
 
-        async function loadNotifications() {
+        // ================================================================
+        // JOBS FUNCTIONS
+        // ================================================================
+        async function loadJobs() {
+            const container = document.getElementById('jobsContainer');
+            if (!container) return;
+            
+            container.innerHTML = '<div class="loading">Loading jobs...</div>';
+            
             try {
-                const groupIds = AppState.groups.map(g => g.id);
-                if (groupIds.length === 0) {
-                    document.getElementById('notificationList').innerHTML = '<div class="notification-empty">No notifications</div>';
-                    return;
-                }
-                
+                const now = new Date().toISOString();
                 const { data, error } = await sb
-                    .from('group_notifications')
+                    .from('jobs')
                     .select('*')
-                    .in('group_id', groupIds)
-                    .order('created_at', { ascending: false })
-                    .limit(20);
+                    .order('created_at', { ascending: false });
                 
                 if (error) throw error;
                 
-                const container = document.getElementById('notificationList');
                 if (!data || data.length === 0) {
-                    container.innerHTML = '<div class="notification-empty">No notifications</div>';
+                    container.innerHTML = '<div class="loading" style="color:var(--text-muted);">No jobs available.</div>';
                     return;
                 }
                 
-                container.innerHTML = data.map(notif => `
-                    <div class="notification-item ${!notif.is_read ? 'unread' : ''}" onclick="handleNotificationClick(${notif.id})">
-                        <div class="notif-title">${notif.title}</div>
-                        <div class="notif-message">${notif.message}</div>
-                        <div class="notif-time">${new Date(notif.created_at).toLocaleDateString()} ${new Date(notif.created_at).toLocaleTimeString()}</div>
+                const isVerified = AppState.isAdmin || AppState.isTeacher;
+                
+                container.innerHTML = data.map(job => {
+                    const isExpired = new Date(job.deadline) < new Date();
+                    const isOwner = job.posted_by === AppState.userId;
+                    const canManage = isOwner || AppState.isAdmin;
+                    
+                    return `
+                        <div class="job-card">
+                            <div class="title">${job.title} ${isExpired ? '<span class="expired-badge">⏰ Expired</span>' : ''}</div>
+                            <div class="details">
+                                <span>🏢 ${job.company}</span>
+                                <span>📍 ${job.location}</span>
+                                <span>${job.job_type}</span>
+                                <span>💰 ${job.salary_range || 'Negotiable'}</span>
+                            </div>
+                            <div class="details" style="margin-top:4px;">
+                                <span>📅 Deadline: ${new Date(job.deadline).toLocaleDateString()}</span>
+                                ${!isExpired ? `<span>⏳ ${Math.ceil((new Date(job.deadline) - new Date()) / (1000 * 60 * 60 * 24))} days remaining</span>` : ''}
+                            </div>
+                            ${job.description ? `<p style="margin-top:4px; font-size:13px; color:var(--text-muted); font-weight:700;">${job.description.substring(0, 100)}${job.description.length > 100 ? '...' : ''}</p>` : ''}
+                            <button class="apply-btn" onclick="applyToJob(${job.id})" ${isExpired ? 'disabled style="opacity:0.5;"' : ''}>${isExpired ? 'Expired' : '📋 Apply Now'}</button>
+                            ${canManage ? `
+                                <div class="job-actions">
+                                    <button class="edit-job" onclick="editJob(${job.id})">✏️ Edit</button>
+                                    <button class="delete-job" onclick="deleteJob(${job.id})">🗑️ Delete</button>
+                                    <button class="manage-apps" onclick="manageJobApplications(${job.id})">📬 Applications</button>
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                }).join('');
+                
+                translatePage();
+            } catch (err) {
+                console.error('Load jobs error:', err);
+                container.innerHTML = '<div class="loading" style="color:var(--red-error);">Failed to load jobs</div>';
+            }
+        }
+
+        function filterJobs() {
+            const search = document.getElementById('jobSearch')?.value?.toLowerCase() || '';
+            const filter = document.getElementById('jobFilter')?.value || 'all';
+            
+            document.querySelectorAll('.job-card').forEach(card => {
+                const title = card.querySelector('.title')?.textContent?.toLowerCase() || '';
+                const company = card.querySelector('.details span:first-child')?.textContent?.toLowerCase() || '';
+                const isExpired = card.querySelector('.expired-badge') !== null;
+                
+                let visible = true;
+                if (search && !title.includes(search) && !company.includes(search)) visible = false;
+                if (filter === 'active' && isExpired) visible = false;
+                if (filter === 'expired' && !isExpired) visible = false;
+                card.style.display = visible ? 'block' : 'none';
+            });
+        }
+
+        async function submitJob() {
+            if (!AppState.isAdmin && !AppState.isTeacher) {
+                showToast('Only verified users can post jobs.', 'error');
+                return;
+            }
+            
+            const title = document.getElementById('jobTitle')?.value;
+            const company = document.getElementById('jobCompany')?.value;
+            const location = document.getElementById('jobLocation')?.value;
+            const jobType = document.getElementById('jobType')?.value;
+            const description = document.getElementById('jobDescription')?.value;
+            const requirements = document.getElementById('jobRequirements')?.value;
+            const salary = document.getElementById('jobSalary')?.value;
+            const deadline = document.getElementById('jobDeadline')?.value;
+            const contactEmail = document.getElementById('jobContactEmail')?.value;
+            const contactPhone = document.getElementById('jobContactPhone')?.value;
+            
+            if (!title || !company || !location || !description || !deadline || !contactEmail) {
+                showToast('Please fill in all required fields.', 'error');
+                return;
+            }
+            
+            try {
+                const { error } = await sb.from('jobs').insert({
+                    title: title,
+                    company: company,
+                    location: location,
+                    job_type: jobType,
+                    description: description,
+                    requirements: requirements || '',
+                    salary_range: salary || '',
+                    deadline: deadline,
+                    contact_email: contactEmail,
+                    contact_phone: contactPhone || '',
+                    posted_by: AppState.userId,
+                    is_active: true
+                });
+                
+                if (error) throw error;
+                
+                showToast('✅ Job posted successfully!', 'success');
+                closeModal('addJobModal');
+                loadJobs();
+                
+            } catch (err) {
+                console.error('Submit job error:', err);
+                showToast('Error posting job: ' + err.message, 'error');
+            }
+        }
+
+        function loadMyJobs() {
+            showToast('📋 Loading your jobs...', 'info');
+            loadJobs();
+        }
+
+        function editJob(jobId) {
+            showToast('✏️ Edit feature coming soon.', 'info');
+        }
+
+        async function deleteJob(jobId) {
+            if (!confirm('⚠️ Are you sure you want to delete this job?')) return;
+            
+            try {
+                const { error } = await sb.from('jobs').delete().eq('id', jobId);
+                if (error) throw error;
+                showToast('🗑️ Job deleted.', 'info');
+                loadJobs();
+            } catch (err) {
+                console.error('Delete job error:', err);
+                showToast('Error deleting job: ' + err.message, 'error');
+            }
+        }
+
+        async function applyToJob(jobId) {
+            if (!AppState.userId) {
+                showToast('Please login first.', 'error');
+                return;
+            }
+            
+            AppState.currentJobId = jobId;
+            showModal('jobApplyModal');
+        }
+
+        async function submitJobApplication() {
+            const name = document.getElementById('jobApplyName')?.value;
+            const email = document.getElementById('jobApplyEmail')?.value;
+            const phone = document.getElementById('jobApplyPhone')?.value;
+            const cvInput = document.getElementById('jobApplyCv');
+            const letter = document.getElementById('jobApplyLetter')?.value;
+            
+            if (!name || !email || !cvInput || !cvInput.files[0]) {
+                showToast('Please fill in all required fields.', 'error');
+                return;
+            }
+            
+            try {
+                const file = cvInput.files[0];
+                const fileExt = file.name.split('.').pop();
+                const fileName = `job_cvs/${AppState.userId}_${Date.now()}.${fileExt}`;
+                const { data: uploadData, error: uploadError } = await sb.storage
+                    .from('t-hub-uploads')
+                    .upload(fileName, file, { cacheControl: '3600', upsert: false });
+                
+                if (uploadError) throw uploadError;
+                
+                const { data: urlData } = sb.storage.from('t-hub-uploads').getPublicUrl(fileName);
+                
+                const { error } = await sb.from('job_applications').insert({
+                    job_id: AppState.currentJobId,
+                    applicant_id: AppState.userId,
+                    full_name: name,
+                    email: email,
+                    phone: phone || '',
+                    cv_url: urlData.publicUrl,
+                    cover_letter: letter || '',
+                    status: 'pending'
+                });
+                
+                if (error) throw error;
+                
+                showToast('✅ Application submitted!', 'success');
+                closeModal('jobApplyModal');
+                
+            } catch (err) {
+                console.error('Job application error:', err);
+                showToast('Error submitting application: ' + err.message, 'error');
+            }
+        }
+
+        async function manageJobApplications(jobId) {
+            try {
+                const { data, error } = await sb
+                    .from('job_applications')
+                    .select('*')
+                    .eq('job_id', jobId);
+                
+                if (error) throw error;
+                
+                const container = document.getElementById('jobAppsContainer');
+                if (!container) return;
+                
+                if (!data || data.length === 0) {
+                    container.innerHTML = '<div class="loading" style="color:var(--text-muted);">No applications yet.</div>';
+                } else {
+                    container.innerHTML = data.map(app => `
+                        <div style="padding:12px; border-bottom:1px solid #eee;">
+                            <p><strong>${app.full_name}</strong> - ${app.email}</p>
+                            <p style="font-size:13px; color:var(--text-muted);">📱 ${app.phone || 'N/A'}</p>
+                            <p style="font-size:13px;">Status: <span style="font-weight:900; color:${app.status === 'pending' ? '#f59e0b' : app.status === 'shortlisted' ? 'var(--green-success)' : 'var(--red-error)'};">${app.status.toUpperCase()}</span></p>
+                            <div style="display:flex; gap:8px; margin-top:4px; flex-wrap:wrap;">
+                                <button class="btn-sm btn-teal" onclick="updateApplicationStatus(${app.id}, 'shortlisted')">✅ Shortlist</button>
+                                <button class="btn-sm" onclick="updateApplicationStatus(${app.id}, 'reviewed')" style="background:#f59e0b; color:white;">📝 Review</button>
+                                <button class="btn-sm" onclick="updateApplicationStatus(${app.id}, 'rejected')" style="background:var(--red-error); color:white;">❌ Reject</button>
+                                <button class="btn-sm" onclick="updateApplicationStatus(${app.id}, 'accepted')" style="background:var(--green-success); color:white;">🎉 Accept</button>
+                                <a href="${app.cv_url}" target="_blank"><button class="btn-sm" style="background:var(--navy); color:white;">📄 CV</button></a>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+                
+                showModal('manageJobAppsModal');
+                
+            } catch (err) {
+                console.error('Load applications error:', err);
+                showToast('Error loading applications: ' + err.message, 'error');
+            }
+        }
+
+        async function updateApplicationStatus(appId, status) {
+            try {
+                const { error } = await sb
+                    .from('job_applications')
+                    .update({ status: status })
+                    .eq('id', appId);
+                
+                if (error) throw error;
+                
+                showToast(`✅ Application status updated to ${status}`, 'success');
+                manageJobApplications(AppState.currentJobId || 0);
+            } catch (err) {
+                console.error('Update status error:', err);
+                showToast('Error updating status: ' + err.message, 'error');
+            }
+        }
+
+        // ================================================================
+        // RESEARCH FUNCTIONS
+        // ================================================================
+        async function loadResearch() {
+            const container = document.getElementById('researchContainer');
+            if (!container) return;
+            
+            container.innerHTML = '<div class="loading">Loading research...</div>';
+            
+            try {
+                const { data, error } = await sb
+                    .from('research_papers')
+                    .select('*')
+                    .eq('status', 'approved')
+                    .order('created_at', { ascending: false });
+                
+                if (error) throw error;
+                
+                if (!data || data.length === 0) {
+                    container.innerHTML = '<div class="loading" style="color:var(--text-muted);">No research available.</div>';
+                    return;
+                }
+                
+                const isVerified = AppState.isAdmin || AppState.isTeacher;
+                
+                container.innerHTML = data.map(research => `
+                    <div class="research-card">
+                        <div class="info">
+                            <div class="title">${research.title}</div>
+                            <div class="author">By ${research.author} • ${new Date(research.created_at).toLocaleDateString()}</div>
+                            <div class="category">📂 ${research.category || 'General'}</div>
+                        </div>
+                        <div class="research-actions">
+                            <span class="tag free">${research.status === 'approved' ? '✅ Approved' : '⏳ Pending'}</span>
+                            <button class="read-btn" onclick="openResearch(${research.id})">📖 Read</button>
+                            ${isVerified ? `
+                                <button class="edit-research" onclick="editResearch(${research.id})">✏️</button>
+                                <button class="delete-research" onclick="deleteResearch(${research.id})">🗑️</button>
+                            ` : ''}
+                        </div>
                     </div>
                 `).join('');
                 
+                translatePage();
             } catch (err) {
-                console.error('Load notifications error:', err);
+                console.error('Load research error:', err);
+                container.innerHTML = '<div class="loading" style="color:var(--red-error);">Failed to load research</div>';
             }
         }
 
-        function toggleNotificationDropdown(event) {
-            if (event) event.stopPropagation();
-            const dropdown = document.getElementById('notificationDropdown');
-            if (!dropdown) return;
+        function filterResearch() {
+            const search = document.getElementById('researchSearch')?.value?.toLowerCase() || '';
             
-            if (dropdown.style.display === 'block') {
-                dropdown.style.display = 'none';
-            } else {
-                dropdown.style.display = 'block';
-                loadNotifications();
-                updateNotificationBadge();
-            }
+            document.querySelectorAll('.research-card').forEach(card => {
+                const title = card.querySelector('.title')?.textContent?.toLowerCase() || '';
+                const author = card.querySelector('.author')?.textContent?.toLowerCase() || '';
+                const visible = !search || title.includes(search) || author.includes(search);
+                card.style.display = visible ? 'flex' : 'none';
+            });
         }
 
-        async function handleNotificationClick(notifId) {
+        async function submitResearch() {
+            if (!AppState.isAdmin && !AppState.isTeacher) {
+                showToast('Only verified users can upload research.', 'error');
+                return;
+            }
+            
+            const title = document.getElementById('researchTitle')?.value;
+            const author = document.getElementById('researchAuthor')?.value;
+            const desc = document.getElementById('researchDesc')?.value;
+            const category = document.getElementById('researchCategory')?.value;
+            const coverInput = document.getElementById('researchCover');
+            const fileInput = document.getElementById('researchFile');
+            
+            if (!title || !author || !fileInput || !fileInput.files[0]) {
+                showToast('Please fill in all required fields.', 'error');
+                return;
+            }
+            
             try {
-                await sb.from('group_notifications')
-                    .update({ is_read: true })
-                    .eq('id', notifId);
-                
-                const { data } = await sb
-                    .from('group_notifications')
-                    .select('link')
-                    .eq('id', notifId)
-                    .single();
-                
-                if (data && data.link) {
-                    window.open(data.link, '_blank');
+                let cover_url = null;
+                if (coverInput && coverInput.files && coverInput.files[0]) {
+                    const file = coverInput.files[0];
+                    const fileExt = file.name.split('.').pop();
+                    const fileName = `research_covers/${AppState.userId}_${Date.now()}.${fileExt}`;
+                    const { data: uploadData, error: uploadError } = await sb.storage
+                        .from('t-hub-uploads')
+                        .upload(fileName, file, { cacheControl: '3600', upsert: false });
+                    if (!uploadError) {
+                        const { data: urlData } = sb.storage.from('t-hub-uploads').getPublicUrl(fileName);
+                        cover_url = urlData.publicUrl;
+                    }
                 }
                 
-                updateNotificationBadge();
-                loadNotifications();
+                const file = fileInput.files[0];
+                const fileExt = file.name.split('.').pop();
+                const fileName = `research_pdfs/${AppState.userId}_${Date.now()}.${fileExt}`;
+                const { data: uploadData, error: uploadError } = await sb.storage
+                    .from('t-hub-uploads')
+                    .upload(fileName, file, { cacheControl: '3600', upsert: false });
+                
+                if (uploadError) throw uploadError;
+                
+                const { data: urlData } = sb.storage.from('t-hub-uploads').getPublicUrl(fileName);
+                const file_url = urlData.publicUrl;
+                
+                const researchData = {
+                    title: title,
+                    author: author,
+                    description: desc,
+                    category: category || 'other',
+                    cover_url: cover_url,
+                    file_url: file_url,
+                    uploaded_by: AppState.userId,
+                    status: AppState.isAdmin ? 'approved' : 'pending'
+                };
+                
+                const { error: insertError } = await sb.from('research_papers').insert(researchData);
+                if (insertError) throw insertError;
+                
+                if (AppState.isAdmin) {
+                    showToast('✅ Research uploaded!', 'success');
+                } else {
+                    showToast('📤 Research submitted for admin review!', 'success');
+                }
+                
+                closeModal('uploadResearchModal');
+                loadResearch();
+                
             } catch (err) {
-                console.error('Notification click error:', err);
+                console.error('Upload research error:', err);
+                showToast('Error uploading research: ' + err.message, 'error');
             }
+        }
+
+        function loadMyResearch() {
+            showToast('📋 Loading your research...', 'info');
+            loadResearch();
+        }
+
+        function editResearch(researchId) {
+            showToast('✏️ Edit feature coming soon.', 'info');
+        }
+
+        async function deleteResearch(researchId) {
+            if (!confirm('⚠️ Are you sure you want to delete this research?')) return;
+            
+            try {
+                const { error } = await sb.from('research_papers').delete().eq('id', researchId);
+                if (error) throw error;
+                showToast('🗑️ Research deleted.', 'info');
+                loadResearch();
+            } catch (err) {
+                console.error('Delete research error:', err);
+                showToast('Error deleting research: ' + err.message, 'error');
+            }
+        }
+
+        function openResearch(researchId) {
+            showToast('📖 Opening research...', 'info');
+        }
+
+        // ================================================================
+        // MY LIBRARY
+        // ================================================================
+        async function loadMyLibrary() {
+            const container = document.getElementById('myLibraryContainer');
+            if (!container) return;
+            
+            container.innerHTML = '<div class="loading">Loading your library...</div>';
+            
+            try {
+                const { data, error } = await sb
+                    .from('bstore_subscriptions')
+                    .select('*, bstore_books(*)')
+                    .eq('user_id', AppState.userId)
+                    .eq('is_active', true)
+                    .order('expires_at', { ascending: true });
+                
+                if (error) throw error;
+                
+                if (!data || data.length === 0) {
+                    container.innerHTML = '<div class="loading" style="color:var(--text-muted);">No books in your library yet.</div>';
+                    return;
+                }
+                
+                container.innerHTML = data.map(sub => {
+                    const book = sub.bstore_books;
+                    const daysLeft = Math.ceil((new Date(sub.expires_at) - new Date()) / (1000 * 60 * 60 * 24));
+                    const isExpiring = daysLeft <= 3;
+                    const isExpired = daysLeft <= 0;
+                    
+                    return `
+                        <div class="content-card" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
+                            <div>
+                                <h4 style="font-weight:900;">${book?.title || 'Book'}</h4>
+                                <p style="font-weight:700;">By ${book?.author || 'Unknown'}</p>
+                                <p style="font-size:13px; color:${isExpired ? 'var(--red-error)' : isExpiring ? 'var(--gold)' : 'var(--text-muted)'}; font-weight:700;">
+                                    ${isExpired ? '⏰ EXPIRED' : isExpiring ? `⚠️ Expires in ${daysLeft} days` : `✅ Active (${daysLeft} days left)`}
+                                </p>
+                            </div>
+                            <div style="display:flex; gap:8px;">
+                                ${!isExpired ? `<button class="btn-sm btn-teal" onclick="openBook(${book?.id})" style="margin:0;">📖 Read</button>` : ''}
+                                ${isExpired || isExpiring ? `<button class="btn-sm" onclick="subscribeToBook(${book?.id})" style="margin:0; background:var(--gold); color:var(--text-dark);">🔄 Renew</button>` : ''}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                translatePage();
+                
+            } catch (err) {
+                console.error('Load library error:', err);
+                container.innerHTML = '<div class="loading" style="color:var(--red-error);">Failed to load library</div>';
+            }
+        }
+
+        function openBook(bookId) {
+            showToast('📖 Opening book... (Reader coming soon)', 'info');
         }
 
         // ================================================================
@@ -2800,30 +3810,19 @@
                     
                     const { data: uploadData, error: uploadError } = await sb.storage
                         .from('t-hub-uploads')
-                        .upload(fileName, file, { 
-                            cacheControl: '3600', 
-                            upsert: true,
-                            contentType: file.type
-                        });
+                        .upload(fileName, file, { cacheControl: '3600', upsert: true, contentType: file.type });
                     
                     if (uploadError) {
                         console.error('Upload error:', uploadError);
                         const altFileName = `profile_pics/${AppState.userId}_${Date.now()}.${fileExt}`;
                         const { data: altData, error: altError } = await sb.storage
                             .from('app-assets')
-                            .upload(altFileName, file, { 
-                                cacheControl: '3600', 
-                                upsert: true,
-                                contentType: file.type
-                            });
+                            .upload(altFileName, file, { cacheControl: '3600', upsert: true, contentType: file.type });
                         if (altError) throw altError;
                         const { data: altUrlData } = sb.storage.from('app-assets').getPublicUrl(altFileName);
                         const profilePicUrl = altUrlData.publicUrl;
                         
-                        await sb.from('users')
-                            .update({ profile_pic_url: profilePicUrl })
-                            .eq('user_id', AppState.userId);
-                        
+                        await sb.from('users').update({ profile_pic_url: profilePicUrl }).eq('user_id', AppState.userId);
                         AppState.profilePicUrl = profilePicUrl;
                         
                         document.querySelectorAll('#profileImage, #profileImageLarge, .post-avatar img, .profile-avatar img').forEach(img => {
@@ -2837,10 +3836,7 @@
                     const { data: urlData } = sb.storage.from('t-hub-uploads').getPublicUrl(fileName);
                     const profilePicUrl = urlData.publicUrl;
                     
-                    await sb.from('users')
-                        .update({ profile_pic_url: profilePicUrl })
-                        .eq('user_id', AppState.userId);
-                    
+                    await sb.from('users').update({ profile_pic_url: profilePicUrl }).eq('user_id', AppState.userId);
                     AppState.profilePicUrl = profilePicUrl;
                     
                     document.querySelectorAll('#profileImage, #profileImageLarge, .post-avatar img, .profile-avatar img').forEach(img => {
@@ -2883,29 +3879,19 @@
                     
                     const { data: uploadData, error: uploadError } = await sb.storage
                         .from('t-hub-uploads')
-                        .upload(fileName, file, { 
-                            cacheControl: '3600', 
-                            upsert: true,
-                            contentType: file.type
-                        });
+                        .upload(fileName, file, { cacheControl: '3600', upsert: true, contentType: file.type });
                     
                     if (uploadError) {
                         console.error('Upload error:', uploadError);
                         const altFileName = `group_pics/${AppState.currentGroupId}_${Date.now()}.${fileExt}`;
                         const { data: altData, error: altError } = await sb.storage
                             .from('app-assets')
-                            .upload(altFileName, file, { 
-                                cacheControl: '3600', 
-                                upsert: true,
-                                contentType: file.type
-                            });
+                            .upload(altFileName, file, { cacheControl: '3600', upsert: true, contentType: file.type });
                         if (altError) throw altError;
                         const { data: altUrlData } = sb.storage.from('app-assets').getPublicUrl(altFileName);
                         const profilePicUrl = altUrlData.publicUrl;
                         
-                        await sb.from('groups')
-                            .update({ profile_pic_url: profilePicUrl })
-                            .eq('id', AppState.currentGroupId);
+                        await sb.from('groups').update({ profile_pic_url: profilePicUrl }).eq('id', AppState.currentGroupId);
                         
                         document.querySelectorAll('#groupAvatarImg, #socialGroupAvatarImg').forEach(img => {
                             if (img) img.src = profilePicUrl;
@@ -2918,9 +3904,7 @@
                     const { data: urlData } = sb.storage.from('t-hub-uploads').getPublicUrl(fileName);
                     const profilePicUrl = urlData.publicUrl;
                     
-                    await sb.from('groups')
-                        .update({ profile_pic_url: profilePicUrl })
-                        .eq('id', AppState.currentGroupId);
+                    await sb.from('groups').update({ profile_pic_url: profilePicUrl }).eq('id', AppState.currentGroupId);
                     
                     document.querySelectorAll('#groupAvatarImg, #socialGroupAvatarImg').forEach(img => {
                         if (img) img.src = profilePicUrl;
@@ -2950,11 +3934,7 @@
             }
             
             try {
-                const { error } = await sb
-                    .from('group_content')
-                    .delete()
-                    .eq('id', contentId);
-                
+                const { error } = await sb.from('group_content').delete().eq('id', contentId);
                 if (error) throw error;
                 
                 showToast('🗑️ Content deleted successfully!', 'success');
@@ -2980,11 +3960,7 @@
             }
             
             try {
-                const { error } = await sb
-                    .from('mock_exams')
-                    .delete()
-                    .eq('id', examId);
-                
+                const { error } = await sb.from('mock_exams').delete().eq('id', examId);
                 if (error) throw error;
                 
                 showToast('🗑️ Mock exam deleted successfully!', 'success');
@@ -3015,8 +3991,7 @@
                 if (error && error.code !== 'PGRST116') throw error;
                 
                 if (data) {
-                    await sb.from('user_favorites')
-                        .delete()
+                    await sb.from('user_favorites').delete()
                         .eq('user_id', AppState.userId)
                         .eq('content_type', contentType)
                         .eq('content_id', contentId);
@@ -3312,7 +4287,10 @@
                 closeModal('appealModal');
                 return;
             }
-            if (AppState.coinBalance < 6000) return showToast('⚠️ Insufficient coins. Please buy more coins first.', 'error');
+            if (AppState.coinBalance < 6000) {
+                showToast('⚠️ Insufficient coins. Please buy more coins first.', 'error');
+                return;
+            }
             showToast('📤 Application submitted! 6,000 Coins deducted. Admin will review within 48 hours.', 'success');
             closeModal('appealModal');
         }
@@ -3390,16 +4368,315 @@
             txInput.value = '';
         }
 
-        function handleSearch(event) {
-            if (event.key === 'Enter') {
-                const q = document.getElementById('globalSearch').value.toLowerCase();
-                if (q.includes('class') || q.includes('group')) openTabContent('class');
-                else if (q.includes('bstore') || q.includes('book')) openTabContent('bstore');
-                else if (q.includes('calc') || q.includes('calculator')) openTabContent('mcalc');
-                else if (q.includes('job')) openTabContent('jobs');
-                else if (q.includes('research')) openTabContent('research');
-                else if (q.includes('wallet')) openTabContent('wallet');
-                else showToast('No direct match found', 'info');
+        // ================================================================
+        // GO LIVE
+        // ================================================================
+        async function startGoLive() {
+            const meetLink = 'https://meet.google.com/new';
+            window.open(meetLink, '_blank');
+            
+            try {
+                const { error } = await sb.from('group_notifications').insert({
+                    group_id: AppState.currentGroupId,
+                    sender_id: AppState.userId,
+                    type: 'live_start',
+                    title: '🎥 Live Session Started!',
+                    message: `${AppState.currentUser?.email?.split('@')[0] || 'Someone'} is LIVE! Click to join the meeting.`,
+                    link: meetLink
+                });
+                
+                if (error) throw error;
+                
+                showToast('🔴 Live session started! Members have been notified.', 'success');
+                updateNotificationBadge();
+            } catch (err) {
+                console.error('Notification error:', err);
+                showToast('🔴 Live session started! (Notification failed)', 'info');
+            }
+        }
+
+        // ================================================================
+        // NOTIFICATIONS
+        // ================================================================
+        async function updateNotificationBadge() {
+            try {
+                const groupIds = AppState.groups.map(g => g.id);
+                if (groupIds.length === 0) return;
+                
+                const { count, error } = await sb
+                    .from('group_notifications')
+                    .select('*', { count: 'exact', head: true })
+                    .in('group_id', groupIds)
+                    .eq('is_read', false);
+                
+                if (error) throw error;
+                
+                const badge = document.getElementById('notificationBadge');
+                if (badge) {
+                    if (count > 0) {
+                        badge.textContent = count > 99 ? '99+' : count;
+                        badge.classList.add('has-notifications');
+                    } else {
+                        badge.classList.remove('has-notifications');
+                    }
+                }
+            } catch (err) {
+                console.error('Badge update error:', err);
+            }
+        }
+
+        async function loadNotifications() {
+            try {
+                const groupIds = AppState.groups.map(g => g.id);
+                if (groupIds.length === 0) {
+                    document.getElementById('notificationList').innerHTML = '<div class="notification-empty">No notifications</div>';
+                    return;
+                }
+                
+                const { data, error } = await sb
+                    .from('group_notifications')
+                    .select('*')
+                    .in('group_id', groupIds)
+                    .order('created_at', { ascending: false })
+                    .limit(20);
+                
+                if (error) throw error;
+                
+                const container = document.getElementById('notificationList');
+                if (!data || data.length === 0) {
+                    container.innerHTML = '<div class="notification-empty">No notifications</div>';
+                    return;
+                }
+                
+                container.innerHTML = data.map(notif => `
+                    <div class="notification-item ${!notif.is_read ? 'unread' : ''}" onclick="handleNotificationClick(${notif.id})">
+                        <div class="notif-title">${notif.title}</div>
+                        <div class="notif-message">${notif.message}</div>
+                        <div class="notif-time">${new Date(notif.created_at).toLocaleDateString()} ${new Date(notif.created_at).toLocaleTimeString()}</div>
+                    </div>
+                `).join('');
+                
+            } catch (err) {
+                console.error('Load notifications error:', err);
+            }
+        }
+
+        function toggleNotificationDropdown(event) {
+            if (event) event.stopPropagation();
+            const dropdown = document.getElementById('notificationDropdown');
+            if (!dropdown) return;
+            
+            if (dropdown.style.display === 'block') {
+                dropdown.style.display = 'none';
+            } else {
+                dropdown.style.display = 'block';
+                loadNotifications();
+                updateNotificationBadge();
+            }
+        }
+
+        async function handleNotificationClick(notifId) {
+            try {
+                await sb.from('group_notifications').update({ is_read: true }).eq('id', notifId);
+                
+                const { data } = await sb.from('group_notifications').select('link').eq('id', notifId).single();
+                
+                if (data && data.link) {
+                    window.open(data.link, '_blank');
+                }
+                
+                updateNotificationBadge();
+                loadNotifications();
+            } catch (err) {
+                console.error('Notification click error:', err);
+            }
+        }
+
+        // ================================================================
+        // SUBMIT ADD FILE
+        // ================================================================
+        async function submitAddFile() {
+            const typeSelect = document.getElementById('addFileType');
+            if (!typeSelect) return showToast('Form not found.', 'error');
+            
+            const type = typeSelect.value;
+            const groupId = AppState.currentGroupId;
+            if (!groupId) return showToast('You must be in a group to add content.', 'error');
+            
+            if (type === 'mockexam') {
+                const titleInput = document.getElementById('examTitle');
+                const timeLimitInput = document.getElementById('examTimeLimit');
+                
+                if (!titleInput) return showToast('Mock Exam title field not found.', 'error');
+                
+                const title = titleInput.value;
+                let time_limit = parseInt(timeLimitInput?.value);
+                if (isNaN(time_limit) || time_limit < 1) time_limit = 5;
+                
+                if (!title) return showToast('Please enter a Mock Exam Title.', 'error');
+
+                const questions = [];
+                for (let i = 1; i <= examQuestionCount; i++) {
+                    const q = document.getElementById(`examQ${i}`)?.value;
+                    const a = document.getElementById(`examA${i}`)?.value;
+                    const b = document.getElementById(`examB${i}`)?.value;
+                    const c = document.getElementById(`examC${i}`)?.value;
+                    const d = document.getElementById(`examD${i}`)?.value;
+                    const ans = document.getElementById(`examAns${i}`)?.value;
+                    const exp = document.getElementById(`examExp${i}`)?.value;
+                    
+                    if (!q) return showToast(`Please fill in Question ${i}.`, 'error');
+                    if (!a || !b || !c || !d) return showToast(`Please fill in all options for Question ${i}.`, 'error');
+                    
+                    questions.push({ 
+                        question: q,
+                        options: [a, b, c, d],
+                        answer: ans,
+                        explanation: exp || ''
+                    });
+                }
+
+                const { data, error } = await sb.from('mock_exams').insert({
+                    group_id: groupId,
+                    author_id: AppState.userId,
+                    title: title,
+                    questions: questions,
+                    time_limit: time_limit
+                }).select();
+
+                if (error) {
+                    console.error("❌ Supabase Error:", error);
+                    return showToast('Error saving mock exam: ' + error.message, 'error');
+                }
+
+                showToast(`📝 Mock Exam '${title}' with ${questions.length} questions created!`, 'success');
+                closeModal('addFileModal');
+                
+                examQuestionCount = 1;
+                if (titleInput) titleInput.value = '';
+                if (timeLimitInput) timeLimitInput.value = '5';
+                
+                if (AppState.currentGroupId) {
+                    loadGroupContent(AppState.currentGroupId, 'mockexam');
+                }
+                return;
+            }
+
+            // Handle Video/PPT upload
+            const titleInput = document.getElementById('addFileTitle');
+            const urlInput = document.getElementById('addFileUrl');
+            const descInput = document.getElementById('addFileDesc');
+            
+            if (!titleInput || !urlInput) return showToast('Form fields not found.', 'error');
+            
+            const title = titleInput.value;
+            const url = urlInput.value;
+            const description = descInput ? descInput.value : '';
+            
+            if(!title) return showToast('Please enter a title.', 'error');
+            if(!url) return showToast('Please upload a file first (click the Upload button).', 'error');
+
+            try {
+                const { error } = await sb.from('group_content').insert({
+                    group_id: groupId, 
+                    author_id: AppState.userId, 
+                    content_type: type, 
+                    title: title,
+                    description: description,
+                    file_url: url,
+                    likes: 0
+                });
+
+                if (error) throw error;
+
+                showToast(`📤 ${type === 'video' ? 'Video' : 'PPT'} published successfully!`, 'success');
+                closeModal('addFileModal');
+                
+                titleInput.value = '';
+                urlInput.value = '';
+                if (descInput) descInput.value = '';
+                const fileInput = document.getElementById('addFileInput');
+                if (fileInput) fileInput.value = '';
+                const statusDiv = document.getElementById('uploadStatus');
+                if (statusDiv) statusDiv.innerText = '⏳ No file selected';
+                
+                if (AppState.currentGroupId) {
+                    loadGroupContent(AppState.currentGroupId, type === 'video' ? 'videos' : 'ppts');
+                }
+            } catch (err) {
+                console.error("❌ Error:", err);
+                showToast('Error publishing content: ' + err.message, 'error');
+            }
+        }
+
+        // ================================================================
+        // UPLOAD FILE TO STORAGE
+        // ================================================================
+        async function uploadFileToStorage() {
+            const fileInput = document.getElementById('addFileInput');
+            const statusDiv = document.getElementById('uploadStatus');
+            
+            if (!fileInput || !statusDiv) return showToast('Upload elements not found.', 'error');
+            
+            const file = fileInput.files[0];
+            if (!file) return showToast('Please select a file first.', 'error');
+            
+            if (file.size > 50 * 1024 * 1024) { 
+                return showToast('File is too large. Max 50MB allowed.', 'error'); 
+            }
+            
+            console.log('📁 Uploading:', { name: file.name, type: file.type, size: (file.size/1024/1024).toFixed(2) + 'MB' });
+            
+            statusDiv.innerText = `⏳ Uploading ${file.name}...`;
+            statusDiv.style.color = 'var(--gold)';
+            
+            try {
+                const fileExt = file.name.split('.').pop().toLowerCase();
+                const fileName = `uploads/${AppState.userId}_${Date.now()}.${fileExt}`;
+                
+                const { data: buckets } = await sb.storage.listBuckets();
+                const bucketExists = buckets?.some(b => b.name === 't-hub-uploads');
+                
+                if (!bucketExists) {
+                    await sb.storage.createBucket('t-hub-uploads', { public: true });
+                }
+                
+                const { data, error } = await sb.storage.from('t-hub-uploads').upload(fileName, file, { 
+                    cacheControl: '3600', upsert: false, contentType: file.type || 'application/octet-stream'
+                });
+                
+                if (error) {
+                    console.log('Trying fallback to app-assets...');
+                    const altFileName = `uploads/${AppState.userId}_${Date.now()}.${fileExt}`;
+                    const { data: altData, error: altError } = await sb.storage.from('app-assets').upload(altFileName, file, { 
+                        cacheControl: '3600', upsert: false, contentType: file.type || 'application/octet-stream'
+                    });
+                    
+                    if (altError) throw altError;
+                    
+                    const { data: altUrlData } = sb.storage.from('app-assets').getPublicUrl(altFileName);
+                    const urlInput = document.getElementById('addFileUrl');
+                    if (urlInput) urlInput.value = altUrlData.publicUrl;
+                    
+                    statusDiv.innerText = `✅ Uploaded ${file.name}!`;
+                    statusDiv.style.color = 'var(--green-success)';
+                    showToast('✅ File uploaded to T-Hub Cloud!', 'success');
+                    return;
+                }
+                
+                const { data: urlData } = sb.storage.from('t-hub-uploads').getPublicUrl(fileName);
+                const urlInput = document.getElementById('addFileUrl');
+                if (urlInput) urlInput.value = urlData.publicUrl;
+                
+                statusDiv.innerText = `✅ Uploaded ${file.name}!`;
+                statusDiv.style.color = 'var(--green-success)';
+                showToast('✅ File uploaded to T-Hub Cloud!', 'success');
+                
+            } catch (err) {
+                console.error('Upload error:', err);
+                statusDiv.innerText = `❌ Upload failed: ${err.message}`;
+                statusDiv.style.color = 'var(--red-error)';
+                showToast('Upload failed: ' + err.message, 'error');
             }
         }
 
@@ -3478,11 +4755,6 @@
                         <h4 style="font-weight:900;">Upload to B-Store</h4>
                         <p style="font-size:13px; color:var(--text-muted); font-weight:700;">Add medical books to the library</p>
                     </div>
-                    <div class="card" onclick="loadBStoreAppeals()" style="cursor:pointer; transition:0.2s;">
-                        <div style="font-size:32px;">📝</div>
-                        <h4 style="font-weight:900;">Approve Books</h4>
-                        <p style="font-size:13px; color:var(--text-muted); font-weight:700;">Review teacher book submissions</p>
-                    </div>
                     <div class="card" onclick="showModal('createCalculatorModal')" style="cursor:pointer; transition:0.2s;">
                         <div style="font-size:32px;">🧮</div>
                         <h4 style="font-weight:900;">Create Calculator</h4>
@@ -3502,6 +4774,11 @@
                         <div style="font-size:32px;">📊</div>
                         <h4 style="font-weight:900;">Analytics</h4>
                         <p style="font-size:13px; color:var(--text-muted); font-weight:700;">Track users, revenue & growth</p>
+                    </div>
+                    <div class="card" onclick="loadAppeals()" style="cursor:pointer; transition:0.2s;">
+                        <div style="font-size:32px;">📝</div>
+                        <h4 style="font-weight:900;">Pending Approvals</h4>
+                        <p style="font-size:13px; color:var(--text-muted); font-weight:700;">Books, Research & Appeals</p>
                     </div>
                 </div>
             `;
@@ -3533,231 +4810,50 @@
             setTimeout(() => translatePage(), 50);
         }
 
-        // ================================================================
-        // B-STORE FUNCTIONS
-        // ================================================================
-        async function loadBStore() {
-            const container = document.getElementById('bstoreContainer');
-            if (!container) return;
-            
-            container.innerHTML = '<div class="loading">Loading books...</div>';
-            
+        async function loadAppeals() {
+            // Load pending book appeals and research
             try {
-                const { data, error } = await sb
-                    .from('bstore_books')
-                    .select('*')
-                    .eq('status', 'approved')
-                    .order('created_at', { ascending: false });
-                
-                if (error) throw error;
-                
-                if (!data || data.length === 0) {
-                    container.innerHTML = '<div class="loading" style="color:var(--text-muted);">No books available in B-Store yet.</div>';
-                    return;
-                }
-                
-                container.innerHTML = `
-                    <div class="bstore-grid">
-                        ${data.map(book => `
-                            <div class="bstore-card">
-                                <div class="book-cover">
-                                    ${book.cover_url ? `<img src="${book.cover_url}" alt="${book.title}">` : '📖'}
-                                </div>
-                                <div class="title">${book.title}</div>
-                                <div class="author">By ${book.author}</div>
-                                <div style="font-size:12px; color:var(--text-muted); font-weight:700;">${book.description || ''}</div>
-                                <div class="price">💰 Monthly: ${book.price_monthly || 0} Coins</div>
-                                <div style="display:flex; gap:4px; flex-wrap:wrap; justify-content:center; margin:4px 0;">
-                                    <span class="status-badge ${book.price_monthly === 0 ? 'free' : 'paid'}">${book.price_monthly === 0 ? 'FREE' : 'Paid'}</span>
-                                </div>
-                                <button class="buy-btn" onclick="subscribeToBook(${book.id})">📖 Subscribe</button>
-                            </div>
-                        `).join('')}
-                    </div>
-                `;
-                
-                translatePage();
-            } catch (err) {
-                console.error('Load B-Store error:', err);
-                container.innerHTML = '<div class="loading" style="color:var(--red-error);">Failed to load books</div>';
-            }
-        }
-
-        function filterBStore() {
-            const search = document.getElementById('bstoreSearch')?.value?.toLowerCase() || '';
-            const filter = document.getElementById('bstoreFilter')?.value || 'all';
-            
-            document.querySelectorAll('.bstore-card').forEach(card => {
-                const title = card.querySelector('.title')?.textContent?.toLowerCase() || '';
-                const author = card.querySelector('.author')?.textContent?.toLowerCase() || '';
-                const price = card.querySelector('.price')?.textContent || '';
-                const isFree = price.includes('FREE');
-                
-                let visible = true;
-                if (search && !title.includes(search) && !author.includes(search)) visible = false;
-                if (filter === 'free' && !isFree) visible = false;
-                if (filter === 'paid' && isFree) visible = false;
-                
-                card.style.display = visible ? 'block' : 'none';
-            });
-        }
-
-        async function subscribeToBook(bookId) {
-            if (!AppState.userId) {
-                showToast('Please login first.', 'error');
-                return;
-            }
-            
-            // Show subscription options modal
-            const modal = document.createElement('div');
-            modal.className = 'modal active';
-            modal.innerHTML = `
-                <div class="modal-content">
-                    <span class="close" onclick="this.closest('.modal').remove()">&times;</span>
-                    <h3>📖 Choose Subscription</h3>
-                    <p style="color:var(--text-muted); margin-bottom:12px; font-weight:700;">Select your subscription plan</p>
-                    <button class="btn btn-teal" onclick="processSubscription(${bookId}, 'monthly')">Monthly</button>
-                    <button class="btn" onclick="processSubscription(${bookId}, '3months')">3 Months</button>
-                    <button class="btn" onclick="processSubscription(${bookId}, '6months')">6 Months</button>
-                    <button class="btn" onclick="processSubscription(${bookId}, '9months')">9 Months</button>
-                    <button class="btn" onclick="processSubscription(${bookId}, 'yearly')">1 Year</button>
-                </div>
-            `;
-            document.body.appendChild(modal);
-        }
-
-        async function processSubscription(bookId, tier) {
-            try {
-                // Get book price
-                const { data: book, error: bookError } = await sb
-                    .from('bstore_books')
-                    .select(`price_${tier}`)
-                    .eq('id', bookId)
-                    .single();
-                
-                if (bookError) throw bookError;
-                
-                const price = book[`price_${tier}`] || 0;
-                if (price === 0) {
-                    // Free book
-                    await sb.from('bstore_subscriptions').insert({
-                        book_id: bookId,
-                        user_id: AppState.userId,
-                        tier: tier,
-                        amount_paid: 0,
-                        expires_at: new Date(Date.now() + getTierDuration(tier)).toISOString()
-                    });
-                    showToast('✅ Book added to your library!', 'success');
-                } else {
-                    // Check balance
-                    if (AppState.coinBalance < price) {
-                        showToast(`⚠️ Insufficient coins. Need ${price} coins.`, 'error');
-                        return;
-                    }
-                    
-                    // Deduct coins
-                    await sb.from('users')
-                        .update({ coin_balance: AppState.coinBalance - price })
-                        .eq('user_id', AppState.userId);
-                    
-                    AppState.coinBalance -= price;
-                    
-                    // Create subscription
-                    await sb.from('bstore_subscriptions').insert({
-                        book_id: bookId,
-                        user_id: AppState.userId,
-                        tier: tier,
-                        amount_paid: price,
-                        expires_at: new Date(Date.now() + getTierDuration(tier)).toISOString()
-                    });
-                    
-                    // Record transaction
-                    await sb.from('transactions').insert({
-                        user_id: AppState.userId,
-                        type: 'spend',
-                        amount: price,
-                        description: `B-Store subscription: ${tier}`
-                    });
-                    
-                    showToast(`✅ Subscribed! ${price} coins deducted.`, 'success');
-                }
-                
-                // Close modal
-                document.querySelectorAll('.modal.active').forEach(m => m.remove());
-                loadBStore();
-                loadWallet();
-                
-            } catch (err) {
-                console.error('Subscription error:', err);
-                showToast('Error processing subscription: ' + err.message, 'error');
-            }
-        }
-
-        function getTierDuration(tier) {
-            const durations = {
-                'monthly': 30 * 24 * 60 * 60 * 1000,
-                '3months': 90 * 24 * 60 * 60 * 1000,
-                '6months': 180 * 24 * 60 * 60 * 1000,
-                '9months': 270 * 24 * 60 * 60 * 1000,
-                'yearly': 365 * 24 * 60 * 60 * 1000
-            };
-            return durations[tier] || durations['monthly'];
-        }
-
-        async function loadBStoreAppeals() {
-            if (!AppState.isAdmin) {
-                showToast('Admin access required.', 'error');
-                return;
-            }
-            
-            try {
-                const { data, error } = await sb
-                    .from('bstore_appeals')
-                    .select('*')
-                    .eq('status', 'pending')
-                    .order('created_at', { ascending: false });
-                
-                if (error) throw error;
+                const [booksResult, researchResult] = await Promise.all([
+                    sb.from('bstore_books').select('*').eq('status', 'pending'),
+                    sb.from('research_papers').select('*').eq('status', 'pending')
+                ]);
                 
                 const container = document.getElementById('tabContentContainer');
                 if (!container) return;
                 
-                if (!data || data.length === 0) {
-                    container.innerHTML = `
-                        <div class="card">
-                            <h3>📝 Book Appeals</h3>
-                            <div class="loading" style="color:var(--text-muted);">No pending book appeals.</div>
-                            <button class="btn" onclick="loadAdminPanel()" style="margin-top:12px;">← Back to Admin</button>
-                        </div>
-                    `;
-                    return;
+                let html = `<div class="card"><h3>📝 Pending Approvals</h3>`;
+                
+                if (booksResult.data && booksResult.data.length > 0) {
+                    html += `<h4 style="font-weight:900;">📖 Books (${booksResult.data.length})</h4>`;
+                    booksResult.data.forEach(book => {
+                        html += `
+                            <div style="border:1px solid var(--card-border); border-radius:12px; padding:12px; margin-bottom:8px; background:var(--card-bg);">
+                                <p><strong>${book.title}</strong> by ${book.author}</p>
+                                <button class="btn-sm btn-teal" onclick="approveBook(${book.id})">✅ Approve</button>
+                                <button class="btn-sm" onclick="rejectBook(${book.id})" style="background:var(--red-error); color:white;">❌ Reject</button>
+                            </div>
+                        `;
+                    });
                 }
                 
-                let html = `
-                    <div class="card">
-                        <h3>📝 Book Appeals (${data.length} pending)</h3>
-                `;
-                
-                data.forEach(appeal => {
-                    html += `
-                        <div style="border:1px solid var(--card-border); border-radius:12px; padding:12px; margin-bottom:12px; background:var(--card-bg);">
-                            <h4 style="font-weight:900;">${appeal.title}</h4>
-                            <p style="font-weight:700;">By ${appeal.author}</p>
-                            <p style="font-size:13px; color:var(--text-muted); font-weight:700;">${appeal.description || ''}</p>
-                            <p style="font-size:13px; font-weight:700;">Price: Monthly ${appeal.price_monthly || 0} Coins</p>
-                            <div style="display:flex; gap:8px; margin-top:8px;">
-                                <button class="btn-sm btn-teal" onclick="approveBookAppeal(${appeal.id})" style="margin:0;">✅ Approve</button>
-                                <button class="btn-sm" onclick="rejectBookAppeal(${appeal.id})" style="margin:0; background:var(--red-error); color:white;">❌ Reject</button>
+                if (researchResult.data && researchResult.data.length > 0) {
+                    html += `<h4 style="font-weight:900;">🔬 Research (${researchResult.data.length})</h4>`;
+                    researchResult.data.forEach(research => {
+                        html += `
+                            <div style="border:1px solid var(--card-border); border-radius:12px; padding:12px; margin-bottom:8px; background:var(--card-bg);">
+                                <p><strong>${research.title}</strong> by ${research.author}</p>
+                                <button class="btn-sm btn-teal" onclick="approveResearch(${research.id})">✅ Approve</button>
+                                <button class="btn-sm" onclick="rejectResearch(${research.id})" style="background:var(--red-error); color:white;">❌ Reject</button>
                             </div>
-                        </div>
-                    `;
-                });
+                        `;
+                    });
+                }
                 
-                html += `
-                        <button class="btn" onclick="loadAdminPanel()" style="margin-top:12px;">← Back to Admin</button>
-                    </div>
-                `;
+                if (!booksResult.data?.length && !researchResult.data?.length) {
+                    html += `<p style="color:var(--text-muted); font-weight:700;">No pending approvals.</p>`;
+                }
                 
+                html += `<button class="btn" onclick="loadAdminPanel()" style="margin-top:12px;">← Back to Admin</button></div>`;
                 container.innerHTML = html;
                 translatePage();
                 
@@ -3767,223 +4863,60 @@
             }
         }
 
-        async function approveBookAppeal(appealId) {
+        async function approveBook(bookId) {
             try {
-                const { data: appeal, error: appealError } = await sb
-                    .from('bstore_appeals')
-                    .select('*')
-                    .eq('id', appealId)
-                    .single();
-                
-                if (appealError) throw appealError;
-                
-                // Create book in bstore_books
-                const { error: insertError } = await sb.from('bstore_books').insert({
-                    title: appeal.title,
-                    author: appeal.author,
-                    description: appeal.description,
-                    cover_url: appeal.cover_url,
-                    file_url: appeal.file_url,
-                    file_type: appeal.file_type,
-                    price_monthly: appeal.price_monthly,
-                    price_3months: appeal.price_3months,
-                    price_6months: appeal.price_6months,
-                    price_9months: appeal.price_9months,
-                    price_yearly: appeal.price_yearly,
-                    teacher_id: appeal.teacher_id,
-                    status: 'approved'
-                });
-                
-                if (insertError) throw insertError;
-                
-                // Update appeal status
-                await sb.from('bstore_appeals')
-                    .update({ status: 'approved' })
-                    .eq('id', appealId);
-                
-                showToast('✅ Book approved and added to B-Store!', 'success');
-                loadBStoreAppeals();
-                
+                await sb.from('bstore_books').update({ status: 'approved' }).eq('id', bookId);
+                showToast('✅ Book approved!', 'success');
+                loadAppeals();
             } catch (err) {
-                console.error('Approve error:', err);
-                showToast('Error approving book: ' + err.message, 'error');
+                showToast('Error: ' + err.message, 'error');
             }
         }
 
-        async function rejectBookAppeal(appealId) {
-            if (!confirm('Reject this book appeal?')) return;
-            
+        async function rejectBook(bookId) {
             try {
-                await sb.from('bstore_appeals')
-                    .update({ status: 'rejected' })
-                    .eq('id', appealId);
-                
-                showToast('❌ Book appeal rejected.', 'info');
-                loadBStoreAppeals();
-                
+                await sb.from('bstore_books').update({ status: 'rejected' }).eq('id', bookId);
+                showToast('❌ Book rejected.', 'info');
+                loadAppeals();
             } catch (err) {
-                console.error('Reject error:', err);
-                showToast('Error rejecting book: ' + err.message, 'error');
+                showToast('Error: ' + err.message, 'error');
             }
         }
 
-        async function submitBStoreBook() {
-            if (!AppState.isAdmin && !AppState.isTeacher) {
-                showToast('Only Admin or Verified Teachers can upload books.', 'error');
-                return;
-            }
-            
-            const title = document.getElementById('bstoreTitle')?.value;
-            const author = document.getElementById('bstoreAuthor')?.value;
-            const desc = document.getElementById('bstoreDesc')?.value;
-            const coverInput = document.getElementById('bstoreCover');
-            const fileInput = document.getElementById('bstoreFile');
-            const priceMonthly = parseInt(document.getElementById('bstorePriceMonthly')?.value) || 0;
-            const price3 = parseInt(document.getElementById('bstorePrice3')?.value) || 0;
-            const price6 = parseInt(document.getElementById('bstorePrice6')?.value) || 0;
-            const price9 = parseInt(document.getElementById('bstorePrice9')?.value) || 0;
-            const priceYearly = parseInt(document.getElementById('bstorePriceYearly')?.value) || 0;
-            
-            if (!title || !author || !fileInput || !fileInput.files[0]) {
-                showToast('Please fill in all required fields.', 'error');
-                return;
-            }
-            
+        async function approveResearch(researchId) {
             try {
-                // Upload cover
-                let cover_url = null;
-                if (coverInput && coverInput.files && coverInput.files[0]) {
-                    const file = coverInput.files[0];
-                    const fileExt = file.name.split('.').pop();
-                    const fileName = `bstore_covers/${AppState.userId}_${Date.now()}.${fileExt}`;
-                    const { data: uploadData, error: uploadError } = await sb.storage
-                        .from('t-hub-uploads')
-                        .upload(fileName, file, { cacheControl: '3600', upsert: false });
-                    if (!uploadError) {
-                        const { data: urlData } = sb.storage.from('t-hub-uploads').getPublicUrl(fileName);
-                        cover_url = urlData.publicUrl;
-                    }
-                }
-                
-                // Upload book file
-                const file = fileInput.files[0];
-                const fileExt = file.name.split('.').pop().toLowerCase();
-                const fileName = `bstore_books/${AppState.userId}_${Date.now()}.${fileExt}`;
-                const { data: uploadData, error: uploadError } = await sb.storage
-                    .from('t-hub-uploads')
-                    .upload(fileName, file, { cacheControl: '3600', upsert: false });
-                
-                if (uploadError) throw uploadError;
-                
-                const { data: urlData } = sb.storage.from('t-hub-uploads').getPublicUrl(fileName);
-                const file_url = urlData.publicUrl;
-                
-                if (AppState.isAdmin) {
-                    // Admin uploads directly
-                    const { error: insertError } = await sb.from('bstore_books').insert({
-                        title: title,
-                        author: author,
-                        description: desc,
-                        cover_url: cover_url,
-                        file_url: file_url,
-                        file_type: fileExt,
-                        price_monthly: priceMonthly,
-                        price_3months: price3,
-                        price_6months: price6,
-                        price_9months: price9,
-                        price_yearly: priceYearly,
-                        teacher_id: AppState.userId,
-                        status: 'approved'
-                    });
-                    if (insertError) throw insertError;
-                    showToast('✅ Book uploaded to B-Store!', 'success');
-                } else {
-                    // Teacher submits for review
-                    const { error: insertError } = await sb.from('bstore_appeals').insert({
-                        teacher_id: AppState.userId,
-                        title: title,
-                        author: author,
-                        description: desc,
-                        cover_url: cover_url,
-                        file_url: file_url,
-                        file_type: fileExt,
-                        price_monthly: priceMonthly,
-                        price_3months: price3,
-                        price_6months: price6,
-                        price_9months: price9,
-                        price_yearly: priceYearly,
-                        status: 'pending'
-                    });
-                    if (insertError) throw insertError;
-                    showToast('📤 Book submitted for admin review!', 'success');
-                }
-                
-                closeModal('bstoreUploadModal');
-                loadBStore();
-                
+                await sb.from('research_papers').update({ status: 'approved' }).eq('id', researchId);
+                showToast('✅ Research approved!', 'success');
+                loadAppeals();
             } catch (err) {
-                console.error('Upload book error:', err);
-                showToast('Error uploading book: ' + err.message, 'error');
+                showToast('Error: ' + err.message, 'error');
+            }
+        }
+
+        async function rejectResearch(researchId) {
+            try {
+                await sb.from('research_papers').update({ status: 'rejected' }).eq('id', researchId);
+                showToast('❌ Research rejected.', 'info');
+                loadAppeals();
+            } catch (err) {
+                showToast('Error: ' + err.message, 'error');
             }
         }
 
         // ================================================================
-        // MY LIBRARY
+        // SEARCH
         // ================================================================
-        async function loadMyLibrary() {
-            const container = document.getElementById('myLibraryContainer');
-            if (!container) return;
-            
-            container.innerHTML = '<div class="loading">Loading your library...</div>';
-            
-            try {
-                const { data, error } = await sb
-                    .from('bstore_subscriptions')
-                    .select('*, bstore_books(*)')
-                    .eq('user_id', AppState.userId)
-                    .eq('is_active', true)
-                    .order('expires_at', { ascending: true });
-                
-                if (error) throw error;
-                
-                if (!data || data.length === 0) {
-                    container.innerHTML = '<div class="loading" style="color:var(--text-muted);">No books in your library yet. Visit B-Store to subscribe!</div>';
-                    return;
-                }
-                
-                container.innerHTML = data.map(sub => {
-                    const book = sub.bstore_books;
-                    const daysLeft = Math.ceil((new Date(sub.expires_at) - new Date()) / (1000 * 60 * 60 * 24));
-                    const isExpiring = daysLeft <= 3;
-                    const isExpired = daysLeft <= 0;
-                    
-                    return `
-                        <div class="content-card" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
-                            <div>
-                                <h4 style="font-weight:900;">${book.title}</h4>
-                                <p style="font-weight:700;">By ${book.author}</p>
-                                <p style="font-size:13px; color:${isExpired ? 'var(--red-error)' : isExpiring ? 'var(--gold)' : 'var(--text-muted)'}; font-weight:700;">
-                                    ${isExpired ? '⏰ EXPIRED' : isExpiring ? `⚠️ Expires in ${daysLeft} days` : `✅ Active (${daysLeft} days left)`}
-                                </p>
-                            </div>
-                            <div style="display:flex; gap:8px;">
-                                ${!isExpired ? `<button class="btn-sm btn-teal" onclick="openBook(${book.id})" style="margin:0;">📖 Read</button>` : ''}
-                                ${isExpired || isExpiring ? `<button class="btn-sm" onclick="subscribeToBook(${book.id})" style="margin:0; background:var(--gold); color:var(--text-dark);">🔄 Renew</button>` : ''}
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-                
-                translatePage();
-                
-            } catch (err) {
-                console.error('Load library error:', err);
-                container.innerHTML = '<div class="loading" style="color:var(--red-error);">Failed to load library</div>';
+        function handleSearch(event) {
+            if (event.key === 'Enter') {
+                const q = document.getElementById('globalSearch').value.toLowerCase();
+                if (q.includes('class') || q.includes('group')) openTabContent('class');
+                else if (q.includes('bstore') || q.includes('book')) openTabContent('bstore');
+                else if (q.includes('calc') || q.includes('calculator')) openTabContent('mcalc');
+                else if (q.includes('job')) openTabContent('jobs');
+                else if (q.includes('research')) openTabContent('research');
+                else if (q.includes('wallet')) openTabContent('wallet');
+                else showToast('No direct match found', 'info');
             }
-        }
-
-        function openBook(bookId) {
-            showToast('📖 Opening book... (Reader coming soon)', 'info');
         }
 
         // ================================================================
@@ -4074,9 +5007,7 @@
         }
 
         function calculateResult(calcId) {
-            // This will be implemented with math.js evaluation
             showToast('🧮 Calculating...', 'info');
-            // Placeholder - will be implemented with full formula evaluation
             const container = document.getElementById('calcResultContainer');
             if (container) {
                 container.style.display = 'block';
@@ -4130,36 +5061,6 @@
         }
 
         // ================================================================
-        // PLATFORM WITHDRAWAL
-        // ================================================================
-        async function submitPlatformWithdraw() {
-            const amount = parseInt(document.getElementById('platformWithdrawAmount')?.value);
-            if (!amount || amount < 10000) {
-                showToast('Minimum withdrawal is 10,000 Coins.', 'error');
-                return;
-            }
-            
-            try {
-                const { error } = await sb.from('platform_transactions').insert({
-                    type: 'withdraw',
-                    amount: amount,
-                    description: 'Platform withdrawal requested',
-                    status: 'pending'
-                });
-                
-                if (error) throw error;
-                
-                showToast('📤 Withdrawal request sent!', 'success');
-                closeModal('platformWithdrawModal');
-                loadAdminPanel();
-                
-            } catch (err) {
-                console.error('Withdraw error:', err);
-                showToast('Error processing withdrawal: ' + err.message, 'error');
-            }
-        }
-
-        // ================================================================
         // CLOSE DROPDOWNS
         // ================================================================
         document.addEventListener('click', function(e) {
@@ -4200,6 +5101,7 @@
             
             document.getElementById('loadingOverlay').style.display = 'flex';
             checkSession();
+            loadGlobalTrending();
         });
     </script>
 </body>
