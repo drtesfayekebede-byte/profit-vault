@@ -7,7 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>T-Hub | Complete Medical Ecosystem</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
@@ -35,6 +34,7 @@
         @keyframes pulseRed { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
         @keyframes countdown { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+        @keyframes heartBeat { 0% { transform: scale(1); } 25% { transform: scale(1.1); } 50% { transform: scale(1); } }
 
         html, body { height: 100dvh; width: 100%; margin: 0; padding: 0; overflow: hidden; background: var(--bg-white); font-family: var(--font-main); font-weight: 700; }
 
@@ -124,10 +124,6 @@
 
         .tab-content-wrapper { display: none; height: 100dvh; width: 100%; flex-direction: column; }
         .tab-content-wrapper.active { display: flex; }
-        .back-button { display: none; color: white; font-size: 14px; font-weight: 800; padding: 10px 16px; cursor: pointer; background: var(--navy); border: none; border-radius: 40px; align-items: center; gap: 8px; width: auto; min-height: 42px; box-shadow: 0 4px 15px rgba(10, 37, 64, 0.2); transition: 0.3s; position: fixed; bottom: 90px; left: 16px; z-index: 50; }
-        .back-button.visible { display: flex; }
-        .back-button:hover { transform: scale(1.02); background: var(--navy-light); }
-
         .tab-scroll-area { flex: 1; overflow-y: auto; padding: 16px; padding-bottom: calc(var(--footer-height) + 20px); width: 100%; max-width: 800px; margin: 0 auto; }
         .tab-scroll-area * { font-weight: 700; }
 
@@ -148,8 +144,9 @@
         .group-banner h3 { color: var(--gold); font-size: 22px; font-weight: 900; margin-bottom: 4px; }
         .group-banner .stats { font-size: 14px; color: rgba(255,255,255,0.8); font-weight: 700; }
         .group-banner .stats span { color: var(--gold); font-weight: 900; }
-        .group-banner .group-avatar { width: 60px; height: 60px; border-radius: 50%; background: var(--teal); display: flex; align-items: center; justify-content: center; font-size: 30px; border: 3px solid var(--gold); flex-shrink: 0; overflow: hidden; cursor: pointer; }
+        .group-banner .group-avatar { width: 60px; height: 60px; border-radius: 50%; background: var(--teal); display: flex; align-items: center; justify-content: center; font-size: 30px; border: 3px solid var(--gold); flex-shrink: 0; overflow: hidden; cursor: pointer; position: relative; }
         .group-banner .group-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .group-banner .group-avatar .pen-icon { position: absolute; bottom: -4px; right: -4px; background: var(--gold); color: var(--text-dark); border-radius: 50%; width: 22px; height: 22px; font-size: 12px; display: flex; align-items: center; justify-content: center; border: 2px solid var(--navy); cursor: pointer; }
         .group-banner .go-live-btn { position: absolute; top: 12px; right: 16px; background: var(--red-error); color: white; border: none; border-radius: 30px; padding: 6px 14px; font-size: 12px; font-weight: 800; cursor: pointer; animation: pulse 1.5s infinite; display: flex; align-items: center; gap: 6px; transition: 0.2s; }
         .group-banner .go-live-btn:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(239, 68, 68, 0.5); }
         .group-banner .go-live-btn .pulse-dot { display: inline-block; width: 8px; height: 8px; background: white; border-radius: 50%; animation: pulseRed 1s infinite; }
@@ -176,7 +173,7 @@
             box-shadow: 0 4px 12px rgba(10, 37, 64, 0.06);
         }
 
-        .content-card .thumbnail { width: 100%; height: 160px; background: #1a1a2e; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 32px; margin-bottom: 12px; position: relative; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+        .content-card .thumbnail { width: 100%; height: 160px; background: #1a1a2e; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 32px; margin-bottom: 12px; position: relative; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; cursor: pointer; }
         .content-card .thumbnail .duration { position: absolute; bottom: 10px; right: 10px; background: rgba(0,0,0,0.7); padding: 2px 8px; border-radius: 6px; font-size: 12px; font-weight: 700; }
         .content-card .meta h4 { font-size: 16px; font-weight: 800; color: var(--text-dark); margin-bottom: 4px; user-select: none; -webkit-user-select: none; }
         .content-card .meta p { font-size: 13px; color: var(--text-muted); font-weight: 700; }
@@ -184,7 +181,7 @@
         .content-card .actions button { background: none; border: none; font-size: 14px; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 4px; transition: 0.2s; font-weight: 700; }
         .content-card .actions button:hover { color: var(--navy); }
         .content-card .actions button.liked { color: var(--red-error); }
-        .content-card .actions button.disliked { color: #8b5cf6; }
+        .content-card .actions button.disliked { color: #000000; }
         .content-card .comment-section { margin-top: 12px; display: none; }
         .content-card .comment-section textarea { width: 100%; padding: 10px; border: 1px solid #eee; border-radius: 8px; resize: none; font-size: 14px; margin-bottom: 8px; font-weight: 700; }
         .content-card .comment-section .send-btn { background: var(--teal); color: white; border: none; padding: 6px 16px; border-radius: 20px; font-weight: 800; cursor: pointer; }
@@ -197,44 +194,59 @@
         .content-card .watermark { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); color: rgba(255,255,255,0.2); font-size: 10px; font-weight: 700; pointer-events: none; user-select: none; }
 
         /* POST CARDS - SOCIAL & TEACHING */
-        .post-card .post-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+        .post-card .post-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
         .post-card .post-header .post-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--teal); display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 18px; overflow: hidden; }
         .post-card .post-header .post-avatar img { width: 100%; height: 100%; object-fit: cover; }
         .post-card .post-header .post-name { font-weight: 800; color: var(--text-dark); }
         .post-card .post-header .post-time { font-size: 12px; color: var(--text-muted); font-weight: 700; }
-        .post-card .post-header .post-actions-btn { background: none; border: none; font-size: 16px; cursor: pointer; color: var(--text-muted); }
-        .post-card .post-content { font-size: 15px; color: var(--text-dark); margin-bottom: 10px; font-weight: 700; word-wrap: break-word; }
+        .post-card .post-header .post-actions-btn { background: none; border: none; font-size: 16px; cursor: pointer; color: var(--text-muted); padding: 4px 8px; }
+        .post-card .post-content { font-size: 15px; color: var(--text-dark); margin-bottom: 10px; font-weight: 700; word-wrap: break-word; white-space: pre-wrap; }
         .post-card .post-content .read-more { color: var(--teal); cursor: pointer; font-weight: 800; }
+        .post-card .post-content .read-less { color: var(--teal); cursor: pointer; font-weight: 800; }
         .post-card .post-image { width: 100%; border-radius: 8px; margin-bottom: 10px; max-height: 400px; object-fit: cover; }
         .post-card .post-link { color: var(--teal); text-decoration: underline; font-weight: 700; word-break: break-all; }
-        .post-card .post-actions { display: flex; gap: 12px; border-top: 1px solid #eee; padding-top: 10px; flex-wrap: wrap; }
-        .post-card .post-actions button { background: none; border: none; font-size: 14px; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 4px; font-weight: 700; transition: 0.2s; }
-        .post-card .post-actions button:hover { color: var(--navy); }
+        .post-card .post-actions { display: flex; gap: 16px; border-top: 1px solid #eee; padding-top: 10px; flex-wrap: wrap; align-items: center; }
+        .post-card .post-actions button { background: none; border: none; font-size: 14px; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 5px; font-weight: 700; transition: 0.2s; padding: 4px 8px; border-radius: 8px; }
+        .post-card .post-actions button:hover { background: var(--card-hover); }
         .post-card .post-actions button.liked { color: var(--red-error); }
-        .post-card .post-actions button.disliked { color: #8b5cf6; }
+        .post-card .post-actions button.liked i { animation: heartBeat 0.3s; }
+        .post-card .post-actions button.disliked { color: #000000; }
         .post-card .post-actions .share-btn { position: relative; }
-        .post-card .post-actions .share-options { display: none; position: absolute; bottom: 30px; background: white; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); padding: 8px; z-index: 100; min-width: 150px; }
+        .post-card .post-actions .share-options { display: none; position: absolute; bottom: 30px; background: white; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); padding: 8px 0; z-index: 100; min-width: 150px; border: 1px solid #eee; }
         .post-card .post-actions .share-options.show { display: block; }
-        .post-card .post-actions .share-options div { padding: 8px 12px; cursor: pointer; font-weight: 700; font-size: 13px; border-bottom: 1px solid #f1f1f1; }
+        .post-card .post-actions .share-options div { padding: 10px 16px; cursor: pointer; font-weight: 700; font-size: 13px; border-bottom: 1px solid #f1f1f1; }
         .post-card .post-actions .share-options div:last-child { border-bottom: none; }
         .post-card .post-actions .share-options div:hover { background: #f8fafc; }
         .post-card .post-actions .pin-btn { color: var(--gold); }
         .post-card .post-actions .report-btn { color: var(--red-error); }
-        .post-card .post-comments { margin-top: 12px; display: none; }
-        .post-card .post-comments .comment-item { font-size: 13px; color: var(--text-dark); margin-bottom: 6px; padding: 6px 0; border-bottom: 1px solid #f1f1f1; font-weight: 700; }
-        .post-card .post-comments .comment-input { width: 100%; padding: 8px; border: 1px solid #eee; border-radius: 8px; margin-top: 8px; font-size: 14px; font-weight: 700; }
-        .post-card .post-comments .comment-send { background: var(--teal); color: white; border: none; padding: 4px 16px; border-radius: 20px; font-weight: 800; cursor: pointer; margin-top: 4px; }
-        .post-card .post-edit { display: none; margin-top: 8px; }
-        .post-card .post-edit textarea { width: 100%; padding: 8px; border: 1px solid #eee; border-radius: 8px; font-weight: 700; }
-        .post-card .post-edit input[type="file"] { margin-top: 4px; }
-        .post-card .post-edit .save-edit-btn { background: var(--gold); color: var(--text-dark); border: none; padding: 4px 16px; border-radius: 20px; font-weight: 800; cursor: pointer; margin-top: 4px; }
-        .post-card .post-edit .cancel-edit-btn { background: #e2e8f0; color: var(--text-dark); border: none; padding: 4px 16px; border-radius: 20px; font-weight: 800; cursor: pointer; margin-top: 4px; margin-left: 4px; }
+        .post-card .post-comments { margin-top: 12px; display: none; padding: 8px 0; }
+        .post-card .post-comments .comment-item { padding: 8px 0; border-bottom: 1px solid #f1f1f1; }
+        .post-card .post-comments .comment-item:last-child { border-bottom: none; }
+        .post-card .post-comments .comment-item .comment-author { font-weight: 800; color: var(--text-dark); }
+        .post-card .post-comments .comment-item .comment-text { font-weight: 700; color: var(--text-dark); margin: 2px 0; }
+        .post-card .post-comments .comment-item .comment-time { font-size: 11px; color: var(--text-muted); font-weight: 700; }
+        .post-card .post-comments .comment-item .comment-actions { display: flex; gap: 12px; margin-top: 4px; }
+        .post-card .post-comments .comment-item .comment-actions button { background: none; border: none; font-size: 12px; color: var(--text-muted); cursor: pointer; font-weight: 700; padding: 2px 6px; }
+        .post-card .post-comments .comment-item .comment-actions button.liked { color: var(--red-error); }
+        .post-card .post-comments .comment-item .comment-actions button.disliked { color: #000000; }
+        .post-card .post-comments .comment-item .comment-replies { margin-left: 30px; margin-top: 8px; }
+        .post-card .post-comments .comment-item .comment-reply-input { display: none; margin-top: 6px; }
+        .post-card .post-comments .comment-item .comment-reply-input input { width: 80%; padding: 6px 10px; border: 1px solid #eee; border-radius: 20px; font-weight: 700; font-size: 13px; }
+        .post-card .post-comments .comment-item .comment-reply-input button { background: var(--teal); color: white; border: none; padding: 4px 12px; border-radius: 20px; font-weight: 800; cursor: pointer; }
+        .post-card .post-comments .comment-input-wrapper { display: flex; gap: 8px; margin-top: 8px; }
+        .post-card .post-comments .comment-input-wrapper input { flex: 1; padding: 8px 12px; border: 1px solid #eee; border-radius: 20px; font-weight: 700; font-size: 14px; }
+        .post-card .post-comments .comment-input-wrapper button { background: var(--teal); color: white; border: none; padding: 6px 16px; border-radius: 20px; font-weight: 800; cursor: pointer; }
         .post-card .viral-badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: 900; margin-left: 8px; }
         .post-card .viral-badge.super { background: linear-gradient(135deg, #f59e0b, #ef4444); color: white; }
         .post-card .viral-badge.viral { background: #8b5cf6; color: white; }
         .post-card .viral-badge.trending { background: #f97316; color: white; }
         .post-card .viral-badge.rising { background: #f59e0b; color: white; }
         .post-card .pinned-badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: 900; background: var(--gold); color: var(--text-dark); margin-left: 8px; }
+        .post-card .post-edit { display: none; margin-top: 8px; }
+        .post-card .post-edit textarea { width: 100%; padding: 8px; border: 1px solid #eee; border-radius: 8px; font-weight: 700; }
+        .post-card .post-edit input[type="file"] { margin-top: 4px; }
+        .post-card .post-edit .save-edit-btn { background: var(--gold); color: var(--text-dark); border: none; padding: 4px 16px; border-radius: 20px; font-weight: 800; cursor: pointer; margin-top: 4px; }
+        .post-card .post-edit .cancel-edit-btn { background: #e2e8f0; color: var(--text-dark); border: none; padding: 4px 16px; border-radius: 20px; font-weight: 800; cursor: pointer; margin-top: 4px; margin-left: 4px; }
 
         .exam-toggle { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
         .exam-toggle span { font-weight: 800; color: var(--text-dark); }
@@ -396,6 +408,25 @@
         .three-dot-dropdown div:last-child { border-bottom: none; }
         .three-dot-dropdown div:hover { background: #f8fafc; }
 
+        /* VIDEO PLAYER MODAL */
+        .video-modal .modal-content { max-width: 700px; background: #000; border-radius: 12px; padding: 0; overflow: hidden; }
+        .video-modal video { width: 100%; max-height: 80vh; display: block; }
+        .video-modal .video-controls { padding: 12px 16px; background: var(--navy); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+        .video-modal .video-controls .video-title { color: white; font-weight: 700; font-size: 14px; flex: 1; }
+        .video-modal .video-controls .close-btn { background: var(--red-error); color: white; border: none; padding: 6px 16px; border-radius: 20px; font-weight: 800; cursor: pointer; }
+
+        /* TRENDING TABS */
+        .trending-tabs { display: flex; gap: 8px; margin-bottom: 12px; }
+        .trending-tab { padding: 6px 16px; border-radius: 30px; border: none; font-weight: 800; font-size: 13px; cursor: pointer; transition: 0.2s; background: var(--card-bg); color: var(--text-muted); border: 1px solid var(--card-border); }
+        .trending-tab.active { background: var(--gold); color: var(--text-dark); border-color: var(--gold); }
+        .trending-tab:hover { transform: scale(1.02); }
+
+        /* GROUP SETTINGS MODAL */
+        .group-settings-options { display: flex; flex-direction: column; gap: 10px; }
+        .group-settings-options button { padding: 12px 16px; border: 1px solid var(--card-border); border-radius: 12px; background: var(--card-bg); font-weight: 700; cursor: pointer; transition: 0.2s; text-align: left; }
+        .group-settings-options button:hover { background: var(--card-hover); }
+        .group-settings-options button.danger { color: var(--red-error); border-color: var(--red-error); }
+
         @media (max-width: 600px) {
             .app-logo h1 { font-size: 18px; }
             .logo-icon { font-size: 20px; }
@@ -415,7 +446,11 @@
             .welcome-banner { flex-direction: column; text-align: center; }
             .calc-result .value { font-size: 20px; }
             .post-card .post-actions { gap: 8px; }
-            .post-card .post-actions button { font-size: 12px; }
+            .post-card .post-actions button { font-size: 12px; padding: 4px 6px; }
+            .post-card .post-comments .comment-item .comment-replies { margin-left: 15px; }
+            .video-modal .modal-content { max-width: 100%; border-radius: 0; }
+            .video-modal video { max-height: 60vh; }
+            .group-banner .group-avatar .pen-icon { width: 18px; height: 18px; font-size: 10px; bottom: -2px; right: -2px; }
         }
         @media (min-width: 601px) {
             .quick-actions { grid-template-columns: repeat(3, 1fr); gap: 16px; }
@@ -484,6 +519,7 @@
                 </div>
                 <div class="feed-section">
                     <h3 data-key="trending">🔥 Trending Content</h3>
+                    <div id="trendingTabsContainer"></div>
                     <div id="globalTrendingContainer"></div>
                 </div>
             </div>
@@ -491,7 +527,6 @@
 
         <!-- TAB WRAPPER -->
         <div id="tabContentWrapper" class="tab-content-wrapper">
-            <button class="back-button" id="backButton" onclick="goToHome()" data-key="home">← Home</button>
             <div id="tabContentContainer" class="tab-scroll-area"></div>
         </div>
 
@@ -530,11 +565,12 @@
             <div id="group-feed">
                 <div class="group-banner" id="groupBanner">
                     <div style="display:flex; align-items:center; gap:12px; justify-content:center; flex-wrap:wrap;">
-                        <div class="group-avatar" id="groupAvatar" onclick="changeGroupProfilePic()">
+                        <div class="group-avatar" id="groupAvatar">
                             <img id="groupAvatarImg" src="https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app-assets/1780156694418.png" alt="Group">
+                            <span class="pen-icon" id="groupPenIcon" onclick="event.stopPropagation(); showGroupSettings()">✏️</span>
                         </div>
                         <div style="text-align:left;">
-                            <h3 id="groupBannerTitle" style="color:var(--gold); font-size:20px; font-weight:900;">Teaching Class</h3>
+                            <h3 id="groupBannerTitle" style="color:var(--gold); font-size:20px; font-weight:900;">Loading...</h3>
                             <div class="stats" style="font-size:12px; color:rgba(255,255,255,0.8);">
                                 <span style="color:var(--gold); font-weight:900;" id="groupFollowers">0</span> <span data-key="followers">Followers</span> • 
                                 <span style="color:var(--gold); font-weight:900;" id="groupOnline">0</span> <span data-key="online">Online</span>
@@ -546,7 +582,6 @@
                     </button>
                     <div style="display:flex; gap:10px; justify-content:center; margin-top:10px;">
                         <button class="btn" style="width:auto; padding:4px 16px; font-size:12px; margin:0;" onclick="toggleGroupJoin(this)" data-key="join_class">➕ Join Class</button>
-                        <button class="btn" style="width:auto; padding:4px 16px; font-size:12px; margin:0; background:var(--teal); color:white;" onclick="changeGroupProfilePic()">🖼️ Change Pic</button>
                     </div>
                 </div>
                 <div class="class-tabs" id="groupTabs">
@@ -581,11 +616,12 @@
             <div id="social-group-feed">
                 <div class="group-banner" id="socialGroupBanner">
                     <div style="display:flex; align-items:center; gap:12px; justify-content:center; flex-wrap:wrap;">
-                        <div class="group-avatar" id="socialGroupAvatar" onclick="changeGroupProfilePic()">
+                        <div class="group-avatar" id="socialGroupAvatar">
                             <img id="socialGroupAvatarImg" src="https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app-assets/1780156694418.png" alt="Group">
+                            <span class="pen-icon" id="socialGroupPenIcon" onclick="event.stopPropagation(); showGroupSettings()">✏️</span>
                         </div>
                         <div style="text-align:left;">
-                            <h3 id="socialGroupBannerTitle" style="color:var(--gold); font-size:20px; font-weight:900;">Social Group</h3>
+                            <h3 id="socialGroupBannerTitle" style="color:var(--gold); font-size:20px; font-weight:900;">Loading...</h3>
                             <div class="stats" style="font-size:12px; color:rgba(255,255,255,0.8);">
                                 <span style="color:var(--gold); font-weight:900;" id="socialGroupFollowers">0</span> <span data-key="followers">Followers</span> • 
                                 <span style="color:var(--gold); font-weight:900;" id="socialGroupOnline">0</span> <span data-key="online">Online</span>
@@ -597,7 +633,6 @@
                     </button>
                     <div style="display:flex; gap:10px; justify-content:center; margin-top:10px;">
                         <button class="btn" style="width:auto; padding:4px 16px; font-size:12px; margin:0;" onclick="toggleGroupJoin(this)" data-key="join_class">➕ Join Class</button>
-                        <button class="btn" style="width:auto; padding:4px 16px; font-size:12px; margin:0; background:var(--teal); color:white;" onclick="changeGroupProfilePic()">🖼️ Change Pic</button>
                     </div>
                 </div>
                 <div style="margin-bottom:16px;">
@@ -1015,6 +1050,51 @@
             </div>
         </div>
 
+        <!-- Group Settings Modal -->
+        <div id="groupSettingsModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('groupSettingsModal')">&times;</span>
+                <h3>✏️ Group Settings</h3>
+                <div class="group-settings-options">
+                    <button onclick="changeGroupProfilePic()">🖼️ Change Profile Picture</button>
+                    <button onclick="showModal('editGroupModal')">✏️ Change Group Name</button>
+                    <button class="danger" onclick="deleteGroupFromSettings()">🗑️ Delete Group</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Video Player Modal -->
+        <div id="videoPlayerModal" class="modal video-modal">
+            <div class="modal-content">
+                <video controls autoplay controlsList="nodownload noremoteplayback" disablePictureInPicture id="videoPlayer">
+                    <source id="videoSource" src="" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <div class="video-controls">
+                    <span class="video-title" id="videoTitle">Video</span>
+                    <button class="close-btn" onclick="closeVideoPlayer()">✕ Close</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Calculator Modal -->
+        <div id="calculatorModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('calculatorModal')">&times;</span>
+                <div id="calculatorModalContent"></div>
+            </div>
+        </div>
+
+        <!-- Platform Withdraw Modal -->
+        <div id="platformWithdrawModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('platformWithdrawModal')">&times;</span>
+                <h3>📤 Platform Withdrawal</h3>
+                <div class="form-group"><label>Amount (Coins)</label><input type="number" id="platformWithdrawAmount" placeholder="Min 10,000 Coins"></div>
+                <button class="btn btn-teal" onclick="submitPlatformWithdraw()">📤 Withdraw</button>
+            </div>
+        </div>
+
         <!-- FOOTER -->
         <div class="app-footer" id="appFooter">
             <div class="app-footer-tabs" id="footerTabs">
@@ -1065,7 +1145,8 @@
             currentGroupName: null,
             isGroupOwner: false,
             profilePicUrl: null,
-            currentJobId: null
+            currentJobId: null,
+            currentTrendingTab: 'class'
         };
         
         let examQuestionCount = 1;
@@ -1283,7 +1364,6 @@
             stopExamTimer();
             document.getElementById('appMain').style.display = 'block';
             document.getElementById('tabContentWrapper').classList.remove('active');
-            document.getElementById('backButton').classList.remove('visible');
             document.querySelectorAll('.app-footer-tab').forEach(t => t.classList.remove('active'));
             const homeTab = document.querySelector('[data-tab="home"]');
             if (homeTab) homeTab.classList.add('active');
@@ -1295,7 +1375,6 @@
             stopExamTimer();
             document.getElementById('appMain').style.display = 'none';
             document.getElementById('tabContentWrapper').classList.add('active');
-            document.getElementById('backButton').classList.add('visible');
             const container = document.getElementById('tabContentContainer');
             
             let id = '';
@@ -1345,7 +1424,9 @@
                     
                     const prefix = isSocial ? 'social' : '';
                     const bannerTitle = document.querySelector(`#${prefix}group-feed .group-banner h3`);
-                    if (bannerTitle) bannerTitle.innerText = group.name;
+                    if (bannerTitle) {
+                        bannerTitle.innerText = group.name;
+                    }
                     
                     const avatarImg = document.getElementById(`${prefix}GroupAvatarImg`);
                     if (avatarImg && group.profile_pic_url) {
@@ -1363,6 +1444,12 @@
                         goLiveBtn.style.display = AppState.isGroupOwner || AppState.isAdmin ? 'flex' : 'none';
                     }
                     
+                    // Show pen icon only for owner/admin
+                    const penIcon = document.getElementById(`${prefix}GroupPenIcon`);
+                    if (penIcon) {
+                        penIcon.style.display = (AppState.isGroupOwner || AppState.isAdmin) ? 'flex' : 'none';
+                    }
+                    
                     if (isSocial) {
                         loadSocialPosts(specificGroupId);
                     } else {
@@ -1377,6 +1464,11 @@
                 renderUserGroups();
                 updateTrendingGroups();
             }
+            
+            // Push state for back button
+            if (tabId !== 'home') {
+                history.pushState({ tab: tabId }, '', window.location.href);
+            }
         }
 
         function footerTabClick(tabId) {
@@ -1386,6 +1478,13 @@
             if (tabId === 'home') return goToHome();
             openTabContent(tabId);
         }
+
+        // Handle device back button
+        window.addEventListener('popstate', function(event) {
+            if (document.getElementById('tabContentWrapper').classList.contains('active')) {
+                goToHome();
+            }
+        });
 
         // ================================================================
         // AUTHENTICATION
@@ -1707,7 +1806,7 @@
         }
 
         // ================================================================
-        // GROUP CREATION
+        // GROUP CREATION (One Teaching + One Social per user)
         // ================================================================
         async function createGroup() {
             const nameInput = document.getElementById('createGroupName');
@@ -1724,6 +1823,27 @@
             const group_purpose = purposeSelect ? purposeSelect.value : 'teaching';
             
             if (!name) return showToast('Please enter a group name.', 'error');
+            
+            // Check if user already has a group of this type
+            const existingGroup = AppState.groups.find(g => g.group_purpose === group_purpose);
+            
+            if (existingGroup) {
+                showToast(`⚠️ You already have a ${group_purpose} group. Delete it first to create a new one.`, 'error');
+                return;
+            }
+            
+            // Check if user has both group types
+            const hasTeaching = AppState.groups.some(g => g.group_purpose === 'teaching');
+            const hasSocial = AppState.groups.some(g => g.group_purpose === 'social');
+            
+            if (group_purpose === 'teaching' && hasTeaching) {
+                showToast('⚠️ You already have a teaching group. Delete it first to create a new one.', 'error');
+                return;
+            }
+            if (group_purpose === 'social' && hasSocial) {
+                showToast('⚠️ You already have a social group. Delete it first to create a new one.', 'error');
+                return;
+            }
             
             try {
                 let profile_pic_url = 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app-assets/1780156694418.png';
@@ -1773,61 +1893,106 @@
         }
 
         // ================================================================
-        // TOGGLE GROUP JOIN
+        // TOGGLE GROUP JOIN - FIXED
         // ================================================================
         async function toggleGroupJoin(btn) {
             const card = btn.closest('.teacher-card');
             if (!card) {
-                showToast('Group not found.', 'error');
+                showToast('⚠️ Group card not found.', 'error');
                 return;
             }
             
             const nameEl = card.querySelector('.name');
-            if (!nameEl) return showToast('Group not found.', 'error');
+            if (!nameEl) {
+                showToast('⚠️ Group name not found.', 'error');
+                return;
+            }
             
             let groupName = nameEl.textContent.trim();
             groupName = groupName.replace('✓', '').trim();
-            
-            const group = AppState.groups.find(g => g.name === groupName);
+            groupName = groupName.replace(/\s+/g, ' ');
             
             if (btn.innerText.includes('Owner')) {
                 showToast('📌 This is your group!', 'info');
                 return;
             }
             
-            if (!group) {
-                showToast('📌 You are now following this group!', 'success');
-                btn.innerText = '✅ Joined';
-                btn.className = 'join-btn joined';
-                return;
-            }
-
-            const currentFollowers = group.followers || 0;
             const isJoined = btn.innerText.includes('Joined') || btn.innerText.includes('✅');
             
+            // Check if user is in the group (AppState.groups)
+            let group = AppState.groups.find(g => g.name === groupName);
+            
+            if (group) {
+                const currentFollowers = group.followers || 0;
+                
+                try {
+                    if (!isJoined) {
+                        const newFollowers = currentFollowers + 1;
+                        await sb.from('groups').update({ followers: newFollowers }).eq('id', group.id);
+                        group.followers = newFollowers;
+                        btn.innerText = '✅ Joined';
+                        btn.className = 'join-btn joined';
+                        showToast('✅ You have joined this class!', 'success');
+                        updateTrendingGroups();
+                    } else {
+                        const newFollowers = Math.max(0, currentFollowers - 1);
+                        await sb.from('groups').update({ followers: newFollowers }).eq('id', group.id);
+                        group.followers = newFollowers;
+                        btn.innerText = '➕ Join Class';
+                        btn.className = 'join-btn';
+                        showToast('📌 Left the class.', 'info');
+                        updateTrendingGroups();
+                    }
+                } catch (err) {
+                    console.error('Error:', err);
+                    showToast('❌ Operation failed: ' + err.message, 'error');
+                }
+                return;
+            }
+            
+            // If group not found in AppState, fetch from database (trending group)
             try {
+                const { data: dbGroup, error } = await sb
+                    .from('groups')
+                    .select('*')
+                    .ilike('name', groupName)
+                    .single();
+                
+                if (error || !dbGroup) {
+                    // Toggle button state anyway
+                    if (isJoined) {
+                        btn.innerText = '➕ Join Class';
+                        btn.className = 'join-btn';
+                        showToast('📌 Left the group.', 'info');
+                    } else {
+                        btn.innerText = '✅ Joined';
+                        btn.className = 'join-btn joined';
+                        showToast('📌 You are now following this group!', 'success');
+                    }
+                    return;
+                }
+                
+                const currentFollowers = dbGroup.followers || 0;
+                
                 if (!isJoined) {
                     const newFollowers = currentFollowers + 1;
-                    const { error } = await sb.from('groups').update({ followers: newFollowers }).eq('id', group.id);
-                    if (error) throw error;
-                    group.followers = newFollowers;
+                    await sb.from('groups').update({ followers: newFollowers }).eq('id', dbGroup.id);
                     btn.innerText = '✅ Joined';
                     btn.className = 'join-btn joined';
                     showToast('✅ You have joined this class!', 'success');
                     updateTrendingGroups();
                 } else {
                     const newFollowers = Math.max(0, currentFollowers - 1);
-                    const { error } = await sb.from('groups').update({ followers: newFollowers }).eq('id', group.id);
-                    if (error) throw error;
-                    group.followers = newFollowers;
-                    btn.innerText = '➕ Join';
+                    await sb.from('groups').update({ followers: newFollowers }).eq('id', dbGroup.id);
+                    btn.innerText = '➕ Join Class';
                     btn.className = 'join-btn';
                     showToast('📌 Left the class.', 'info');
                     updateTrendingGroups();
                 }
+                
             } catch (err) {
-                console.error('Error:', err);
-                showToast('❌ Operation failed: ' + err.message, 'error');
+                console.error('Database error:', err);
+                showToast('❌ Error: ' + err.message, 'error');
             }
         }
 
@@ -1896,9 +2061,9 @@
                 container.innerHTML = data.map(item => `
                     <div class="content-card" style="position:relative;">
                         ${isOwner ? `<button class="delete-btn" onclick="deleteContent('${item.id}', '${contentType}')">✕</button>` : ''}
-                        <div class="thumbnail" style="${item.cover_url ? `background: url('${item.cover_url}') center/cover;` : ''}">
+                        <div class="thumbnail" onclick="playVideo('${item.file_url}', '${item.title}')" style="${item.cover_url ? `background: url('${item.cover_url}') center/cover;` : ''}">
                             ${contentType === 'videos' ? `<i class="fas fa-play-circle"></i>` : `<i class="fas fa-file-powerpoint"></i>`}
-                            <span class="duration">${contentType === 'videos' ? 'Video' : 'PPT'}</span>
+                            <span class="duration">${contentType === 'videos' ? '▶️ Play' : 'PPT'}</span>
                             <span class="watermark">© T-Hub</span>
                         </div>
                         <div class="meta">
@@ -1907,15 +2072,15 @@
                             <p>Uploaded • ${new Date(item.created_at).toLocaleDateString()}</p>
                         </div>
                         <div class="actions">
-                            <button onclick="toggleLike(this, '${item.id}')"><i class="fas fa-heart"></i> <span>${item.likes || 0}</span></button>
-                            <button onclick="toggleComment(this)"><i class="fas fa-comment"></i> <span>0</span></button>
-                            <button onclick="shareContent()"><i class="fas fa-share"></i> <span data-key="share">Share</span></button>
-                            <button class="favorite-btn" onclick="toggleFavorite('${item.id}', '${contentType === 'videos' ? 'video' : 'ppt'}')">⭐</button>
+                            <button onclick="event.stopPropagation(); toggleLike(this, '${item.id}')"><i class="fas fa-heart"></i> <span>${item.likes || 0}</span></button>
+                            <button onclick="event.stopPropagation(); toggleComment(this)"><i class="fas fa-comment"></i> <span>0</span></button>
+                            <button onclick="event.stopPropagation(); shareContent()"><i class="fas fa-share"></i> <span data-key="share">Share</span></button>
+                            <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite('${item.id}', '${contentType === 'videos' ? 'video' : 'ppt'}')">⭐</button>
                         </div>
                         <div class="comment-section">
                             <div class="comment-list"></div>
                             <textarea placeholder="Add a comment..."></textarea>
-                            <button class="send-btn" onclick="addComment(this, '${item.id}', '${contentType}')" data-key="post_comment">Post Comment</button>
+                            <button class="send-btn" onclick="event.stopPropagation(); addComment(this, '${item.id}', '${contentType}')" data-key="post_comment">Post Comment</button>
                         </div>
                     </div>
                 `).join('');
@@ -1927,6 +2092,57 @@
                 container.innerHTML = `<div class="loading" style="color:var(--red-error);">Failed to load content</div>`;
             }
         }
+
+        // ================================================================
+        // VIDEO PLAYER
+        // ================================================================
+        function playVideo(videoUrl, title) {
+            if (!videoUrl) {
+                showToast('❌ Video URL not found.', 'error');
+                return;
+            }
+            
+            const modal = document.getElementById('videoPlayerModal');
+            const video = document.getElementById('videoPlayer');
+            const source = document.getElementById('videoSource');
+            const titleEl = document.getElementById('videoTitle');
+            
+            if (!modal || !video || !source) {
+                showToast('❌ Video player not available.', 'error');
+                return;
+            }
+            
+            source.src = videoUrl;
+            video.load();
+            
+            if (title) {
+                titleEl.textContent = title;
+            } else {
+                titleEl.textContent = 'Video';
+            }
+            
+            modal.classList.add('active');
+            
+            // Auto-play
+            video.play().catch(() => {
+                // Auto-play may be blocked by browser
+            });
+        }
+
+        function closeVideoPlayer() {
+            const modal = document.getElementById('videoPlayerModal');
+            const video = document.getElementById('videoPlayer');
+            if (modal) modal.classList.remove('active');
+            if (video) video.pause();
+        }
+
+        // Close video player on outside click
+        document.addEventListener('click', function(e) {
+            const modal = document.getElementById('videoPlayerModal');
+            if (modal && modal.classList.contains('active') && e.target === modal) {
+                closeVideoPlayer();
+            }
+        });
 
         // ================================================================
         // LOAD MOCK EXAMS
@@ -2428,7 +2644,7 @@
             container.innerHTML = '<div class="loading">Loading posts...</div>';
             
             try {
-                const { data, error } = await sb
+                const { data: posts, error } = await sb
                     .from('social_posts')
                     .select('*')
                     .eq('group_id', groupId)
@@ -2436,14 +2652,40 @@
                 
                 if (error) throw error;
                 
-                if (!data || data.length === 0) {
+                if (!posts || posts.length === 0) {
                     container.innerHTML = '<div class="loading" style="color:var(--text-muted);">No posts yet. Create the first post!</div>';
                     return;
                 }
+
+                // Get user's likes and dislikes for all posts
+                if (AppState.userId) {
+                    const postIds = posts.map(p => p.id);
+                    
+                    const { data: userLikes } = await sb
+                        .from('social_post_likes')
+                        .select('post_id')
+                        .eq('user_id', AppState.userId)
+                        .in('post_id', postIds);
+                    
+                    const likedPostIds = userLikes?.map(l => l.post_id) || [];
+                    
+                    const { data: userDislikes } = await sb
+                        .from('social_post_dislikes')
+                        .select('post_id')
+                        .eq('user_id', AppState.userId)
+                        .in('post_id', postIds);
+                    
+                    const dislikedPostIds = userDislikes?.map(d => d.post_id) || [];
+                    
+                    posts.forEach(post => {
+                        post.user_liked = likedPostIds.includes(post.id);
+                        post.user_disliked = dislikedPostIds.includes(post.id);
+                    });
+                }
                 
-                container.innerHTML = data.map(post => renderPostCard(post)).join('');
-                
+                container.innerHTML = posts.map(post => renderPostCard(post)).join('');
                 translatePage();
+                
             } catch (err) {
                 console.error('Load posts error:', err);
                 container.innerHTML = '<div class="loading" style="color:var(--red-error);">Failed to load posts</div>';
@@ -2456,10 +2698,11 @@
             const isGroupOwner = AppState.isGroupOwner;
             const canModerate = isOwner || isAdmin || isGroupOwner;
             
-            // Text truncation
+            // Text truncation with Read More/Read Less
             const maxLength = 150;
             let contentDisplay = post.content;
             let showReadMore = false;
+            let isExpanded = false;
             if (post.content && post.content.length > maxLength) {
                 contentDisplay = post.content.substring(0, maxLength) + '...';
                 showReadMore = true;
@@ -2480,8 +2723,9 @@
             // Pinned badge
             let pinnedBadge = post.is_pinned ? `<span class="pinned-badge">📌 Pinned</span>` : '';
             
-            // Share count display
-            const shareCount = post.share_count || 0;
+            // User like/dislike status
+            const userLiked = post.user_liked || false;
+            const userDisliked = post.user_disliked || false;
             
             // Viral glow for super viral
             const viralGlow = post.viral_level === 'super_viral' || post.viral_level === 'viral' ? 'viral-glow' : '';
@@ -2497,7 +2741,7 @@
                             <div class="post-time">${new Date(post.created_at).toLocaleDateString()} ${new Date(post.created_at).toLocaleTimeString()}</div>
                         </div>
                         ${canModerate ? `
-                            <div style="margin-left:auto;">
+                            <div style="margin-left:auto; position:relative;">
                                 <button class="post-actions-btn" onclick="togglePostMenu('${post.id}')">⋮</button>
                                 <div id="postMenu-${post.id}" style="display:none; position:absolute; right:0; background:white; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.1); padding:4px 0; z-index:20; min-width:120px;">
                                     ${isOwner ? `<div style="padding:6px 12px; cursor:pointer; font-weight:700; font-size:13px;" onclick="editPost('${post.id}')">✏️ Edit</div>` : ''}
@@ -2509,40 +2753,43 @@
                         ` : ''}
                     </div>
                     
-                    <div class="post-content">
-                        <span id="postContent-${post.id}">${contentDisplay}</span>
-                        ${showReadMore ? `<span class="read-more" onclick="togglePostContent('${post.id}')">Read More</span>` : ''}
+                    <div class="post-content" id="postContent-${post.id}">
+                        <span id="postContentText-${post.id}">${contentDisplay}</span>
+                        ${showReadMore ? `
+                            <span class="read-more" onclick="togglePostContent('${post.id}')" id="readMoreBtn-${post.id}">Read More</span>
+                        ` : ''}
                     </div>
                     
                     ${post.image_url ? `<img src="${post.image_url}" alt="Post image" class="post-image">` : ''}
                     ${post.link_url ? `<a href="${post.link_url}" target="_blank" class="post-link">🔗 ${post.link_url}</a>` : ''}
                     
                     <div class="post-actions">
-                        <button onclick="toggleLikePost('${post.id}')" id="likeBtn-${post.id}">
+                        <button onclick="toggleLikePost('${post.id}')" id="likeBtn-${post.id}" class="${userLiked ? 'liked' : ''}">
                             <i class="fas fa-heart"></i> <span id="likeCount-${post.id}">${post.likes || 0}</span>
                         </button>
-                        <button onclick="toggleDislikePost('${post.id}')" id="dislikeBtn-${post.id}">
-                            <i class="fas fa-thumbs-down"></i> <span id="dislikeCount-${post.id}">${post.dislikes || 0}</span>
+                        <button onclick="toggleDislikePost('${post.id}')" id="dislikeBtn-${post.id}" class="${userDisliked ? 'disliked' : ''}">
+                            <i class="fas fa-heart" style="color:${userDisliked ? '#000000' : '#888'}"></i> <span id="dislikeCount-${post.id}">${post.dislikes || 0}</span>
                         </button>
                         <button onclick="togglePostComment(this)">
                             <i class="fas fa-comment"></i> <span id="commentCount-${post.id}">${post.comment_count || 0}</span>
                         </button>
                         <div class="share-btn">
                             <button onclick="toggleShareOptions('${post.id}')">
-                                <i class="fas fa-share"></i> <span id="shareCount-${post.id}">${shareCount}</span>
+                                <i class="fas fa-share"></i> <span id="shareCount-${post.id}">${post.share_count || 0}</span>
                             </button>
                             <div id="shareOptions-${post.id}" class="share-options">
                                 <div onclick="sharePost('${post.id}', 'external')">📤 Share External</div>
                                 <div onclick="sharePost('${post.id}', 'group')">📬 Repost to Group</div>
                             </div>
                         </div>
-                        <button onclick="shareContent()"><i class="fas fa-link"></i> Link</button>
                     </div>
                     
                     <div class="post-comments" id="comments-${post.id}">
                         <div id="commentList-${post.id}"></div>
-                        <input type="text" class="comment-input" placeholder="Write a comment..." id="commentInput-${post.id}">
-                        <button class="comment-send" onclick="addPostComment('${post.id}', this)">Post</button>
+                        <div class="comment-input-wrapper">
+                            <input type="text" class="comment-input" placeholder="Write a comment..." id="commentInput-${post.id}">
+                            <button class="comment-send" onclick="addPostComment('${post.id}', this)">Post</button>
+                        </div>
                     </div>
                     
                     <div class="post-edit" id="editPost-${post.id}">
@@ -2560,65 +2807,210 @@
         // POST INTERACTIONS
         // ================================================================
         function togglePostContent(postId) {
-            const contentSpan = document.getElementById(`postContent-${postId}`);
-            const post = document.querySelector(`#post-${postId}`);
-            if (!contentSpan || !post) return;
+            const contentSpan = document.getElementById(`postContentText-${postId}`);
+            const readMoreBtn = document.getElementById(`readMoreBtn-${postId}`);
+            if (!contentSpan || !readMoreBtn) return;
             
-            const fullContent = post.dataset.fullContent || contentSpan.textContent;
+            const fullContent = contentSpan.dataset.fullContent || contentSpan.textContent;
+            
             if (contentSpan.textContent.includes('...')) {
+                // Expand
                 contentSpan.textContent = fullContent;
-                post.dataset.fullContent = '';
+                contentSpan.dataset.fullContent = '';
+                readMoreBtn.textContent = 'Read Less';
+                readMoreBtn.className = 'read-less';
             } else {
-                post.dataset.fullContent = contentSpan.textContent;
+                // Collapse
+                contentSpan.dataset.fullContent = contentSpan.textContent;
                 contentSpan.textContent = contentSpan.textContent.substring(0, 150) + '...';
+                readMoreBtn.textContent = 'Read More';
+                readMoreBtn.className = 'read-more';
             }
         }
 
+        // ================================================================
+        // TOGGLE LIKE POST - FIXED (Prevents multiple likes)
+        // ================================================================
         async function toggleLikePost(postId) {
+            if (!AppState.userId) {
+                showToast('Please login first.', 'error');
+                return;
+            }
+
+            const btn = document.getElementById(`likeBtn-${postId}`);
+            const countSpan = document.getElementById(`likeCount-${postId}`);
+            if (!btn || !countSpan) return;
+
             try {
-                const btn = document.getElementById(`likeBtn-${postId}`);
-                const countSpan = document.getElementById(`likeCount-${postId}`);
-                if (!btn || !countSpan) return;
-                
-                btn.classList.toggle('liked');
-                let count = parseInt(countSpan.textContent) || 0;
-                
-                if (btn.classList.contains('liked')) {
-                    count++;
-                    await sb.from('social_posts').update({ likes: count }).eq('id', postId);
+                // Check if user already liked this post
+                const { data: existingLike, error: checkError } = await sb
+                    .from('social_post_likes')
+                    .select('*')
+                    .eq('post_id', postId)
+                    .eq('user_id', AppState.userId)
+                    .single();
+
+                if (checkError && checkError.code !== 'PGRST116') throw checkError;
+
+                if (existingLike) {
+                    // Remove like
+                    await sb.from('social_post_likes').delete()
+                        .eq('post_id', postId)
+                        .eq('user_id', AppState.userId);
+
+                    const { data: post } = await sb
+                        .from('social_posts')
+                        .select('likes')
+                        .eq('id', postId)
+                        .single();
+
+                    const newCount = Math.max(0, (post?.likes || 0) - 1);
+                    await sb.from('social_posts').update({ likes: newCount }).eq('id', postId);
+
+                    countSpan.textContent = newCount;
+                    btn.classList.remove('liked');
                 } else {
-                    count--;
-                    await sb.from('social_posts').update({ likes: count }).eq('id', postId);
+                    // Check if user has disliked this post
+                    const { data: existingDislike } = await sb
+                        .from('social_post_dislikes')
+                        .select('*')
+                        .eq('post_id', postId)
+                        .eq('user_id', AppState.userId)
+                        .single();
+
+                    if (existingDislike) {
+                        // Remove dislike first
+                        await sb.from('social_post_dislikes').delete()
+                            .eq('post_id', postId)
+                            .eq('user_id', AppState.userId);
+
+                        const { data: post } = await sb
+                            .from('social_posts')
+                            .select('dislikes')
+                            .eq('id', postId)
+                            .single();
+
+                        const newDislikeCount = Math.max(0, (post?.dislikes || 0) - 1);
+                        await sb.from('social_posts').update({ dislikes: newDislikeCount }).eq('id', postId);
+
+                        document.getElementById(`dislikeCount-${postId}`).textContent = newDislikeCount;
+                        document.getElementById(`dislikeBtn-${postId}`).classList.remove('disliked');
+                    }
+
+                    // Add like
+                    await sb.from('social_post_likes').insert({ post_id: postId, user_id: AppState.userId });
+
+                    const { data: post } = await sb
+                        .from('social_posts')
+                        .select('likes')
+                        .eq('id', postId)
+                        .single();
+
+                    const newCount = (post?.likes || 0) + 1;
+                    await sb.from('social_posts').update({ likes: newCount }).eq('id', postId);
+
+                    countSpan.textContent = newCount;
+                    btn.classList.add('liked');
                 }
-                countSpan.textContent = count;
+
                 updateViralScore(postId);
+
             } catch (err) {
                 console.error('Like error:', err);
-                showToast('Error updating like', 'error');
+                showToast('Error updating like: ' + err.message, 'error');
             }
         }
 
+        // ================================================================
+        // TOGGLE DISLIKE POST - FIXED (Prevents multiple dislikes)
+        // ================================================================
         async function toggleDislikePost(postId) {
+            if (!AppState.userId) {
+                showToast('Please login first.', 'error');
+                return;
+            }
+
+            const btn = document.getElementById(`dislikeBtn-${postId}`);
+            const countSpan = document.getElementById(`dislikeCount-${postId}`);
+            if (!btn || !countSpan) return;
+
             try {
-                const btn = document.getElementById(`dislikeBtn-${postId}`);
-                const countSpan = document.getElementById(`dislikeCount-${postId}`);
-                if (!btn || !countSpan) return;
-                
-                btn.classList.toggle('disliked');
-                let count = parseInt(countSpan.textContent) || 0;
-                
-                if (btn.classList.contains('disliked')) {
-                    count++;
-                    await sb.from('social_posts').update({ dislikes: count }).eq('id', postId);
+                // Check if user already disliked this post
+                const { data: existingDislike, error: checkError } = await sb
+                    .from('social_post_dislikes')
+                    .select('*')
+                    .eq('post_id', postId)
+                    .eq('user_id', AppState.userId)
+                    .single();
+
+                if (checkError && checkError.code !== 'PGRST116') throw checkError;
+
+                if (existingDislike) {
+                    // Remove dislike
+                    await sb.from('social_post_dislikes').delete()
+                        .eq('post_id', postId)
+                        .eq('user_id', AppState.userId);
+
+                    const { data: post } = await sb
+                        .from('social_posts')
+                        .select('dislikes')
+                        .eq('id', postId)
+                        .single();
+
+                    const newCount = Math.max(0, (post?.dislikes || 0) - 1);
+                    await sb.from('social_posts').update({ dislikes: newCount }).eq('id', postId);
+
+                    countSpan.textContent = newCount;
+                    btn.classList.remove('disliked');
                 } else {
-                    count--;
-                    await sb.from('social_posts').update({ dislikes: count }).eq('id', postId);
+                    // Check if user has liked this post
+                    const { data: existingLike } = await sb
+                        .from('social_post_likes')
+                        .select('*')
+                        .eq('post_id', postId)
+                        .eq('user_id', AppState.userId)
+                        .single();
+
+                    if (existingLike) {
+                        // Remove like first
+                        await sb.from('social_post_likes').delete()
+                            .eq('post_id', postId)
+                            .eq('user_id', AppState.userId);
+
+                        const { data: post } = await sb
+                            .from('social_posts')
+                            .select('likes')
+                            .eq('id', postId)
+                            .single();
+
+                        const newLikeCount = Math.max(0, (post?.likes || 0) - 1);
+                        await sb.from('social_posts').update({ likes: newLikeCount }).eq('id', postId);
+
+                        document.getElementById(`likeCount-${postId}`).textContent = newLikeCount;
+                        document.getElementById(`likeBtn-${postId}`).classList.remove('liked');
+                    }
+
+                    // Add dislike
+                    await sb.from('social_post_dislikes').insert({ post_id: postId, user_id: AppState.userId });
+
+                    const { data: post } = await sb
+                        .from('social_posts')
+                        .select('dislikes')
+                        .eq('id', postId)
+                        .single();
+
+                    const newCount = (post?.dislikes || 0) + 1;
+                    await sb.from('social_posts').update({ dislikes: newCount }).eq('id', postId);
+
+                    countSpan.textContent = newCount;
+                    btn.classList.add('disliked');
                 }
-                countSpan.textContent = count;
+
                 updateViralScore(postId);
+
             } catch (err) {
                 console.error('Dislike error:', err);
-                showToast('Error updating dislike', 'error');
+                showToast('Error updating dislike: ' + err.message, 'error');
             }
         }
 
@@ -2650,14 +3042,12 @@
                         showToast('📋 Link copied to clipboard!', 'success');
                     }
                 } else if (type === 'group') {
-                    // Repost to user's own group
                     const userGroups = AppState.groups.filter(g => g.owner_id === AppState.userId);
                     if (userGroups.length === 0) {
                         showToast('⚠️ You need to own a group to repost.', 'error');
                         return;
                     }
                     
-                    // Get original post data
                     const { data: post, error } = await sb
                         .from('social_posts')
                         .select('*')
@@ -2666,7 +3056,6 @@
                     
                     if (error) throw error;
                     
-                    // Create repost in user's first group
                     const newPost = {
                         group_id: userGroups[0].id,
                         user_id: AppState.userId,
@@ -2683,7 +3072,6 @@
                     
                     await sb.from('social_posts').insert(newPost);
                     
-                    // Increment share count on original
                     await sb.from('social_posts')
                         .update({ share_count: (post.share_count || 0) + 1 })
                         .eq('id', postId);
@@ -2787,15 +3175,14 @@
 
         function reportPost(postId) {
             showToast('🚨 Post reported to admin for review.', 'info');
-            // In production, this would create a report record
         }
 
         // ================================================================
-        // POST COMMENTS
+        // POST COMMENTS WITH LIKE AND REPLY
         // ================================================================
         async function loadPostComments(postId) {
             try {
-                const { data, error } = await sb
+                const { data: comments, error } = await sb
                     .from('social_comments')
                     .select('*')
                     .eq('post_id', postId)
@@ -2806,36 +3193,101 @@
                 const container = document.getElementById(`commentList-${postId}`);
                 if (!container) return;
                 
-                if (!data || data.length === 0) {
+                if (!comments || comments.length === 0) {
                     container.innerHTML = '<div style="color:var(--text-muted); font-size:13px; font-weight:700;">No comments yet.</div>';
                     return;
                 }
                 
-                container.innerHTML = data.map(comment => `
-                    <div class="comment-item">
-                        <strong>${comment.user_id === AppState.userId ? 'You' : 'User'}:</strong> ${comment.comment}
-                        <span style="font-size:11px; color:var(--text-muted);">${new Date(comment.created_at).toLocaleTimeString()}</span>
+                // Get comment likes for each comment
+                let commentLikes = {};
+                if (AppState.userId) {
+                    const commentIds = comments.map(c => c.id);
+                    const { data: likes } = await sb
+                        .from('social_comment_likes')
+                        .select('comment_id')
+                        .eq('user_id', AppState.userId)
+                        .in('comment_id', commentIds);
+                    commentLikes = likes?.reduce((acc, l) => { acc[l.comment_id] = true; return acc; }, {}) || {};
+                }
+                
+                container.innerHTML = comments.map(comment => `
+                    <div class="comment-item" id="comment-${comment.id}">
+                        <div>
+                            <span class="comment-author">${comment.user_id === AppState.userId ? 'You' : 'User'}</span>
+                            <span class="comment-text">${comment.comment}</span>
+                            <span class="comment-time">${new Date(comment.created_at).toLocaleTimeString()}</span>
+                        </div>
+                        <div class="comment-actions">
+                            <button onclick="toggleCommentLike('${comment.id}')" id="commentLikeBtn-${comment.id}" class="${commentLikes[comment.id] ? 'liked' : ''}">
+                                <i class="fas fa-heart"></i> <span id="commentLikeCount-${comment.id}">${comment.likes || 0}</span>
+                            </button>
+                            <button onclick="toggleCommentReply('${comment.id}')">💬 Reply</button>
+                        </div>
+                        <div class="comment-replies" id="commentReplies-${comment.id}">
+                            <!-- Replies will be loaded here -->
+                        </div>
+                        <div class="comment-reply-input" id="commentReplyInput-${comment.id}">
+                            <input type="text" placeholder="Write a reply..." id="replyInput-${comment.id}">
+                            <button onclick="addCommentReply('${comment.id}', '${postId}')">Post</button>
+                        </div>
                     </div>
                 `).join('');
+                
+                // Load replies for each comment
+                comments.forEach(comment => {
+                    loadCommentReplies(comment.id);
+                });
+                
             } catch (err) {
                 console.error('Load comments error:', err);
             }
         }
 
+        async function loadCommentReplies(commentId) {
+            try {
+                const { data: replies, error } = await sb
+                    .from('social_comment_replies')
+                    .select('*')
+                    .eq('comment_id', commentId)
+                    .order('created_at', { ascending: true });
+                
+                if (error) throw error;
+                
+                const container = document.getElementById(`commentReplies-${commentId}`);
+                if (!container) return;
+                
+                if (!replies || replies.length === 0) {
+                    container.innerHTML = '';
+                    return;
+                }
+                
+                container.innerHTML = replies.map(reply => `
+                    <div style="padding:4px 0; border-bottom: 1px solid #f5f5f5;">
+                        <span style="font-weight:800;">${reply.user_id === AppState.userId ? 'You' : 'User'}:</span>
+                        <span>${reply.reply}</span>
+                        <span style="font-size:10px; color:var(--text-muted);">${new Date(reply.created_at).toLocaleTimeString()}</span>
+                    </div>
+                `).join('');
+                
+            } catch (err) {
+                console.error('Load replies error:', err);
+            }
+        }
+
         async function addPostComment(postId, btn) {
-            const input = btn.closest('.post-comments').querySelector('.comment-input');
+            const input = document.getElementById(`commentInput-${postId}`);
             if (!input || !input.value) return;
             
             try {
                 const { data, error } = await sb.from('social_comments').insert({
                     post_id: postId,
                     user_id: AppState.userId,
-                    comment: input.value
+                    comment: input.value,
+                    likes: 0
                 });
                 
                 if (error) throw error;
                 
-                // Update comment count
                 const { data: post } = await sb
                     .from('social_posts')
                     .select('comment_count')
@@ -2854,6 +3306,79 @@
             } catch (err) {
                 console.error('Add comment error:', err);
                 showToast('Error adding comment: ' + err.message, 'error');
+            }
+        }
+
+        function toggleCommentReply(commentId) {
+            const replyInput = document.getElementById(`commentReplyInput-${commentId}`);
+            if (!replyInput) return;
+            replyInput.style.display = replyInput.style.display === 'block' ? 'none' : 'block';
+        }
+
+        async function addCommentReply(commentId, postId) {
+            const input = document.getElementById(`replyInput-${commentId}`);
+            if (!input || !input.value) return;
+            
+            try {
+                await sb.from('social_comment_replies').insert({
+                    comment_id: commentId,
+                    user_id: AppState.userId,
+                    reply: input.value
+                });
+                
+                input.value = '';
+                document.getElementById(`commentReplyInput-${commentId}`).style.display = 'none';
+                loadCommentReplies(commentId);
+                showToast('Reply added!', 'success');
+            } catch (err) {
+                console.error('Add reply error:', err);
+                showToast('Error adding reply: ' + err.message, 'error');
+            }
+        }
+
+        async function toggleCommentLike(commentId) {
+            if (!AppState.userId) {
+                showToast('Please login first.', 'error');
+                return;
+            }
+            
+            const btn = document.getElementById(`commentLikeBtn-${commentId}`);
+            const countSpan = document.getElementById(`commentLikeCount-${commentId}`);
+            if (!btn || !countSpan) return;
+            
+            try {
+                const { data: existing, error } = await sb
+                    .from('social_comment_likes')
+                    .select('*')
+                    .eq('comment_id', commentId)
+                    .eq('user_id', AppState.userId)
+                    .single();
+                
+                if (existing) {
+                    await sb.from('social_comment_likes').delete()
+                        .eq('comment_id', commentId)
+                        .eq('user_id', AppState.userId);
+                    
+                    const newCount = Math.max(0, parseInt(countSpan.textContent) - 1);
+                    countSpan.textContent = newCount;
+                    btn.classList.remove('liked');
+                    
+                    await sb.from('social_comments').update({ likes: newCount }).eq('id', commentId);
+                } else {
+                    await sb.from('social_comment_likes').insert({
+                        comment_id: commentId,
+                        user_id: AppState.userId
+                    });
+                    
+                    const newCount = (parseInt(countSpan.textContent) || 0) + 1;
+                    countSpan.textContent = newCount;
+                    btn.classList.add('liked');
+                    
+                    await sb.from('social_comments').update({ likes: newCount }).eq('id', commentId);
+                }
+            } catch (err) {
+                console.error('Comment like error:', err);
+                showToast('Error updating comment like: ' + err.message, 'error');
             }
         }
 
@@ -2939,7 +3464,7 @@
                 
                 // Time Score (30%)
                 const hoursSincePost = (Date.now() - new Date(post.created_at).getTime()) / (1000 * 60 * 60);
-                let timeScore = 100 - (hoursSincePost / 24) * 10; // 10% decay per day
+                let timeScore = 100 - (hoursSincePost / 24) * 10;
                 timeScore = Math.max(0, timeScore);
                 
                 // Raw Score
@@ -2949,7 +3474,6 @@
                 let penalty = 0;
                 if (post.dislikes > 100) penalty = 0.10;
                 else if (post.dislikes > 50) penalty = 0.05;
-                // If dislikes > likes * 0.5, small penalty
                 if (post.dislikes > post.likes * 0.5 && post.dislikes > 5) {
                     penalty = Math.max(penalty, 0.05);
                 }
@@ -2988,31 +3512,111 @@
             }
         }
 
+        // ================================================================
+        // TRENDING CONTENT - WITH CLASS/SOCIAL TABS
+        // ================================================================
         async function loadGlobalTrending() {
             try {
-                const { data, error } = await sb
-                    .from('global_trending_posts')
-                    .select('*, social_posts(*)')
+                const container = document.getElementById('globalTrendingContainer');
+                const tabsContainer = document.getElementById('trendingTabsContainer');
+                if (!container || !tabsContainer) return;
+                
+                // Create tabs
+                tabsContainer.innerHTML = `
+                    <div class="trending-tabs">
+                        <button class="trending-tab active" onclick="switchTrendingTab('class', this)" data-tab="class">📚 Class</button>
+                        <button class="trending-tab" onclick="switchTrendingTab('social', this)" data-tab="social">🗣️ Social</button>
+                    </div>
+                `;
+                
+                // Load default tab (Class)
+                await loadTrendingContent('class');
+                
+            } catch (err) {
+                console.error('Global trending error:', err);
+            }
+        }
+
+        async function switchTrendingTab(tab, btn) {
+            document.querySelectorAll('.trending-tab').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+            AppState.currentTrendingTab = tab;
+            await loadTrendingContent(tab);
+        }
+
+        async function loadTrendingContent(tab) {
+            const container = document.getElementById('globalTrendingContainer');
+            if (!container) return;
+            
+            container.innerHTML = '<div class="loading">Loading trending content...</div>';
+            
+            try {
+                const groupPurpose = tab === 'class' ? 'teaching' : 'social';
+                
+                // Get posts from groups with the selected purpose
+                const { data: posts, error } = await sb
+                    .from('social_posts')
+                    .select(`
+                        *,
+                        groups!inner(id, name, group_purpose, profile_pic_url)
+                    `)
+                    .eq('groups.group_purpose', groupPurpose)
+                    .neq('viral_level', 'normal')
                     .order('viral_score', { ascending: false })
-                    .limit(5);
+                    .limit(10);
                 
                 if (error) throw error;
                 
-                const container = document.getElementById('globalTrendingContainer');
-                if (!container) return;
-                
-                if (!data || data.length === 0) {
-                    container.innerHTML = '<div class="loading" style="color:var(--text-muted);">No trending content yet.</div>';
+                if (!posts || posts.length === 0) {
+                    // If no viral content, show normal content
+                    const { data: normalPosts, error: normalError } = await sb
+                        .from('social_posts')
+                        .select(`
+                            *,
+                            groups!inner(id, name, group_purpose, profile_pic_url)
+                        `)
+                        .eq('groups.group_purpose', groupPurpose)
+                        .order('created_at', { ascending: false })
+                        .limit(5);
+                    
+                    if (normalError) throw normalError;
+                    
+                    if (!normalPosts || normalPosts.length === 0) {
+                        container.innerHTML = `
+                            <div style="text-align:center; color:var(--text-muted); padding:20px; font-weight:700;">
+                                📝 No content available for ${tab === 'class' ? 'Class' : 'Social'} groups yet.
+                            </div>
+                        `;
+                        return;
+                    }
+                    
+                    container.innerHTML = `
+                        <div style="text-align:center; color:var(--text-muted); padding:8px; font-size:13px; font-weight:700;">
+                            📝 No viral content yet. Showing recent posts.
+                        </div>
+                        ${normalPosts.map(post => `
+                            <div class="feed-card" onclick="openTabContent('group-feed', ${post.groups.id})" style="cursor:pointer;">
+                                <div class="info">
+                                    <h4>📌 ${post.content ? post.content.substring(0, 60) + (post.content.length > 60 ? '...' : '') : 'Recent Post'}</h4>
+                                    <p>${post.groups.name} • ${post.likes || 0} likes • ${post.comment_count || 0} comments</p>
+                                </div>
+                                <button class="action-btn">View</button>
+                            </div>
+                        `).join('')}
+                    `;
                     return;
                 }
                 
-                container.innerHTML = data.map(item => {
-                    const post = item.social_posts;
+                container.innerHTML = posts.map(post => {
+                    const levelEmoji = post.viral_level === 'super_viral' ? '⭐' : post.viral_level === 'viral' ? '💎' : post.viral_level === 'trending' ? '🔥' : '⬆️';
+                    const levelName = post.viral_level || 'Viral';
+                    
                     return `
-                        <div class="feed-card" onclick="openTabContent('group-feed', ${post.group_id})" style="cursor:pointer;">
+                        <div class="feed-card" onclick="openTabContent('group-feed', ${post.groups.id})" style="cursor:pointer; border-left: 4px solid ${post.viral_level === 'super_viral' ? '#f59e0b' : post.viral_level === 'viral' ? '#8b5cf6' : post.viral_level === 'trending' ? '#f97316' : '#f59e0b'};">
                             <div class="info">
-                                <h4>🔥 ${post.content ? post.content.substring(0, 40) + '...' : 'Trending Post'}</h4>
-                                <p>${post.viral_level || 'Viral'} • ${post.likes || 0} likes • ${post.comment_count || 0} comments</p>
+                                <h4>${levelEmoji} ${levelName} • ${post.groups.name}</h4>
+                                <p>${post.content ? post.content.substring(0, 80) + (post.content.length > 80 ? '...' : '') : 'Trending Post'}</p>
+                                <p style="font-size:12px; color:var(--text-muted);">❤️ ${post.likes || 0} • 💬 ${post.comment_count || 0} • 📤 ${post.share_count || 0} • 👁️ ${post.views || 0}</p>
                             </div>
                             <button class="action-btn">View</button>
                         </div>
@@ -3020,7 +3624,8 @@
                 }).join('');
                 
             } catch (err) {
-                console.error('Global trending error:', err);
+                console.error('Load trending content error:', err);
+                container.innerHTML = '<div class="loading" style="color:var(--red-error);">Failed to load trending content</div>';
             }
         }
 
@@ -3088,7 +3693,6 @@
                 return;
             }
             
-            // Show subscription options modal
             const modal = document.createElement('div');
             modal.className = 'modal active';
             modal.innerHTML = `
@@ -3687,6 +4291,27 @@
 
         function openResearch(researchId) {
             showToast('📖 Opening research...', 'info');
+        }
+
+        // ================================================================
+        // GROUP SETTINGS (Pen Icon)
+        // ================================================================
+        function showGroupSettings() {
+            if (!AppState.isGroupOwner && !AppState.isAdmin) {
+                showToast('❌ Only the group owner or admin can access settings.', 'error');
+                return;
+            }
+            showModal('groupSettingsModal');
+        }
+
+        function deleteGroupFromSettings() {
+            const groupId = AppState.currentGroupId;
+            if (!groupId) {
+                showToast('❌ No group found.', 'error');
+                return;
+            }
+            closeModal('groupSettingsModal');
+            deleteGroup(groupId);
         }
 
         // ================================================================
@@ -4728,7 +5353,7 @@
                 
                 <div class="card" style="border:2px solid var(--gold);">
                     <h3 style="color:var(--gold);">💳 Platform Wallet & Stats</h3>
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px;">
                         <div style="background:var(--card-bg); padding:12px; border-radius:12px; text-align:center;">
                             <div style="font-size:12px; color:var(--text-muted); font-weight:700;">💰 Balance</div>
                             <div style="font-size:20px; font-weight:900; color:var(--gold);">${platformBalance} Coins</div>
@@ -4744,6 +5369,14 @@
                         <div style="background:var(--card-bg); padding:12px; border-radius:12px; text-align:center;">
                             <div style="font-size:12px; color:var(--text-muted); font-weight:700;">📊 Commission Earned</div>
                             <div style="font-size:20px; font-weight:900; color:var(--green-success);">${totalCommission} Coins</div>
+                        </div>
+                        <div style="background:var(--card-bg); padding:12px; border-radius:12px; text-align:center;">
+                            <div style="font-size:12px; color:var(--text-muted); font-weight:700;">📈 Total Revenue</div>
+                            <div style="font-size:20px; font-weight:900; color:var(--gold);">≈ ${Math.round(totalCommission / 10)} ETB</div>
+                        </div>
+                        <div style="background:var(--card-bg); padding:12px; border-radius:12px; text-align:center;">
+                            <div style="font-size:12px; color:var(--text-muted); font-weight:700;">👥 Total Users</div>
+                            <div style="font-size:20px; font-weight:900; color:var(--navy);">${AppState.groups.length > 0 ? AppState.groups.reduce((acc, g) => acc + (g.followers || 0), 0) + 1 : 1}</div>
                         </div>
                     </div>
                     <button class="btn" style="margin-top:12px;" onclick="showModal('platformWithdrawModal')">📥 Withdraw Platform Funds</button>
@@ -4811,7 +5444,6 @@
         }
 
         async function loadAppeals() {
-            // Load pending book appeals and research
             try {
                 const [booksResult, researchResult] = await Promise.all([
                     sb.from('bstore_books').select('*').eq('status', 'pending'),
@@ -5057,6 +5689,36 @@
             } catch (err) {
                 console.error('Create calculator error:', err);
                 showToast('Error creating calculator: ' + err.message, 'error');
+            }
+        }
+
+        // ================================================================
+        // PLATFORM WITHDRAWAL
+        // ================================================================
+        async function submitPlatformWithdraw() {
+            const amount = parseInt(document.getElementById('platformWithdrawAmount')?.value);
+            if (!amount || amount < 10000) {
+                showToast('Minimum withdrawal is 10,000 Coins.', 'error');
+                return;
+            }
+            
+            try {
+                const { error } = await sb.from('platform_transactions').insert({
+                    type: 'withdraw',
+                    amount: amount,
+                    description: 'Platform withdrawal requested',
+                    status: 'pending'
+                });
+                
+                if (error) throw error;
+                
+                showToast('📤 Withdrawal request sent!', 'success');
+                closeModal('platformWithdrawModal');
+                loadAdminPanel();
+                
+            } catch (err) {
+                console.error('Withdraw error:', err);
+                showToast('Error processing withdrawal: ' + err.message, 'error');
             }
         }
 
