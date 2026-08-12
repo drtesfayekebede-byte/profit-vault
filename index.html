@@ -1637,20 +1637,34 @@
             document.body.appendChild(m);
         }
 
-        async function login() {
-            const email = document.getElementById('authEmail')?.value; 
-            const password = document.getElementById('authPassword')?.value;
-            if (!email || !password) return showToast('Email and password required', 'error');
-            try {
-                const { error } = await sb.auth.signInWithPassword({ email, password });
-                if (error) throw error;
-                const modal = document.getElementById('authModal');
-                if (modal) modal.remove();
-                window.location.reload();
-            } catch (err) {
-                showToast(err.message, 'error');
+async function login() {
+    const email = document.getElementById('authEmail')?.value; 
+    const password = document.getElementById('authPassword')?.value;
+    if (!email || !password) {
+        showToast('Email and password required', 'error');
+        return;
+    }
+    try {
+        const { data, error } = await sb.auth.signInWithPassword({ email, password });
+        if (error) {
+            // Check if error is due to email not confirmed
+            if (error.message.includes('Email not confirmed')) {
+                showToast('⚠️ Please confirm your email before logging in. Check your inbox.', 'error');
+                // Option to resend confirmation
+                await sb.auth.resend({ type: 'signup', email });
+                showToast('📨 Confirmation email resent!', 'info');
+            } else {
+                showToast('❌ ' + error.message, 'error');
             }
+            return;
         }
+        const modal = document.getElementById('authModal');
+        if (modal) modal.remove();
+        window.location.reload();
+    } catch (err) {
+        showToast('❌ ' + err.message, 'error');
+    }
+}
 
         async function register() {
             const email = document.getElementById('authEmail')?.value; 
@@ -3544,91 +3558,107 @@
             await loadTrendingContent(tab);
         }
 
-        async function loadTrendingContent(tab) {
-            const container = document.getElementById('globalTrendingContainer');
-            if (!container) return;
-            
-            container.innerHTML = '<div class="loading">Loading trending content...</div>';
-            
-            try {
-                const groupPurpose = tab === 'class' ? 'teaching' : 'social';
-                
-                // Get posts from groups with the selected purpose
-                const { data: posts, error } = await sb
-                    .from('social_posts')
-                    .select(`
-                        *,
-                        groups!inner(id, name, group_purpose, profile_pic_url)
-                    `)
-                    .eq('groups.group_purpose', groupPurpose)
-                    .neq('viral_level', 'normal')
-                    .order('viral_score', { ascending: false })
-                    .limit(10);
-                
-                if (error) throw error;
-                
-                if (!posts || posts.length === 0) {
-                    // If no viral content, show normal content
-                    const { data: normalPosts, error: normalError } = await sb
-                        .from('social_posts')
-                        .select(`
-                            *,
-                            groups!inner(id, name, group_purpose, profile_pic_url)
-                        `)
-                        .eq('groups.group_purpose', groupPurpose)
-                        .order('created_at', { ascending: false })
-                        .limit(5);
-                    
-                    if (normalError) throw normalError;
-                    
-                    if (!normalPosts || normalPosts.length === 0) {
-                        container.innerHTML = `
-                            <div style="text-align:center; color:var(--text-muted); padding:20px; font-weight:700;">
-                                📝 No content available for ${tab === 'class' ? 'Class' : 'Social'} groups yet.
-                            </div>
-                        `;
-                        return;
-                    }
-                    
-                    container.innerHTML = `
-                        <div style="text-align:center; color:var(--text-muted); padding:8px; font-size:13px; font-weight:700;">
-                            📝 No viral content yet. Showing recent posts.
-                        </div>
-                        ${normalPosts.map(post => `
-                            <div class="feed-card" onclick="openTabContent('group-feed', ${post.groups.id})" style="cursor:pointer;">
-                                <div class="info">
-                                    <h4>📌 ${post.content ? post.content.substring(0, 60) + (post.content.length > 60 ? '...' : '') : 'Recent Post'}</h4>
-                                    <p>${post.groups.name} • ${post.likes || 0} likes • ${post.comment_count || 0} comments</p>
-                                </div>
-                                <button class="action-btn">View</button>
-                            </div>
-                        `).join('')}
-                    `;
-                    return;
-                }
-                
-                container.innerHTML = posts.map(post => {
-                    const levelEmoji = post.viral_level === 'super_viral' ? '⭐' : post.viral_level === 'viral' ? '💎' : post.viral_level === 'trending' ? '🔥' : '⬆️';
-                    const levelName = post.viral_level || 'Viral';
-                    
-                    return `
-                        <div class="feed-card" onclick="openTabContent('group-feed', ${post.groups.id})" style="cursor:pointer; border-left: 4px solid ${post.viral_level === 'super_viral' ? '#f59e0b' : post.viral_level === 'viral' ? '#8b5cf6' : post.viral_level === 'trending' ? '#f97316' : '#f59e0b'};">
-                            <div class="info">
-                                <h4>${levelEmoji} ${levelName} • ${post.groups.name}</h4>
-                                <p>${post.content ? post.content.substring(0, 80) + (post.content.length > 80 ? '...' : '') : 'Trending Post'}</p>
-                                <p style="font-size:12px; color:var(--text-muted);">❤️ ${post.likes || 0} • 💬 ${post.comment_count || 0} • 📤 ${post.share_count || 0} • 👁️ ${post.views || 0}</p>
-                            </div>
-                            <button class="action-btn">View</button>
-                        </div>
-                    `;
-                }).join('');
-                
-            } catch (err) {
-                console.error('Load trending content error:', err);
-                container.innerHTML = '<div class="loading" style="color:var(--red-error);">Failed to load trending content</div>';
-            }
+async function loadTrendingContent(tab) {
+    const container = document.getElementById('globalTrendingContainer');
+    if (!container) return;
+    
+    container.innerHTML = '<div class="loading">Loading trending content...</div>';
+    
+    try {
+        const groupPurpose = tab === 'class' ? 'teaching' : 'social';
+        
+        // First, get groups of the selected purpose
+        const { data: groups, error: groupsError } = await sb
+            .from('groups')
+            .select('id, name, group_purpose')
+            .eq('group_purpose', groupPurpose);
+        
+        if (groupsError) throw groupsError;
+        
+        if (!groups || groups.length === 0) {
+            container.innerHTML = `
+                <div style="text-align:center; color:var(--text-muted); padding:20px; font-weight:700;">
+                    📝 No ${tab === 'class' ? 'Teaching' : 'Social'} groups yet.
+                </div>
+            `;
+            return;
         }
-
+        
+        const groupIds = groups.map(g => g.id);
+        const groupMap = groups.reduce((acc, g) => { acc[g.id] = g; return acc; }, {});
+        
+        // Get viral posts from these groups
+        const { data: posts, error: postsError } = await sb
+            .from('social_posts')
+            .select('*')
+            .in('group_id', groupIds)
+            .neq('viral_level', 'normal')
+            .order('viral_score', { ascending: false })
+            .limit(10);
+        
+        if (postsError) throw postsError;
+        
+        if (!posts || posts.length === 0) {
+            // Show normal posts instead
+            const { data: normalPosts, error: normalError } = await sb
+                .from('social_posts')
+                .select('*')
+                .in('group_id', groupIds)
+                .order('created_at', { ascending: false })
+                .limit(5);
+            
+            if (normalError) throw normalError;
+            
+            if (!normalPosts || normalPosts.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align:center; color:var(--text-muted); padding:20px; font-weight:700;">
+                        📝 No posts in ${tab === 'class' ? 'Teaching' : 'Social'} groups yet.
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = `
+                <div style="text-align:center; color:var(--text-muted); padding:8px; font-size:13px; font-weight:700;">
+                    📝 No viral content yet. Showing recent posts.
+                </div>
+                ${normalPosts.map(post => `
+                    <div class="feed-card" onclick="openTabContent('group-feed', ${post.group_id})" style="cursor:pointer;">
+                        <div class="info">
+                            <h4>📌 ${post.content ? post.content.substring(0, 60) + (post.content.length > 60 ? '...' : '') : 'Recent Post'}</h4>
+                            <p>${groupMap[post.group_id]?.name || 'Group'} • ${post.likes || 0} likes • ${post.comment_count || 0} comments</p>
+                        </div>
+                        <button class="action-btn">View</button>
+                    </div>
+                `).join('')}
+            `;
+            return;
+        }
+        
+        container.innerHTML = posts.map(post => {
+            const levelEmoji = post.viral_level === 'super_viral' ? '⭐' : 
+                              post.viral_level === 'viral' ? '💎' : 
+                              post.viral_level === 'trending' ? '🔥' : '⬆️';
+            const levelName = post.viral_level || 'Viral';
+            const group = groupMap[post.group_id];
+            
+            return `
+                <div class="feed-card" onclick="openTabContent('group-feed', ${post.group_id})" style="cursor:pointer; border-left: 4px solid ${post.viral_level === 'super_viral' ? '#f59e0b' : post.viral_level === 'viral' ? '#8b5cf6' : post.viral_level === 'trending' ? '#f97316' : '#f59e0b'};">
+                    <div class="info">
+                        <h4>${levelEmoji} ${levelName} • ${group?.name || 'Unknown Group'}</h4>
+                        <p>${post.content ? post.content.substring(0, 80) + (post.content.length > 80 ? '...' : '') : 'Trending Post'}</p>
+                        <p style="font-size:12px; color:var(--text-muted);">❤️ ${post.likes || 0} • 💬 ${post.comment_count || 0} • 📤 ${post.share_count || 0}</p>
+                    </div>
+                    <button class="action-btn">View</button>
+                </div>
+            `;
+        }).join('');
+        
+    } catch (err) {
+        console.error('Load trending content error:', err);
+        container.innerHTML = '<div class="loading" style="color:var(--red-error);">Failed to load trending content</div>';
+    }
+}
         // ================================================================
         // B-STORE FUNCTIONS
         // ================================================================
