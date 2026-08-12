@@ -29,7 +29,20 @@
         @media (max-width: 400px) { :root { --header-height: 52px; --footer-height: 52px; } }
 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-textarea { text-align: left; vertical-align: top; }
+        
+        /* FIX: Textarea alignment */
+        textarea,
+        .modal-content textarea,
+        #postContent,
+        .comment-input,
+        .post-comments textarea,
+        .comment-item textarea {
+            text-align: left !important;
+            vertical-align: top !important;
+            padding: 12px !important;
+            line-height: 1.6 !important;
+        }
+
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         @keyframes pulseRed { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
@@ -87,11 +100,18 @@ textarea { text-align: left; vertical-align: top; }
         .app-grid-wrapper { display: flex; flex-direction: column; gap: 16px; }
 
         .welcome-banner { background: var(--navy); border-radius: var(--border-radius-card); padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; width: 100%; box-shadow: 0 4px 12px rgba(0,0,0,0.2); flex-wrap: wrap; gap: 12px; }
-        .welcome-banner h2 { color: var(--gold); font-size: 20px; font-weight: 900; }
+        .welcome-banner h2 { color: var(--gold); font-size: 20px; font-weight: 900; display: flex; align-items: center; gap: 6px; }
         .welcome-banner p { color: rgba(255,255,255,0.8); font-size: 14px; font-weight: 700; }
         .welcome-banner .btn-go { background: var(--gold); color: var(--text-dark); padding: 8px 16px; border-radius: 30px; font-weight: 800; font-size: 13px; border: none; cursor: pointer; transition: 0.2s; }
         .welcome-banner .btn-go:hover { background: var(--gold-dark); transform: scale(1.02); }
-        .welcome-banner .verification-status { display: none; color: var(--gold); font-weight: 800; font-size: 14px; }
+        
+        /* Verification Badge - Gold Star Only */
+        .verification-star {
+            color: var(--gold);
+            font-size: 18px;
+            margin-left: 4px;
+            display: inline-block;
+        }
 
         .ticker-container { background: var(--navy-light); border-radius: 12px; padding: 8px 16px; overflow: hidden; white-space: nowrap; width: 100%; }
         .ticker-text { display: inline-block; animation: slideIn 20s linear infinite; color: var(--gold); font-weight: 800; font-size: 13px; }
@@ -109,7 +129,7 @@ textarea { text-align: left; vertical-align: top; }
         .feed-card:hover { background: var(--card-hover); box-shadow: 0 4px 12px rgba(10, 37, 64, 0.06); }
         .feed-card .info h4 { color: var(--text-dark); font-size: 15px; font-weight: 800; }
         .feed-card .info p { color: var(--text-muted); font-size: 13px; margin-top: 4px; font-weight: 700; }
-        .feed-card .action-btn { background: var(--teal); color: white; padding: 6px 14px; border-radius: 30px; font-weight: 800; font-size: 12px; border: none; cursor: pointer; }
+        .feed-card .action-btn { background: var(--teal); color: white; padding: 8px 18px; border-radius: 30px; font-weight: 800; font-size: 13px; border: none; cursor: pointer; }
 
         .app-footer { flex-shrink: 0; width: 100%; z-index: 99; background: var(--navy); box-shadow: 0 -4px 10px rgba(0,0,0,0.1); padding: 10px 16px; height: var(--footer-height); display: flex; align-items: center; }
         .app-footer-tabs { display: flex; justify-content: space-around; align-items: center; overflow-x: auto; padding: 4px 2px; max-width: 700px; margin: 0 auto; width: 100%; scrollbar-width: none; }
@@ -194,11 +214,11 @@ textarea { text-align: left; vertical-align: top; }
         .content-card:hover .delete-btn { display: block; }
         .content-card .watermark { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); color: rgba(255,255,255,0.2); font-size: 10px; font-weight: 700; pointer-events: none; user-select: none; }
 
-        /* POST CARDS - SOCIAL & TEACHING */
+        /* POST CARDS - FIXED: Bigger, Bolder Buttons */
         .post-card .post-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
         .post-card .post-header .post-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--teal); display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 18px; overflow: hidden; }
         .post-card .post-header .post-avatar img { width: 100%; height: 100%; object-fit: cover; }
-        .post-card .post-header .post-name { font-weight: 800; color: var(--text-dark); }
+        .post-card .post-header .post-name { font-weight: 800; color: var(--text-dark); font-size: 15px; }
         .post-card .post-header .post-time { font-size: 12px; color: var(--text-muted); font-weight: 700; }
         .post-card .post-header .post-actions-btn { background: none; border: none; font-size: 16px; cursor: pointer; color: var(--text-muted); padding: 4px 8px; }
         .post-card .post-content { font-size: 15px; color: var(--text-dark); margin-bottom: 10px; font-weight: 700; word-wrap: break-word; white-space: pre-wrap; }
@@ -206,16 +226,57 @@ textarea { text-align: left; vertical-align: top; }
         .post-card .post-content .read-less { color: var(--teal); cursor: pointer; font-weight: 800; }
         .post-card .post-image { width: 100%; border-radius: 8px; margin-bottom: 10px; max-height: 400px; object-fit: cover; }
         .post-card .post-link { color: var(--teal); text-decoration: underline; font-weight: 700; word-break: break-all; }
-        .post-card .post-actions { display: flex; gap: 16px; border-top: 1px solid #eee; padding-top: 10px; flex-wrap: wrap; align-items: center; }
-        .post-card .post-actions button { background: none; border: none; font-size: 14px; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 5px; font-weight: 700; transition: 0.2s; padding: 4px 8px; border-radius: 8px; }
-        .post-card .post-actions button:hover { background: var(--card-hover); }
-        .post-card .post-actions button.liked { color: var(--red-error); }
-        .post-card .post-actions button.liked i { animation: heartBeat 0.3s; }
-        .post-card .post-actions button.disliked { color: #000000; }
+        
+        /* FIX: Post action buttons - Bigger, Bolder, More Spacing */
+        .post-card .post-actions { 
+            display: flex; 
+            gap: 20px; 
+            border-top: 1px solid #eee; 
+            padding-top: 14px; 
+            flex-wrap: wrap; 
+            align-items: center; 
+            margin-top: 4px;
+        }
+        .post-card .post-actions button { 
+            background: none; 
+            border: none; 
+            font-size: 16px; 
+            font-weight: 800; 
+            color: var(--text-muted); 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            padding: 8px 14px; 
+            border-radius: 30px; 
+            transition: 0.2s; 
+            min-height: 44px;
+            min-width: 60px;
+        }
+        .post-card .post-actions button:hover { 
+            background: var(--card-hover); 
+        }
+        .post-card .post-actions button.liked { 
+            color: var(--red-error); 
+        }
+        .post-card .post-actions button.liked i { 
+            animation: heartBeat 0.3s; 
+        }
+        .post-card .post-actions button.disliked { 
+            color: #000000; 
+        }
+        .post-card .post-actions button i { 
+            font-size: 20px; 
+        }
+        .post-card .post-actions button span { 
+            font-size: 15px; 
+            font-weight: 800; 
+        }
+        
         .post-card .post-actions .share-btn { position: relative; }
-        .post-card .post-actions .share-options { display: none; position: absolute; bottom: 30px; background: white; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); padding: 8px 0; z-index: 100; min-width: 150px; border: 1px solid #eee; }
+        .post-card .post-actions .share-options { display: none; position: absolute; bottom: 40px; background: white; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); padding: 8px 0; z-index: 100; min-width: 180px; border: 1px solid #eee; }
         .post-card .post-actions .share-options.show { display: block; }
-        .post-card .post-actions .share-options div { padding: 10px 16px; cursor: pointer; font-weight: 700; font-size: 13px; border-bottom: 1px solid #f1f1f1; }
+        .post-card .post-actions .share-options div { padding: 10px 16px; cursor: pointer; font-weight: 700; font-size: 14px; border-bottom: 1px solid #f1f1f1; }
         .post-card .post-actions .share-options div:last-child { border-bottom: none; }
         .post-card .post-actions .share-options div:hover { background: #f8fafc; }
         .post-card .post-actions .pin-btn { color: var(--gold); }
@@ -227,7 +288,7 @@ textarea { text-align: left; vertical-align: top; }
         .post-card .post-comments .comment-item .comment-text { font-weight: 700; color: var(--text-dark); margin: 2px 0; }
         .post-card .post-comments .comment-item .comment-time { font-size: 11px; color: var(--text-muted); font-weight: 700; }
         .post-card .post-comments .comment-item .comment-actions { display: flex; gap: 12px; margin-top: 4px; }
-        .post-card .post-comments .comment-item .comment-actions button { background: none; border: none; font-size: 12px; color: var(--text-muted); cursor: pointer; font-weight: 700; padding: 2px 6px; }
+        .post-card .post-comments .comment-item .comment-actions button { background: none; border: none; font-size: 13px; color: var(--text-muted); cursor: pointer; font-weight: 700; padding: 4px 10px; border-radius: 20px; }
         .post-card .post-comments .comment-item .comment-actions button.liked { color: var(--red-error); }
         .post-card .post-comments .comment-item .comment-actions button.disliked { color: #000000; }
         .post-card .post-comments .comment-item .comment-replies { margin-left: 30px; margin-top: 8px; }
@@ -235,8 +296,8 @@ textarea { text-align: left; vertical-align: top; }
         .post-card .post-comments .comment-item .comment-reply-input input { width: 80%; padding: 6px 10px; border: 1px solid #eee; border-radius: 20px; font-weight: 700; font-size: 13px; }
         .post-card .post-comments .comment-item .comment-reply-input button { background: var(--teal); color: white; border: none; padding: 4px 12px; border-radius: 20px; font-weight: 800; cursor: pointer; }
         .post-card .post-comments .comment-input-wrapper { display: flex; gap: 8px; margin-top: 8px; }
-        .post-card .post-comments .comment-input-wrapper input { flex: 1; padding: 8px 12px; border: 1px solid #eee; border-radius: 20px; font-weight: 700; font-size: 14px; }
-        .post-card .post-comments .comment-input-wrapper button { background: var(--teal); color: white; border: none; padding: 6px 16px; border-radius: 20px; font-weight: 800; cursor: pointer; }
+        .post-card .post-comments .comment-input-wrapper input { flex: 1; padding: 10px 14px; border: 1px solid #eee; border-radius: 20px; font-weight: 700; font-size: 14px; }
+        .post-card .post-comments .comment-input-wrapper button { background: var(--teal); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 800; cursor: pointer; font-size: 14px; }
         .post-card .viral-badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: 900; margin-left: 8px; }
         .post-card .viral-badge.super { background: linear-gradient(135deg, #f59e0b, #ef4444); color: white; }
         .post-card .viral-badge.viral { background: #8b5cf6; color: white; }
@@ -264,10 +325,11 @@ textarea { text-align: left; vertical-align: top; }
         .exam-timer.warning .timer { color: var(--red-error); }
 
         .join-header h2 { color: var(--navy); font-size: 20px; font-weight: 900; margin-bottom: 16px; }
-        .teacher-card { display: flex; justify-content: space-between; align-items: center; }
+        .teacher-card { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; margin-bottom: 12px; transition: all 0.3s ease; }
+        .teacher-card:hover { background: var(--card-hover); box-shadow: 0 4px 12px rgba(10, 37, 64, 0.06); }
         .teacher-card .info .name { font-weight: 800; color: var(--text-dark); font-size: 16px; }
         .teacher-card .info .spec { color: var(--text-muted); font-size: 13px; font-weight: 700; }
-        .teacher-card .join-btn { background: var(--teal); color: white; border: none; padding: 6px 16px; border-radius: 30px; font-weight: 800; cursor: pointer; }
+        .teacher-card .join-btn { background: var(--teal); color: white; border: none; padding: 8px 18px; border-radius: 30px; font-weight: 800; cursor: pointer; font-size: 14px; min-height: 40px; }
         .teacher-card .join-btn.joined { background: var(--green-success); }
 
         .books-header h2 { color: var(--navy); font-size: 20px; font-weight: 900; margin-bottom: 12px; }
@@ -292,7 +354,7 @@ textarea { text-align: left; vertical-align: top; }
         .job-card .title { font-weight: 800; color: var(--text-dark); font-size: 16px; }
         .job-card .details { font-size: 13px; color: var(--text-muted); margin: 4px 0; display: flex; flex-wrap: wrap; gap: 8px; font-weight: 700; }
         .job-card .details span { background: #f8fafc; padding: 2px 8px; border-radius: 12px; }
-        .job-card .apply-btn { background: var(--green-success); color: white; border: none; padding: 6px 16px; border-radius: 30px; font-weight: 800; cursor: pointer; margin-top: 8px; width: 100%; }
+        .job-card .apply-btn { background: var(--green-success); color: white; border: none; padding: 8px 16px; border-radius: 30px; font-weight: 800; cursor: pointer; margin-top: 8px; width: 100%; font-size: 14px; }
         .job-card .job-actions { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
         .job-card .job-actions button { background: none; border: none; font-size: 13px; cursor: pointer; font-weight: 700; padding: 4px 12px; border-radius: 20px; transition: 0.2s; }
         .job-card .job-actions .edit-job { background: var(--gold); color: var(--text-dark); }
@@ -308,7 +370,7 @@ textarea { text-align: left; vertical-align: top; }
         .research-card .tag.free { background: var(--green-success); color: white; }
         .research-card .tag.premium { background: var(--gold); color: var(--text-dark); }
         .research-card .tag.pending { background: #f59e0b; color: white; }
-        .research-card .read-btn { background: var(--teal); color: white; border: none; padding: 4px 14px; border-radius: 20px; font-weight: 800; cursor: pointer; }
+        .research-card .read-btn { background: var(--teal); color: white; border: none; padding: 6px 16px; border-radius: 20px; font-weight: 800; cursor: pointer; }
         .research-card .research-actions { display: flex; gap: 8px; flex-wrap: wrap; }
         .research-card .research-actions button { background: none; border: none; font-size: 12px; cursor: pointer; font-weight: 700; padding: 4px 12px; border-radius: 20px; transition: 0.2s; }
         .research-card .research-actions .edit-research { background: var(--gold); color: var(--text-dark); }
@@ -345,7 +407,7 @@ textarea { text-align: left; vertical-align: top; }
         .btn:hover { background: var(--gold-dark); }
         .btn-teal { background: var(--teal); color: white; }
         .btn-danger { background: var(--red-error); color: white; }
-        .btn-sm { padding: 6px 16px; border: none; border-radius: 20px; font-weight: 800; cursor: pointer; font-size: 12px; transition: 0.2s; }
+        .btn-sm { padding: 8px 18px; border: none; border-radius: 20px; font-weight: 800; cursor: pointer; font-size: 13px; transition: 0.2s; }
         .btn-sm.btn-teal { background: var(--teal); color: white; }
         .btn-sm:hover { transform: scale(1.02); }
         .btn-sm:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
@@ -382,7 +444,7 @@ textarea { text-align: left; vertical-align: top; }
         .bstore-card .status-badge.pending { background: #f59e0b; color: white; }
         .bstore-card .status-badge.approved { background: var(--green-success); color: white; }
         .bstore-card .status-badge.rejected { background: var(--red-error); color: white; }
-        .bstore-card .buy-btn { background: var(--teal); color: white; border: none; padding: 8px 16px; border-radius: 30px; font-weight: 800; cursor: pointer; width: 100%; margin-top: 8px; transition: 0.2s; }
+        .bstore-card .buy-btn { background: var(--teal); color: white; border: none; padding: 10px 16px; border-radius: 30px; font-weight: 800; cursor: pointer; width: 100%; margin-top: 8px; transition: 0.2s; font-size: 14px; }
         .bstore-card .buy-btn:hover { background: var(--teal-light); transform: scale(1.02); }
         .bstore-card .buy-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
         .bstore-card .delete-btn { position: absolute; top: 8px; right: 8px; background: var(--red-error); color: white; border: none; border-radius: 50%; width: 24px; height: 24px; font-size: 12px; cursor: pointer; font-weight: 900; display: none; z-index: 10; }
@@ -416,9 +478,9 @@ textarea { text-align: left; vertical-align: top; }
         .video-modal .video-controls .video-title { color: white; font-weight: 700; font-size: 14px; flex: 1; }
         .video-modal .video-controls .close-btn { background: var(--red-error); color: white; border: none; padding: 6px 16px; border-radius: 20px; font-weight: 800; cursor: pointer; }
 
-        /* TRENDING TABS */
-        .trending-tabs { display: flex; gap: 8px; margin-bottom: 12px; }
-        .trending-tab { padding: 6px 16px; border-radius: 30px; border: none; font-weight: 800; font-size: 13px; cursor: pointer; transition: 0.2s; background: var(--card-bg); color: var(--text-muted); border: 1px solid var(--card-border); }
+        /* TRENDING TABS - UPDATED: Social, Video, PPT, Mock Exam */
+        .trending-tabs { display: flex; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+        .trending-tab { padding: 8px 18px; border-radius: 30px; border: none; font-weight: 800; font-size: 14px; cursor: pointer; transition: 0.2s; background: var(--card-bg); color: var(--text-muted); border: 1px solid var(--card-border); }
         .trending-tab.active { background: var(--gold); color: var(--text-dark); border-color: var(--gold); }
         .trending-tab:hover { transform: scale(1.02); }
 
@@ -446,12 +508,18 @@ textarea { text-align: left; vertical-align: top; }
             .group-banner .go-live-btn { font-size: 10px; padding: 4px 10px; top: 8px; right: 8px; }
             .welcome-banner { flex-direction: column; text-align: center; }
             .calc-result .value { font-size: 20px; }
-            .post-card .post-actions { gap: 8px; }
-            .post-card .post-actions button { font-size: 12px; padding: 4px 6px; }
+            /* FIX: Post buttons mobile */
+            .post-card .post-actions { gap: 10px; }
+            .post-card .post-actions button { font-size: 14px; padding: 6px 10px; min-height: 38px; min-width: 50px; }
+            .post-card .post-actions button i { font-size: 18px; }
+            .post-card .post-actions button span { font-size: 13px; }
             .post-card .post-comments .comment-item .comment-replies { margin-left: 15px; }
             .video-modal .modal-content { max-width: 100%; border-radius: 0; }
             .video-modal video { max-height: 60vh; }
             .group-banner .group-avatar .pen-icon { width: 18px; height: 18px; font-size: 10px; bottom: -2px; right: -2px; }
+            /* Trending tabs mobile */
+            .trending-tabs { gap: 6px; }
+            .trending-tab { font-size: 12px; padding: 6px 12px; }
         }
         @media (min-width: 601px) {
             .quick-actions { grid-template-columns: repeat(3, 1fr); gap: 16px; }
@@ -499,7 +567,6 @@ textarea { text-align: left; vertical-align: top; }
                     <div>
                         <h2 id="welcomeText" data-key="welcome_title">👋 Welcome back!</h2>
                         <p data-key="welcome_desc">Your medical education ecosystem</p>
-                        <div class="verification-status" id="verificationStatus">✅ Verified Account</div>
                     </div>
                     <button class="btn-go" id="appealBtnContainer" onclick="showModal('appealModal')" data-key="apply_now">📝 Apply for Verification</button>
                 </div>
@@ -562,7 +629,7 @@ textarea { text-align: left; vertical-align: top; }
                 <div id="trendingGroupsContainer"></div>
             </div>
             
-            <!-- GROUP FEED (Teaching) -->
+            <!-- GROUP FEED - UNIFIED (All features in ONE group) -->
             <div id="group-feed">
                 <div class="group-banner" id="groupBanner">
                     <div style="display:flex; align-items:center; gap:12px; justify-content:center; flex-wrap:wrap;">
@@ -585,8 +652,10 @@ textarea { text-align: left; vertical-align: top; }
                         <button class="btn" style="width:auto; padding:4px 16px; font-size:12px; margin:0;" onclick="toggleGroupJoin(this)" data-key="join_class">➕ Join Class</button>
                     </div>
                 </div>
+                <!-- TABS: Social, Video, PPT, Mock Exam -->
                 <div class="class-tabs" id="groupTabs">
-                    <button class="class-tab active" onclick="switchGroupTab('videos', this)" data-key="video">📹 Video</button>
+                    <button class="class-tab active" onclick="switchGroupTab('social', this)" data-key="social">📝 Social</button>
+                    <button class="class-tab" onclick="switchGroupTab('videos', this)" data-key="video">📹 Video</button>
                     <button class="class-tab" onclick="switchGroupTab('ppts', this)" data-key="ppt">📊 PPT</button>
                     <button class="class-tab" onclick="switchGroupTab('mockexam', this)" data-key="mock_exam">📝 Mock Exam</button>
                     <div style="position:relative; display:inline-block;">
@@ -601,8 +670,18 @@ textarea { text-align: left; vertical-align: top; }
                         </div>
                     </div>
                 </div>
-                <div id="videos" class="class-content active"></div>
+                <!-- Social Tab Content -->
+                <div id="social" class="class-content active">
+                    <div style="margin-bottom:16px;">
+                        <button class="btn btn-teal" onclick="showModal('createPostModal')" style="margin-bottom:8px;">📝 Create New Post</button>
+                    </div>
+                    <div id="socialPostsContainer"></div>
+                </div>
+                <!-- Video Tab Content -->
+                <div id="videos" class="class-content"></div>
+                <!-- PPT Tab Content -->
                 <div id="ppts" class="class-content"></div>
+                <!-- Mock Exam Tab Content -->
                 <div id="mockexam" class="class-content">
                     <div class="exam-toggle">
                         <span data-key="mode">Mode:</span>
@@ -611,35 +690,6 @@ textarea { text-align: left; vertical-align: top; }
                     </div>
                     <div id="mockExamListContainer"><div class="loading">Loading exams...</div></div>
                 </div>
-            </div>
-
-            <!-- SOCIAL GROUP FEED -->
-            <div id="social-group-feed">
-                <div class="group-banner" id="socialGroupBanner">
-                    <div style="display:flex; align-items:center; gap:12px; justify-content:center; flex-wrap:wrap;">
-                        <div class="group-avatar" id="socialGroupAvatar">
-                            <img id="socialGroupAvatarImg" src="https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app-assets/1780156694418.png" alt="Group">
-                            <span class="pen-icon" id="socialGroupPenIcon" onclick="event.stopPropagation(); showGroupSettings()">✏️</span>
-                        </div>
-                        <div style="text-align:left;">
-                            <h3 id="socialGroupBannerTitle" style="color:var(--gold); font-size:20px; font-weight:900;">Loading...</h3>
-                            <div class="stats" style="font-size:12px; color:rgba(255,255,255,0.8);">
-                                <span style="color:var(--gold); font-weight:900;" id="socialGroupFollowers">0</span> <span data-key="followers">Followers</span> • 
-                                <span style="color:var(--gold); font-weight:900;" id="socialGroupOnline">0</span> <span data-key="online">Online</span>
-                            </div>
-                        </div>
-                    </div>
-                    <button class="go-live-btn" onclick="startGoLive()" id="socialGoLiveBtn">
-                        <span class="pulse-dot"></span> 🔴 Go Live
-                    </button>
-                    <div style="display:flex; gap:10px; justify-content:center; margin-top:10px;">
-                        <button class="btn" style="width:auto; padding:4px 16px; font-size:12px; margin:0;" onclick="toggleGroupJoin(this)" data-key="join_class">➕ Join Class</button>
-                    </div>
-                </div>
-                <div style="margin-bottom:16px;">
-                    <button class="btn btn-teal" onclick="showModal('createPostModal')" style="margin-bottom:8px;">📝 Create New Post</button>
-                </div>
-                <div id="socialPostsContainer"></div>
             </div>
 
             <!-- B-STORE TAB -->
@@ -772,16 +822,14 @@ textarea { text-align: left; vertical-align: top; }
         <div id="createGroupModal" class="modal">
             <div class="modal-content">
                 <span class="close" onclick="closeModal('createGroupModal')">&times;</span>
-                <h3 data-key="create_new_group">➕ Create a New Class Group</h3>
+                <h3 data-key="create_new_group">➕ Create a New Group</h3>
                 <div class="form-group"><label data-key="group_name">Group Name</label><input type="text" id="createGroupName"></div>
                 <div class="form-group"><label>Upload Profile Pic</label><input type="file" id="createGroupPic" accept="image/*"></div>
                 <div class="form-group"><label data-key="group_desc">Group Description</label><textarea id="createGroupDesc" rows="2"></textarea></div>
                 <div class="form-group"><label data-key="group_type">Group Type</label>
                     <select id="createGroupType"><option value="Private">Private (Only owner & admins can post)</option><option value="Public">Public (Anyone can post)</option></select>
                 </div>
-                <div class="form-group"><label data-key="group_purpose">Group Purpose</label>
-                    <select id="createGroupPurpose"><option value="teaching" data-key="teaching_class">Teaching Class (Video, PPT, Mock Exam)</option><option value="social" data-key="social_network">Social Network (Text posts & Links only)</option></select>
-                </div>
+                <!-- REMOVED: Group Purpose dropdown - all groups now have ALL features -->
                 <button class="btn btn-teal" onclick="createGroup()" data-key="create_group">🚀 Create Group</button>
             </div>
         </div>
@@ -1139,7 +1187,6 @@ textarea { text-align: left; vertical-align: top; }
             pendingPrice: 600, 
             coinBalance: 0, 
             groupCount: 0, 
-            groupPurpose: null, 
             groups: [],
             currentGroupId: null,
             currentGroupType: null,
@@ -1147,7 +1194,8 @@ textarea { text-align: left; vertical-align: top; }
             isGroupOwner: false,
             profilePicUrl: null,
             currentJobId: null,
-            currentTrendingTab: 'class'
+            currentTrendingTab: 'social',
+            firstName: ''
         };
         
         let examQuestionCount = 1;
@@ -1185,9 +1233,7 @@ textarea { text-align: left; vertical-align: top; }
                 upload_certificate: "Upload Certificate", select_university: "Select Graduated University",
                 submit_review: "Submit & Pay 6,000 Coins", group_name: "Group Name",
                 group_desc: "Group Description", group_type: "Group Type",
-                group_purpose: "Group Purpose", teaching_class: "Teaching Class (Video, PPT, Mock Exam)",
-                social_network: "Social Network (Text posts & Links only)",
-                create_new_group: "Create a New Class Group",
+                create_new_group: "Create a New Group",
                 apply_creator: "Apply to Become a Verified Creator",
                 subscription: "Premium Subscription", subscribe: "Subscribe Now",
                 send_payment: "Send Payment", submit_approval: "Submit for Approval",
@@ -1206,10 +1252,10 @@ textarea { text-align: left; vertical-align: top; }
                 premium_sub: "Premium: 600 ETB/month", upload_files: "Upload Files",
                 mock_exam_mgmt: "Mock Exam", verify_teachers: "Verify Teachers",
                 set_prices: "Set Prices", consultations: "Consultations",
-                analytics: "Analytics", create_social_group: "Create Social Group",
-                create_teaching_group: "Create Teaching Group", my_groups: "My Groups",
+                analytics: "Analytics", my_groups: "My Groups",
                 promote_admin: "Promote to Admin", mode: "Mode:",
-                comment: "Comment", share: "Share", post_comment: "Post Comment"
+                comment: "Comment", share: "Share", post_comment: "Post Comment",
+                social: "Social"
             },
             am: {
                 home: "መነሻ", class: "ክፍሌ", bstore: "ቢ-ስቶር", mcalc: "ኤም-ካልክ",
@@ -1232,10 +1278,8 @@ textarea { text-align: left; vertical-align: top; }
                 select_university: "የተመረቁበት ዩኒቨርሲቲ ይምረጡ",
                 submit_review: "📤 ያስገቡ እና 6,000 ሳንቲም ይክፈሉ",
                 group_name: "የቡድን ስም", group_desc: "የቡድን መግለጫ",
-                group_type: "የቡድን አይነት", group_purpose: "የቡድን ዓላማ",
-                teaching_class: "የማስተማሪያ ክፍል (ቪዲዮ፣ ፒፒቲ፣ ሙከራ ፈተና)",
-                social_network: "ማህበራዊ አውታር (ጽሑፍ እና አገናኞች ብቻ)",
-                create_new_group: "አዲስ የክፍል ቡድን ይፍጠሩ",
+                group_type: "የቡድን አይነት",
+                create_new_group: "አዲስ ቡድን ይፍጠሩ",
                 apply_creator: "የተረጋገጠ ፈጣሪ ለመሆን ያመልክቱ",
                 subscription: "ፕሪሚየም ምዝገባ", subscribe: "አሁኑኑ ይመዝገቡ",
                 send_payment: "ክፍያ ይላኩ", submit_approval: "ለማጽደቅ ይላኩ",
@@ -1255,11 +1299,10 @@ textarea { text-align: left; vertical-align: top; }
                 upload_files: "ፋይሎች ይስቀሉ", mock_exam_mgmt: "የሙከራ ፈተና",
                 verify_teachers: "መምህራን ያረጋግጡ", set_prices: "ዋጋ ያዘጋጁ",
                 consultations: "ምክክር", analytics: "ትንተና",
-                create_social_group: "ማህበራዊ ቡድን ይፍጠሩ",
-                create_teaching_group: "የማስተማሪያ ቡድን ይፍጠሩ",
                 my_groups: "የኔ ቡድኖች", promote_admin: "ወደ አስተዳዳሪ ከፍ አድርግ",
                 mode: "ሁኔታ:", comment: "አስተያየት", share: "ያጋሩ",
-                post_comment: "አስተያየት ይለጥፉ"
+                post_comment: "አስተያየት ይለጥፉ",
+                social: "ማህበራዊ"
             }
         };
 
@@ -1379,7 +1422,6 @@ textarea { text-align: left; vertical-align: top; }
             const container = document.getElementById('tabContentContainer');
             
             let id = '';
-            let isSocial = false;
             
             if (tabId === 'class') id = 'class-tab';
             else if (tabId === 'bstore') id = 'bstore-tab';
@@ -1391,11 +1433,6 @@ textarea { text-align: left; vertical-align: top; }
             else if (tabId === 'wallet') id = 'wallet-tab';
             else if (tabId === 'group-feed') {
                 id = 'group-feed';
-                const group = AppState.groups.find(g => g.id === specificGroupId);
-                if (group && group.group_purpose === 'social') {
-                    id = 'social-group-feed';
-                    isSocial = true;
-                }
             } else return;
             
             const template = document.getElementById(id);
@@ -1414,54 +1451,78 @@ textarea { text-align: left; vertical-align: top; }
             setTimeout(() => {
                 translatePage();
             }, 50);
-if (tabId === 'group-feed' && specificGroupId) {
-    AppState.currentGroupId = specificGroupId;
-    const group = AppState.groups.find(g => g.id === specificGroupId);
-    if (group) {
-        AppState.currentGroupType = group.group_purpose;
-        AppState.currentGroupName = group.name;
-        AppState.isGroupOwner = group.owner_id === AppState.userId;
-        
-        // Load content FIRST
-        if (group.group_purpose === 'social') {
-            loadSocialPosts(specificGroupId);
-        } else {
-            loadGroupContent(specificGroupId, 'videos');
-            loadGroupContent(specificGroupId, 'ppts');
-            loadGroupContent(specificGroupId, 'mockexam');
-        }
-        
-        // THEN update banner with longer delay
-        setTimeout(() => {
-            const prefix = group.group_purpose === 'social' ? 'social' : '';
-            const bannerTitle = document.querySelector(`#${prefix}group-feed .group-banner h3`);
-            if (bannerTitle) {
-                bannerTitle.innerText = group.name;
+
+            // FIXED: Group feed loading with proper data fetching
+            if (tabId === 'group-feed' && specificGroupId) {
+                AppState.currentGroupId = specificGroupId;
+                
+                // Find group in AppState first
+                let group = AppState.groups.find(g => g.id === specificGroupId);
+                
+                // If not found, fetch from database
+                if (!group) {
+                    (async () => {
+                        try {
+                            const { data, error } = await sb
+                                .from('groups')
+                                .select('*')
+                                .eq('id', specificGroupId)
+                                .single();
+                            
+                            if (!error && data) {
+                                group = data;
+                                AppState.groups.push(group);
+                                updateGroupUI(group);
+                            }
+                        } catch (err) {
+                            console.error('Error fetching group:', err);
+                        }
+                    })();
+                } else {
+                    updateGroupUI(group);
+                }
+                
+                function updateGroupUI(group) {
+                    AppState.currentGroupType = 'unified';
+                    AppState.currentGroupName = group.name;
+                    AppState.isGroupOwner = group.owner_id === AppState.userId;
+                    
+                    // Load content FIRST
+                    loadSocialPosts(specificGroupId);
+                    loadGroupContent(specificGroupId, 'videos');
+                    loadGroupContent(specificGroupId, 'ppts');
+                    loadGroupContent(specificGroupId, 'mockexam');
+                    
+                    // THEN update banner with longer delay
+                    setTimeout(() => {
+                        const bannerTitle = document.querySelector('#group-feed .group-banner h3');
+                        if (bannerTitle) {
+                            bannerTitle.innerText = group.name;
+                        }
+                        
+                        const avatarImg = document.getElementById('groupAvatarImg');
+                        if (avatarImg && group.profile_pic_url) {
+                            avatarImg.src = group.profile_pic_url;
+                        }
+                        
+                        const statsSpans = document.querySelectorAll('#group-feed .group-banner .stats span');
+                        if (statsSpans.length >= 2) {
+                            statsSpans[0].innerText = group.followers || 0;
+                            statsSpans[1].innerText = group.online || 0;
+                        }
+                        
+                        const goLiveBtn = document.getElementById('goLiveBtn');
+                        if (goLiveBtn) {
+                            goLiveBtn.style.display = (AppState.isGroupOwner || AppState.isAdmin) ? 'flex' : 'none';
+                        }
+                        
+                        const penIcon = document.getElementById('groupPenIcon');
+                        if (penIcon) {
+                            penIcon.style.display = (AppState.isGroupOwner || AppState.isAdmin) ? 'flex' : 'none';
+                        }
+                    }, 500);
+                }
             }
-            
-            const avatarImg = document.getElementById(`${prefix}GroupAvatarImg`);
-            if (avatarImg && group.profile_pic_url) {
-                avatarImg.src = group.profile_pic_url;
-            }
-            
-            const statsSpans = document.querySelectorAll(`#${prefix}group-feed .group-banner .stats span`);
-            if (statsSpans.length >= 2) {
-                statsSpans[0].innerText = group.followers || 0;
-                statsSpans[1].innerText = group.online || 0;
-            }
-            
-            const goLiveBtn = document.getElementById(`${prefix}GoLiveBtn`);
-            if (goLiveBtn) {
-                goLiveBtn.style.display = (AppState.isGroupOwner || AppState.isAdmin) ? 'flex' : 'none';
-            }
-            
-            const penIcon = document.getElementById(`${prefix}GroupPenIcon`);
-            if (penIcon) {
-                penIcon.style.display = (AppState.isGroupOwner || AppState.isAdmin) ? 'flex' : 'none';
-            }
-        }, 300);  // ← CHANGED from 100 to 300
-    }
-}
 
             if (tabId === 'class') {
                 renderUserGroups();
@@ -1501,10 +1562,11 @@ if (tabId === 'group-feed' && specificGroupId) {
                 if (session?.user) {
                     AppState.userId = session.user.id;
                     AppState.currentUser = session.user;
+                    AppState.firstName = session.user.user_metadata?.first_name || session.user.email?.split('@')[0] || 'User';
                     
                     const { data: userData, error: userError } = await sb
                         .from('users')
-                        .select('is_admin, is_teacher, coin_balance, profile_pic_url')
+                        .select('is_admin, is_teacher, coin_balance, profile_pic_url, first_name')
                         .eq('user_id', AppState.userId)
                         .single();
                     
@@ -1512,6 +1574,7 @@ if (tabId === 'group-feed' && specificGroupId) {
                         await sb.from('users').insert({
                             user_id: AppState.userId,
                             email: session.user.email,
+                            first_name: AppState.firstName,
                             is_admin: false,
                             is_teacher: false,
                             coin_balance: 0,
@@ -1526,6 +1589,7 @@ if (tabId === 'group-feed' && specificGroupId) {
                         AppState.isTeacher = userData.is_teacher === true;
                         AppState.coinBalance = userData.coin_balance || 0;
                         AppState.profilePicUrl = userData.profile_pic_url || 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app-assets/1780156694418.png';
+                        if (userData.first_name) AppState.firstName = userData.first_name;
                     }
                     
                     if (session.user.email === 'drtesfayekebede@gmail.com') { 
@@ -1557,10 +1621,8 @@ if (tabId === 'group-feed' && specificGroupId) {
                     appealBtnContainers.forEach(el => {
                         if (AppState.isAdmin || AppState.isTeacher) {
                             el.style.display = 'none';
-                            document.getElementById('verificationStatus').style.display = 'block';
                         } else {
                             el.style.display = 'block';
-                            document.getElementById('verificationStatus').style.display = 'none';
                         }
                     });
                     
@@ -1569,9 +1631,12 @@ if (tabId === 'group-feed' && specificGroupId) {
                         el.style.display = (AppState.isAdmin || AppState.isTeacher) ? 'block' : 'none';
                     });
                     
+                    // FIX: Welcome text with first name and verification star
                     const welcomeText = document.getElementById('welcomeText');
                     if (welcomeText) {
-                        welcomeText.innerText = `👋 Welcome back, ${session.user.email.split('@')[0]}!`;
+                        const isVerified = AppState.isAdmin || AppState.isTeacher;
+                        const star = isVerified ? ' ★' : '';
+                        welcomeText.innerText = `👋 Welcome back, ${AppState.firstName}!${star}`;
                     }
                     
                     const profileName = document.getElementById('profileName');
@@ -1622,273 +1687,270 @@ if (tabId === 'group-feed' && specificGroupId) {
             }
         }
 
-function showAuthModal() {
-    if (document.getElementById('authModal')) return;
-    
-    let m = document.createElement('div');
-    m.id = 'authModal';
-    m.className = 'modal active';
-    m.innerHTML = `
-        <div class="modal-content">
-            <h3 style="color:var(--navy); font-weight:900;">📶 T-Hub</h3>
-            <p style="color:var(--text-muted); margin-bottom:15px; font-weight:700;">Medical Education Ecosystem</p>
+        function showAuthModal() {
+            if (document.getElementById('authModal')) return;
             
-            <!-- Mode Toggle -->
-            <div style="display:flex; gap:10px; margin-bottom:15px; background:#f1f5f9; border-radius:12px; padding:4px;">
-                <button id="authSignInTab" onclick="switchAuthMode('signin')" style="flex:1; padding:10px; border:none; border-radius:8px; font-weight:800; cursor:pointer; background:var(--navy); color:white; transition:0.2s;">
-                    🔑 Sign In
-                </button>
-                <button id="authRegisterTab" onclick="switchAuthMode('register')" style="flex:1; padding:10px; border:none; border-radius:8px; font-weight:800; cursor:pointer; background:transparent; color:var(--text-muted); transition:0.2s;">
-                    📝 Register
-                </button>
-            </div>
-            
-            <!-- SIGN IN FORM -->
-            <div id="signinForm">
-                <div class="form-group">
-                    <label style="font-weight:800;">Email Address</label>
-                    <input type="email" id="authEmail" placeholder="Enter your email" style="width:100%; padding:12px; border:1px solid #eee; border-radius:8px; font-weight:700;">
-                </div>
-                <div class="form-group" style="position:relative;">
-                    <label style="font-weight:800;">Password</label>
-                    <div style="position:relative;">
-                        <input type="password" id="authPassword" placeholder="Enter your password" style="width:100%; padding:12px; padding-right:45px; border:1px solid #eee; border-radius:8px; font-weight:700;">
-                        <span onclick="togglePasswordVisibility('authPassword', this)" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); cursor:pointer; font-size:20px;">👁️</span>
+            let m = document.createElement('div');
+            m.id = 'authModal';
+            m.className = 'modal active';
+            m.innerHTML = `
+                <div class="modal-content">
+                    <h3 style="color:var(--navy); font-weight:900;">📶 T-Hub</h3>
+                    <p style="color:var(--text-muted); margin-bottom:15px; font-weight:700;">Medical Education Ecosystem</p>
+                    
+                    <!-- Mode Toggle -->
+                    <div style="display:flex; gap:10px; margin-bottom:15px; background:#f1f5f9; border-radius:12px; padding:4px;">
+                        <button id="authSignInTab" onclick="switchAuthMode('signin')" style="flex:1; padding:10px; border:none; border-radius:8px; font-weight:800; cursor:pointer; background:var(--navy); color:white; transition:0.2s;">
+                            🔑 Sign In
+                        </button>
+                        <button id="authRegisterTab" onclick="switchAuthMode('register')" style="flex:1; padding:10px; border:none; border-radius:8px; font-weight:800; cursor:pointer; background:transparent; color:var(--text-muted); transition:0.2s;">
+                            📝 Register
+                        </button>
                     </div>
-                </div>
-                <button class="btn" onclick="login()" style="width:100%; margin-bottom:8px;">🔑 Sign In</button>
-                <p style="text-align:center; font-size:13px; color:var(--teal); font-weight:800; cursor:pointer; margin-bottom:8px;" onclick="showForgotPasswordModal()">
-                    🔑 Forgot Password? Click Here
-                </p>
-                <p style="text-align:center; font-size:13px; color:var(--text-muted); font-weight:700;">
-                    Don't have an account? <span onclick="switchAuthMode('register')" style="color:var(--teal); cursor:pointer; font-weight:900;">Register</span>
-                </p>
-            </div>
-            
-            <!-- REGISTER FORM -->
-            <div id="registerForm" style="display:none;">
-                <div class="form-group">
-                    <label style="font-weight:800;">First Name</label>
-                    <input type="text" id="authFirstName" placeholder="Enter your first name" style="width:100%; padding:12px; border:1px solid #eee; border-radius:8px; font-weight:700;">
-                </div>
-                <div class="form-group">
-                    <label style="font-weight:800;">Middle Name (Optional)</label>
-                    <input type="text" id="authMiddleName" placeholder="Enter your middle name" style="width:100%; padding:12px; border:1px solid #eee; border-radius:8px; font-weight:700;">
-                </div>
-                <div class="form-group">
-                    <label style="font-weight:800;">Email Address</label>
-                    <input type="email" id="authEmailRegister" placeholder="Enter your email" style="width:100%; padding:12px; border:1px solid #eee; border-radius:8px; font-weight:700;">
-                </div>
-                <div class="form-group" style="position:relative;">
-                    <label style="font-weight:800;">Create Password</label>
-                    <div style="position:relative;">
-                        <input type="password" id="authPasswordRegister" placeholder="Min 6 characters" style="width:100%; padding:12px; padding-right:45px; border:1px solid #eee; border-radius:8px; font-weight:700;">
-                        <span onclick="togglePasswordVisibility('authPasswordRegister', this)" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); cursor:pointer; font-size:20px;">👁️</span>
+                    
+                    <!-- SIGN IN FORM -->
+                    <div id="signinForm">
+                        <div class="form-group">
+                            <label style="font-weight:800;">Email Address</label>
+                            <input type="email" id="authEmail" placeholder="Enter your email" style="width:100%; padding:12px; border:1px solid #eee; border-radius:8px; font-weight:700;">
+                        </div>
+                        <div class="form-group" style="position:relative;">
+                            <label style="font-weight:800;">Password</label>
+                            <div style="position:relative;">
+                                <input type="password" id="authPassword" placeholder="Enter your password" style="width:100%; padding:12px; padding-right:45px; border:1px solid #eee; border-radius:8px; font-weight:700;">
+                                <span onclick="togglePasswordVisibility('authPassword', this)" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); cursor:pointer; font-size:20px;">👁️</span>
+                            </div>
+                        </div>
+                        <button class="btn" onclick="login()" style="width:100%; margin-bottom:8px;">🔑 Sign In</button>
+                        <p style="text-align:center; font-size:13px; color:var(--teal); font-weight:800; cursor:pointer; margin-bottom:8px;" onclick="showForgotPasswordModal()">
+                            🔑 Forgot Password? Click Here
+                        </p>
+                        <p style="text-align:center; font-size:13px; color:var(--text-muted); font-weight:700;">
+                            Don't have an account? <span onclick="switchAuthMode('register')" style="color:var(--teal); cursor:pointer; font-weight:900;">Register</span>
+                        </p>
                     </div>
-                </div>
-                <div class="form-group" style="position:relative;">
-                    <label style="font-weight:800;">Confirm Password</label>
-                    <div style="position:relative;">
-                        <input type="password" id="authPasswordConfirm" placeholder="Re-enter your password" style="width:100%; padding:12px; padding-right:45px; border:1px solid #eee; border-radius:8px; font-weight:700;">
-                        <span onclick="togglePasswordVisibility('authPasswordConfirm', this)" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); cursor:pointer; font-size:20px;">👁️</span>
+                    
+                    <!-- REGISTER FORM -->
+                    <div id="registerForm" style="display:none;">
+                        <div class="form-group">
+                            <label style="font-weight:800;">First Name</label>
+                            <input type="text" id="authFirstName" placeholder="Enter your first name" style="width:100%; padding:12px; border:1px solid #eee; border-radius:8px; font-weight:700;">
+                        </div>
+                        <div class="form-group">
+                            <label style="font-weight:800;">Middle Name (Optional)</label>
+                            <input type="text" id="authMiddleName" placeholder="Enter your middle name" style="width:100%; padding:12px; border:1px solid #eee; border-radius:8px; font-weight:700;">
+                        </div>
+                        <div class="form-group">
+                            <label style="font-weight:800;">Email Address</label>
+                            <input type="email" id="authEmailRegister" placeholder="Enter your email" style="width:100%; padding:12px; border:1px solid #eee; border-radius:8px; font-weight:700;">
+                        </div>
+                        <div class="form-group" style="position:relative;">
+                            <label style="font-weight:800;">Create Password</label>
+                            <div style="position:relative;">
+                                <input type="password" id="authPasswordRegister" placeholder="Min 6 characters" style="width:100%; padding:12px; padding-right:45px; border:1px solid #eee; border-radius:8px; font-weight:700;">
+                                <span onclick="togglePasswordVisibility('authPasswordRegister', this)" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); cursor:pointer; font-size:20px;">👁️</span>
+                            </div>
+                        </div>
+                        <div class="form-group" style="position:relative;">
+                            <label style="font-weight:800;">Confirm Password</label>
+                            <div style="position:relative;">
+                                <input type="password" id="authPasswordConfirm" placeholder="Re-enter your password" style="width:100%; padding:12px; padding-right:45px; border:1px solid #eee; border-radius:8px; font-weight:700;">
+                                <span onclick="togglePasswordVisibility('authPasswordConfirm', this)" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); cursor:pointer; font-size:20px;">👁️</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-teal" onclick="register()" style="width:100%; margin-bottom:8px;">📝 Create Account</button>
+                        <p style="text-align:center; font-size:13px; color:var(--text-muted); font-weight:700;">
+                            Already have an account? <span onclick="switchAuthMode('signin')" style="color:var(--teal); cursor:pointer; font-weight:900;">Sign In</span>
+                        </p>
                     </div>
+                    
+                    <p style="text-align:center; font-size:11px; color:var(--text-muted); margin-top:8px; font-weight:700;">
+                        By continuing, you agree to T-Hub's Terms & Privacy Policy
+                    </p>
                 </div>
-                <button class="btn btn-teal" onclick="register()" style="width:100%; margin-bottom:8px;">📝 Create Account</button>
-                <p style="text-align:center; font-size:13px; color:var(--text-muted); font-weight:700;">
-                    Already have an account? <span onclick="switchAuthMode('signin')" style="color:var(--teal); cursor:pointer; font-weight:900;">Sign In</span>
-                </p>
-            </div>
-            
-            <p style="text-align:center; font-size:11px; color:var(--text-muted); margin-top:8px; font-weight:700;">
-                By continuing, you agree to T-Hub's Terms & Privacy Policy
-            </p>
-        </div>
-    `;
-    document.body.appendChild(m);
-}
-async function login() {
-    const email = document.getElementById('authEmail')?.value;
-    const password = document.getElementById('authPassword')?.value;
-    
-    if (!email || !password) {
-        showToast('Please enter email and password.', 'error');
-        return;
-    }
-    
-    try {
-        const { data, error } = await sb.auth.signInWithPassword({ email, password });
-        if (error) {
-            if (error.message.includes('Email not confirmed')) {
-                showToast('⚠️ Please confirm your email before logging in. Check your inbox.', 'error');
-                await sb.auth.resend({ type: 'signup', email });
-                showToast('📨 Confirmation email resent!', 'info');
-            } else {
-                showToast('❌ ' + error.message, 'error');
-            }
-            return;
+            `;
+            document.body.appendChild(m);
         }
-        const modal = document.getElementById('authModal');
-        if (modal) modal.remove();
-        window.location.reload();
-    } catch (err) {
-        showToast('❌ ' + err.message, 'error');
-    }
-}
-async function register() {
-    const firstName = document.getElementById('authFirstName')?.value;
-    const middleName = document.getElementById('authMiddleName')?.value || '';
-    const email = document.getElementById('authEmailRegister')?.value;
-    const password = document.getElementById('authPasswordRegister')?.value;
-    const confirmPassword = document.getElementById('authPasswordConfirm')?.value;
-    
-    if (!firstName || !email || !password || !confirmPassword) {
-        showToast('Please fill in all required fields.', 'error');
-        return;
-    }
-    
-    if (firstName.length < 2) {
-        showToast('First name must be at least 2 characters.', 'error');
-        return;
-    }
-    
-    if (password.length < 6) {
-        showToast('Password must be at least 6 characters.', 'error');
-        return;
-    }
-    
-    if (password !== confirmPassword) {
-        showToast('Passwords do not match.', 'error');
-        return;
-    }
-    
-    try {
-        const { data, error } = await sb.auth.signUp({ 
-            email, 
-            password,
-            options: {
-                data: {
-                    first_name: firstName,
-                    middle_name: middleName,
-                    full_name: firstName + (middleName ? ' ' + middleName : '')
-                }
+
+        async function login() {
+            const email = document.getElementById('authEmail')?.value;
+            const password = document.getElementById('authPassword')?.value;
+            
+            if (!email || !password) {
+                showToast('Please enter email and password.', 'error');
+                return;
             }
-        });
-        
-        if (error) throw error;
-        
-        showToast('✅ Account created! Please check your email to confirm.', 'success');
-        
-        // Clear fields
-        document.getElementById('authFirstName').value = '';
-        document.getElementById('authMiddleName').value = '';
-        document.getElementById('authEmailRegister').value = '';
-        document.getElementById('authPasswordRegister').value = '';
-        document.getElementById('authPasswordConfirm').value = '';
-        
-        // Switch to sign in mode
-        switchAuthMode('signin');
-        showToast('📨 Confirmation email sent! Check your inbox.', 'info');
-        
-    } catch (err) {
-        showToast('❌ ' + err.message, 'error');
-    }
-}
+            
+            try {
+                const { data, error } = await sb.auth.signInWithPassword({ email, password });
+                if (error) {
+                    if (error.message.includes('Email not confirmed')) {
+                        showToast('⚠️ Please confirm your email before logging in. Check your inbox.', 'error');
+                        await sb.auth.resend({ type: 'signup', email });
+                        showToast('📨 Confirmation email resent!', 'info');
+                    } else {
+                        showToast('❌ ' + error.message, 'error');
+                    }
+                    return;
+                }
+                const modal = document.getElementById('authModal');
+                if (modal) modal.remove();
+                window.location.reload();
+            } catch (err) {
+                showToast('❌ ' + err.message, 'error');
+            }
+        }
 
-function switchAuthMode(mode) {
-    const signinForm = document.getElementById('signinForm');
-    const registerForm = document.getElementById('registerForm');
-    const signinTab = document.getElementById('authSignInTab');
-    const registerTab = document.getElementById('authRegisterTab');
-    
-    if (!signinForm || !registerForm || !signinTab || !registerTab) return;
-    
-    if (mode === 'signin') {
-        signinForm.style.display = 'block';
-        registerForm.style.display = 'none';
-        signinTab.style.background = 'var(--navy)';
-        signinTab.style.color = 'white';
-        registerTab.style.background = 'transparent';
-        registerTab.style.color = 'var(--text-muted)';
-    } else {
-        signinForm.style.display = 'none';
-        registerForm.style.display = 'block';
-        registerTab.style.background = 'var(--navy)';
-        registerTab.style.color = 'white';
-        signinTab.style.background = 'transparent';
-        signinTab.style.color = 'var(--text-muted)';
-    }
-}
+        async function register() {
+            const firstName = document.getElementById('authFirstName')?.value;
+            const middleName = document.getElementById('authMiddleName')?.value || '';
+            const email = document.getElementById('authEmailRegister')?.value;
+            const password = document.getElementById('authPasswordRegister')?.value;
+            const confirmPassword = document.getElementById('authPasswordConfirm')?.value;
+            
+            if (!firstName || !email || !password || !confirmPassword) {
+                showToast('Please fill in all required fields.', 'error');
+                return;
+            }
+            
+            if (firstName.length < 2) {
+                showToast('First name must be at least 2 characters.', 'error');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showToast('Password must be at least 6 characters.', 'error');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                showToast('Passwords do not match.', 'error');
+                return;
+            }
+            
+            try {
+                const { data, error } = await sb.auth.signUp({ 
+                    email, 
+                    password,
+                    options: {
+                        data: {
+                            first_name: firstName,
+                            middle_name: middleName,
+                            full_name: firstName + (middleName ? ' ' + middleName : '')
+                        }
+                    }
+                });
+                
+                if (error) throw error;
+                
+                showToast('✅ Account created! Please check your email to confirm.', 'success');
+                
+                // Clear fields
+                document.getElementById('authFirstName').value = '';
+                document.getElementById('authMiddleName').value = '';
+                document.getElementById('authEmailRegister').value = '';
+                document.getElementById('authPasswordRegister').value = '';
+                document.getElementById('authPasswordConfirm').value = '';
+                
+                // Switch to sign in mode
+                switchAuthMode('signin');
+                showToast('📨 Confirmation email sent! Check your inbox.', 'info');
+                
+            } catch (err) {
+                showToast('❌ ' + err.message, 'error');
+            }
+        }
 
-function togglePasswordVisibility(inputId, eyeIcon) {
-    const input = document.getElementById(inputId);
-    if (!input) return;
-    
-    if (input.type === 'password') {
-        input.type = 'text';
-        eyeIcon.textContent = '🙈';
-    } else {
-        input.type = 'password';
-        eyeIcon.textContent = '👁️';
-    }
-}
+        function switchAuthMode(mode) {
+            const signinForm = document.getElementById('signinForm');
+            const registerForm = document.getElementById('registerForm');
+            const signinTab = document.getElementById('authSignInTab');
+            const registerTab = document.getElementById('authRegisterTab');
+            
+            if (!signinForm || !registerForm || !signinTab || !registerTab) return;
+            
+            if (mode === 'signin') {
+                signinForm.style.display = 'block';
+                registerForm.style.display = 'none';
+                signinTab.style.background = 'var(--navy)';
+                signinTab.style.color = 'white';
+                registerTab.style.background = 'transparent';
+                registerTab.style.color = 'var(--text-muted)';
+            } else {
+                signinForm.style.display = 'none';
+                registerForm.style.display = 'block';
+                registerTab.style.background = 'var(--navy)';
+                registerTab.style.color = 'white';
+                signinTab.style.background = 'transparent';
+                signinTab.style.color = 'var(--text-muted)';
+            }
+        }
 
-function showForgotPasswordModal() {
-    // Remove existing forgot password modal if any
-    const existing = document.getElementById('forgotPasswordModal');
-    if (existing) existing.remove();
-    
-    // Close auth modal temporarily (optional)
-    // document.getElementById('authModal').style.opacity = '0.3';
-    
-    let m = document.createElement('div');
-    m.id = 'forgotPasswordModal';
-    m.className = 'modal active';
-    m.innerHTML = `
-        <div class="modal-content">
-            <span class="close" onclick="document.getElementById('forgotPasswordModal').remove()">&times;</span>
-            <h3 style="color:var(--navy); font-weight:900;">🔑 Reset Password</h3>
-            <p style="color:var(--text-muted); margin-bottom:15px; font-weight:700;">
-                Enter your email address and we'll send you a password reset link.
-            </p>
-            <div class="form-group">
-                <label style="font-weight:800;">Email Address</label>
-                <input type="email" id="resetEmail" placeholder="Enter your email" style="width:100%; padding:12px; border:1px solid #eee; border-radius:8px; font-weight:700;">
-            </div>
-            <button class="btn btn-teal" onclick="resetPassword()" style="width:100%; margin-bottom:8px;">📧 Send Reset Link</button>
-            <button class="btn" onclick="document.getElementById('forgotPasswordModal').remove()" style="width:100%; background:#e2e8f0; color:var(--text-dark);">✕ Cancel</button>
-        </div>
-    `;
-    document.body.appendChild(m);
-}
+        function togglePasswordVisibility(inputId, eyeIcon) {
+            const input = document.getElementById(inputId);
+            if (!input) return;
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                eyeIcon.textContent = '🙈';
+            } else {
+                input.type = 'password';
+                eyeIcon.textContent = '👁️';
+            }
+        }
 
-async function resetPassword() {
-    const email = document.getElementById('resetEmail')?.value;
-    
-    if (!email) {
-        showToast('Please enter your email address.', 'error');
-        return;
-    }
-    
-    try {
-        const { error } = await sb.auth.resetPasswordForEmail(email, {
-            redirectTo: window.location.origin + window.location.pathname
-        });
-        
-        if (error) throw error;
-        
-        showToast('✅ Password reset link sent to your email!', 'success');
-        
-        // Close modal
-        const modal = document.getElementById('forgotPasswordModal');
-        if (modal) modal.remove();
-        
-        // Clear field
-        document.getElementById('resetEmail').value = '';
-        
-    } catch (err) {
-        showToast('❌ ' + err.message, 'error');
-    }
-}
+        function showForgotPasswordModal() {
+            const existing = document.getElementById('forgotPasswordModal');
+            if (existing) existing.remove();
+            
+            let m = document.createElement('div');
+            m.id = 'forgotPasswordModal';
+            m.className = 'modal active';
+            m.innerHTML = `
+                <div class="modal-content">
+                    <span class="close" onclick="document.getElementById('forgotPasswordModal').remove()">&times;</span>
+                    <h3 style="color:var(--navy); font-weight:900;">🔑 Reset Password</h3>
+                    <p style="color:var(--text-muted); margin-bottom:15px; font-weight:700;">
+                        Enter your email address and we'll send you a password reset link.
+                    </p>
+                    <div class="form-group">
+                        <label style="font-weight:800;">Email Address</label>
+                        <input type="email" id="resetEmail" placeholder="Enter your email" style="width:100%; padding:12px; border:1px solid #eee; border-radius:8px; font-weight:700;">
+                    </div>
+                    <button class="btn btn-teal" onclick="resetPassword()" style="width:100%; margin-bottom:8px;">📧 Send Reset Link</button>
+                    <button class="btn" onclick="document.getElementById('forgotPasswordModal').remove()" style="width:100%; background:#e2e8f0; color:var(--text-dark);">✕ Cancel</button>
+                </div>
+            `;
+            document.body.appendChild(m);
+        }
+
+        async function resetPassword() {
+            const email = document.getElementById('resetEmail')?.value;
+            
+            if (!email) {
+                showToast('Please enter your email address.', 'error');
+                return;
+            }
+            
+            try {
+                const { error } = await sb.auth.resetPasswordForEmail(email, {
+                    redirectTo: window.location.origin + window.location.pathname
+                });
+                
+                if (error) throw error;
+                
+                showToast('✅ Password reset link sent to your email!', 'success');
+                
+                const modal = document.getElementById('forgotPasswordModal');
+                if (modal) modal.remove();
+                
+                document.getElementById('resetEmail').value = '';
+                
+            } catch (err) {
+                showToast('❌ ' + err.message, 'error');
+            }
+        }
+
         // ================================================================
         // LOGOUT
         // ================================================================
@@ -1955,9 +2017,6 @@ async function resetPassword() {
                     document.querySelectorAll('#group-feed .group-banner .stats span').forEach((el, idx) => {
                         if (idx === 1) el.innerText = count;
                     });
-                    document.querySelectorAll('#social-group-feed .group-banner .stats span').forEach((el, idx) => {
-                        if (idx === 1) el.innerText = count;
-                    });
                 } catch (err) {
                     console.error('Online count error:', err);
                 }
@@ -2011,7 +2070,7 @@ async function resetPassword() {
                 }
                 
                 container.innerHTML = data.map(group => `
-                    <div class="teacher-card" onclick="openTabContent('group-feed', ${group.id})" style="cursor:pointer;">
+                    <div class="teacher-card" onclick="openTabContent('group-feed', ${group.id})" style="cursor:pointer;" data-group-id="${group.id}">
                         <div class="info">
                             <div class="name">${group.name} <span class="verified-badge">✓</span></div>
                             <div class="spec">👥 ${group.followers || 0} Followers • ${group.group_type || 'Public'}</div>
@@ -2027,13 +2086,12 @@ async function resetPassword() {
         }
 
         // ================================================================
-        // GROUP CREATION (One Teaching + One Social per user)
+        // GROUP CREATION (Unified - No separate types)
         // ================================================================
         async function createGroup() {
             const nameInput = document.getElementById('createGroupName');
             const descInput = document.getElementById('createGroupDesc');
             const typeSelect = document.getElementById('createGroupType');
-            const purposeSelect = document.getElementById('createGroupPurpose');
             const picInput = document.getElementById('createGroupPic');
             
             if (!nameInput) return showToast('Form not found.', 'error');
@@ -2041,28 +2099,12 @@ async function resetPassword() {
             const name = nameInput.value;
             const description = descInput ? descInput.value : '';
             const group_type = typeSelect ? typeSelect.value : 'Public';
-            const group_purpose = purposeSelect ? purposeSelect.value : 'teaching';
             
             if (!name) return showToast('Please enter a group name.', 'error');
             
-            // Check if user already has a group of this type
-            const existingGroup = AppState.groups.find(g => g.group_purpose === group_purpose);
-            
-            if (existingGroup) {
-                showToast(`⚠️ You already have a ${group_purpose} group. Delete it first to create a new one.`, 'error');
-                return;
-            }
-            
-            // Check if user has both group types
-            const hasTeaching = AppState.groups.some(g => g.group_purpose === 'teaching');
-            const hasSocial = AppState.groups.some(g => g.group_purpose === 'social');
-            
-            if (group_purpose === 'teaching' && hasTeaching) {
-                showToast('⚠️ You already have a teaching group. Delete it first to create a new one.', 'error');
-                return;
-            }
-            if (group_purpose === 'social' && hasSocial) {
-                showToast('⚠️ You already have a social group. Delete it first to create a new one.', 'error');
+            // Check if user already has a group
+            if (AppState.groups.length > 0) {
+                showToast('⚠️ You already have a group. Delete it first to create a new one.', 'error');
                 return;
             }
             
@@ -2084,12 +2126,12 @@ async function resetPassword() {
                     }
                 }
                 
+                // REMOVED: group_purpose field - all groups have all features
                 const { data, error } = await sb.from('groups').insert({
                     owner_id: AppState.userId,
                     name: name,
                     description: description,
                     group_type: group_type,
-                    group_purpose: group_purpose,
                     profile_pic_url: profile_pic_url,
                     followers: 0,
                     online: 1
@@ -2113,93 +2155,74 @@ async function resetPassword() {
             }
         }
 
-// ================================================================
-        // TOGGLE GROUP JOIN - FIXED
+        // ================================================================
+        // TOGGLE GROUP JOIN - FIXED (Group card not found)
         // ================================================================
         async function toggleGroupJoin(btn) {
-    // Stop event propagation to prevent accidental navigation
-    if (event) event.stopPropagation();
-    
-    if (!AppState.userId) {
-        showToast('Please login first.', 'error');
-        return;
-    }
-    
-    // Check if user is the owner
-    if (btn.innerText.includes('Owner') || btn.dataset.isOwner === 'true') {
-        showToast('📌 This is your group!', 'info');
-        return;
-    }
-    
-    // Find the group ID from the card
-    const card = btn.closest('.teacher-card');
-    if (!card) {
-        showToast('⚠️ Group card not found.', 'error');
-        return;
-    }
-    
-    // Try to get group ID from data attribute
-    let groupId = card.dataset.groupId;
-    
-    // If no data attribute, try to find from name
-    if (!groupId) {
-        const nameEl = card.querySelector('.name');
-        if (!nameEl) {
-            showToast('⚠️ Group name not found.', 'error');
-            return;
-        }
-        
-        let groupName = nameEl.textContent.trim();
-        // Remove any special characters that might interfere
-        groupName = groupName.replace(/[✓✅⭐✨📌]/g, '').trim();
-        groupName = groupName.replace(/\s+/g, ' ');
-        
-        // Find group by name
-        const foundGroup = AppState.groups.find(g => g.name === groupName);
-        if (foundGroup) {
-            groupId = foundGroup.id;
-        }
-    }
-    
-    // If still no group ID, fetch from database
-    if (!groupId) {
-        try {
-            const nameEl = card.querySelector('.name');
-            if (!nameEl) return;
+            if (event) event.stopPropagation();
             
-            let groupName = nameEl.textContent.trim();
-            groupName = groupName.replace(/[✓✅⭐✨📌]/g, '').trim();
-            groupName = groupName.replace(/\s+/g, ' ');
+            if (!AppState.userId) {
+                showToast('Please login first.', 'error');
+                return;
+            }
             
-            // Search in trending groups container
-            const allCards = document.querySelectorAll('.teacher-card');
-            for (const c of allCards) {
-                const n = c.querySelector('.name');
-                if (n) {
-                    let gName = n.textContent.trim();
-                    gName = gName.replace(/[✓✅⭐✨📌]/g, '').trim();
-                    gName = gName.replace(/\s+/g, ' ');
-                    if (gName === groupName) {
+            // Check if user is the owner
+            if (btn.innerText.includes('Owner') || btn.dataset.isOwner === 'true') {
+                showToast('📌 This is your group!', 'info');
+                return;
+            }
+            
+            // Find the group ID - try multiple methods
+            let groupId = null;
+            
+            // Method 1: Get from data attribute on card
+            const card = btn.closest('.teacher-card');
+            if (card && card.dataset.groupId) {
+                groupId = card.dataset.groupId;
+            }
+            
+            // Method 2: Get from the onclick attribute of the card
+            if (!groupId && card && card.getAttribute('onclick')) {
+                const match = card.getAttribute('onclick').match(/openTabContent\('group-feed',\s*(\d+)\)/);
+                if (match) groupId = parseInt(match[1]);
+            }
+            
+            // Method 3: Find group by name
+            if (!groupId) {
+                const nameEl = card ? card.querySelector('.name') : null;
+                if (nameEl) {
+                    let groupName = nameEl.textContent.trim();
+                    groupName = groupName.replace(/[✓✅⭐✨📌★]/g, '').trim();
+                    groupName = groupName.replace(/\s+/g, ' ');
+                    
+                    const foundGroup = AppState.groups.find(g => g.name === groupName);
+                    if (foundGroup) {
+                        groupId = foundGroup.id;
+                    }
+                }
+            }
+            
+            // Method 4: Fallback - search all teacher cards
+            if (!groupId) {
+                const allCards = document.querySelectorAll('.teacher-card');
+                for (const c of allCards) {
+                    const nameEl = c.querySelector('.name');
+                    if (nameEl) {
+                        let gName = nameEl.textContent.trim();
+                        gName = gName.replace(/[✓✅⭐✨📌★]/g, '').trim();
+                        gName = gName.replace(/\s+/g, ' ');
                         const joinBtn = c.querySelector('.join-btn');
-                        if (joinBtn && joinBtn !== btn) {
-                            // Copy the join state
-                            btn.innerText = joinBtn.innerText;
-                            btn.className = joinBtn.className;
-                            return;
+                        if (joinBtn && joinBtn === btn) {
+                            const match = c.getAttribute('onclick')?.match(/openTabContent\('group-feed',\s*(\d+)\)/);
+                            if (match) groupId = parseInt(match[1]);
+                            break;
                         }
                     }
                 }
             }
             
-            // Fetch from database
-            const { data: dbGroup, error } = await sb
-                .from('groups')
-                .select('id, followers')
-                .ilike('name', `%${groupName}%`)
-                .single();
-            
-            if (error || !dbGroup) {
-                // Toggle button state locally
+            if (!groupId) {
+                // Toggle button state locally as fallback
                 if (btn.innerText.includes('Joined') || btn.innerText.includes('✅')) {
                     btn.innerText = '➕ Join Class';
                     btn.className = 'join-btn';
@@ -2212,79 +2235,51 @@ async function resetPassword() {
                 return;
             }
             
-            groupId = dbGroup.id;
-            const currentFollowers = dbGroup.followers || 0;
-            
-            if (!btn.innerText.includes('Joined') && !btn.innerText.includes('✅')) {
-                const newFollowers = currentFollowers + 1;
-                await sb.from('groups').update({ followers: newFollowers }).eq('id', groupId);
-                btn.innerText = '✅ Joined';
-                btn.className = 'join-btn joined';
-                showToast('✅ You have joined this class!', 'success');
-                updateTrendingGroups();
-            } else {
-                const newFollowers = Math.max(0, currentFollowers - 1);
-                await sb.from('groups').update({ followers: newFollowers }).eq('id', groupId);
-                btn.innerText = '➕ Join Class';
-                btn.className = 'join-btn';
-                showToast('📌 Left the class.', 'info');
-                updateTrendingGroups();
+            // Process with found group ID
+            try {
+                let group = AppState.groups.find(g => g.id === groupId);
+                
+                if (!group) {
+                    const { data: dbGroup, error } = await sb
+                        .from('groups')
+                        .select('*')
+                        .eq('id', groupId)
+                        .single();
+                    
+                    if (error || !dbGroup) {
+                        showToast('⚠️ Group not found.', 'error');
+                        return;
+                    }
+                    group = dbGroup;
+                    AppState.groups.push(group);
+                }
+                
+                const currentFollowers = group.followers || 0;
+                
+                if (!btn.innerText.includes('Joined') && !btn.innerText.includes('✅')) {
+                    const newFollowers = currentFollowers + 1;
+                    await sb.from('groups').update({ followers: newFollowers }).eq('id', group.id);
+                    group.followers = newFollowers;
+                    btn.innerText = '✅ Joined';
+                    btn.className = 'join-btn joined';
+                    showToast('✅ You have joined this class!', 'success');
+                    updateTrendingGroups();
+                } else {
+                    const newFollowers = Math.max(0, currentFollowers - 1);
+                    await sb.from('groups').update({ followers: newFollowers }).eq('id', group.id);
+                    group.followers = newFollowers;
+                    btn.innerText = '➕ Join Class';
+                    btn.className = 'join-btn';
+                    showToast('📌 Left the class.', 'info');
+                    updateTrendingGroups();
+                }
+                
+            } catch (err) {
+                console.error('Error in toggleGroupJoin:', err);
+                showToast('❌ Operation failed: ' + err.message, 'error');
             }
-            return;
-            
-        } catch (err) {
-            console.error('Error in toggleGroupJoin:', err);
-            showToast('❌ Error: ' + err.message, 'error');
-            return;
         }
-    }
-    
-    // If we have a group ID, process normally
-    try {
-        // Find group in AppState
-        let group = AppState.groups.find(g => g.id === groupId);
-        
-        // If not in AppState, fetch from database
-        if (!group) {
-            const { data: dbGroup, error } = await sb
-                .from('groups')
-                .select('*')
-                .eq('id', groupId)
-                .single();
-            
-            if (error || !dbGroup) {
-                showToast('⚠️ Group not found.', 'error');
-                return;
-            }
-            group = dbGroup;
-            AppState.groups.push(group);
-        }
-        
-        const currentFollowers = group.followers || 0;
-        
-        if (!btn.innerText.includes('Joined') && !btn.innerText.includes('✅')) {
-            const newFollowers = currentFollowers + 1;
-            await sb.from('groups').update({ followers: newFollowers }).eq('id', group.id);
-            group.followers = newFollowers;
-            btn.innerText = '✅ Joined';
-            btn.className = 'join-btn joined';
-            showToast('✅ You have joined this class!', 'success');
-            updateTrendingGroups();
-        } else {
-            const newFollowers = Math.max(0, currentFollowers - 1);
-            await sb.from('groups').update({ followers: newFollowers }).eq('id', group.id);
-            group.followers = newFollowers;
-            btn.innerText = '➕ Join Class';
-            btn.className = 'join-btn';
-            showToast('📌 Left the class.', 'info');
-            updateTrendingGroups();
-        }
-        
-    } catch (err) {
-        console.error('Error in toggleGroupJoin:', err);
-        showToast('❌ Operation failed: ' + err.message, 'error');
-    }
-}
+
         // ================================================================
         // RENDER USER GROUPS
         // ================================================================
@@ -2296,7 +2291,7 @@ async function resetPassword() {
                 let html = `<div class="join-header"><h2 data-key="my_groups">📂 My Groups</h2></div>`;
                 AppState.groups.forEach(group => {
                     html += `
-                        <div class="teacher-card" style="cursor:pointer;" onclick="openTabContent('group-feed', ${group.id})">
+                        <div class="teacher-card" style="cursor:pointer;" onclick="openTabContent('group-feed', ${group.id})" data-group-id="${group.id}">
                             <div class="info">
                                 <div class="name">${group.name} <span class="verified-badge">✓</span></div>
                                 <div class="spec">👥 ${group.followers || 0} Followers • ${group.group_type || 'Public'}</div>
@@ -2412,10 +2407,7 @@ async function resetPassword() {
             
             modal.classList.add('active');
             
-            // Auto-play
-            video.play().catch(() => {
-                // Auto-play may be blocked by browser
-            });
+            video.play().catch(() => {});
         }
 
         function closeVideoPlayer() {
@@ -2425,7 +2417,6 @@ async function resetPassword() {
             if (video) video.pause();
         }
 
-        // Close video player on outside click
         document.addEventListener('click', function(e) {
             const modal = document.getElementById('videoPlayerModal');
             if (modal && modal.classList.contains('active') && e.target === modal) {
@@ -2981,6 +2972,9 @@ async function resetPassword() {
             }
         }
 
+        // ================================================================
+        // RENDER POST CARD - FIXED: Repost shows original author name
+        // ================================================================
         function renderPostCard(post) {
             const isOwner = post.user_id === AppState.userId;
             const isAdmin = AppState.isAdmin;
@@ -2991,7 +2985,6 @@ async function resetPassword() {
             const maxLength = 150;
             let contentDisplay = post.content;
             let showReadMore = false;
-            let isExpanded = false;
             if (post.content && post.content.length > maxLength) {
                 contentDisplay = post.content.substring(0, maxLength) + '...';
                 showReadMore = true;
@@ -3016,8 +3009,43 @@ async function resetPassword() {
             const userLiked = post.user_liked || false;
             const userDisliked = post.user_disliked || false;
             
-            // Viral glow for super viral
+            // Viral glow
             const viralGlow = post.viral_level === 'super_viral' || post.viral_level === 'viral' ? 'viral-glow' : '';
+            
+            // FIX: Repost display - Show original author name instead of link
+            let repostInfo = '';
+            if (post.is_repost && post.original_post_id) {
+                // We'll fetch the original post author name in the component
+                // For now, show a placeholder that will be updated
+                repostInfo = `<div style="font-size:13px; color:var(--text-muted); margin-bottom:6px; font-weight:700;">📤 Shared from: <span id="repostAuthor-${post.id}" style="color:var(--gold);">Loading...</span></div>`;
+                
+                // Fetch original post author
+                (async () => {
+                    try {
+                        const { data: originalPost, error } = await sb
+                            .from('social_posts')
+                            .select('user_id')
+                            .eq('id', post.original_post_id)
+                            .single();
+                        
+                        if (!error && originalPost) {
+                            const { data: user } = await sb
+                                .from('users')
+                                .select('first_name, email')
+                                .eq('user_id', originalPost.user_id)
+                                .single();
+                            
+                            if (user) {
+                                const name = user.first_name || user.email?.split('@')[0] || 'User';
+                                const authorSpan = document.getElementById(`repostAuthor-${post.id}`);
+                                if (authorSpan) authorSpan.textContent = name;
+                            }
+                        }
+                    } catch (err) {
+                        console.error('Error fetching repost author:', err);
+                    }
+                })();
+            }
             
             return `
                 <div class="post-card ${viralGlow}" id="post-${post.id}">
@@ -3042,6 +3070,8 @@ async function resetPassword() {
                         ` : ''}
                     </div>
                     
+                    ${repostInfo}
+                    
                     <div class="post-content" id="postContent-${post.id}">
                         <span id="postContentText-${post.id}">${contentDisplay}</span>
                         ${showReadMore ? `
@@ -3052,12 +3082,13 @@ async function resetPassword() {
                     ${post.image_url ? `<img src="${post.image_url}" alt="Post image" class="post-image">` : ''}
                     ${post.link_url ? `<a href="${post.link_url}" target="_blank" class="post-link">🔗 ${post.link_url}</a>` : ''}
                     
+                    <!-- FIX: Bigger, bolder post action buttons -->
                     <div class="post-actions">
                         <button onclick="toggleLikePost('${post.id}')" id="likeBtn-${post.id}" class="${userLiked ? 'liked' : ''}">
                             <i class="fas fa-heart"></i> <span id="likeCount-${post.id}">${post.likes || 0}</span>
                         </button>
                         <button onclick="toggleDislikePost('${post.id}')" id="dislikeBtn-${post.id}" class="${userDisliked ? 'disliked' : ''}">
-                            <i class="fas fa-heart" style="color:${userDisliked ? '#000000' : '#888'}"></i> <span id="dislikeCount-${post.id}">${post.dislikes || 0}</span>
+                            <i class="fas fa-heart-broken"></i> <span id="dislikeCount-${post.id}">${post.dislikes || 0}</span>
                         </button>
                         <button onclick="togglePostComment(this)">
                             <i class="fas fa-comment"></i> <span id="commentCount-${post.id}">${post.comment_count || 0}</span>
@@ -3103,13 +3134,11 @@ async function resetPassword() {
             const fullContent = contentSpan.dataset.fullContent || contentSpan.textContent;
             
             if (contentSpan.textContent.includes('...')) {
-                // Expand
                 contentSpan.textContent = fullContent;
                 contentSpan.dataset.fullContent = '';
                 readMoreBtn.textContent = 'Read Less';
                 readMoreBtn.className = 'read-less';
             } else {
-                // Collapse
                 contentSpan.dataset.fullContent = contentSpan.textContent;
                 contentSpan.textContent = contentSpan.textContent.substring(0, 150) + '...';
                 readMoreBtn.textContent = 'Read More';
@@ -3118,7 +3147,7 @@ async function resetPassword() {
         }
 
         // ================================================================
-        // TOGGLE LIKE POST - FIXED (Prevents multiple likes)
+        // TOGGLE LIKE POST
         // ================================================================
         async function toggleLikePost(postId) {
             if (!AppState.userId) {
@@ -3131,7 +3160,6 @@ async function resetPassword() {
             if (!btn || !countSpan) return;
 
             try {
-                // Check if user already liked this post
                 const { data: existingLike, error: checkError } = await sb
                     .from('social_post_likes')
                     .select('*')
@@ -3142,7 +3170,6 @@ async function resetPassword() {
                 if (checkError && checkError.code !== 'PGRST116') throw checkError;
 
                 if (existingLike) {
-                    // Remove like
                     await sb.from('social_post_likes').delete()
                         .eq('post_id', postId)
                         .eq('user_id', AppState.userId);
@@ -3159,7 +3186,6 @@ async function resetPassword() {
                     countSpan.textContent = newCount;
                     btn.classList.remove('liked');
                 } else {
-                    // Check if user has disliked this post
                     const { data: existingDislike } = await sb
                         .from('social_post_dislikes')
                         .select('*')
@@ -3168,7 +3194,6 @@ async function resetPassword() {
                         .single();
 
                     if (existingDislike) {
-                        // Remove dislike first
                         await sb.from('social_post_dislikes').delete()
                             .eq('post_id', postId)
                             .eq('user_id', AppState.userId);
@@ -3186,7 +3211,6 @@ async function resetPassword() {
                         document.getElementById(`dislikeBtn-${postId}`).classList.remove('disliked');
                     }
 
-                    // Add like
                     await sb.from('social_post_likes').insert({ post_id: postId, user_id: AppState.userId });
 
                     const { data: post } = await sb
@@ -3211,7 +3235,7 @@ async function resetPassword() {
         }
 
         // ================================================================
-        // TOGGLE DISLIKE POST - FIXED (Prevents multiple dislikes)
+        // TOGGLE DISLIKE POST
         // ================================================================
         async function toggleDislikePost(postId) {
             if (!AppState.userId) {
@@ -3224,7 +3248,6 @@ async function resetPassword() {
             if (!btn || !countSpan) return;
 
             try {
-                // Check if user already disliked this post
                 const { data: existingDislike, error: checkError } = await sb
                     .from('social_post_dislikes')
                     .select('*')
@@ -3235,7 +3258,6 @@ async function resetPassword() {
                 if (checkError && checkError.code !== 'PGRST116') throw checkError;
 
                 if (existingDislike) {
-                    // Remove dislike
                     await sb.from('social_post_dislikes').delete()
                         .eq('post_id', postId)
                         .eq('user_id', AppState.userId);
@@ -3252,7 +3274,6 @@ async function resetPassword() {
                     countSpan.textContent = newCount;
                     btn.classList.remove('disliked');
                 } else {
-                    // Check if user has liked this post
                     const { data: existingLike } = await sb
                         .from('social_post_likes')
                         .select('*')
@@ -3261,7 +3282,6 @@ async function resetPassword() {
                         .single();
 
                     if (existingLike) {
-                        // Remove like first
                         await sb.from('social_post_likes').delete()
                             .eq('post_id', postId)
                             .eq('user_id', AppState.userId);
@@ -3279,7 +3299,6 @@ async function resetPassword() {
                         document.getElementById(`likeBtn-${postId}`).classList.remove('liked');
                     }
 
-                    // Add dislike
                     await sb.from('social_post_dislikes').insert({ post_id: postId, user_id: AppState.userId });
 
                     const { data: post } = await sb
@@ -3348,7 +3367,7 @@ async function resetPassword() {
                     const newPost = {
                         group_id: userGroups[0].id,
                         user_id: AppState.userId,
-                        content: `🔄 Shared from "${post.group_id}" by ${post.user_id}\n\n${post.content}`,
+                        content: post.content,
                         image_url: post.image_url,
                         link_url: post.link_url,
                         is_repost: true,
@@ -3467,7 +3486,7 @@ async function resetPassword() {
         }
 
         // ================================================================
-        // POST COMMENTS WITH LIKE AND REPLY
+        // POST COMMENTS WITH LIKE AND REPLY - FIXED: Duplicate likes
         // ================================================================
         async function loadPostComments(postId) {
             try {
@@ -3512,9 +3531,7 @@ async function resetPassword() {
                             </button>
                             <button onclick="toggleCommentReply('${comment.id}')">💬 Reply</button>
                         </div>
-                        <div class="comment-replies" id="commentReplies-${comment.id}">
-                            <!-- Replies will be loaded here -->
-                        </div>
+                        <div class="comment-replies" id="commentReplies-${comment.id}"></div>
                         <div class="comment-reply-input" id="commentReplyInput-${comment.id}">
                             <input type="text" placeholder="Write a reply..." id="replyInput-${comment.id}">
                             <button onclick="addCommentReply('${comment.id}', '${postId}')">Post</button>
@@ -3522,7 +3539,6 @@ async function resetPassword() {
                     </div>
                 `).join('');
                 
-                // Load replies for each comment
                 comments.forEach(comment => {
                     loadCommentReplies(comment.id);
                 });
@@ -3625,6 +3641,7 @@ async function resetPassword() {
             }
         }
 
+        // FIX: Comment like toggle - Prevents multiple likes from same user
         async function toggleCommentLike(commentId) {
             if (!AppState.userId) {
                 showToast('Please login first.', 'error');
@@ -3636,6 +3653,7 @@ async function resetPassword() {
             if (!btn || !countSpan) return;
             
             try {
+                // Check if user already liked this comment
                 const { data: existing, error } = await sb
                     .from('social_comment_likes')
                     .select('*')
@@ -3644,6 +3662,7 @@ async function resetPassword() {
                     .single();
                 
                 if (existing) {
+                    // Remove like
                     await sb.from('social_comment_likes').delete()
                         .eq('comment_id', commentId)
                         .eq('user_id', AppState.userId);
@@ -3654,6 +3673,7 @@ async function resetPassword() {
                     
                     await sb.from('social_comments').update({ likes: newCount }).eq('id', commentId);
                 } else {
+                    // Add like
                     await sb.from('social_comment_likes').insert({
                         comment_id: commentId,
                         user_id: AppState.userId
@@ -3745,21 +3765,14 @@ async function resetPassword() {
                 
                 if (error) throw error;
                 
-                // Engagement Score (40%)
                 const engagementScore = (post.likes || 0) + (post.comment_count || 0) * 2 + (post.share_count || 0) * 3;
-                
-                // View Score (30%)
                 const viewScore = post.views || 0;
-                
-                // Time Score (30%)
                 const hoursSincePost = (Date.now() - new Date(post.created_at).getTime()) / (1000 * 60 * 60);
                 let timeScore = 100 - (hoursSincePost / 24) * 10;
                 timeScore = Math.max(0, timeScore);
                 
-                // Raw Score
                 let rawScore = (engagementScore * 0.40) + (viewScore * 0.30) + (timeScore * 0.30);
                 
-                // Dislike Penalty (VERY WEAK)
                 let penalty = 0;
                 if (post.dislikes > 100) penalty = 0.10;
                 else if (post.dislikes > 50) penalty = 0.05;
@@ -3769,7 +3782,6 @@ async function resetPassword() {
                 
                 const finalScore = rawScore * (1 - penalty);
                 
-                // Determine viral level
                 let viralLevel = 'normal';
                 if (finalScore > 1000) viralLevel = 'super_viral';
                 else if (finalScore > 600) viralLevel = 'viral';
@@ -3783,7 +3795,6 @@ async function resetPassword() {
                     })
                     .eq('id', postId);
                 
-                // If viral, add to global trending
                 if (viralLevel === 'viral' || viralLevel === 'super_viral') {
                     await sb.from('global_trending_posts').upsert({
                         post_id: postId,
@@ -3792,7 +3803,6 @@ async function resetPassword() {
                     });
                 }
                 
-                // Update UI
                 loadSocialPosts(AppState.currentGroupId);
                 loadGlobalTrending();
                 
@@ -3802,7 +3812,7 @@ async function resetPassword() {
         }
 
         // ================================================================
-        // TRENDING CONTENT - WITH CLASS/SOCIAL TABS
+        // TRENDING CONTENT - Social, Video, PPT, Mock Exam
         // ================================================================
         async function loadGlobalTrending() {
             try {
@@ -3810,16 +3820,16 @@ async function resetPassword() {
                 const tabsContainer = document.getElementById('trendingTabsContainer');
                 if (!container || !tabsContainer) return;
                 
-                // Create tabs
                 tabsContainer.innerHTML = `
                     <div class="trending-tabs">
-                        <button class="trending-tab active" onclick="switchTrendingTab('class', this)" data-tab="class">📚 Class</button>
-                        <button class="trending-tab" onclick="switchTrendingTab('social', this)" data-tab="social">🗣️ Social</button>
+                        <button class="trending-tab active" onclick="switchTrendingTab('social', this)" data-tab="social">📝 Social</button>
+                        <button class="trending-tab" onclick="switchTrendingTab('video', this)" data-tab="video">📹 Video</button>
+                        <button class="trending-tab" onclick="switchTrendingTab('ppt', this)" data-tab="ppt">📊 PPT (Most Viewed)</button>
+                        <button class="trending-tab" onclick="switchTrendingTab('mockexam', this)" data-tab="mockexam">📝 Mock Exam (Most Viewed)</button>
                     </div>
                 `;
                 
-                // Load default tab (Class)
-                await loadTrendingContent('class');
+                await loadTrendingContent('social');
                 
             } catch (err) {
                 console.error('Global trending error:', err);
@@ -3833,107 +3843,135 @@ async function resetPassword() {
             await loadTrendingContent(tab);
         }
 
-async function loadTrendingContent(tab) {
-    const container = document.getElementById('globalTrendingContainer');
-    if (!container) return;
-    
-    container.innerHTML = '<div class="loading">Loading trending content...</div>';
-    
-    try {
-        const groupPurpose = tab === 'class' ? 'teaching' : 'social';
-        
-        // First, get groups of the selected purpose
-        const { data: groups, error: groupsError } = await sb
-            .from('groups')
-            .select('id, name, group_purpose')
-            .eq('group_purpose', groupPurpose);
-        
-        if (groupsError) throw groupsError;
-        
-        if (!groups || groups.length === 0) {
-            container.innerHTML = `
-                <div style="text-align:center; color:var(--text-muted); padding:20px; font-weight:700;">
-                    📝 No ${tab === 'class' ? 'Teaching' : 'Social'} groups yet.
-                </div>
-            `;
-            return;
-        }
-        
-        const groupIds = groups.map(g => g.id);
-        const groupMap = groups.reduce((acc, g) => { acc[g.id] = g; return acc; }, {});
-        
-        // Get viral posts from these groups
-        const { data: posts, error: postsError } = await sb
-            .from('social_posts')
-            .select('*')
-            .in('group_id', groupIds)
-            .neq('viral_level', 'normal')
-            .order('viral_score', { ascending: false })
-            .limit(10);
-        
-        if (postsError) throw postsError;
-        
-        if (!posts || posts.length === 0) {
-            // Show normal posts instead
-            const { data: normalPosts, error: normalError } = await sb
-                .from('social_posts')
-                .select('*')
-                .in('group_id', groupIds)
-                .order('created_at', { ascending: false })
-                .limit(5);
+        async function loadTrendingContent(tab) {
+            const container = document.getElementById('globalTrendingContainer');
+            if (!container) return;
             
-            if (normalError) throw normalError;
+            container.innerHTML = '<div class="loading">Loading trending content...</div>';
             
-            if (!normalPosts || normalPosts.length === 0) {
-                container.innerHTML = `
-                    <div style="text-align:center; color:var(--text-muted); padding:20px; font-weight:700;">
-                        📝 No posts in ${tab === 'class' ? 'Teaching' : 'Social'} groups yet.
-                    </div>
-                `;
-                return;
-            }
-            
-            container.innerHTML = `
-                <div style="text-align:center; color:var(--text-muted); padding:8px; font-size:13px; font-weight:700;">
-                    📝 No viral content yet. Showing recent posts.
-                </div>
-                ${normalPosts.map(post => `
-                    <div class="feed-card" onclick="openTabContent('group-feed', ${post.group_id})" style="cursor:pointer;">
-                        <div class="info">
-                            <h4>📌 ${post.content ? post.content.substring(0, 60) + (post.content.length > 60 ? '...' : '') : 'Recent Post'}</h4>
-                            <p>${groupMap[post.group_id]?.name || 'Group'} • ${post.likes || 0} likes • ${post.comment_count || 0} comments</p>
+            try {
+                let posts = [];
+                let groupIds = [];
+                
+                // First get all groups
+                const { data: groups, error: groupsError } = await sb
+                    .from('groups')
+                    .select('id, name');
+                
+                if (groupsError) throw groupsError;
+                
+                if (!groups || groups.length === 0) {
+                    container.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:20px; font-weight:700;">📝 No groups yet.</div>`;
+                    return;
+                }
+                
+                groupIds = groups.map(g => g.id);
+                const groupMap = groups.reduce((acc, g) => { acc[g.id] = g; return acc; }, {});
+                
+                if (tab === 'social') {
+                    // Get viral social posts
+                    const { data, error } = await sb
+                        .from('social_posts')
+                        .select('*')
+                        .in('group_id', groupIds)
+                        .neq('viral_level', 'normal')
+                        .order('viral_score', { ascending: false })
+                        .limit(10);
+                    
+                    if (error) throw error;
+                    posts = data || [];
+                    
+                    if (posts.length === 0) {
+                        const { data: recentPosts } = await sb
+                            .from('social_posts')
+                            .select('*')
+                            .in('group_id', groupIds)
+                            .order('created_at', { ascending: false })
+                            .limit(5);
+                        posts = recentPosts || [];
+                    }
+                } else if (tab === 'video') {
+                    // Get most viewed videos
+                    const { data, error } = await sb
+                        .from('group_content')
+                        .select('*')
+                        .eq('content_type', 'video')
+                        .in('group_id', groupIds)
+                        .order('views', { ascending: false })
+                        .limit(10);
+                    
+                    if (error) throw error;
+                    posts = data || [];
+                } else if (tab === 'ppt') {
+                    // Get most viewed PPTs
+                    const { data, error } = await sb
+                        .from('group_content')
+                        .select('*')
+                        .eq('content_type', 'ppt')
+                        .in('group_id', groupIds)
+                        .order('views', { ascending: false })
+                        .limit(10);
+                    
+                    if (error) throw error;
+                    posts = data || [];
+                } else if (tab === 'mockexam') {
+                    // Get most viewed mock exams
+                    const { data, error } = await sb
+                        .from('mock_exams')
+                        .select('*')
+                        .in('group_id', groupIds)
+                        .order('attempts', { ascending: false })
+                        .limit(10);
+                    
+                    if (error) throw error;
+                    posts = data || [];
+                }
+                
+                if (!posts || posts.length === 0) {
+                    const tabNames = {
+                        'social': 'social posts',
+                        'video': 'videos',
+                        'ppt': 'PPTs',
+                        'mockexam': 'mock exams'
+                    };
+                    container.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:20px; font-weight:700;">📝 No trending ${tabNames[tab] || 'content'} yet.</div>`;
+                    return;
+                }
+                
+                container.innerHTML = posts.map(post => {
+                    let title = post.content || post.title || 'Trending Content';
+                    if (title.length > 80) title = title.substring(0, 80) + '...';
+                    
+                    const groupName = groupMap[post.group_id]?.name || 'Unknown Group';
+                    const likes = post.likes || 0;
+                    const comments = post.comment_count || 0;
+                    const shares = post.share_count || 0;
+                    const views = post.views || 0;
+                    
+                    let stats = `❤️ ${likes} • 💬 ${comments} • 📤 ${shares}`;
+                    if (tab === 'video' || tab === 'ppt') {
+                        stats = `👁️ ${views} views`;
+                    } else if (tab === 'mockexam') {
+                        stats = `📝 ${post.attempts || 0} attempts`;
+                    }
+                    
+                    return `
+                        <div class="feed-card" onclick="openTabContent('group-feed', ${post.group_id})" style="cursor:pointer;">
+                            <div class="info">
+                                <h4>${title}</h4>
+                                <p>📂 ${groupName} • ${stats}</p>
+                            </div>
+                            <button class="action-btn">View</button>
                         </div>
-                        <button class="action-btn">View</button>
-                    </div>
-                `).join('')}
-            `;
-            return;
+                    `;
+                }).join('');
+                
+            } catch (err) {
+                console.error('Load trending content error:', err);
+                container.innerHTML = '<div class="loading" style="color:var(--red-error);">Failed to load trending content</div>';
+            }
         }
-        
-        container.innerHTML = posts.map(post => {
-            const levelEmoji = post.viral_level === 'super_viral' ? '⭐' : 
-                              post.viral_level === 'viral' ? '💎' : 
-                              post.viral_level === 'trending' ? '🔥' : '⬆️';
-            const levelName = post.viral_level || 'Viral';
-            const group = groupMap[post.group_id];
-            
-            return `
-                <div class="feed-card" onclick="openTabContent('group-feed', ${post.group_id})" style="cursor:pointer; border-left: 4px solid ${post.viral_level === 'super_viral' ? '#f59e0b' : post.viral_level === 'viral' ? '#8b5cf6' : post.viral_level === 'trending' ? '#f97316' : '#f59e0b'};">
-                    <div class="info">
-                        <h4>${levelEmoji} ${levelName} • ${group?.name || 'Unknown Group'}</h4>
-                        <p>${post.content ? post.content.substring(0, 80) + (post.content.length > 80 ? '...' : '') : 'Trending Post'}</p>
-                        <p style="font-size:12px; color:var(--text-muted);">❤️ ${post.likes || 0} • 💬 ${post.comment_count || 0} • 📤 ${post.share_count || 0}</p>
-                    </div>
-                    <button class="action-btn">View</button>
-                </div>
-            `;
-        }).join('');
-        
-    } catch (err) {
-        console.error('Load trending content error:', err);
-        container.innerHTML = '<div class="loading" style="color:var(--red-error);">Failed to load trending content</div>';
-    }
-}
+
         // ================================================================
         // B-STORE FUNCTIONS
         // ================================================================
@@ -3992,6 +4030,9 @@ async function loadTrendingContent(tab) {
             });
         }
 
+        // ================================================================
+        // BOOK SUBSCRIPTION AND OPENING - FIXED
+        // ================================================================
         async function subscribeToBook(bookId) {
             if (!AppState.userId) {
                 showToast('Please login first.', 'error');
@@ -4019,7 +4060,7 @@ async function loadTrendingContent(tab) {
             try {
                 const { data: book, error: bookError } = await sb
                     .from('bstore_books')
-                    .select(`price_${tier}`)
+                    .select(`price_${tier}, file_url, title`)
                     .eq('id', bookId)
                     .single();
                 
@@ -4032,7 +4073,8 @@ async function loadTrendingContent(tab) {
                         user_id: AppState.userId,
                         tier: tier,
                         amount_paid: 0,
-                        expires_at: new Date(Date.now() + getTierDuration(tier)).toISOString()
+                        expires_at: new Date(Date.now() + getTierDuration(tier)).toISOString(),
+                        is_active: true
                     });
                     showToast('✅ Book added to your library!', 'success');
                 } else {
@@ -4052,7 +4094,8 @@ async function loadTrendingContent(tab) {
                         user_id: AppState.userId,
                         tier: tier,
                         amount_paid: price,
-                        expires_at: new Date(Date.now() + getTierDuration(tier)).toISOString()
+                        expires_at: new Date(Date.now() + getTierDuration(tier)).toISOString(),
+                        is_active: true
                     });
                     
                     await sb.from('transactions').insert({
@@ -4068,10 +4111,59 @@ async function loadTrendingContent(tab) {
                 document.querySelectorAll('.modal.active').forEach(m => m.remove());
                 loadBStore();
                 loadWallet();
+                loadMyLibrary();
                 
             } catch (err) {
                 console.error('Subscription error:', err);
                 showToast('Error processing subscription: ' + err.message, 'error');
+            }
+        }
+
+        // FIX: Book opening functionality
+        async function openBook(bookId) {
+            try {
+                const { data: subscription, error: subError } = await sb
+                    .from('bstore_subscriptions')
+                    .select('*')
+                    .eq('book_id', bookId)
+                    .eq('user_id', AppState.userId)
+                    .eq('is_active', true)
+                    .single();
+                
+                if (subError || !subscription) {
+                    showToast('⚠️ You need an active subscription to read this book.', 'error');
+                    return;
+                }
+                
+                // Check if subscription is expired
+                if (new Date(subscription.expires_at) < new Date()) {
+                    await sb.from('bstore_subscriptions')
+                        .update({ is_active: false })
+                        .eq('id', subscription.id);
+                    showToast('⚠️ Your subscription has expired. Please renew.', 'error');
+                    loadMyLibrary();
+                    return;
+                }
+                
+                // Get book file URL
+                const { data: book, error: bookError } = await sb
+                    .from('bstore_books')
+                    .select('file_url, title')
+                    .eq('id', bookId)
+                    .single();
+                
+                if (bookError || !book || !book.file_url) {
+                    showToast('❌ Book file not found.', 'error');
+                    return;
+                }
+                
+                // Open book in new tab
+                window.open(book.file_url, '_blank');
+                showToast(`📖 Opening "${book.title}"...`, 'success');
+                
+            } catch (err) {
+                console.error('Open book error:', err);
+                showToast('Error opening book: ' + err.message, 'error');
             }
         }
 
@@ -4172,7 +4264,7 @@ async function loadTrendingContent(tab) {
         }
 
         // ================================================================
-        // JOBS FUNCTIONS
+        // JOBS FUNCTIONS - FIXED: deadline column
         // ================================================================
         async function loadJobs() {
             const container = document.getElementById('jobsContainer');
@@ -4181,7 +4273,6 @@ async function loadTrendingContent(tab) {
             container.innerHTML = '<div class="loading">Loading jobs...</div>';
             
             try {
-                const now = new Date().toISOString();
                 const { data, error } = await sb
                     .from('jobs')
                     .select('*')
@@ -4194,10 +4285,8 @@ async function loadTrendingContent(tab) {
                     return;
                 }
                 
-                const isVerified = AppState.isAdmin || AppState.isTeacher;
-                
                 container.innerHTML = data.map(job => {
-                    const isExpired = new Date(job.deadline) < new Date();
+                    const isExpired = job.deadline ? new Date(job.deadline) < new Date() : false;
                     const isOwner = job.posted_by === AppState.userId;
                     const canManage = isOwner || AppState.isAdmin;
                     
@@ -4211,8 +4300,8 @@ async function loadTrendingContent(tab) {
                                 <span>💰 ${job.salary_range || 'Negotiable'}</span>
                             </div>
                             <div class="details" style="margin-top:4px;">
-                                <span>📅 Deadline: ${new Date(job.deadline).toLocaleDateString()}</span>
-                                ${!isExpired ? `<span>⏳ ${Math.ceil((new Date(job.deadline) - new Date()) / (1000 * 60 * 60 * 24))} days remaining</span>` : ''}
+                                ${job.deadline ? `<span>📅 Deadline: ${new Date(job.deadline).toLocaleDateString()}</span>` : ''}
+                                ${!isExpired && job.deadline ? `<span>⏳ ${Math.ceil((new Date(job.deadline) - new Date()) / (1000 * 60 * 60 * 24))} days remaining</span>` : ''}
                             </div>
                             ${job.description ? `<p style="margin-top:4px; font-size:13px; color:var(--text-muted); font-weight:700;">${job.description.substring(0, 100)}${job.description.length > 100 ? '...' : ''}</p>` : ''}
                             <button class="apply-btn" onclick="applyToJob(${job.id})" ${isExpired ? 'disabled style="opacity:0.5;"' : ''}>${isExpired ? 'Expired' : '📋 Apply Now'}</button>
@@ -4268,7 +4357,7 @@ async function loadTrendingContent(tab) {
             const contactEmail = document.getElementById('jobContactEmail')?.value;
             const contactPhone = document.getElementById('jobContactPhone')?.value;
             
-            if (!title || !company || !location || !description || !deadline || !contactEmail) {
+            if (!title || !company || !location || !description || !contactEmail) {
                 showToast('Please fill in all required fields.', 'error');
                 return;
             }
@@ -4282,7 +4371,7 @@ async function loadTrendingContent(tab) {
                     description: description,
                     requirements: requirements || '',
                     salary_range: salary || '',
-                    deadline: deadline,
+                    deadline: deadline || null,
                     contact_email: contactEmail,
                     contact_phone: contactPhone || '',
                     posted_by: AppState.userId,
@@ -4599,7 +4688,7 @@ async function loadTrendingContent(tab) {
         }
 
         // ================================================================
-        // GROUP SETTINGS (Pen Icon)
+        // GROUP SETTINGS
         // ================================================================
         function showGroupSettings() {
             if (!AppState.isGroupOwner && !AppState.isAdmin) {
@@ -4672,10 +4761,6 @@ async function loadTrendingContent(tab) {
                 console.error('Load library error:', err);
                 container.innerHTML = '<div class="loading" style="color:var(--red-error);">Failed to load library</div>';
             }
-        }
-
-        function openBook(bookId) {
-            showToast('📖 Opening book... (Reader coming soon)', 'info');
         }
 
         // ================================================================
@@ -4823,7 +4908,7 @@ async function loadTrendingContent(tab) {
                         
                         await sb.from('groups').update({ profile_pic_url: profilePicUrl }).eq('id', AppState.currentGroupId);
                         
-                        document.querySelectorAll('#groupAvatarImg, #socialGroupAvatarImg').forEach(img => {
+                        document.querySelectorAll('#groupAvatarImg').forEach(img => {
                             if (img) img.src = profilePicUrl;
                         });
                         
@@ -4836,7 +4921,7 @@ async function loadTrendingContent(tab) {
                     
                     await sb.from('groups').update({ profile_pic_url: profilePicUrl }).eq('id', AppState.currentGroupId);
                     
-                    document.querySelectorAll('#groupAvatarImg, #socialGroupAvatarImg').forEach(img => {
+                    document.querySelectorAll('#groupAvatarImg').forEach(img => {
                         if (img) img.src = profilePicUrl;
                     });
                     
@@ -5001,22 +5086,14 @@ async function loadTrendingContent(tab) {
             document.querySelectorAll('.class-header-dropdown').forEach(d => d.classList.remove('active'));
             if (!isOpen) dropdown.classList.add('active');
 
-            const hasTeachingGroup = AppState.groups.some(g => g.group_purpose === 'teaching');
-            const hasSocialGroup = AppState.groups.some(g => g.group_purpose === 'social');
             const totalGroups = AppState.groups.length;
 
             let menuHtml = `<div class="divider"></div>`;
             
             if (totalGroups === 0) {
                 menuHtml += `<div onclick="showModal('createGroupModal')">➕ ${t('create_group')}</div>`;
-            } else if (totalGroups === 1) {
-                if (hasTeachingGroup) {
-                    menuHtml += `<div onclick="showModal('createGroupModal')">➕ ${t('create_social_group')}</div>`;
-                } else if (hasSocialGroup) {
-                    menuHtml += `<div onclick="showModal('createGroupModal')">➕ ${t('create_teaching_group')}</div>`;
-                }
             } else {
-                menuHtml += `<div style="color:var(--text-muted); font-size:12px; font-weight:700; padding:10px 16px;">✅ ${t('my_groups')}</div>`;
+                menuHtml += `<div onclick="showModal('createGroupModal')">➕ ${t('create_group')}</div>`;
             }
 
             menuHtml += `<div class="divider"></div>`;
@@ -5129,7 +5206,7 @@ async function loadTrendingContent(tab) {
         }
 
         // ================================================================
-        // SWITCH GROUP TAB
+        // SWITCH GROUP TAB - Updated order: Social, Video, PPT, Mock Exam
         // ================================================================
         function switchGroupTab(tabId, btn) {
             document.querySelectorAll('.class-tab').forEach(t => t.classList.remove('active'));
@@ -5139,7 +5216,9 @@ async function loadTrendingContent(tab) {
             if (content) content.classList.add('active');
 
             if (AppState.currentGroupId) {
-                if (tabId === 'mockexam') {
+                if (tabId === 'social') {
+                    loadSocialPosts(AppState.currentGroupId);
+                } else if (tabId === 'mockexam') {
                     loadGroupContent(AppState.currentGroupId, 'mockexam');
                 } else if (tabId === 'videos') {
                     loadGroupContent(AppState.currentGroupId, 'videos');
@@ -5622,7 +5701,6 @@ async function loadTrendingContent(tab) {
                 return; 
             }
             
-            // Get platform stats
             let platformBalance = 0;
             let totalBooksSold = 0;
             let totalCoinsSold = 0;
