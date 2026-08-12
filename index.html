@@ -107,7 +107,7 @@
         
         /* Verification Badge - Gold Star Only */
         .verification-star {
-            color: var(--gold);
+            color: #228B22 !important; 
             font-size: 18px;
             margin-left: 4px;
             display: inline-block;
@@ -526,6 +526,21 @@
             .app-main { padding: 24px; }
             .tab-scroll-area { padding: 24px; }
         }
+/* FORCE textarea alignment */
+textarea,
+#postContent,
+.modal-content textarea,
+.comment-input,
+.post-comments textarea,
+.comment-item textarea,
+.post-edit textarea {
+    text-align: left !important;
+    vertical-align: top !important;
+    padding: 12px 14px !important;
+    line-height: 1.6 !important;
+    display: block !important;
+    resize: vertical !important;
+}
     </style>
 </head>
 <body>
@@ -3890,42 +3905,44 @@
                             .limit(5);
                         posts = recentPosts || [];
                     }
-                } else if (tab === 'video') {
-                    // Get most viewed videos
-                    const { data, error } = await sb
-                        .from('group_content')
-                        .select('*')
-                        .eq('content_type', 'video')
-                        .in('group_id', groupIds)
-                        .order('views', { ascending: false })
-                        .limit(10);
-                    
-                    if (error) throw error;
-                    posts = data || [];
-                } else if (tab === 'ppt') {
-                    // Get most viewed PPTs
-                    const { data, error } = await sb
-                        .from('group_content')
-                        .select('*')
-                        .eq('content_type', 'ppt')
-                        .in('group_id', groupIds)
-                        .order('views', { ascending: false })
-                        .limit(10);
-                    
-                    if (error) throw error;
-                    posts = data || [];
-                } else if (tab === 'mockexam') {
-                    // Get most viewed mock exams
-                    const { data, error } = await sb
-                        .from('mock_exams')
-                        .select('*')
-                        .in('group_id', groupIds)
-                        .order('attempts', { ascending: false })
-                        .limit(10);
-                    
-                    if (error) throw error;
-                    posts = data || [];
-                }
+} else if (tab === 'video') {
+    // Get most viewed videos - use likes as fallback if views doesn't exist
+    const { data, error } = await sb
+        .from('group_content')
+        .select('*')
+        .eq('content_type', 'video')
+        .in('group_id', groupIds)
+        .order('likes', { ascending: false })
+        .limit(10);
+    
+    if (error) throw error;
+    posts = data || [];
+    
+} else if (tab === 'ppt') {
+    // Get most viewed PPTs - use likes as fallback
+    const { data, error } = await sb
+        .from('group_content')
+        .select('*')
+        .eq('content_type', 'ppt')
+        .in('group_id', groupIds)
+        .order('likes', { ascending: false })
+        .limit(10);
+    
+    if (error) throw error;
+    posts = data || [];
+    
+} else if (tab === 'mockexam') {
+    // Get most viewed mock exams - use created_at as fallback
+    const { data, error } = await sb
+        .from('mock_exams')
+        .select('*')
+        .in('group_id', groupIds)
+        .order('created_at', { ascending: false })
+        .limit(10);
+    
+    if (error) throw error;
+    posts = data || [];
+}
                 
                 if (!posts || posts.length === 0) {
                     const tabNames = {
@@ -3938,33 +3955,45 @@
                     return;
                 }
                 
-                container.innerHTML = posts.map(post => {
-                    let title = post.content || post.title || 'Trending Content';
-                    if (title.length > 80) title = title.substring(0, 80) + '...';
-                    
-                    const groupName = groupMap[post.group_id]?.name || 'Unknown Group';
-                    const likes = post.likes || 0;
-                    const comments = post.comment_count || 0;
-                    const shares = post.share_count || 0;
-                    const views = post.views || 0;
-                    
-                    let stats = `❤️ ${likes} • 💬 ${comments} • 📤 ${shares}`;
-                    if (tab === 'video' || tab === 'ppt') {
-                        stats = `👁️ ${views} views`;
-                    } else if (tab === 'mockexam') {
-                        stats = `📝 ${post.attempts || 0} attempts`;
-                    }
-                    
-                    return `
-                        <div class="feed-card" onclick="openTabContent('group-feed', ${post.group_id})" style="cursor:pointer;">
-                            <div class="info">
-                                <h4>${title}</h4>
-                                <p>📂 ${groupName} • ${stats}</p>
-                            </div>
-                            <button class="action-btn">View</button>
-                        </div>
-                    `;
-                }).join('');
+container.innerHTML = posts.map(post => {
+    let content = post.content || post.title || 'Trending Content';
+    let fullContent = content;
+    let displayContent = content;
+    let showReadMore = false;
+    
+    if (content.length > 80) {
+        displayContent = content.substring(0, 80) + '...';
+        showReadMore = true;
+    }
+    
+    const groupName = groupMap[post.group_id]?.name || 'Unknown Group';
+    const likes = post.likes || 0;
+    const comments = post.comment_count || 0;
+    const shares = post.share_count || 0;
+    
+    let stats = `❤️ ${likes} • 💬 ${comments} • 📤 ${shares}`;
+    if (tab === 'video' || tab === 'ppt') {
+        stats = `👁️ ${post.views || post.likes || 0} views`;
+    } else if (tab === 'mockexam') {
+        stats = `📝 ${post.attempts || 0} attempts`;
+    }
+    
+    return `
+        <div class="feed-card" onclick="openTabContent('group-feed', ${post.group_id})" style="cursor:pointer; flex-direction:column; align-items:flex-start;">
+            <div class="info" style="width:100%;">
+                <h4 style="font-weight:900; color:var(--text-dark);">${post.title || 'Post'}</h4>
+                <p style="font-weight:700; color:var(--text-muted); margin-top:4px;">📂 ${groupName} • ${stats}</p>
+                <div style="margin-top:8px; font-weight:700; color:var(--text-dark); word-wrap:break-word; white-space:pre-wrap;">
+                    <span id="trendingContentText-${post.id}">${displayContent}</span>
+                    ${showReadMore ? `
+                        <span class="read-more" onclick="event.stopPropagation(); toggleTrendingContent('${post.id}', '${fullContent.replace(/'/g, "\\'")}')" style="color:var(--teal); cursor:pointer; font-weight:800;"> Read More</span>
+                    ` : ''}
+                </div>
+            </div>
+            <button class="action-btn" style="margin-top:10px; align-self:flex-start;">View</button>
+        </div>
+    `;
+}).join('');
                 
             } catch (err) {
                 console.error('Load trending content error:', err);
