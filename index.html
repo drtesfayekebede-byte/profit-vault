@@ -2585,6 +2585,7 @@
     </div>
 
 </div>
+
 <!-- ================================================================ -->
 <!-- JAVASCRIPT - PART 3A: CONFIG, STATE, TRANSLATIONS & UTILITIES -->
 <!-- ================================================================ -->
@@ -2740,7 +2741,7 @@ const translations = {
 };
 
 function t(key) { 
-    const translation = translations[AppState.lang]?.[key];
+    var translation = translations[AppState.lang] && translations[AppState.lang][key];
     return translation || key;
 }
 
@@ -2748,8 +2749,9 @@ function t(key) {
 // UTILITY FUNCTIONS
 // ================================================================
 
-function showToast(msg, type = 'success') {
-    const toast = document.getElementById('toast');
+function showToast(msg, type) {
+    type = type || 'success';
+    var toast = document.getElementById('toast');
     if (!toast) return;
     
     // Clear existing timeout
@@ -2769,7 +2771,7 @@ function showToast(msg, type = 'success') {
     }
     toast.style.display = 'flex';
     toast.style.animation = 'none';
-    toast.offsetHeight; // Trigger reflow
+    toast.offsetHeight;
     toast.style.animation = 'fadeIn 0.2s';
     
     AppState.toastTimeout = setTimeout(function() {
@@ -2779,14 +2781,12 @@ function showToast(msg, type = 'success') {
 }
 
 function showModal(id) { 
-    // Close all modals first
     document.querySelectorAll('.modal.active').forEach(function(m) {
         m.classList.remove('active');
     });
     var modal = document.getElementById(id);
     if (modal) {
         modal.classList.add('active');
-        // Click outside to close
         modal.addEventListener('click', function(e) {
             if (e.target === modal) {
                 closeModal(id);
@@ -2833,7 +2833,7 @@ function setLoading(element, isLoading, message) {
         if (!element.dataset.originalContent) {
             element.dataset.originalContent = element.innerHTML;
         }
-        element.innerHTML = '<div class="loading"><div class="spinner"></div>' + (message || 'Loading...') + '</div>';
+        element.innerHTML = '<div class="loading"><div class="spinner"></div>' + (message || 'Loading...') + '<\/div>';
     } else {
         if (element.dataset.originalContent) {
             element.innerHTML = element.dataset.originalContent;
@@ -2885,6 +2885,9 @@ function translatePage() {
         }
     });
 }
+
+</script>
+
 <!-- ================================================================ -->
 <!-- JAVASCRIPT - PART 3B: AUTHENTICATION FUNCTIONS -->
 <!-- ================================================================ -->
@@ -2902,7 +2905,7 @@ async function checkSession() {
         if (session && session.user) {
             AppState.userId = session.user.id;
             AppState.currentUser = session.user;
-            AppState.firstName = session.user.user_metadata?.first_name || session.user.email?.split('@')[0] || 'User';
+            AppState.firstName = session.user.user_metadata && session.user.user_metadata.first_name ? session.user.user_metadata.first_name : (session.user.email ? session.user.email.split('@')[0] : 'User');
             
             // Get user data
             var { data: userData, error: userError } = await sb
@@ -3009,7 +3012,7 @@ function updateUIForUser() {
     // Welcome text
     var welcomeText = document.getElementById('welcomeText');
     if (welcomeText) {
-        var badge = isVerified ? ' <span class="verification-badge"><span class="star">★</span></span>' : '';
+        var badge = isVerified ? ' <span class="verification-badge"><span class="star">★</span><\/span>' : '';
         welcomeText.innerHTML = '👋 Welcome back, ' + AppState.firstName + '!' + badge;
     }
     
@@ -3017,7 +3020,7 @@ function updateUIForUser() {
     var profileName = document.getElementById('profileName');
     if (profileName) {
         var name = AppState.currentUser && AppState.currentUser.email ? AppState.currentUser.email.split('@')[0] : 'User';
-        var badge = isVerified ? ' <span class="verification-badge"><span class="star">★</span></span>' : '';
+        var badge = isVerified ? ' <span class="verification-badge"><span class="star">★</span><\/span>' : '';
         profileName.innerHTML = name + badge;
     }
     
@@ -3042,9 +3045,9 @@ function updateUIForUser() {
     var dropdownItems = document.getElementById('dropdownItems');
     if (dropdownItems) {
         dropdownItems.innerHTML = 
-            '<div onclick="openTabContent(\'profile\')">👤 Profile</div>' +
-            '<div onclick="openTabContent(\'wallet\')">💳 Wallet</div>' +
-            '<div class="logout-item" onclick="logout()">🚪 Logout</div>';
+            '<div onclick="openTabContent(\'profile\')">👤 Profile<\/div>' +
+            '<div onclick="openTabContent(\'wallet\')">💳 Wallet<\/div>' +
+            '<div class="logout-item" onclick="logout()">🚪 Logout<\/div>';
     }
     
     // Wallet balance
@@ -3067,33 +3070,33 @@ function showAuthModal() {
     m.className = 'modal active';
     m.innerHTML = 
         '<div class="modal-content">' +
-            '<h3 style="color:var(--navy); font-weight:900; margin-bottom:16px;">📶 T-Hub</h3>' +
+            '<h3 style="color:var(--navy); font-weight:900; margin-bottom:16px;">📶 T-Hub<\/h3>' +
             
             '<div style="display:flex; gap:10px; margin-bottom:15px; background:#f1f5f9; border-radius:12px; padding:4px;">' +
-                '<button id="authSignInTab" onclick="switchAuthMode(\'signin\')" style="flex:1; padding:10px; border:none; border-radius:8px; font-weight:800; cursor:pointer; background:var(--navy); color:white; transition:0.2s;">🔑 Sign In</button>' +
-                '<button id="authRegisterTab" onclick="switchAuthMode(\'register\')" style="flex:1; padding:10px; border:none; border-radius:8px; font-weight:800; cursor:pointer; background:transparent; color:var(--text-muted); transition:0.2s;">📝 Register</button>' +
-            '</div>' +
+                '<button id="authSignInTab" onclick="switchAuthMode(\'signin\')" style="flex:1; padding:10px; border:none; border-radius:8px; font-weight:800; cursor:pointer; background:var(--navy); color:white; transition:0.2s;">🔑 Sign In<\/button>' +
+                '<button id="authRegisterTab" onclick="switchAuthMode(\'register\')" style="flex:1; padding:10px; border:none; border-radius:8px; font-weight:800; cursor:pointer; background:transparent; color:var(--text-muted); transition:0.2s;">📝 Register<\/button>' +
+            '<\/div>' +
             
             '<div id="signinForm">' +
-                '<div class="form-group"><label style="font-weight:800;">Email Address</label><input type="email" id="authEmail" placeholder="Enter your email" style="width:100%; padding:12px; border:1px solid #eee; border-radius:8px; font-weight:700;"></div>' +
-                '<div class="form-group" style="position:relative;"><label style="font-weight:800;">Password</label><div style="position:relative;"><input type="password" id="authPassword" placeholder="Enter your password" style="width:100%; padding:12px; padding-right:45px; border:1px solid #eee; border-radius:8px; font-weight:700;"><span onclick="togglePasswordVisibility(\'authPassword\', this)" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); cursor:pointer; font-size:20px;">👁️</span></div></div>' +
-                '<button class="btn" onclick="login()" style="width:100%; margin-bottom:8px;">🔑 Sign In</button>' +
-                '<p style="text-align:center; font-size:13px; color:var(--teal); font-weight:800; cursor:pointer; margin-bottom:8px;" onclick="showForgotPasswordModal()">🔑 Forgot Password? Click Here</p>' +
-                '<p style="text-align:center; font-size:13px; color:var(--text-muted); font-weight:700;">Don\'t have an account? <span onclick="switchAuthMode(\'register\')" style="color:var(--teal); cursor:pointer; font-weight:900;">Register</span></p>' +
-            '</div>' +
+                '<div class="form-group"><label style="font-weight:800;">Email Address<\/label><input type="email" id="authEmail" placeholder="Enter your email" style="width:100%; padding:12px; border:1px solid #eee; border-radius:8px; font-weight:700;"><\/div>' +
+                '<div class="form-group" style="position:relative;"><label style="font-weight:800;">Password<\/label><div style="position:relative;"><input type="password" id="authPassword" placeholder="Enter your password" style="width:100%; padding:12px; padding-right:45px; border:1px solid #eee; border-radius:8px; font-weight:700;"><span onclick="togglePasswordVisibility(\'authPassword\', this)" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); cursor:pointer; font-size:20px;">👁️<\/span><\/div><\/div>' +
+                '<button class="btn" onclick="login()" style="width:100%; margin-bottom:8px;">🔑 Sign In<\/button>' +
+                '<p style="text-align:center; font-size:13px; color:var(--teal); font-weight:800; cursor:pointer; margin-bottom:8px;" onclick="showForgotPasswordModal()">🔑 Forgot Password? Click Here<\/p>' +
+                '<p style="text-align:center; font-size:13px; color:var(--text-muted); font-weight:700;">Don\'t have an account? <span onclick="switchAuthMode(\'register\')" style="color:var(--teal); cursor:pointer; font-weight:900;">Register<\/span><\/p>' +
+            '<\/div>' +
             
             '<div id="registerForm" style="display:none;">' +
-                '<div class="form-group"><label style="font-weight:800;">First Name</label><input type="text" id="authFirstName" placeholder="Enter your first name" style="width:100%; padding:12px; border:1px solid #eee; border-radius:8px; font-weight:700;"></div>' +
-                '<div class="form-group"><label style="font-weight:800;">Middle Name (Optional)</label><input type="text" id="authMiddleName" placeholder="Enter your middle name" style="width:100%; padding:12px; border:1px solid #eee; border-radius:8px; font-weight:700;"></div>' +
-                '<div class="form-group"><label style="font-weight:800;">Email Address</label><input type="email" id="authEmailRegister" placeholder="Enter your email" style="width:100%; padding:12px; border:1px solid #eee; border-radius:8px; font-weight:700;"></div>' +
-                '<div class="form-group" style="position:relative;"><label style="font-weight:800;">Create Password</label><div style="position:relative;"><input type="password" id="authPasswordRegister" placeholder="Min 6 characters" style="width:100%; padding:12px; padding-right:45px; border:1px solid #eee; border-radius:8px; font-weight:700;"><span onclick="togglePasswordVisibility(\'authPasswordRegister\', this)" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); cursor:pointer; font-size:20px;">👁️</span></div></div>' +
-                '<div class="form-group" style="position:relative;"><label style="font-weight:800;">Confirm Password</label><div style="position:relative;"><input type="password" id="authPasswordConfirm" placeholder="Re-enter your password" style="width:100%; padding:12px; padding-right:45px; border:1px solid #eee; border-radius:8px; font-weight:700;"><span onclick="togglePasswordVisibility(\'authPasswordConfirm\', this)" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); cursor:pointer; font-size:20px;">👁️</span></div></div>' +
-                '<button class="btn btn-teal" onclick="register()" style="width:100%; margin-bottom:8px;">📝 Create Account</button>' +
-                '<p style="text-align:center; font-size:13px; color:var(--text-muted); font-weight:700;">Already have an account? <span onclick="switchAuthMode(\'signin\')" style="color:var(--teal); cursor:pointer; font-weight:900;">Sign In</span></p>' +
-            '</div>' +
+                '<div class="form-group"><label style="font-weight:800;">First Name<\/label><input type="text" id="authFirstName" placeholder="Enter your first name" style="width:100%; padding:12px; border:1px solid #eee; border-radius:8px; font-weight:700;"><\/div>' +
+                '<div class="form-group"><label style="font-weight:800;">Middle Name (Optional)<\/label><input type="text" id="authMiddleName" placeholder="Enter your middle name" style="width:100%; padding:12px; border:1px solid #eee; border-radius:8px; font-weight:700;"><\/div>' +
+                '<div class="form-group"><label style="font-weight:800;">Email Address<\/label><input type="email" id="authEmailRegister" placeholder="Enter your email" style="width:100%; padding:12px; border:1px solid #eee; border-radius:8px; font-weight:700;"><\/div>' +
+                '<div class="form-group" style="position:relative;"><label style="font-weight:800;">Create Password<\/label><div style="position:relative;"><input type="password" id="authPasswordRegister" placeholder="Min 6 characters" style="width:100%; padding:12px; padding-right:45px; border:1px solid #eee; border-radius:8px; font-weight:700;"><span onclick="togglePasswordVisibility(\'authPasswordRegister\', this)" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); cursor:pointer; font-size:20px;">👁️<\/span><\/div><\/div>' +
+                '<div class="form-group" style="position:relative;"><label style="font-weight:800;">Confirm Password<\/label><div style="position:relative;"><input type="password" id="authPasswordConfirm" placeholder="Re-enter your password" style="width:100%; padding:12px; padding-right:45px; border:1px solid #eee; border-radius:8px; font-weight:700;"><span onclick="togglePasswordVisibility(\'authPasswordConfirm\', this)" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); cursor:pointer; font-size:20px;">👁️<\/span><\/div><\/div>' +
+                '<button class="btn btn-teal" onclick="register()" style="width:100%; margin-bottom:8px;">📝 Create Account<\/button>' +
+                '<p style="text-align:center; font-size:13px; color:var(--text-muted); font-weight:700;">Already have an account? <span onclick="switchAuthMode(\'signin\')" style="color:var(--teal); cursor:pointer; font-weight:900;">Sign In<\/span><\/p>' +
+            '<\/div>' +
             
-            '<p style="text-align:center; font-size:11px; color:var(--text-muted); margin-top:8px; font-weight:700;">By continuing, you agree to T-Hub\'s Terms & Privacy Policy</p>' +
-        '</div>';
+            '<p style="text-align:center; font-size:11px; color:var(--text-muted); margin-top:8px; font-weight:700;">By continuing, you agree to T-Hub\'s Terms & Privacy Policy<\/p>' +
+        '<\/div>';
     document.body.appendChild(m);
 }
 
@@ -3239,13 +3242,13 @@ function showForgotPasswordModal() {
     m.className = 'modal active';
     m.innerHTML = 
         '<div class="modal-content">' +
-            '<span class="close" onclick="document.getElementById(\'forgotPasswordModal\').remove()">&times;</span>' +
-            '<h3 style="color:var(--navy); font-weight:900;">🔑 Reset Password</h3>' +
-            '<p style="color:var(--text-muted); margin-bottom:15px; font-weight:700;">Enter your email address and we\'ll send you a password reset link.</p>' +
-            '<div class="form-group"><label style="font-weight:800;">Email Address</label><input type="email" id="resetEmail" placeholder="Enter your email" style="width:100%; padding:12px; border:1px solid #eee; border-radius:8px; font-weight:700;"></div>' +
-            '<button class="btn btn-teal" onclick="resetPassword()" style="width:100%; margin-bottom:8px;">📧 Send Reset Link</button>' +
-            '<button class="btn" onclick="document.getElementById(\'forgotPasswordModal\').remove()" style="width:100%; background:#e2e8f0; color:var(--text-dark);">✕ Cancel</button>' +
-        '</div>';
+            '<span class="close" onclick="document.getElementById(\'forgotPasswordModal\').remove()">&times;<\/span>' +
+            '<h3 style="color:var(--navy); font-weight:900;">🔑 Reset Password<\/h3>' +
+            '<p style="color:var(--text-muted); margin-bottom:15px; font-weight:700;">Enter your email address and we\'ll send you a password reset link.<\/p>' +
+            '<div class="form-group"><label style="font-weight:800;">Email Address<\/label><input type="email" id="resetEmail" placeholder="Enter your email" style="width:100%; padding:12px; border:1px solid #eee; border-radius:8px; font-weight:700;"><\/div>' +
+            '<button class="btn btn-teal" onclick="resetPassword()" style="width:100%; margin-bottom:8px;">📧 Send Reset Link<\/button>' +
+            '<button class="btn" onclick="document.getElementById(\'forgotPasswordModal\').remove()" style="width:100%; background:#e2e8f0; color:var(--text-dark);">✕ Cancel<\/button>' +
+        '<\/div>';
     document.body.appendChild(m);
 }
 
@@ -3311,6 +3314,7 @@ async function logout() {
         showToast('Error logging out: ' + err.message, 'error');
     }
 }
+
 </script>
 
 <!-- ================================================================ -->
@@ -3546,7 +3550,7 @@ async function updateTrendingGroups() {
         if (!container) return;
         
         if (!data || data.length === 0) {
-            container.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:20px; font-weight:700;">No trending groups yet.</div>';
+            container.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:20px; font-weight:700;">No trending groups yet.<\/div>';
             return;
         }
         
@@ -3560,11 +3564,11 @@ async function updateTrendingGroups() {
             html += 
                 '<div class="teacher-card" onclick="openTabContent(\'group-feed\', ' + group.id + ')" style="cursor:pointer;" data-group-id="' + group.id + '">' +
                     '<div class="info">' +
-                        '<div class="name">' + group.name + ' <span class="verified-badge">✓</span></div>' +
-                        '<div class="spec">👥 ' + (group.followers || 0) + ' Followers • ' + (group.group_type || 'Public') + '</div>' +
-                    '</div>' +
-                    '<button class="join-btn ' + btnClass + '" style="' + btnStyle + '" onclick="event.stopPropagation(); toggleGroupJoin(this)" data-group-id="' + group.id + '">' + btnText + '</button>' +
-                '</div>';
+                        '<div class="name">' + group.name + ' <span class="verified-badge">✓<\/span><\/div>' +
+                        '<div class="spec">👥 ' + (group.followers || 0) + ' Followers • ' + (group.group_type || 'Public') + '<\/div>' +
+                    '<\/div>' +
+                    '<button class="join-btn ' + btnClass + '" style="' + btnStyle + '" onclick="event.stopPropagation(); toggleGroupJoin(this)" data-group-id="' + group.id + '">' + btnText + '<\/button>' +
+                '<\/div>';
         }
         container.innerHTML = html;
         translatePage();
@@ -3572,7 +3576,9 @@ async function updateTrendingGroups() {
         console.error('Trending update error:', err);
     }
 }
+
 </script>
+
 <!-- ================================================================ -->
 <!-- JAVASCRIPT - PART 3D: GROUP FUNCTIONS -->
 <!-- ================================================================ -->
@@ -3826,22 +3832,22 @@ function renderUserGroups() {
     if (!containerDiv) return;
     
     if (AppState.groups && AppState.groups.length > 0) {
-        var html = '<div class="join-header"><h2 data-key="my_groups">📂 My Groups</h2></div>';
+        var html = '<div class="join-header"><h2 data-key="my_groups">📂 My Groups<\/h2><\/div>';
         for (var i = 0; i < AppState.groups.length; i++) {
             var group = AppState.groups[i];
             html += 
                 '<div class="teacher-card" style="cursor:pointer;" onclick="openTabContent(\'group-feed\', ' + group.id + ')" data-group-id="' + group.id + '">' +
                     '<div class="info">' +
-                        '<div class="name">' + group.name + ' <span class="verified-badge">✓</span></div>' +
-                        '<div class="spec">👥 ' + (group.followers || 0) + ' Followers • ' + (group.group_type || 'Public') + '</div>' +
-                    '</div>' +
-                    '<button class="join-btn joined" style="background:var(--gold); color:var(--text-dark); cursor:default;">Owner</button>' +
-                '</div>';
+                        '<div class="name">' + group.name + ' <span class="verified-badge">✓<\/span><\/div>' +
+                        '<div class="spec">👥 ' + (group.followers || 0) + ' Followers • ' + (group.group_type || 'Public') + '<\/div>' +
+                    '<\/div>' +
+                    '<button class="join-btn joined" style="background:var(--gold); color:var(--text-dark); cursor:default;">Owner<\/button>' +
+                '<\/div>';
         }
         containerDiv.innerHTML = html;
         setTimeout(function() { translatePage(); }, 50);
     } else {
-        containerDiv.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:20px; font-weight:700;">No groups yet. Create one using the "Create New Group" button.</div>';
+        containerDiv.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:20px; font-weight:700;">No groups yet. Create one using the "Create New Group" button.<\/div>';
     }
 }
 
@@ -3904,6 +3910,9 @@ async function deleteGroup(groupId) {
         showToast('❌ Error deleting group: ' + err.message, 'error');
     }
 }
+
+</script>
+
 <!-- ================================================================ -->
 <!-- JAVASCRIPT - PART 3E: SOCIAL POST FUNCTIONS -->
 <!-- ================================================================ -->
@@ -3928,7 +3937,7 @@ async function loadSocialPosts(groupId) {
         if (error) throw error;
         
         if (!posts || posts.length === 0) {
-            container.innerHTML = '<div class="loading" style="color:var(--text-muted);">No posts yet. Create the first post!</div>';
+            container.innerHTML = '<div class="loading" style="color:var(--text-muted);">No posts yet. Create the first post!<\/div>';
             return;
         }
 
@@ -4008,7 +4017,7 @@ async function loadSocialPosts(groupId) {
         
     } catch (err) {
         console.error('Load posts error:', err);
-        container.innerHTML = '<div class="loading" style="color:var(--red-error);">Failed to load posts</div>';
+        container.innerHTML = '<div class="loading" style="color:var(--red-error);">Failed to load posts<\/div>';
     }
 }
 
@@ -4041,17 +4050,17 @@ function renderPostCard(post, userMap) {
     // Badges
     var viralBadge = '';
     if (post.viral_level === 'super_viral') {
-        viralBadge = '<span class="viral-badge super">⭐ Super Viral</span>';
+        viralBadge = '<span class="viral-badge super">⭐ Super Viral<\/span>';
     } else if (post.viral_level === 'viral') {
-        viralBadge = '<span class="viral-badge viral">💎 Viral</span>';
+        viralBadge = '<span class="viral-badge viral">💎 Viral<\/span>';
     } else if (post.viral_level === 'trending') {
-        viralBadge = '<span class="viral-badge trending">🔥 Trending</span>';
+        viralBadge = '<span class="viral-badge trending">🔥 Trending<\/span>';
     } else if (post.viral_level === 'rising') {
-        viralBadge = '<span class="viral-badge rising">⬆️ Rising</span>';
+        viralBadge = '<span class="viral-badge rising">⬆️ Rising<\/span>';
     }
     
-    var pinnedBadge = post.is_pinned ? '<span class="pinned-badge">📌 Pinned</span>' : '';
-    var verifiedBadge = isVerified ? ' <span class="verification-badge"><span class="star">★</span></span>' : '';
+    var pinnedBadge = post.is_pinned ? '<span class="pinned-badge">📌 Pinned<\/span>' : '';
+    var verifiedBadge = isVerified ? ' <span class="verification-badge"><span class="star">★<\/span><\/span>' : '';
     
     var userLiked = post.user_liked || false;
     var userDisliked = post.user_disliked || false;
@@ -4060,7 +4069,7 @@ function renderPostCard(post, userMap) {
     // Repost info
     var repostInfo = '';
     if (post.is_repost && post.original_post_id) {
-        repostInfo = '<div class="repost-info">📤 Shared from: <span id="repostAuthor-' + post.id + '" style="color:var(--gold);">Loading...</span></div>';
+        repostInfo = '<div class="repost-info">📤 Shared from: <span id="repostAuthor-' + post.id + '" style="color:var(--gold);">Loading...<\/span><\/div>';
         
         (function(postId, originalPostId) {
             (async function() {
@@ -4093,46 +4102,46 @@ function renderPostCard(post, userMap) {
     
     return '<div class="post-card ' + viralGlow + '" id="post-' + post.id + '">' +
         '<div class="post-header">' +
-            '<div class="post-avatar"><img src="' + authorPic + '" alt="' + authorName + '"></div>' +
+            '<div class="post-avatar"><img src="' + authorPic + '" alt="' + authorName + '"><\/div>' +
             '<div>' +
-                '<div class="post-name">' + authorName + verifiedBadge + ' ' + viralBadge + ' ' + pinnedBadge + '</div>' +
-                '<div class="post-time">' + new Date(post.created_at).toLocaleDateString() + ' ' + new Date(post.created_at).toLocaleTimeString() + '</div>' +
-            '</div>' +
-            (canModerate ? '<div style="margin-left:auto; position:relative;"><button class="post-actions-btn" onclick="togglePostMenu(\'' + post.id + '\')">⋮</button><div id="postMenu-' + post.id + '" style="display:none; position:absolute; right:0; background:white; border-radius:8px; box-shadow:var(--shadow-sm); padding:4px 0; z-index:20; min-width:120px;">' +
-                (isOwner ? '<div style="padding:6px 12px; cursor:pointer; font-weight:700; font-size:13px;" onclick="editPost(\'' + post.id + '\')">✏️ Edit</div>' : '') +
-                (isOwner ? '<div style="padding:6px 12px; cursor:pointer; font-weight:700; font-size:13px; color:var(--red-error);" onclick="deletePost(\'' + post.id + '\')">🗑️ Delete</div>' : '') +
-                ((isAdmin || isGroupOwner) ? '<div style="padding:6px 12px; cursor:pointer; font-weight:700; font-size:13px; color:var(--gold);" onclick="togglePinPost(\'' + post.id + '\')">' + (post.is_pinned ? '📌 Unpin' : '📌 Pin') + '</div>' : '') +
-                (isAdmin ? '<div style="padding:6px 12px; cursor:pointer; font-weight:700; font-size:13px; color:var(--red-error);" onclick="reportPost(\'' + post.id + '\')">🚨 Report</div>' : '') +
-            '</div></div>' : '') +
-        '</div>' +
+                '<div class="post-name">' + authorName + verifiedBadge + ' ' + viralBadge + ' ' + pinnedBadge + '<\/div>' +
+                '<div class="post-time">' + new Date(post.created_at).toLocaleDateString() + ' ' + new Date(post.created_at).toLocaleTimeString() + '<\/div>' +
+            '<\/div>' +
+            (canModerate ? '<div style="margin-left:auto; position:relative;"><button class="post-actions-btn" onclick="togglePostMenu(\'' + post.id + '\')">⋮<\/button><div id="postMenu-' + post.id + '" style="display:none; position:absolute; right:0; background:white; border-radius:8px; box-shadow:var(--shadow-sm); padding:4px 0; z-index:20; min-width:120px;">' +
+                (isOwner ? '<div style="padding:6px 12px; cursor:pointer; font-weight:700; font-size:13px;" onclick="editPost(\'' + post.id + '\')">✏️ Edit<\/div>' : '') +
+                (isOwner ? '<div style="padding:6px 12px; cursor:pointer; font-weight:700; font-size:13px; color:var(--red-error);" onclick="deletePost(\'' + post.id + '\')">🗑️ Delete<\/div>' : '') +
+                ((isAdmin || isGroupOwner) ? '<div style="padding:6px 12px; cursor:pointer; font-weight:700; font-size:13px; color:var(--gold);" onclick="togglePinPost(\'' + post.id + '\')">' + (post.is_pinned ? '📌 Unpin' : '📌 Pin') + '<\/div>' : '') +
+                (isAdmin ? '<div style="padding:6px 12px; cursor:pointer; font-weight:700; font-size:13px; color:var(--red-error);" onclick="reportPost(\'' + post.id + '\')">🚨 Report<\/div>' : '') +
+            '<\/div><\/div>' : '') +
+        '<\/div>' +
         repostInfo +
         '<div class="post-content" id="postContent-' + post.id + '">' +
-            '<span id="postContentText-' + post.id + '">' + displayContent.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</span>' +
-            (showReadMore ? '<span class="read-more" onclick="togglePostContent(\'' + post.id + '\', \'' + fullContent.replace(/'/g, "\\'").replace(/\n/g, ' ').replace(/</g, '&lt;').replace(/>/g, '&gt;') + '\')" id="readMoreBtn-' + post.id + '">Read More</span>' : '') +
-        '</div>' +
+            '<span id="postContentText-' + post.id + '">' + displayContent.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '<\/span>' +
+            (showReadMore ? '<span class="read-more" onclick="togglePostContent(\'' + post.id + '\', \'' + fullContent.replace(/'/g, "\\'").replace(/\n/g, ' ').replace(/</g, '&lt;').replace(/>/g, '&gt;') + '\')" id="readMoreBtn-' + post.id + '">Read More<\/span>' : '') +
+        '<\/div>' +
         (post.image_url ? '<img src="' + post.image_url + '" alt="Post image" class="post-image">' : '') +
-        (post.link_url ? '<a href="' + post.link_url + '" target="_blank" class="post-link">🔗 ' + post.link_url + '</a>' : '') +
+        (post.link_url ? '<a href="' + post.link_url + '" target="_blank" class="post-link">🔗 ' + post.link_url + '<\/a>' : '') +
         '<div class="post-actions">' +
-            '<button onclick="toggleLikePost(\'' + post.id + '\')" id="likeBtn-' + post.id + '" class="' + (userLiked ? 'liked' : '') + '"><i class="fas fa-heart"></i> <span id="likeCount-' + post.id + '">' + (post.likes || 0) + '</span></button>' +
-            '<button onclick="toggleDislikePost(\'' + post.id + '\')" id="dislikeBtn-' + post.id + '" class="' + (userDisliked ? 'disliked' : '') + '"><i class="fas fa-heart-broken"></i> <span id="dislikeCount-' + post.id + '">' + (post.dislikes || 0) + '</span></button>' +
-            '<button onclick="togglePostComment(this)"><i class="fas fa-comment"></i> <span id="commentCount-' + post.id + '">' + (post.comment_count || 0) + '</span></button>' +
-            '<div class="share-btn"><button onclick="toggleShareOptions(\'' + post.id + '\')"><i class="fas fa-share"></i> <span id="shareCount-' + post.id + '">' + (post.share_count || 0) + '</span></button><div id="shareOptions-' + post.id + '" class="share-options"><div onclick="sharePost(\'' + post.id + '\', \'external\')">📤 Share External</div><div onclick="sharePost(\'' + post.id + '\', \'group\')">📬 Repost to Group</div></div></div>' +
-        '</div>' +
+            '<button onclick="toggleLikePost(\'' + post.id + '\')" id="likeBtn-' + post.id + '" class="' + (userLiked ? 'liked' : '') + '"><i class="fas fa-heart"><\/i> <span id="likeCount-' + post.id + '">' + (post.likes || 0) + '<\/span><\/button>' +
+            '<button onclick="toggleDislikePost(\'' + post.id + '\')" id="dislikeBtn-' + post.id + '" class="' + (userDisliked ? 'disliked' : '') + '"><i class="fas fa-heart-broken"><\/i> <span id="dislikeCount-' + post.id + '">' + (post.dislikes || 0) + '<\/span><\/button>' +
+            '<button onclick="togglePostComment(this)"><i class="fas fa-comment"><\/i> <span id="commentCount-' + post.id + '">' + (post.comment_count || 0) + '<\/span><\/button>' +
+            '<div class="share-btn"><button onclick="toggleShareOptions(\'' + post.id + '\')"><i class="fas fa-share"><\/i> <span id="shareCount-' + post.id + '">' + (post.share_count || 0) + '<\/span><\/button><div id="shareOptions-' + post.id + '" class="share-options"><div onclick="sharePost(\'' + post.id + '\', \'external\')">📤 Share External<\/div><div onclick="sharePost(\'' + post.id + '\', \'group\')">📬 Repost to Group<\/div><\/div><\/div>' +
+        '<\/div>' +
         '<div class="post-comments" id="comments-' + post.id + '">' +
-            '<div id="commentList-' + post.id + '"></div>' +
+            '<div id="commentList-' + post.id + '"><\/div>' +
             '<div class="comment-input-wrapper">' +
                 '<input type="text" class="comment-input" placeholder="Write a comment..." id="commentInput-' + post.id + '">' +
-                '<button class="comment-send" onclick="addPostComment(\'' + post.id + '\', this)">Post</button>' +
-            '</div>' +
-        '</div>' +
+                '<button class="comment-send" onclick="addPostComment(\'' + post.id + '\', this)">Post<\/button>' +
+            '<\/div>' +
+        '<\/div>' +
         '<div class="post-edit" id="editPost-' + post.id + '">' +
-            '<textarea id="editContent-' + post.id + '" rows="3">' + post.content + '</textarea>' +
+            '<textarea id="editContent-' + post.id + '" rows="3">' + post.content + '<\/textarea>' +
             '<input type="file" id="editImage-' + post.id + '" accept="image/*">' +
             '<input type="url" id="editLink-' + post.id + '" placeholder="Link URL" value="' + (post.link_url || '') + '">' +
-            '<button class="save-edit-btn" onclick="savePostEdit(\'' + post.id + '\')">Save</button>' +
-            '<button class="cancel-edit-btn" onclick="cancelPostEdit(\'' + post.id + '\')">Cancel</button>' +
-        '</div>' +
-    '</div>';
+            '<button class="save-edit-btn" onclick="savePostEdit(\'' + post.id + '\')">Save<\/button>' +
+            '<button class="cancel-edit-btn" onclick="cancelPostEdit(\'' + post.id + '\')">Cancel<\/button>' +
+        '<\/div>' +
+    '<\/div>';
 }
 
 // ================================================================
@@ -4632,7 +4641,7 @@ async function loadPostComments(postId) {
         if (!container) return;
         
         if (!comments || comments.length === 0) {
-            container.innerHTML = '<div style="color:var(--text-muted); font-size:13px; font-weight:700;">No comments yet.</div>';
+            container.innerHTML = '<div style="color:var(--text-muted); font-size:13px; font-weight:700;">No comments yet.<\/div>';
             return;
         }
         
@@ -4662,20 +4671,20 @@ async function loadPostComments(postId) {
             html += 
                 '<div class="comment-item" id="comment-' + comment.id + '">' +
                     '<div>' +
-                        '<span class="comment-author">' + (comment.user_id === AppState.userId ? 'You' : 'User') + '</span>' +
-                        '<span class="comment-text">' + comment.comment + '</span>' +
-                        '<span class="comment-time">' + new Date(comment.created_at).toLocaleTimeString() + '</span>' +
-                    '</div>' +
+                        '<span class="comment-author">' + (comment.user_id === AppState.userId ? 'You' : 'User') + '<\/span>' +
+                        '<span class="comment-text">' + comment.comment + '<\/span>' +
+                        '<span class="comment-time">' + new Date(comment.created_at).toLocaleTimeString() + '<\/span>' +
+                    '<\/div>' +
                     '<div class="comment-actions">' +
-                        '<button onclick="toggleCommentLike(\'' + comment.id + '\')" id="commentLikeBtn-' + comment.id + '" class="' + (isLiked ? 'liked' : '') + '"><i class="fas fa-heart"></i> <span id="commentLikeCount-' + comment.id + '">' + (comment.likes || 0) + '</span></button>' +
-                        '<button onclick="toggleCommentReply(\'' + comment.id + '\')">💬 Reply</button>' +
-                    '</div>' +
-                    '<div class="comment-replies" id="commentReplies-' + comment.id + '"></div>' +
+                        '<button onclick="toggleCommentLike(\'' + comment.id + '\')" id="commentLikeBtn-' + comment.id + '" class="' + (isLiked ? 'liked' : '') + '"><i class="fas fa-heart"><\/i> <span id="commentLikeCount-' + comment.id + '">' + (comment.likes || 0) + '<\/span><\/button>' +
+                        '<button onclick="toggleCommentReply(\'' + comment.id + '\')">💬 Reply<\/button>' +
+                    '<\/div>' +
+                    '<div class="comment-replies" id="commentReplies-' + comment.id + '"><\/div>' +
                     '<div class="comment-reply-input" id="commentReplyInput-' + comment.id + '">' +
                         '<input type="text" placeholder="Write a reply..." id="replyInput-' + comment.id + '">' +
-                        '<button onclick="addCommentReply(\'' + comment.id + '\', \'' + postId + '\')">Post</button>' +
-                    '</div>' +
-                '</div>';
+                        '<button onclick="addCommentReply(\'' + comment.id + '\', \'' + postId + '\')">Post<\/button>' +
+                    '<\/div>' +
+                '<\/div>';
         }
         container.innerHTML = html;
         
@@ -4711,10 +4720,10 @@ async function loadCommentReplies(commentId) {
             var reply = replies[i];
             html += 
                 '<div style="padding:4px 0; border-bottom: 1px solid #f5f5f5;">' +
-                    '<span style="font-weight:800;">' + (reply.user_id === AppState.userId ? 'You' : 'User') + ':</span>' +
-                    '<span>' + reply.reply + '</span>' +
-                    '<span style="font-size:10px; color:var(--text-muted);">' + new Date(reply.created_at).toLocaleTimeString() + '</span>' +
-                '</div>';
+                    '<span style="font-weight:800;">' + (reply.user_id === AppState.userId ? 'You' : 'User') + ':<\/span>' +
+                    '<span>' + reply.reply + '<\/span>' +
+                    '<span style="font-size:10px; color:var(--text-muted);">' + new Date(reply.created_at).toLocaleTimeString() + '<\/span>' +
+                '<\/div>';
         }
         container.innerHTML = html;
         
@@ -4837,6 +4846,7 @@ async function toggleCommentLike(commentId) {
         btn.dataset.processing = 'false';
     }
 }
+
 </script>
 
 <!-- ================================================================ -->
@@ -5276,7 +5286,9 @@ async function toggleContentDislike(btn, contentId, contentType) {
         btn.dataset.processing = 'false';
     }
 }
+
 </script>
+
 <!-- ================================================================ -->
 <!-- JAVASCRIPT - PART 3G: LOAD GROUP CONTENT -->
 <!-- UPDATED with video fixes, dislike button, and proper time format -->
@@ -5307,12 +5319,12 @@ async function loadGroupContent(groupId, contentType) {
 
         if (error) {
             console.error('Load error:', error);
-            container.innerHTML = '<div class="loading" style="color:var(--red-error);">Error loading content</div>';
+            container.innerHTML = '<div class="loading" style="color:var(--red-error);">Error loading content<\/div>';
             return;
         }
 
         if (!data || data.length === 0) {
-            container.innerHTML = '<div class="loading" style="color:var(--text-muted);">No ' + contentType + ' uploaded yet.</div>';
+            container.innerHTML = '<div class="loading" style="color:var(--text-muted);">No ' + contentType + ' uploaded yet.<\/div>';
             return;
         }
 
@@ -5330,68 +5342,68 @@ async function loadGroupContent(groupId, contentType) {
                 contentHtml = 
                     '<div class="video-wrapper" id="video-wrapper-' + item.id + '" style="position:relative; width:100%; background:#000; border-radius:12px; overflow:hidden; margin-bottom:10px; cursor:pointer;">' +
                         '<div class="video-thumbnail" id="thumbnail-' + item.id + '" style="position:relative; width:100%; padding-bottom:56.25%; background:#1a1a2e; display:flex; align-items:center; justify-content:center; cursor:pointer;">' +
-                            (thumbnailUrl ? '<img src="' + thumbnailUrl + '" alt="' + item.title + '" style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover;">' : '<div style="position:absolute; top:0; left:0; width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:48px; color:var(--gold);">🎬</div>') +
+                            (thumbnailUrl ? '<img src="' + thumbnailUrl + '" alt="' + item.title + '" style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover;">' : '<div style="position:absolute; top:0; left:0; width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:48px; color:var(--gold);">🎬<\/div>') +
                             '<div onclick="playInlineVideo(\'' + item.id + '\', \'' + item.file_url + '\')" style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); width:60px; height:60px; background:rgba(0,0,0,0.6); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:30px; color:white; transition:0.3s; border:2px solid rgba(255,255,255,0.3); cursor:pointer; z-index:10;">' +
-                                '<span>▶️</span>' +
-                            '</div>' +
-                            '<span class="watermark" style="position:absolute; bottom:8px; left:50%; transform:translateX(-50%); color:rgba(255,255,255,0.2); font-size:10px; font-weight:700; pointer-events:none; user-select:none;">© T-Hub</span>' +
-                        '</div>' +
+                                '<span>▶️<\/span>' +
+                            '<\/div>' +
+                            '<span class="watermark" style="position:absolute; bottom:8px; left:50%; transform:translateX(-50%); color:rgba(255,255,255,0.2); font-size:10px; font-weight:700; pointer-events:none; user-select:none;">© T-Hub<\/span>' +
+                        '<\/div>' +
                         '<div id="video-player-' + item.id + '" style="display:none; width:100%; background:#000; position:relative;">' +
-                            '<video id="video-' + item.id + '" style="width:100%; height:auto; max-height:400px; object-fit:contain; background:#000; display:block;" playsinline preload="metadata"></video>' +
+                            '<video id="video-' + item.id + '" style="width:100%; height:auto; max-height:400px; object-fit:contain; background:#000; display:block;" playsinline preload="metadata"><\/video>' +
                             '<div class="video-controls" id="controls-' + item.id + '" style="display:flex; align-items:center; gap:6px; padding:8px 12px; background:rgba(0,0,0,0.85); color:white; flex-wrap:wrap; transition:opacity 0.3s;">' +
-                                '<button onclick="event.stopPropagation(); toggleVideoPlay(\'' + item.id + '\')" id="playBtn-' + item.id + '" style="background:none; border:none; color:white; font-size:18px; cursor:pointer; padding:4px 8px;">⏸️</button>' +
+                                '<button onclick="event.stopPropagation(); toggleVideoPlay(\'' + item.id + '\')" id="playBtn-' + item.id + '" style="background:none; border:none; color:white; font-size:18px; cursor:pointer; padding:4px 8px;">⏸️<\/button>' +
                                 '<div onclick="event.stopPropagation(); seekVideo(event, \'' + item.id + '\')" style="flex:1; height:4px; background:rgba(255,255,255,0.3); border-radius:2px; cursor:pointer; position:relative; min-width:60px;">' +
                                     '<div id="progressFill-' + item.id + '" style="height:100%; background:#008080; border-radius:2px; width:0%; transition:width 0.1s linear; position:relative;">' +
-                                        '<div style="position:absolute; right:-5px; top:-4px; width:12px; height:12px; background:#008080; border-radius:50%; box-shadow:0 0 10px rgba(0,128,128,0.5);"></div>' +
-                                    '</div>' +
-                                '</div>' +
+                                        '<div style="position:absolute; right:-5px; top:-4px; width:12px; height:12px; background:#008080; border-radius:50%; box-shadow:0 0 10px rgba(0,128,128,0.5);"><\/div>' +
+                                    '<\/div>' +
+                                '<\/div>' +
                                 // FIX #137: Time display with proper MM:SS format
-                                '<span id="timeDisplay-' + item.id + '" style="font-size:12px; color:rgba(255,255,255,0.8); font-weight:700; font-family:monospace; min-width:85px;">0:00 / 0:00</span>' +
+                                '<span id="timeDisplay-' + item.id + '" style="font-size:12px; color:rgba(255,255,255,0.8); font-weight:700; font-family:monospace; min-width:85px;">0:00 / 0:00<\/span>' +
                                 '<input type="range" class="volume-slider" min="0" max="1" step="0.1" value="1" onchange="setVolume(\'' + item.id + '\', this.value)" style="width:50px; height:4px; -webkit-appearance:none; appearance:none; background:rgba(255,255,255,0.3); border-radius:2px; outline:none;">' +
-                                '<button class="speed-control" onclick="event.stopPropagation(); changeSpeed(\'' + item.id + '\', this)" style="background:rgba(255,255,255,0.1); border:none; color:white; padding:2px 10px; border-radius:4px; font-size:11px; font-weight:800; cursor:pointer;">1x</button>' +
-                                '<button onclick="event.stopPropagation(); downloadVideo(\'' + item.file_url + '\')" style="background:none; border:none; color:white; font-size:16px; cursor:pointer; padding:4px;">⬇️</button>' +
-                                '<button onclick="event.stopPropagation(); toggleVideoExpand(\'' + item.id + '\')" id="expandBtn-' + item.id + '" style="background:none; border:none; color:white; font-size:18px; cursor:pointer; padding:4px 8px;">⛶</button>' +
-                                '<button onclick="closeVideoPlayer(\'' + item.id + '\')" style="background:none; border:none; color:#ff4444; font-size:16px; cursor:pointer; padding:4px;">✕</button>' +
-                            '</div>' +
-                        '</div>' +
-                    '</div>';
+                                '<button class="speed-control" onclick="event.stopPropagation(); changeSpeed(\'' + item.id + '\', this)" style="background:rgba(255,255,255,0.1); border:none; color:white; padding:2px 10px; border-radius:4px; font-size:11px; font-weight:800; cursor:pointer;">1x<\/button>' +
+                                '<button onclick="event.stopPropagation(); downloadVideo(\'' + item.file_url + '\')" style="background:none; border:none; color:white; font-size:16px; cursor:pointer; padding:4px;">⬇️<\/button>' +
+                                '<button onclick="event.stopPropagation(); toggleVideoExpand(\'' + item.id + '\')" id="expandBtn-' + item.id + '" style="background:none; border:none; color:white; font-size:18px; cursor:pointer; padding:4px 8px;">⛶<\/button>' +
+                                '<button onclick="closeVideoPlayer(\'' + item.id + '\')" style="background:none; border:none; color:#ff4444; font-size:16px; cursor:pointer; padding:4px;">✕<\/button>' +
+                            '<\/div>' +
+                        '<\/div>' +
+                    '<\/div>';
             } else {
                 // PPT content
                 contentHtml = 
                     '<div class="thumbnail" onclick="openPPT(\'' + item.file_url + '\')" style="' + (item.cover_url ? "background: url('" + item.cover_url + "') center/cover;" : 'background:#1a1a2e; display:flex; align-items:center; justify-content:center; font-size:32px; color:var(--gold);') + '">' +
                         (!item.cover_url ? '📊' : '') +
-                        '<span class="duration">📄 PPT</span>' +
-                        '<span class="watermark">© T-Hub</span>' +
-                    '</div>';
+                        '<span class="duration">📄 PPT<\/span>' +
+                        '<span class="watermark">© T-Hub<\/span>' +
+                    '<\/div>';
             }
 
             html += 
                 '<div class="content-card" style="position:relative;">' +
-                    (isOwner ? '<button class="delete-btn" onclick="deleteContent(\'' + item.id + '\', \'' + contentType + '\')">✕</button>' : '') +
+                    (isOwner ? '<button class="delete-btn" onclick="deleteContent(\'' + item.id + '\', \'' + contentType + '\')">✕<\/button>' : '') +
                     contentHtml +
                     '<div class="meta">' +
-                        '<h4>' + item.title + '</h4>' +
-                        (item.description ? '<p style="font-size:12px;">' + item.description + '</p>' : '') +
-                        '<p>Uploaded • ' + new Date(item.created_at).toLocaleDateString() + '</p>' +
-                    '</div>' +
+                        '<h4>' + item.title + '<\/h4>' +
+                        (item.description ? '<p style="font-size:12px;">' + item.description + '<\/p>' : '') +
+                        '<p>Uploaded • ' + new Date(item.created_at).toLocaleDateString() + '<\/p>' +
+                    '<\/div>' +
                     // FIX #130: Added dislike button
                     '<div class="actions">' +
                         '<button onclick="event.stopPropagation(); toggleContentLike(this, \'' + item.id + '\', \'' + contentType + '\')" id="likeBtn-' + item.id + '">' +
-                            '<i class="fas fa-heart"></i> <span>' + (item.likes || 0) + '</span>' +
-                        '</button>' +
+                            '<i class="fas fa-heart"><\/i> <span>' + (item.likes || 0) + '<\/span>' +
+                        '<\/button>' +
                         '<button onclick="event.stopPropagation(); toggleContentDislike(this, \'' + item.id + '\', \'' + contentType + '\')" id="dislikeBtn-' + item.id + '">' +
-                            '<i class="fas fa-thumbs-down"></i> <span>' + (item.dislikes || 0) + '</span>' +
-                        '</button>' +
-                        '<button onclick="event.stopPropagation(); toggleComment(this)"><i class="fas fa-comment"></i> <span>0</span></button>' +
-                        '<button onclick="event.stopPropagation(); shareContent()"><i class="fas fa-share"></i> <span data-key="share">Share</span></button>' +
-                        '<button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(\'' + item.id + '\', \'' + contentType + '\')">⭐</button>' +
-                    '</div>' +
+                            '<i class="fas fa-thumbs-down"><\/i> <span>' + (item.dislikes || 0) + '<\/span>' +
+                        '<\/button>' +
+                        '<button onclick="event.stopPropagation(); toggleComment(this)"><i class="fas fa-comment"><\/i> <span>0<\/span><\/button>' +
+                        '<button onclick="event.stopPropagation(); shareContent()"><i class="fas fa-share"><\/i> <span data-key="share">Share<\/span><\/button>' +
+                        '<button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(\'' + item.id + '\', \'' + contentType + '\')">⭐<\/button>' +
+                    '<\/div>' +
                     '<div class="comment-section">' +
-                        '<div class="comment-list"></div>' +
-                        '<textarea placeholder="Add a comment..."></textarea>' +
-                        '<button class="send-btn" onclick="event.stopPropagation(); addComment(this, \'' + item.id + '\', \'' + contentType + '\')" data-key="post_comment">Post Comment</button>' +
-                    '</div>' +
-                '</div>';
+                        '<div class="comment-list"><\/div>' +
+                        '<textarea placeholder="Add a comment..."><\/textarea>' +
+                        '<button class="send-btn" onclick="event.stopPropagation(); addComment(this, \'' + item.id + '\', \'' + contentType + '\')" data-key="post_comment">Post Comment<\/button>' +
+                    '<\/div>' +
+                '<\/div>';
         }
         
         container.innerHTML = html;
@@ -5399,7 +5411,7 @@ async function loadGroupContent(groupId, contentType) {
         
     } catch (err) {
         console.error(err);
-        container.innerHTML = '<div class="loading" style="color:var(--red-error);">Failed to load content</div>';
+        container.innerHTML = '<div class="loading" style="color:var(--red-error);">Failed to load content<\/div>';
     }
 }
 
@@ -5465,7 +5477,9 @@ async function deleteContent(contentId, contentType) {
         showToast('Error deleting content: ' + err.message, 'error');
     }
 }
+
 </script>
+
 <!-- ================================================================ -->
 <!-- JAVASCRIPT - PART 3H: MOCK EXAMS, GROUP TABS, TRENDING -->
 <!-- ================================================================ -->
@@ -5484,42 +5498,42 @@ async function loadMockExamsIntoContainer(container, groupId) {
 
         if (error) {
             console.error('Error loading exams:', error);
-            container.innerHTML = '<div class="loading" style="color:var(--red-error);">Failed to load exams</div>';
+            container.innerHTML = '<div class="loading" style="color:var(--red-error);">Failed to load exams<\/div>';
             return;
         }
 
         if (!data || data.length === 0) {
             container.innerHTML = 
                 '<div class="exam-toggle">' +
-                    '<span data-key="mode">Mode:</span>' +
-                    '<button class="toggle-btn study" id="examModeBtn" onclick="toggleExamMode()" data-key="study_mode">📖 Study Mode</button>' +
-                    '<button class="toggle-btn" id="examModeBtnRight" onclick="toggleExamMode()" data-key="exam_mode" style="background:#e2e8f0; color:var(--text-dark);">🚫 Exam Mode</button>' +
-                '</div>' +
-                '<div class="loading" style="color:var(--text-muted);">📝 No mock exams created yet.</div>';
+                    '<span data-key="mode">Mode:<\/span>' +
+                    '<button class="toggle-btn study" id="examModeBtn" onclick="toggleExamMode()" data-key="study_mode">📖 Study Mode<\/button>' +
+                    '<button class="toggle-btn" id="examModeBtnRight" onclick="toggleExamMode()" data-key="exam_mode" style="background:#e2e8f0; color:var(--text-dark);">🚫 Exam Mode<\/button>' +
+                '<\/div>' +
+                '<div class="loading" style="color:var(--text-muted);">📝 No mock exams created yet.<\/div>';
             setTimeout(function() { translatePage(); }, 50);
             return;
         }
 
         var html = 
             '<div class="exam-toggle">' +
-                '<span data-key="mode">Mode:</span>' +
-                '<button class="toggle-btn study" id="examModeBtn" onclick="toggleExamMode()" data-key="study_mode">📖 Study Mode</button>' +
-                '<button class="toggle-btn" id="examModeBtnRight" onclick="toggleExamMode()" data-key="exam_mode" style="background:#e2e8f0; color:var(--text-dark);">🚫 Exam Mode</button>' +
-            '</div>';
+                '<span data-key="mode">Mode:<\/span>' +
+                '<button class="toggle-btn study" id="examModeBtn" onclick="toggleExamMode()" data-key="study_mode">📖 Study Mode<\/button>' +
+                '<button class="toggle-btn" id="examModeBtnRight" onclick="toggleExamMode()" data-key="exam_mode" style="background:#e2e8f0; color:var(--text-dark);">🚫 Exam Mode<\/button>' +
+            '<\/div>';
         
         for (var i = 0; i < data.length; i++) {
             var exam = data[i];
             html += 
                 '<div class="content-card" onclick="startMockExam(' + exam.id + ')" style="cursor:pointer; position:relative;">' +
-                    ((AppState.isGroupOwner || AppState.isAdmin) ? '<button class="delete-btn" onclick="event.stopPropagation(); deleteMockExam(' + exam.id + ')">✕</button>' : '') +
+                    ((AppState.isGroupOwner || AppState.isAdmin) ? '<button class="delete-btn" onclick="event.stopPropagation(); deleteMockExam(' + exam.id + ')">✕<\/button>' : '') +
                     '<div class="meta">' +
-                        '<h4>📝 ' + exam.title + '</h4>' +
-                        '<p>' + (exam.questions ? exam.questions.length : 0) + ' Questions • ' + (exam.time_limit || 5) + ' min • Created ' + new Date(exam.created_at).toLocaleDateString() + '</p>' +
-                    '</div>' +
+                        '<h4>📝 ' + exam.title + '<\/h4>' +
+                        '<p>' + (exam.questions ? exam.questions.length : 0) + ' Questions • ' + (exam.time_limit || 5) + ' min • Created ' + new Date(exam.created_at).toLocaleDateString() + '<\/p>' +
+                    '<\/div>' +
                     '<div class="actions">' +
-                        '<button class="btn-sm btn-teal" style="margin:0;" data-key="start">▶️ Start Exam</button>' +
-                    '</div>' +
-                '</div>';
+                        '<button class="btn-sm btn-teal" style="margin:0;" data-key="start">▶️ Start Exam<\/button>' +
+                    '<\/div>' +
+                '<\/div>';
         }
         
         container.innerHTML = html;
@@ -5527,7 +5541,7 @@ async function loadMockExamsIntoContainer(container, groupId) {
         
     } catch (err) {
         console.error('Error loading exams:', err);
-        container.innerHTML = '<div class="loading" style="color:var(--red-error);">Failed to load exams</div>';
+        container.innerHTML = '<div class="loading" style="color:var(--red-error);">Failed to load exams<\/div>';
     }
 }
 
@@ -5608,7 +5622,7 @@ async function loadTrendingContent(tab) {
         if (groupsError) throw groupsError;
         
         if (!groups || groups.length === 0) {
-            container.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:20px; font-weight:700;">📝 No groups yet.</div>';
+            container.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:20px; font-weight:700;">📝 No groups yet.<\/div>';
             return;
         }
         
@@ -5712,7 +5726,7 @@ async function loadTrendingContent(tab) {
                 'research': 'research papers',
                 'job': 'jobs'
             };
-            container.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:20px; font-weight:700;">📝 No trending ' + (tabNames[tab] || 'content') + ' yet.</div>';
+            container.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:20px; font-weight:700;">📝 No trending ' + (tabNames[tab] || 'content') + ' yet.<\/div>';
             return;
         }
         
@@ -5820,29 +5834,29 @@ async function loadTrendingContent(tab) {
                      'onmouseout="this.style.background=\'var(--card-bg)\'" ' +
                      'onclick="(' + navHandler.toString() + ')()">' +
                     '<div class="info" style="width:100%;">' +
-                        '<h4 style="font-weight:900; color:var(--text-dark);">' + icon + ' ' + title + '</h4>' +
-                        '<p style="font-weight:700; color:var(--text-muted); margin-top:4px;">📂 ' + groupName + ' • ' + stats + '</p>' +
+                        '<h4 style="font-weight:900; color:var(--text-dark);">' + icon + ' ' + title + '<\/h4>' +
+                        '<p style="font-weight:700; color:var(--text-muted); margin-top:4px;">📂 ' + groupName + ' • ' + stats + '<\/p>' +
                         (content ? 
                             '<div style="margin-top:8px; font-weight:700; color:var(--text-dark); word-wrap:break-word; white-space:pre-wrap;">' +
-                                '<span id="trendingContentText-' + post.id + '">' + displayContent.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</span>' +
+                                '<span id="trendingContentText-' + post.id + '">' + displayContent.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '<\/span>' +
                                 (showReadMore ? 
-                                    '<span class="read-more" onclick="event.stopPropagation(); toggleTrendingContent(\'' + post.id + '\', \'' + fullContent.replace(/'/g, "\\'").replace(/\n/g, ' ').replace(/</g, '&lt;').replace(/>/g, '&gt;') + '\')" style="color:var(--teal); cursor:pointer; font-weight:800;"> Read More</span>' : '') +
-                            '</div>' : '') +
-                    '</div>' +
+                                    '<span class="read-more" onclick="event.stopPropagation(); toggleTrendingContent(\'' + post.id + '\', \'' + fullContent.replace(/'/g, "\\'").replace(/\n/g, ' ').replace(/</g, '&lt;').replace(/>/g, '&gt;') + '\')" style="color:var(--teal); cursor:pointer; font-weight:800;"> Read More<\/span>' : '') +
+                            '<\/div>' : '') +
+                    '<\/div>' +
                     '<button class="action-btn" style="margin-top:10px; align-self:flex-start; background:var(--teal); color:white; border:none; padding:8px 20px; border-radius:30px; font-weight:800; cursor:pointer; transition:0.2s;" ' +
                             'onmouseover="this.style.transform=\'scale(1.05)\'" ' +
                             'onmouseout="this.style.transform=\'scale(1)\'" ' +
                             'onclick="event.stopPropagation(); (' + navHandler.toString() + ')()">' +
                         '📖 View' +
-                    '</button>' +
-                '</div>';
+                    '<\/button>' +
+                '<\/div>';
         }
         
         container.innerHTML = html;
         
     } catch (err) {
         console.error('Load trending content error:', err);
-        container.innerHTML = '<div class="loading" style="color:var(--red-error);">Failed to load trending content</div>';
+        container.innerHTML = '<div class="loading" style="color:var(--red-error);">Failed to load trending content<\/div>';
     }
 }
 
@@ -5870,7 +5884,9 @@ function toggleTrendingContent(postId, fullContent) {
         }
     }
 }
+
 </script>
+
 <!-- ================================================================ -->
 <!-- JAVASCRIPT - PART 3I: FAVORITES, VIRAL SCORE, CLASS ACTIONS -->
 <!-- ================================================================ -->
@@ -5978,14 +5994,14 @@ async function loadGlobalTrending() {
         
         tabsContainer.innerHTML = 
             '<div class="tabs-row">' +
-                '<button class="tab-card social active" onclick="switchTrendingTab(\'social\', this)"><span class="tab-icon">👥</span></button>' +
-                '<button class="tab-card video" onclick="switchTrendingTab(\'video\', this)"><span class="tab-icon">▶️</span></button>' +
-                '<button class="tab-card ppt" onclick="switchTrendingTab(\'ppt\', this)"><span class="tab-icon">📋</span></button>' +
-                '<button class="tab-card exam" onclick="switchTrendingTab(\'mockexam\', this)"><span class="tab-icon">🧠</span></button>' +
-                '<button class="tab-card book" onclick="switchTrendingTab(\'book\', this)"><span class="tab-icon">📖</span></button>' +
-                '<button class="tab-card research" onclick="switchTrendingTab(\'research\', this)"><span class="tab-icon">🔬</span></button>' +
-                '<button class="tab-card job" onclick="switchTrendingTab(\'job\', this)"><span class="tab-icon">💼</span></button>' +
-            '</div>';
+                '<button class="tab-card social active" onclick="switchTrendingTab(\'social\', this)"><span class="tab-icon">👥<\/span><\/button>' +
+                '<button class="tab-card video" onclick="switchTrendingTab(\'video\', this)"><span class="tab-icon">▶️<\/span><\/button>' +
+                '<button class="tab-card ppt" onclick="switchTrendingTab(\'ppt\', this)"><span class="tab-icon">📋<\/span><\/button>' +
+                '<button class="tab-card exam" onclick="switchTrendingTab(\'mockexam\', this)"><span class="tab-icon">🧠<\/span><\/button>' +
+                '<button class="tab-card book" onclick="switchTrendingTab(\'book\', this)"><span class="tab-icon">📖<\/span><\/button>' +
+                '<button class="tab-card research" onclick="switchTrendingTab(\'research\', this)"><span class="tab-icon">🔬<\/span><\/button>' +
+                '<button class="tab-card job" onclick="switchTrendingTab(\'job\', this)"><span class="tab-icon">💼<\/span><\/button>' +
+            '<\/div>';
         
         await loadTrendingContent('social');
         
@@ -6064,18 +6080,18 @@ function toggleClassHeaderMenu(event) {
 
     var totalGroups = AppState.groups.length;
 
-    var menuHtml = '<div class="divider"></div>';
+    var menuHtml = '<div class="divider"><\/div>';
     
     if (totalGroups === 0) {
-        menuHtml += '<div onclick="showModal(\'createGroupModal\')">➕ ' + t('create_group') + '</div>';
+        menuHtml += '<div onclick="showModal(\'createGroupModal\')">➕ ' + t('create_group') + '<\/div>';
     } else {
-        menuHtml += '<div onclick="showModal(\'createGroupModal\')">➕ ' + t('create_group') + '</div>';
+        menuHtml += '<div onclick="showModal(\'createGroupModal\')">➕ ' + t('create_group') + '<\/div>';
     }
 
-    menuHtml += '<div class="divider"></div>';
-    menuHtml += '<div onclick="openTabContent(\'profile\')">👤 ' + t('profile') + '</div>';
-    menuHtml += '<div onclick="openTabContent(\'wallet\')">💳 ' + t('wallet') + '</div>';
-    menuHtml += '<div class="logout-item" onclick="logout()">🚪 ' + t('logout') + '</div>';
+    menuHtml += '<div class="divider"><\/div>';
+    menuHtml += '<div onclick="openTabContent(\'profile\')">👤 ' + t('profile') + '<\/div>';
+    menuHtml += '<div onclick="openTabContent(\'wallet\')">💳 ' + t('wallet') + '<\/div>';
+    menuHtml += '<div class="logout-item" onclick="logout()">🚪 ' + t('logout') + '<\/div>';
     
     dropdown.innerHTML = menuHtml;
 }
@@ -6192,7 +6208,9 @@ async function submitEditGroup() {
         showToast('Error updating group: ' + err.message, 'error');
     }
 }
+
 </script>
+
 <!-- ================================================================ -->
 <!-- JAVASCRIPT - PART 3J: EXAM FUNCTIONS -->
 <!-- ================================================================ -->
@@ -6265,7 +6283,7 @@ function renderMockExamQuestion() {
     }
     
     if (!AppState.currentExam || !AppState.currentExam.questions || AppState.currentExam.questions.length === 0) {
-        container.innerHTML = '<div class="loading" style="color:var(--text-muted);">No questions available for this exam.</div>';
+        container.innerHTML = '<div class="loading" style="color:var(--text-muted);">No questions available for this exam.<\/div>';
         return;
     }
 
@@ -6295,40 +6313,40 @@ function renderMockExamQuestion() {
         optionsHtml += 
             '<label class="' + labelClass + '" style="display:block; margin:8px 0; padding:10px; border:2px solid ' + (isSelected ? 'var(--gold)' : '#e2e8f0') + '; border-radius:8px; cursor:' + ((AppState.examSubmitted || isExamMode) ? 'default' : 'pointer') + '; transition:0.2s; ' + (isSelected ? 'background:#fef9e7;' : '') + '" ' + onclickAttr + '>' +
                 '<input type="radio" name="examAnswer" value="' + letter + '" style="margin-right:10px;" ' + (isSelected ? 'checked' : '') + ' ' + disabledAttr + '> ' +
-                '<span style="font-weight:800;">' + letter + '.</span> ' + q.options[i] +
-            '</label>';
+                '<span style="font-weight:800;">' + letter + '.<\/span> ' + q.options[i] +
+            '<\/label>';
     }
 
     container.innerHTML = 
         '<div style="margin-bottom:16px;">' +
             (isExamMode ? 
-                '<div class="exam-timer" id="examTimerContainer"><span data-key="time_left">⏱️ Time Left:</span><span class="timer" id="examTimerDisplay">' + formatTime(AppState.examTimeRemaining) + '</span></div>' : '') +
+                '<div class="exam-timer" id="examTimerContainer"><span data-key="time_left">⏱️ Time Left:<\/span><span class="timer" id="examTimerDisplay">' + formatTime(AppState.examTimeRemaining) + '<\/span><\/div>' : '') +
             '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; margin-top:8px;">' +
-                '<span style="font-weight:900; color:var(--navy); font-size:16px;">📝 ' + AppState.currentExam.title + '</span>' +
-                '<span style="font-weight:900; color:var(--navy);" data-key="question">' + t('question') + ' ' + (AppState.currentQuestionIndex + 1) + '/' + total + '</span>' +
-            '</div>' +
+                '<span style="font-weight:900; color:var(--navy); font-size:16px;">📝 ' + AppState.currentExam.title + '<\/span>' +
+                '<span style="font-weight:900; color:var(--navy);" data-key="question">' + t('question') + ' ' + (AppState.currentQuestionIndex + 1) + '/' + total + '<\/span>' +
+            '<\/div>' +
             '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">' +
-                '<span id="examCorrectCount" style="font-weight:900; color:var(--green-success);" data-key="correct">✅ ' + t('correct') + ': ' + AppState.correctCount + '</span>' +
-                '<span id="examIncorrectCount" style="font-weight:900; color:var(--red-error);" data-key="incorrect">❌ ' + t('incorrect') + ': ' + AppState.incorrectCount + '</span>' +
-            '</div>' +
-            '<div class="progress-bar"><div class="progress-fill" style="width:' + progress + '%;"></div></div>' +
-        '</div>' +
+                '<span id="examCorrectCount" style="font-weight:900; color:var(--green-success);" data-key="correct">✅ ' + t('correct') + ': ' + AppState.correctCount + '<\/span>' +
+                '<span id="examIncorrectCount" style="font-weight:900; color:var(--red-error);" data-key="incorrect">❌ ' + t('incorrect') + ': ' + AppState.incorrectCount + '<\/span>' +
+            '<\/div>' +
+            '<div class="progress-bar"><div class="progress-fill" style="width:' + progress + '%;"><\/div><\/div>' +
+        '<\/div>' +
         '<div class="question-box">' +
-            '<p style="font-size:18px; font-weight:900; margin-bottom:12px;">' + q.question + '</p>' +
+            '<p style="font-size:18px; font-weight:900; margin-bottom:12px;">' + q.question + '<\/p>' +
             optionsHtml +
-            '<div id="examExplanation" style="display:none; margin-top:12px; padding:12px; background:#f0fdf4; border-radius:8px; color:var(--text-dark); border-left:4px solid var(--green-success);"></div>' +
+            '<div id="examExplanation" style="display:none; margin-top:12px; padding:12px; background:#f0fdf4; border-radius:8px; color:var(--text-dark); border-left:4px solid var(--green-success);"><\/div>' +
             (!AppState.examSubmitted && !isExamMode ? 
-                '<button class="explanation-toggle" onclick="toggleMockExamExplanation()" data-key="explanation">💡 See Explanation</button>' : '') +
+                '<button class="explanation-toggle" onclick="toggleMockExamExplanation()" data-key="explanation">💡 See Explanation<\/button>' : '') +
             (isExamMode && !AppState.examSubmitted ? 
-                '<div style="margin-top:10px; font-size:13px; color:var(--text-muted); font-weight:700;">🔒 Explanations are hidden in Exam Mode. Switch to Study Mode to see explanations.</div>' : '') +
-        '</div>' +
+                '<div style="margin-top:10px; font-size:13px; color:var(--text-muted); font-weight:700;">🔒 Explanations are hidden in Exam Mode. Switch to Study Mode to see explanations.<\/div>' : '') +
+        '<\/div>' +
         '<div style="display:flex; gap:10px; margin-top:16px;">' +
-            '<button class="btn-sm" onclick="prevMockExamQuestion()" style="flex:1; padding:10px; border:1px solid #e2e8f0; border-radius:8px; background:#f8fafc; cursor:pointer; font-weight:800;" ' + (AppState.currentQuestionIndex === 0 ? 'disabled style="opacity:0.5;"' : '') + '>◀ Previous</button>' +
-            '<button class="btn-sm btn-teal" onclick="nextMockExamQuestion()" style="flex:1; padding:10px; border:none; border-radius:8px; background:var(--teal); color:white; cursor:pointer; font-weight:800;" ' + (AppState.currentQuestionIndex === total - 1 ? 'disabled style="opacity:0.5;"' : '') + '>Next ▶</button>' +
-        '</div>' +
+            '<button class="btn-sm" onclick="prevMockExamQuestion()" style="flex:1; padding:10px; border:1px solid #e2e8f0; border-radius:8px; background:#f8fafc; cursor:pointer; font-weight:800;" ' + (AppState.currentQuestionIndex === 0 ? 'disabled style="opacity:0.5;"' : '') + '>◀ Previous<\/button>' +
+            '<button class="btn-sm btn-teal" onclick="nextMockExamQuestion()" style="flex:1; padding:10px; border:none; border-radius:8px; background:var(--teal); color:white; cursor:pointer; font-weight:800;" ' + (AppState.currentQuestionIndex === total - 1 ? 'disabled style="opacity:0.5;"' : '') + '>Next ▶<\/button>' +
+        '<\/div>' +
         (!AppState.examSubmitted ? 
-            '<button class="btn" onclick="submitMockExam(false)" style="margin-top:12px;" data-key="submit">📤 Submit Exam</button>' :
-            '<button class="btn" onclick="finishMockExam()" style="margin-top:12px;" data-key="see_result">📊 ' + t('see_result') + '</button>'
+            '<button class="btn" onclick="submitMockExam(false)" style="margin-top:12px;" data-key="submit">📤 Submit Exam<\/button>' :
+            '<button class="btn" onclick="finishMockExam()" style="margin-top:12px;" data-key="see_result">📊 ' + t('see_result') + '<\/button>'
         );
     
     setTimeout(function() { translatePage(); }, 50);
@@ -6372,7 +6390,7 @@ function answerMockExamQuestion(selected, labelEl) {
     var expDiv = document.getElementById('examExplanation');
     if (expDiv && AppState.examMode === 'study') {
         expDiv.style.display = 'block';
-        var html = '<strong>' + (isCorrect ? '✅ Correct!' : '❌ Incorrect.') + '</strong>';
+        var html = '<strong>' + (isCorrect ? '✅ Correct!' : '❌ Incorrect.') + '<\/strong>';
         if (q.explanation) html += '<br><br>💡 ' + q.explanation;
         expDiv.innerHTML = html;
     }
@@ -6410,9 +6428,9 @@ function toggleMockExamExplanation() {
     } else {
         expDiv.style.display = 'block';
         var isCorrect = userAnswer === q.answer;
-        var html = '<strong>' + (isCorrect ? '✅ Correct!' : '❌ Incorrect.') + '</strong>';
+        var html = '<strong>' + (isCorrect ? '✅ Correct!' : '❌ Incorrect.') + '<\/strong>';
         if (q.explanation) html += '<br><br>💡 ' + q.explanation;
-        html += '<br><br><span style="font-size:13px; color:var(--text-muted); font-weight:700;">Your answer: ' + userAnswer + ' | Correct answer: ' + q.answer + '</span>';
+        html += '<br><br><span style="font-size:13px; color:var(--text-muted); font-weight:700;">Your answer: ' + userAnswer + ' | Correct answer: ' + q.answer + '<\/span>';
         expDiv.innerHTML = html;
     }
 }
@@ -6483,16 +6501,16 @@ function renderMockExamResult() {
     
     var html = 
         '<div style="text-align:center; padding:20px; background:var(--navy); border-radius:var(--border-radius-card); color:white; margin-bottom:20px;">' +
-            '<div style="font-size:48px;">' + (score >= 80 ? '🎉' : score >= 60 ? '👍' : '📚') + '</div>' +
-            '<h2 style="color:var(--gold); margin:10px 0;">' + score + '%</h2>' +
+            '<div style="font-size:48px;">' + (score >= 80 ? '🎉' : score >= 60 ? '👍' : '📚') + '<\/div>' +
+            '<h2 style="color:var(--gold); margin:10px 0;">' + score + '%<\/h2>' +
             '<p style="color:rgba(255,255,255,0.8); font-weight:700;">' +
                 t('correct') + ': ' + AppState.correctCount + ' | ' + t('incorrect') + ': ' + AppState.incorrectCount + ' | ' + t('question') + ': ' + total +
-            '</p>' +
+            '<\/p>' +
             '<p style="color:rgba(255,255,255,0.6); margin-top:10px; font-size:14px; font-weight:700;">' +
                 (score >= 80 ? '🌟 Excellent performance!' : score >= 60 ? '💪 Good job, keep practicing!' : '📚 Review the material and try again!') +
-            '</p>' +
-        '</div>' +
-        '<h3 style="color:var(--navy); margin-bottom:16px; font-weight:900;" data-key="review">📝 Review Answers</h3>';
+            '<\/p>' +
+        '<\/div>' +
+        '<h3 style="color:var(--navy); margin-bottom:16px; font-weight:900;" data-key="review">📝 Review Answers<\/h3>';
     
     for (var i = 0; i < AppState.currentExam.questions.length; i++) {
         var q = AppState.currentExam.questions[i];
@@ -6504,19 +6522,19 @@ function renderMockExamResult() {
         html += 
             '<div class="content-card" style="border-left: 4px solid ' + (isCorrect ? 'var(--green-success)' : 'var(--red-error)') + ';">' +
                 '<div class="meta">' +
-                    '<h4>Q' + (i + 1) + ': ' + q.question + '</h4>' +
+                    '<h4>Q' + (i + 1) + ': ' + q.question + '<\/h4>' +
                     '<p style="font-weight:700;">' +
                         '<span style="color:' + (isCorrect ? 'var(--green-success)' : 'var(--red-error)') + '; font-weight:900;">' +
                             (isCorrect ? '✅' : '❌') + ' ' + t('your_answer') + ' ' + (userAnswer || 'Not answered') +
-                        '</span>' +
+                        '<\/span>' +
                         (!isCorrect ? ' | ' + t('correct_answer') + ' ' + correctLetter + '. ' + correctText : '') +
                         (q.explanation ? ' | 💡 ' + q.explanation : '') +
-                    '</p>' +
-                '</div>' +
-            '</div>';
+                    '<\/p>' +
+                '<\/div>' +
+            '<\/div>';
     }
     
-    html += '<button class="btn btn-teal" onclick="finishMockExam()" style="margin-top:12px;" data-key="back">🔙 Back to Exams</button>';
+    html += '<button class="btn btn-teal" onclick="finishMockExam()" style="margin-top:12px;" data-key="back">🔙 Back to Exams<\/button>';
     
     container.innerHTML = html;
     setTimeout(function() { translatePage(); }, 50);
@@ -6593,9 +6611,9 @@ function startExamTimer(minutes) {
         if (container) {
             var timerHtml = 
                 '<div class="exam-timer" id="examTimerContainer">' +
-                    '<span data-key="time_left">⏱️ Time Left:</span>' +
-                    '<span class="timer" id="examTimerDisplay">' + formatTime(AppState.examTimeRemaining) + '</span>' +
-                '</div>';
+                    '<span data-key="time_left">⏱️ Time Left:<\/span>' +
+                    '<span class="timer" id="examTimerDisplay">' + formatTime(AppState.examTimeRemaining) + '<\/span>' +
+                '<\/div>';
             container.insertAdjacentHTML('afterbegin', timerHtml);
         }
     }
@@ -6632,7 +6650,9 @@ function stopExamTimer() {
         timerContainer.remove();
     }
 }
+
 </script>
+
 <!-- ================================================================ -->
 <!-- JAVASCRIPT - PART 3K: B-STORE, JOBS, RESEARCH, WALLET, ADMIN -->
 <!-- ================================================================ -->
@@ -6657,7 +6677,7 @@ async function loadBStore() {
         if (error) throw error;
         
         if (!data || data.length === 0) {
-            container.innerHTML = '<div class="loading" style="color:var(--text-muted);">No books available in B-Store yet.</div>';
+            container.innerHTML = '<div class="loading" style="color:var(--text-muted);">No books available in B-Store yet.<\/div>';
             return;
         }
         
@@ -6666,20 +6686,20 @@ async function loadBStore() {
             var book = data[i];
             html += 
                 '<div class="bstore-card">' +
-                    '<div class="book-cover">' + (book.cover_url ? '<img src="' + book.cover_url + '" alt="' + book.title + '">' : '📖') + '</div>' +
-                    '<div class="title">' + book.title + '</div>' +
-                    '<div class="author">By ' + book.author + '</div>' +
-                    '<div style="font-size:12px; color:var(--text-muted); font-weight:700;">' + (book.category || '') + '</div>' +
-                    '<div class="price">💰 Monthly: ' + (book.price_monthly || 0) + ' Coins</div>' +
-                    '<button class="buy-btn" onclick="subscribeToBook(' + book.id + ')">📖 Subscribe</button>' +
-                '</div>';
+                    '<div class="book-cover">' + (book.cover_url ? '<img src="' + book.cover_url + '" alt="' + book.title + '">' : '📖') + '<\/div>' +
+                    '<div class="title">' + book.title + '<\/div>' +
+                    '<div class="author">By ' + book.author + '<\/div>' +
+                    '<div style="font-size:12px; color:var(--text-muted); font-weight:700;">' + (book.category || '') + '<\/div>' +
+                    '<div class="price">💰 Monthly: ' + (book.price_monthly || 0) + ' Coins<\/div>' +
+                    '<button class="buy-btn" onclick="subscribeToBook(' + book.id + ')">📖 Subscribe<\/button>' +
+                '<\/div>';
         }
-        html += '</div>';
+        html += '<\/div>';
         container.innerHTML = html;
         translatePage();
     } catch (err) {
         console.error('Load B-Store error:', err);
-        container.innerHTML = '<div class="loading" style="color:var(--red-error);">Failed to load books</div>';
+        container.innerHTML = '<div class="loading" style="color:var(--red-error);">Failed to load books<\/div>';
     }
 }
 
@@ -6704,15 +6724,15 @@ async function subscribeToBook(bookId) {
     modal.className = 'modal active';
     modal.innerHTML = 
         '<div class="modal-content">' +
-            '<span class="close" onclick="this.closest(\'.modal\').remove()">&times;</span>' +
-            '<h3>📖 Choose Subscription</h3>' +
-            '<p style="color:var(--text-muted); margin-bottom:12px; font-weight:700;">Select your subscription plan</p>' +
-            '<button class="btn btn-teal" onclick="processSubscription(' + bookId + ', \'monthly\')">Monthly</button>' +
-            '<button class="btn" onclick="processSubscription(' + bookId + ', \'3months\')">3 Months</button>' +
-            '<button class="btn" onclick="processSubscription(' + bookId + ', \'6months\')">6 Months</button>' +
-            '<button class="btn" onclick="processSubscription(' + bookId + ', \'9months\')">9 Months</button>' +
-            '<button class="btn" onclick="processSubscription(' + bookId + ', \'yearly\')">1 Year</button>' +
-        '</div>';
+            '<span class="close" onclick="this.closest(\'.modal\').remove()">&times;<\/span>' +
+            '<h3>📖 Choose Subscription<\/h3>' +
+            '<p style="color:var(--text-muted); margin-bottom:12px; font-weight:700;">Select your subscription plan<\/p>' +
+            '<button class="btn btn-teal" onclick="processSubscription(' + bookId + ', \'monthly\')">Monthly<\/button>' +
+            '<button class="btn" onclick="processSubscription(' + bookId + ', \'3months\')">3 Months<\/button>' +
+            '<button class="btn" onclick="processSubscription(' + bookId + ', \'6months\')">6 Months<\/button>' +
+            '<button class="btn" onclick="processSubscription(' + bookId + ', \'9months\')">9 Months<\/button>' +
+            '<button class="btn" onclick="processSubscription(' + bookId + ', \'yearly\')">1 Year<\/button>' +
+        '<\/div>';
     document.body.appendChild(modal);
 }
 
@@ -6915,7 +6935,7 @@ async function loadMyLibrary() {
         if (error) throw error;
         
         if (!data || data.length === 0) {
-            container.innerHTML = '<div class="loading" style="color:var(--text-muted);">No books in your library yet.</div>';
+            container.innerHTML = '<div class="loading" style="color:var(--text-muted);">No books in your library yet.<\/div>';
             return;
         }
         
@@ -6930,24 +6950,24 @@ async function loadMyLibrary() {
             html += 
                 '<div class="content-card" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">' +
                     '<div>' +
-                        '<h4 style="font-weight:900;">' + (book ? book.title : 'Book') + '</h4>' +
-                        '<p style="font-weight:700;">By ' + (book ? book.author : 'Unknown') + '</p>' +
+                        '<h4 style="font-weight:900;">' + (book ? book.title : 'Book') + '<\/h4>' +
+                        '<p style="font-weight:700;">By ' + (book ? book.author : 'Unknown') + '<\/p>' +
                         '<p style="font-size:13px; color:' + (isExpired ? 'var(--red-error)' : isExpiring ? 'var(--gold)' : 'var(--text-muted)') + '; font-weight:700;">' +
                             (isExpired ? '⏰ EXPIRED' : isExpiring ? '⚠️ Expires in ' + daysLeft + ' days' : '✅ Active (' + daysLeft + ' days left)') +
-                        '</p>' +
-                    '</div>' +
+                        '<\/p>' +
+                    '<\/div>' +
                     '<div style="display:flex; gap:8px;">' +
-                        (!isExpired ? '<button class="btn-sm btn-teal" onclick="openBook(' + (book ? book.id : 0) + ')" style="margin:0;">📖 Read</button>' : '') +
-                        (isExpired || isExpiring ? '<button class="btn-sm" onclick="subscribeToBook(' + (book ? book.id : 0) + ')" style="margin:0; background:var(--gold); color:var(--text-dark);">🔄 Renew</button>' : '') +
-                    '</div>' +
-                '</div>';
+                        (!isExpired ? '<button class="btn-sm btn-teal" onclick="openBook(' + (book ? book.id : 0) + ')" style="margin:0;">📖 Read<\/button>' : '') +
+                        (isExpired || isExpiring ? '<button class="btn-sm" onclick="subscribeToBook(' + (book ? book.id : 0) + ')" style="margin:0; background:var(--gold); color:var(--text-dark);">🔄 Renew<\/button>' : '') +
+                    '<\/div>' +
+                '<\/div>';
         }
         container.innerHTML = html;
         translatePage();
         
     } catch (err) {
         console.error('Load library error:', err);
-        container.innerHTML = '<div class="loading" style="color:var(--red-error);">Failed to load library</div>';
+        container.innerHTML = '<div class="loading" style="color:var(--red-error);">Failed to load library<\/div>';
     }
 }
 
@@ -6974,7 +6994,7 @@ async function loadJobs() {
         if (error) throw error;
         
         if (!data || data.length === 0) {
-            container.innerHTML = '<div class="loading" style="color:var(--text-muted);">No jobs available.</div>';
+            container.innerHTML = '<div class="loading" style="color:var(--text-muted);">No jobs available.<\/div>';
             return;
         }
         
@@ -6987,27 +7007,27 @@ async function loadJobs() {
             
             html += 
                 '<div class="job-card">' +
-                    '<div class="title">' + job.title + (isExpired ? ' <span class="expired-badge">⏰ Expired</span>' : '') + '</div>' +
-                    '<div class="details"><span>🏢 ' + job.company + '</span><span>📍 ' + job.location + '</span><span>' + job.job_type + '</span><span>💰 ' + (job.salary_range || 'Negotiable') + '</span></div>' +
+                    '<div class="title">' + job.title + (isExpired ? ' <span class="expired-badge">⏰ Expired<\/span>' : '') + '<\/div>' +
+                    '<div class="details"><span>🏢 ' + job.company + '<\/span><span>📍 ' + job.location + '<\/span><span>' + job.job_type + '<\/span><span>💰 ' + (job.salary_range || 'Negotiable') + '<\/span><\/div>' +
                     '<div class="details" style="margin-top:4px;">' +
-                        (job.deadline ? '<span>📅 Deadline: ' + new Date(job.deadline).toLocaleDateString() + '</span>' : '') +
-                        (!isExpired && job.deadline ? '<span>⏳ ' + Math.ceil((new Date(job.deadline) - new Date()) / (1000 * 60 * 60 * 24)) + ' days remaining</span>' : '') +
-                    '</div>' +
-                    (job.description ? '<p style="margin-top:4px; font-size:13px; color:var(--text-muted); font-weight:700;">' + job.description.substring(0, 100) + (job.description.length > 100 ? '...' : '') + '</p>' : '') +
-                    '<button class="apply-btn" onclick="applyToJob(' + job.id + ')" ' + (isExpired ? 'disabled style="opacity:0.5;"' : '') + '>' + (isExpired ? 'Expired' : '📋 Apply Now') + '</button>' +
+                        (job.deadline ? '<span>📅 Deadline: ' + new Date(job.deadline).toLocaleDateString() + '<\/span>' : '') +
+                        (!isExpired && job.deadline ? '<span>⏳ ' + Math.ceil((new Date(job.deadline) - new Date()) / (1000 * 60 * 60 * 24)) + ' days remaining<\/span>' : '') +
+                    '<\/div>' +
+                    (job.description ? '<p style="margin-top:4px; font-size:13px; color:var(--text-muted); font-weight:700;">' + job.description.substring(0, 100) + (job.description.length > 100 ? '...' : '') + '<\/p>' : '') +
+                    '<button class="apply-btn" onclick="applyToJob(' + job.id + ')" ' + (isExpired ? 'disabled style="opacity:0.5;"' : '') + '>' + (isExpired ? 'Expired' : '📋 Apply Now') + '<\/button>' +
                     (canManage ? 
                         '<div class="job-actions">' +
-                            '<button class="edit-job" onclick="editJob(' + job.id + ')">✏️ Edit</button>' +
-                            '<button class="delete-job" onclick="deleteJob(' + job.id + ')">🗑️ Delete</button>' +
-                            '<button class="manage-apps" onclick="manageJobApplications(' + job.id + ')">📬 Applications</button>' +
-                        '</div>' : '') +
-                '</div>';
+                            '<button class="edit-job" onclick="editJob(' + job.id + ')">✏️ Edit<\/button>' +
+                            '<button class="delete-job" onclick="deleteJob(' + job.id + ')">🗑️ Delete<\/button>' +
+                            '<button class="manage-apps" onclick="manageJobApplications(' + job.id + ')">📬 Applications<\/button>' +
+                        '<\/div>' : '') +
+                '<\/div>';
         }
         container.innerHTML = html;
         translatePage();
     } catch (err) {
         console.error('Load jobs error:', err);
-        container.innerHTML = '<div class="loading" style="color:var(--red-error);">Failed to load jobs</div>';
+        container.innerHTML = '<div class="loading" style="color:var(--red-error);">Failed to load jobs<\/div>';
     }
 }
 
@@ -7192,24 +7212,24 @@ async function manageJobApplications(jobId) {
         if (!container) return;
         
         if (!data || data.length === 0) {
-            container.innerHTML = '<div class="loading" style="color:var(--text-muted);">No applications yet.</div>';
+            container.innerHTML = '<div class="loading" style="color:var(--text-muted);">No applications yet.<\/div>';
         } else {
             var html = '';
             for (var i = 0; i < data.length; i++) {
                 var app = data[i];
                 html += 
                     '<div style="padding:12px; border-bottom:1px solid #eee;">' +
-                        '<p><strong>' + app.full_name + '</strong> - ' + app.email + '</p>' +
-                        '<p style="font-size:13px; color:var(--text-muted);">📱 ' + (app.phone || 'N/A') + '</p>' +
-                        '<p style="font-size:13px;">Status: <span style="font-weight:900; color:' + (app.status === 'pending' ? '#f59e0b' : app.status === 'shortlisted' ? 'var(--green-success)' : 'var(--red-error)') + ';">' + app.status.toUpperCase() + '</span></p>' +
+                        '<p><strong>' + app.full_name + '<\/strong> - ' + app.email + '<\/p>' +
+                        '<p style="font-size:13px; color:var(--text-muted);">📱 ' + (app.phone || 'N/A') + '<\/p>' +
+                        '<p style="font-size:13px;">Status: <span style="font-weight:900; color:' + (app.status === 'pending' ? '#f59e0b' : app.status === 'shortlisted' ? 'var(--green-success)' : 'var(--red-error)') + ';">' + app.status.toUpperCase() + '<\/span><\/p>' +
                         '<div style="display:flex; gap:8px; margin-top:4px; flex-wrap:wrap;">' +
-                            '<button class="btn-sm btn-teal" onclick="updateApplicationStatus(' + app.id + ', \'shortlisted\')">✅ Shortlist</button>' +
-                            '<button class="btn-sm" onclick="updateApplicationStatus(' + app.id + ', \'reviewed\')" style="background:#f59e0b; color:white;">📝 Review</button>' +
-                            '<button class="btn-sm" onclick="updateApplicationStatus(' + app.id + ', \'rejected\')" style="background:var(--red-error); color:white;">❌ Reject</button>' +
-                            '<button class="btn-sm" onclick="updateApplicationStatus(' + app.id + ', \'accepted\')" style="background:var(--green-success); color:white;">🎉 Accept</button>' +
-                            '<a href="' + app.cv_url + '" target="_blank"><button class="btn-sm" style="background:var(--navy); color:white;">📄 CV</button></a>' +
-                        '</div>' +
-                    '</div>';
+                            '<button class="btn-sm btn-teal" onclick="updateApplicationStatus(' + app.id + ', \'shortlisted\')">✅ Shortlist<\/button>' +
+                            '<button class="btn-sm" onclick="updateApplicationStatus(' + app.id + ', \'reviewed\')" style="background:#f59e0b; color:white;">📝 Review<\/button>' +
+                            '<button class="btn-sm" onclick="updateApplicationStatus(' + app.id + ', \'rejected\')" style="background:var(--red-error); color:white;">❌ Reject<\/button>' +
+                            '<button class="btn-sm" onclick="updateApplicationStatus(' + app.id + ', \'accepted\')" style="background:var(--green-success); color:white;">🎉 Accept<\/button>' +
+                            '<a href="' + app.cv_url + '" target="_blank"><button class="btn-sm" style="background:var(--navy); color:white;">📄 CV<\/button><\/a>' +
+                        '<\/div>' +
+                    '<\/div>';
             }
             container.innerHTML = html;
         }
@@ -7259,7 +7279,7 @@ async function loadResearch() {
         if (error) throw error;
         
         if (!data || data.length === 0) {
-            container.innerHTML = '<div class="loading" style="color:var(--text-muted);">No research available.</div>';
+            container.innerHTML = '<div class="loading" style="color:var(--text-muted);">No research available.<\/div>';
             return;
         }
         
@@ -7270,24 +7290,24 @@ async function loadResearch() {
             html += 
                 '<div class="research-card">' +
                     '<div class="info">' +
-                        '<div class="title">' + research.title + '</div>' +
-                        '<div class="author">By ' + research.author + ' • ' + new Date(research.created_at).toLocaleDateString() + '</div>' +
-                        '<div class="category">📂 ' + (research.category || 'General') + '</div>' +
-                    '</div>' +
+                        '<div class="title">' + research.title + '<\/div>' +
+                        '<div class="author">By ' + research.author + ' • ' + new Date(research.created_at).toLocaleDateString() + '<\/div>' +
+                        '<div class="category">📂 ' + (research.category || 'General') + '<\/div>' +
+                    '<\/div>' +
                     '<div class="research-actions">' +
-                        '<span class="tag free">' + (research.status === 'approved' ? '✅ Approved' : '⏳ Pending') + '</span>' +
-                        '<button class="read-btn" onclick="openResearch(' + research.id + ')">📖 Read</button>' +
+                        '<span class="tag free">' + (research.status === 'approved' ? '✅ Approved' : '⏳ Pending') + '<\/span>' +
+                        '<button class="read-btn" onclick="openResearch(' + research.id + ')">📖 Read<\/button>' +
                         (isVerified ? 
-                            '<button class="edit-research" onclick="editResearch(' + research.id + ')">✏️</button>' +
-                            '<button class="delete-research" onclick="deleteResearch(' + research.id + ')">🗑️</button>' : '') +
-                    '</div>' +
-                '</div>';
+                            '<button class="edit-research" onclick="editResearch(' + research.id + ')">✏️<\/button>' +
+                            '<button class="delete-research" onclick="deleteResearch(' + research.id + ')">🗑️<\/button>' : '') +
+                    '<\/div>' +
+                '<\/div>';
         }
         container.innerHTML = html;
         translatePage();
     } catch (err) {
         console.error('Load research error:', err);
-        container.innerHTML = '<div class="loading" style="color:var(--red-error);">Failed to load research</div>';
+        container.innerHTML = '<div class="loading" style="color:var(--red-error);">Failed to load research<\/div>';
     }
 }
 
@@ -7442,7 +7462,7 @@ async function loadWallet() {
         
         var container = document.getElementById('transactionList');
         if (!data || data.length === 0) {
-            container.innerHTML = '<div class="loading">No transactions yet.</div>';
+            container.innerHTML = '<div class="loading">No transactions yet.<\/div>';
             return;
         }
         
@@ -7451,11 +7471,11 @@ async function loadWallet() {
             var t = data[i];
             html += 
                 '<div class="wallet-transaction">' +
-                    '<span>' + (t.description || t.type) + '</span>' +
+                    '<span>' + (t.description || t.type) + '<\/span>' +
                     '<span class="' + (t.type === 'buy' || t.type === 'earn' ? 'positive' : 'negative') + '">' +
                         (t.type === 'buy' || t.type === 'earn' ? '+' : '-') + ' ' + t.amount + ' Coins' +
-                    '</span>' +
-                '</div>';
+                    '<\/span>' +
+                '<\/div>';
         }
         container.innerHTML = html;
     } catch (err) {
@@ -7578,7 +7598,9 @@ function changeProfilePic() {
     };
     input.click();
 }
+
 </script>
+
 <!-- ================================================================ -->
 <!-- JAVASCRIPT - PART 3L: ADMIN, NOTIFICATIONS, SEARCH, CALCULATORS, MISC -->
 <!-- ================================================================ -->
@@ -7592,7 +7614,7 @@ async function loadAdminPanel() {
     if (!container) return;
     
     if (!AppState.isAdmin) { 
-        container.innerHTML = '<div class="card"><h3>⛔ Access Denied</h3><p>Admin only.</p></div>'; 
+        container.innerHTML = '<div class="card"><h3>⛔ Access Denied<\/h3><p>Admin only.<\/p><\/div>'; 
         return; 
     }
     
@@ -7631,27 +7653,27 @@ async function loadAdminPanel() {
     }
     
     container.innerHTML = 
-        '<div class="card"><h3>⚙️ T-Hub Admin Panel</h3><p style="color:var(--text-muted); margin-bottom:15px; font-weight:700;">Manage content, teachers, payments, and consultations.</p></div>' +
+        '<div class="card"><h3>⚙️ T-Hub Admin Panel<\/h3><p style="color:var(--text-muted); margin-bottom:15px; font-weight:700;">Manage content, teachers, payments, and consultations.<\/p><\/div>' +
         '<div class="card" style="border:2px solid var(--gold);">' +
-            '<h3 style="color:var(--gold);">💳 Platform Wallet & Stats</h3>' +
+            '<h3 style="color:var(--gold);">💳 Platform Wallet & Stats<\/h3>' +
             '<div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px;">' +
-                '<div style="background:var(--card-bg); padding:12px; border-radius:12px; text-align:center;"><div style="font-size:12px; color:var(--text-muted); font-weight:700;">💰 Balance</div><div style="font-size:20px; font-weight:900; color:var(--gold);">' + platformBalance + ' Coins</div></div>' +
-                '<div style="background:var(--card-bg); padding:12px; border-radius:12px; text-align:center;"><div style="font-size:12px; color:var(--text-muted); font-weight:700;">📚 Books Sold</div><div style="font-size:20px; font-weight:900; color:var(--teal);">' + totalBooksSold + '</div></div>' +
-                '<div style="background:var(--card-bg); padding:12px; border-radius:12px; text-align:center;"><div style="font-size:12px; color:var(--text-muted); font-weight:700;">🪙 Coins Sold</div><div style="font-size:20px; font-weight:900; color:var(--gold);">' + totalCoinsSold + '</div></div>' +
-                '<div style="background:var(--card-bg); padding:12px; border-radius:12px; text-align:center;"><div style="font-size:12px; color:var(--text-muted); font-weight:700;">📊 Commission Earned</div><div style="font-size:20px; font-weight:900; color:var(--green-success);">' + totalCommission + ' Coins</div></div>' +
-                '<div style="background:var(--card-bg); padding:12px; border-radius:12px; text-align:center;"><div style="font-size:12px; color:var(--text-muted); font-weight:700;">📈 Total Revenue</div><div style="font-size:20px; font-weight:900; color:var(--gold);">≈ ' + Math.round(totalCommission / 10) + ' ETB</div></div>' +
-                '<div style="background:var(--card-bg); padding:12px; border-radius:12px; text-align:center;"><div style="font-size:12px; color:var(--text-muted); font-weight:700;">👥 Total Users</div><div style="font-size:20px; font-weight:900; color:var(--navy);">' + (AppState.groups.length > 0 ? 1 : 1) + '</div></div>' +
-            '</div>' +
-            '<button class="btn" style="margin-top:12px;" onclick="showModal(\'platformWithdrawModal\')">📥 Withdraw Platform Funds</button>' +
-        '</div>' +
+                '<div style="background:var(--card-bg); padding:12px; border-radius:12px; text-align:center;"><div style="font-size:12px; color:var(--text-muted); font-weight:700;">💰 Balance<\/div><div style="font-size:20px; font-weight:900; color:var(--gold);">' + platformBalance + ' Coins<\/div><\/div>' +
+                '<div style="background:var(--card-bg); padding:12px; border-radius:12px; text-align:center;"><div style="font-size:12px; color:var(--text-muted); font-weight:700;">📚 Books Sold<\/div><div style="font-size:20px; font-weight:900; color:var(--teal);">' + totalBooksSold + '<\/div><\/div>' +
+                '<div style="background:var(--card-bg); padding:12px; border-radius:12px; text-align:center;"><div style="font-size:12px; color:var(--text-muted); font-weight:700;">🪙 Coins Sold<\/div><div style="font-size:20px; font-weight:900; color:var(--gold);">' + totalCoinsSold + '<\/div><\/div>' +
+                '<div style="background:var(--card-bg); padding:12px; border-radius:12px; text-align:center;"><div style="font-size:12px; color:var(--text-muted); font-weight:700;">📊 Commission Earned<\/div><div style="font-size:20px; font-weight:900; color:var(--green-success);">' + totalCommission + ' Coins<\/div><\/div>' +
+                '<div style="background:var(--card-bg); padding:12px; border-radius:12px; text-align:center;"><div style="font-size:12px; color:var(--text-muted); font-weight:700;">📈 Total Revenue<\/div><div style="font-size:20px; font-weight:900; color:var(--gold);">≈ ' + Math.round(totalCommission / 10) + ' ETB<\/div><\/div>' +
+                '<div style="background:var(--card-bg); padding:12px; border-radius:12px; text-align:center;"><div style="font-size:12px; color:var(--text-muted); font-weight:700;">👥 Total Users<\/div><div style="font-size:20px; font-weight:900; color:var(--navy);">' + (AppState.groups.length > 0 ? 1 : 1) + '<\/div><\/div>' +
+            '<\/div>' +
+            '<button class="btn" style="margin-top:12px;" onclick="showModal(\'platformWithdrawModal\')">📥 Withdraw Platform Funds<\/button>' +
+        '<\/div>' +
         '<div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-bottom:20px;">' +
-            '<div class="card" onclick="showModal(\'bstoreUploadModal\')" style="cursor:pointer; transition:0.2s;"><div style="font-size:32px;">📖</div><h4 style="font-weight:900;">Upload to B-Store</h4><p style="font-size:13px; color:var(--text-muted); font-weight:700;">Add medical books to the library</p></div>' +
-            '<div class="card" onclick="showModal(\'createCalculatorModal\')" style="cursor:pointer; transition:0.2s;"><div style="font-size:32px;">🧮</div><h4 style="font-weight:900;">Create Calculator</h4><p style="font-size:13px; color:var(--text-muted); font-weight:700;">Add new medical calculator</p></div>' +
-            '<div class="card" onclick="adminAction(\'👨‍🏫 Verify Teachers\')" style="cursor:pointer; transition:0.2s;"><div style="font-size:32px;">👨‍🏫</div><h4 style="font-weight:900;">Verify Teachers</h4><p style="font-size:13px; color:var(--text-muted); font-weight:700;">Approve pending educator accounts</p></div>' +
-            '<div class="card" onclick="showPricingPanel()" style="cursor:pointer; transition:0.2s;"><div style="font-size:32px;">💰</div><h4 style="font-weight:900;">Set Prices</h4><p style="font-size:13px; color:var(--text-muted); font-weight:700;">Premium subscription & item pricing</p></div>' +
-            '<div class="card" onclick="adminAction(\'📊 Analytics\')" style="cursor:pointer; transition:0.2s;"><div style="font-size:32px;">📊</div><h4 style="font-weight:900;">Analytics</h4><p style="font-size:13px; color:var(--text-muted); font-weight:700;">Track users, revenue & growth</p></div>' +
-            '<div class="card" onclick="loadAppeals()" style="cursor:pointer; transition:0.2s;"><div style="font-size:32px;">📝</div><h4 style="font-weight:900;">Pending Approvals</h4><p style="font-size:13px; color:var(--text-muted); font-weight:700;">Books, Research & Appeals</p></div>' +
-        '</div>';
+            '<div class="card" onclick="showModal(\'bstoreUploadModal\')" style="cursor:pointer; transition:0.2s;"><div style="font-size:32px;">📖<\/div><h4 style="font-weight:900;">Upload to B-Store<\/h4><p style="font-size:13px; color:var(--text-muted); font-weight:700;">Add medical books to the library<\/p><\/div>' +
+            '<div class="card" onclick="showModal(\'createCalculatorModal\')" style="cursor:pointer; transition:0.2s;"><div style="font-size:32px;">🧮<\/div><h4 style="font-weight:900;">Create Calculator<\/h4><p style="font-size:13px; color:var(--text-muted); font-weight:700;">Add new medical calculator<\/p><\/div>' +
+            '<div class="card" onclick="adminAction(\'👨‍🏫 Verify Teachers\')" style="cursor:pointer; transition:0.2s;"><div style="font-size:32px;">👨‍🏫<\/div><h4 style="font-weight:900;">Verify Teachers<\/h4><p style="font-size:13px; color:var(--text-muted); font-weight:700;">Approve pending educator accounts<\/p><\/div>' +
+            '<div class="card" onclick="showPricingPanel()" style="cursor:pointer; transition:0.2s;"><div style="font-size:32px;">💰<\/div><h4 style="font-weight:900;">Set Prices<\/h4><p style="font-size:13px; color:var(--text-muted); font-weight:700;">Premium subscription & item pricing<\/p><\/div>' +
+            '<div class="card" onclick="adminAction(\'📊 Analytics\')" style="cursor:pointer; transition:0.2s;"><div style="font-size:32px;">📊<\/div><h4 style="font-weight:900;">Analytics<\/h4><p style="font-size:13px; color:var(--text-muted); font-weight:700;">Track users, revenue & growth<\/p><\/div>' +
+            '<div class="card" onclick="loadAppeals()" style="cursor:pointer; transition:0.2s;"><div style="font-size:32px;">📝<\/div><h4 style="font-weight:900;">Pending Approvals<\/h4><p style="font-size:13px; color:var(--text-muted); font-weight:700;">Books, Research & Appeals<\/p><\/div>' +
+        '<\/div>';
     setTimeout(function() { translatePage(); }, 50);
 }
 
@@ -7668,11 +7690,11 @@ function showPricingPanel() {
     if (!container) return;
     container.innerHTML = 
         '<div class="card">' +
-            '<h3 style="font-weight:900;">💰 Dynamic Pricing</h3>' +
-            '<div class="form-group"><label style="font-weight:800;">Premium Subscription (ETB)</label><input type="number" id="price_premium" value="600" style="width:100%; padding:10px; border:1px solid #eee; border-radius:8px; font-weight:700; margin-bottom:12px;"></div>' +
-            '<button class="btn btn-teal" onclick="showToast(\'Prices saved to database! (Simulated)\', \'success\')">💾 Save Prices</button>' +
-            '<button class="btn" onclick="loadAdminPanel()" style="margin-top:10px;">← Back to Admin</button>' +
-        '</div>';
+            '<h3 style="font-weight:900;">💰 Dynamic Pricing<\/h3>' +
+            '<div class="form-group"><label style="font-weight:800;">Premium Subscription (ETB)<\/label><input type="number" id="price_premium" value="600" style="width:100%; padding:10px; border:1px solid #eee; border-radius:8px; font-weight:700; margin-bottom:12px;"><\/div>' +
+            '<button class="btn btn-teal" onclick="showToast(\'Prices saved to database! (Simulated)\', \'success\')">💾 Save Prices<\/button>' +
+            '<button class="btn" onclick="loadAdminPanel()" style="margin-top:10px;">← Back to Admin<\/button>' +
+        '<\/div>';
     setTimeout(function() { translatePage(); }, 50);
 }
 
@@ -7686,39 +7708,39 @@ async function loadAppeals() {
         var container = document.getElementById('tabContentContainer');
         if (!container) return;
         
-        var html = '<div class="card"><h3>📝 Pending Approvals</h3>';
+        var html = '<div class="card"><h3>📝 Pending Approvals<\/h3>';
         
         if (booksResult.data && booksResult.data.length > 0) {
-            html += '<h4 style="font-weight:900;">📖 Books (' + booksResult.data.length + ')</h4>';
+            html += '<h4 style="font-weight:900;">📖 Books (' + booksResult.data.length + ')<\/h4>';
             for (var i = 0; i < booksResult.data.length; i++) {
                 var book = booksResult.data[i];
                 html += 
                     '<div style="border:1px solid var(--card-border); border-radius:12px; padding:12px; margin-bottom:8px; background:var(--card-bg);">' +
-                        '<p><strong>' + book.title + '</strong> by ' + book.author + '</p>' +
-                        '<button class="btn-sm btn-teal" onclick="approveBook(' + book.id + ')">✅ Approve</button>' +
-                        '<button class="btn-sm" onclick="rejectBook(' + book.id + ')" style="background:var(--red-error); color:white;">❌ Reject</button>' +
-                    '</div>';
+                        '<p><strong>' + book.title + '<\/strong> by ' + book.author + '<\/p>' +
+                        '<button class="btn-sm btn-teal" onclick="approveBook(' + book.id + ')">✅ Approve<\/button>' +
+                        '<button class="btn-sm" onclick="rejectBook(' + book.id + ')" style="background:var(--red-error); color:white;">❌ Reject<\/button>' +
+                    '<\/div>';
             }
         }
         
         if (researchResult.data && researchResult.data.length > 0) {
-            html += '<h4 style="font-weight:900;">🔬 Research (' + researchResult.data.length + ')</h4>';
+            html += '<h4 style="font-weight:900;">🔬 Research (' + researchResult.data.length + ')<\/h4>';
             for (var i = 0; i < researchResult.data.length; i++) {
                 var research = researchResult.data[i];
                 html += 
                     '<div style="border:1px solid var(--card-border); border-radius:12px; padding:12px; margin-bottom:8px; background:var(--card-bg);">' +
-                        '<p><strong>' + research.title + '</strong> by ' + research.author + '</p>' +
-                        '<button class="btn-sm btn-teal" onclick="approveResearch(' + research.id + ')">✅ Approve</button>' +
-                        '<button class="btn-sm" onclick="rejectResearch(' + research.id + ')" style="background:var(--red-error); color:white;">❌ Reject</button>' +
-                    '</div>';
+                        '<p><strong>' + research.title + '<\/strong> by ' + research.author + '<\/p>' +
+                        '<button class="btn-sm btn-teal" onclick="approveResearch(' + research.id + ')">✅ Approve<\/button>' +
+                        '<button class="btn-sm" onclick="rejectResearch(' + research.id + ')" style="background:var(--red-error); color:white;">❌ Reject<\/button>' +
+                    '<\/div>';
             }
         }
         
         if (!booksResult.data || booksResult.data.length === 0 && (!researchResult.data || researchResult.data.length === 0)) {
-            html += '<p style="color:var(--text-muted); font-weight:700;">No pending approvals.</p>';
+            html += '<p style="color:var(--text-muted); font-weight:700;">No pending approvals.<\/p>';
         }
         
-        html += '<button class="btn" onclick="loadAdminPanel()" style="margin-top:12px;">← Back to Admin</button></div>';
+        html += '<button class="btn" onclick="loadAdminPanel()" style="margin-top:12px;">← Back to Admin<\/button><\/div>';
         container.innerHTML = html;
         translatePage();
         
@@ -7811,7 +7833,7 @@ async function loadNotifications() {
             groupIds.push(AppState.groups[i].id);
         }
         if (groupIds.length === 0) {
-            document.getElementById('notificationList').innerHTML = '<div class="notification-empty">No notifications</div>';
+            document.getElementById('notificationList').innerHTML = '<div class="notification-empty">No notifications<\/div>';
             return;
         }
         
@@ -7826,7 +7848,7 @@ async function loadNotifications() {
         
         var container = document.getElementById('notificationList');
         if (!data || data.length === 0) {
-            container.innerHTML = '<div class="notification-empty">No notifications</div>';
+            container.innerHTML = '<div class="notification-empty">No notifications<\/div>';
             return;
         }
         
@@ -7835,10 +7857,10 @@ async function loadNotifications() {
             var notif = data[i];
             html += 
                 '<div class="notification-item ' + (!notif.is_read ? 'unread' : '') + '" onclick="handleNotificationClick(\'' + notif.id + '\')">' +
-                    '<div class="notif-title">' + notif.title + '</div>' +
-                    '<div class="notif-message">' + notif.message + '</div>' +
-                    '<div class="notif-time">' + new Date(notif.created_at).toLocaleDateString() + ' ' + new Date(notif.created_at).toLocaleTimeString() + '</div>' +
-                '</div>';
+                    '<div class="notif-title">' + notif.title + '<\/div>' +
+                    '<div class="notif-message">' + notif.message + '<\/div>' +
+                    '<div class="notif-time">' + new Date(notif.created_at).toLocaleDateString() + ' ' + new Date(notif.created_at).toLocaleTimeString() + '<\/div>' +
+                '<\/div>';
         }
         container.innerHTML = html;
         
@@ -7937,7 +7959,7 @@ async function loadCalculators() {
         if (error) throw error;
         
         if (!data || data.length === 0) {
-            container.innerHTML = '<div class="loading" style="color:var(--text-muted);">No calculators available yet.</div>';
+            container.innerHTML = '<div class="loading" style="color:var(--text-muted);">No calculators available yet.<\/div>';
             return;
         }
         
@@ -7947,21 +7969,21 @@ async function loadCalculators() {
             html += 
                 '<div class="content-card" onclick="openCalculator(' + calc.id + ')" style="cursor:pointer;">' +
                     '<div class="meta">' +
-                        '<h4>🧮 ' + calc.name + '</h4>' +
-                        '<p>' + (calc.description || '') + '</p>' +
-                        '<p style="font-size:12px; color:var(--text-muted); font-weight:700;">Category: ' + (calc.category || 'General') + '</p>' +
-                    '</div>' +
+                        '<h4>🧮 ' + calc.name + '<\/h4>' +
+                        '<p>' + (calc.description || '') + '<\/p>' +
+                        '<p style="font-size:12px; color:var(--text-muted); font-weight:700;">Category: ' + (calc.category || 'General') + '<\/p>' +
+                    '<\/div>' +
                     '<div class="actions">' +
-                        '<button class="btn-sm btn-teal" style="margin:0;" onclick="event.stopPropagation(); openCalculator(' + calc.id + ')">▶️ Open</button>' +
-                    '</div>' +
-                '</div>';
+                        '<button class="btn-sm btn-teal" style="margin:0;" onclick="event.stopPropagation(); openCalculator(' + calc.id + ')">▶️ Open<\/button>' +
+                    '<\/div>' +
+                '<\/div>';
         }
         container.innerHTML = html;
         translatePage();
         
     } catch (err) {
         console.error('Load calculators error:', err);
-        container.innerHTML = '<div class="loading" style="color:var(--red-error);">Failed to load calculators</div>';
+        container.innerHTML = '<div class="loading" style="color:var(--red-error);">Failed to load calculators<\/div>';
     }
 }
 
@@ -7988,18 +8010,18 @@ async function loadCalculatorData(calcId) {
             var input = data.inputs[i];
             inputsHtml += 
                 '<div class="form-group">' +
-                    '<label>' + input.label + '</label>' +
+                    '<label>' + input.label + '<\/label>' +
                     '<input type="' + (input.type || 'text') + '" id="calc_input_' + input.id + '" placeholder="' + (input.placeholder || '') + '" ' + (input.required ? 'required' : '') + '>' +
-                '</div>';
+                '<\/div>';
         }
         
         container.innerHTML = 
-            '<h3 style="font-weight:900;">🧮 ' + data.name + '</h3>' +
-            '<p style="color:var(--text-muted); font-weight:700;">' + (data.description || '') + '</p>' +
+            '<h3 style="font-weight:900;">🧮 ' + data.name + '<\/h3>' +
+            '<p style="color:var(--text-muted); font-weight:700;">' + (data.description || '') + '<\/p>' +
             inputsHtml +
-            '<button class="btn btn-teal" onclick="calculateResult(' + data.id + ')">📊 Calculate</button>' +
-            '<div id="calcResultContainer" style="margin-top:12px; display:none;"></div>' +
-            '<button class="btn" onclick="closeModal(\'calculatorModal\')" style="margin-top:8px;">Close</button>';
+            '<button class="btn btn-teal" onclick="calculateResult(' + data.id + ')">📊 Calculate<\/button>' +
+            '<div id="calcResultContainer" style="margin-top:12px; display:none;"><\/div>' +
+            '<button class="btn" onclick="closeModal(\'calculatorModal\')" style="margin-top:8px;">Close<\/button>';
         
     } catch (err) {
         console.error('Load calculator data error:', err);
@@ -8014,10 +8036,10 @@ function calculateResult(calcId) {
         container.style.display = 'block';
         container.innerHTML = 
             '<div style="padding:16px; border-radius:12px; border:2px solid var(--gold);">' +
-                '<h4 style="font-weight:900;">📊 Result</h4>' +
-                '<p style="font-size:20px; font-weight:900; color:var(--navy);">Coming soon!</p>' +
-                '<p style="color:var(--text-muted); font-weight:700;">Formula evaluation will be available with full implementation.</p>' +
-            '</div>';
+                '<h4 style="font-weight:900;">📊 Result<\/h4>' +
+                '<p style="font-size:20px; font-weight:900; color:var(--navy);">Coming soon!<\/p>' +
+                '<p style="color:var(--text-muted); font-weight:700;">Formula evaluation will be available with full implementation.<\/p>' +
+            '<\/div>';
     }
 }
 
@@ -8291,17 +8313,17 @@ function addExamQuestion() {
     newQ.style.cssText = "background:var(--bg-light); border-radius:12px; padding:12px; margin-bottom:12px;";
     var qNum = AppState.examQuestionCount;
     newQ.innerHTML = 
-        '<p style="font-weight:900; color:var(--text-dark); margin-bottom:4px;">Q' + qNum + ': Question</p>' +
+        '<p style="font-weight:900; color:var(--text-dark); margin-bottom:4px;">Q' + qNum + ': Question<\/p>' +
         '<input type="text" id="examQ' + qNum + '" placeholder="Type your question..." style="width:100%; margin-bottom:6px; padding:8px; border:1px solid #eee; border-radius:8px; font-weight:700;">' +
         '<div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">' +
-            '<div><input type="text" id="examA' + qNum + '" placeholder="Option A" style="width:100%; padding:6px; border:1px solid #eee; border-radius:6px; font-weight:700;"></div>' +
-            '<div><input type="text" id="examB' + qNum + '" placeholder="Option B" style="width:100%; padding:6px; border:1px solid #eee; border-radius:6px; font-weight:700;"></div>' +
-            '<div><input type="text" id="examC' + qNum + '" placeholder="Option C" style="width:100%; padding:6px; border:1px solid #eee; border-radius:6px; font-weight:700;"></div>' +
-            '<div><input type="text" id="examD' + qNum + '" placeholder="Option D" style="width:100%; padding:6px; border:1px solid #eee; border-radius:6px; font-weight:700;"></div>' +
-        '</div>' +
-        '<div style="margin-top:6px;"><label style="font-size:13px; font-weight:800;">Correct Answer:</label><select id="examAns' + qNum + '" style="padding:4px 8px; border-radius:6px; border:1px solid #eee; font-weight:700;"><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div>' +
-        '<div style="margin-top:6px;"><label style="font-size:13px; font-weight:800;">Explanation (optional):</label><input type="text" id="examExp' + qNum + '" placeholder="Explain why this is correct..." style="width:100%; padding:6px; border:1px solid #eee; border-radius:6px; font-weight:700;"></div>' +
-        '<button class="btn-sm" onclick="removeExamQuestion(this)" style="margin-top:6px; background:var(--red-error); color:white;">✕ Remove</button>';
+            '<div><input type="text" id="examA' + qNum + '" placeholder="Option A" style="width:100%; padding:6px; border:1px solid #eee; border-radius:6px; font-weight:700;"><\/div>' +
+            '<div><input type="text" id="examB' + qNum + '" placeholder="Option B" style="width:100%; padding:6px; border:1px solid #eee; border-radius:6px; font-weight:700;"><\/div>' +
+            '<div><input type="text" id="examC' + qNum + '" placeholder="Option C" style="width:100%; padding:6px; border:1px solid #eee; border-radius:6px; font-weight:700;"><\/div>' +
+            '<div><input type="text" id="examD' + qNum + '" placeholder="Option D" style="width:100%; padding:6px; border:1px solid #eee; border-radius:6px; font-weight:700;"><\/div>' +
+        '<\/div>' +
+        '<div style="margin-top:6px;"><label style="font-size:13px; font-weight:800;">Correct Answer:<\/label><select id="examAns' + qNum + '" style="padding:4px 8px; border-radius:6px; border:1px solid #eee; font-weight:700;"><option value="A">A<\/option><option value="B">B<\/option><option value="C">C<\/option><option value="D">D<\/option><\/select><\/div>' +
+        '<div style="margin-top:6px;"><label style="font-size:13px; font-weight:800;">Explanation (optional):<\/label><input type="text" id="examExp' + qNum + '" placeholder="Explain why this is correct..." style="width:100%; padding:6px; border:1px solid #eee; border-radius:6px; font-weight:700;"><\/div>' +
+        '<button class="btn-sm" onclick="removeExamQuestion(this)" style="margin-top:6px; background:var(--red-error); color:white;">✕ Remove<\/button>';
     container.appendChild(newQ);
 }
 
@@ -8573,6 +8595,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // Service worker disabled because sw.js doesn't exist on the server
 // To enable PWA, create a sw.js file in the root directory
 console.log('🚀 T-Hub Medical Ecosystem v2.0 Loaded Successfully!');
+
 </script>
 </body>
 </html>
