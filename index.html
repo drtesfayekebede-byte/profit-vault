@@ -8539,8 +8539,19 @@ async function submitAddFile() {
 
 document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('loadingOverlay').style.display = 'flex';
-    checkSession();
-    loadGlobalTrending();
+    
+    // Check if checkSession exists before calling
+    if (typeof checkSession === 'function') {
+        checkSession();
+    } else {
+        console.error('checkSession function not found!');
+        document.getElementById('loadingOverlay').style.display = 'none';
+        showToast('Error loading app. Please refresh.', 'error');
+    }
+    
+    if (typeof loadGlobalTrending === 'function') {
+        loadGlobalTrending();
+    }
     
     // Translation observer for dynamic content
     var translationObserver = new MutationObserver(function() {
@@ -8556,15 +8567,11 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // ================================================================
-// SERVICE WORKER (PWA)
+// SERVICE WORKER (PWA) - DISABLED
 // ================================================================
 
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js')
-        .then(function() { console.log('Service Worker registered'); })
-        .catch(function(err) { console.log('Service Worker registration failed:', err); });
-}
-
+// Service worker disabled because sw.js doesn't exist on the server
+// To enable PWA, create a sw.js file in the root directory
 console.log('🚀 T-Hub Medical Ecosystem v2.0 Loaded Successfully!');
 </script>
 </body>
