@@ -3130,11 +3130,21 @@ async function login() {
 }
 
 async function register() {
-    var firstName = document.getElementById('authFirstName') ? document.getElementById('authFirstName').value : '';
-    var middleName = document.getElementById('authMiddleName') ? document.getElementById('authMiddleName').value : '';
-    var email = document.getElementById('authEmailRegister') ? document.getElementById('authEmailRegister').value : '';
-    var password = document.getElementById('authPasswordRegister') ? document.getElementById('authPasswordRegister').value : '';
-    var confirmPassword = document.getElementById('authPasswordConfirm') ? document.getElementById('authPasswordConfirm').value : '';
+    // Get form elements
+    var firstNameInput = document.getElementById('authFirstName');
+    var middleNameInput = document.getElementById('authMiddleName');
+    var emailInput = document.getElementById('authEmailRegister');
+    var passwordInput = document.getElementById('authPasswordRegister');
+    var confirmInput = document.getElementById('authPasswordConfirm');
+    
+    // Get values
+    var firstName = firstNameInput ? firstNameInput.value.trim() : '';
+    var middleName = middleNameInput ? middleNameInput.value.trim() : '';
+    var email = emailInput ? emailInput.value.trim() : '';
+    var password = passwordInput ? passwordInput.value : '';
+    var confirmPassword = confirmInput ? confirmInput.value : '';
+    
+    // === VALIDATION ===
     
     if (!firstName || !email || !password || !confirmPassword) {
         showToast('Please fill in all required fields.', 'error');
@@ -3156,16 +3166,24 @@ async function register() {
         return;
     }
     
-    // Email validation
-    var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    var emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!emailRegex.test(email)) {
         showToast('Please enter a valid email address.', 'error');
         return;
     }
     
+    // Disable button
+    var btn = document.querySelector('#registerForm .btn-teal');
+    if (btn) {
+        btn.disabled = true;
+        btn.textContent = '⏳ Creating...';
+    }
+    
     try {
-        var { data, error } = await sb.auth.signUp({ 
-            email: email, 
+        console.log('📝 Registering:', { email, firstName });
+        
+        var { data, error } = await sb.auth.signUp({
+            email: email,
             password: password,
             options: {
                 data: {
@@ -3176,32 +3194,96 @@ async function register() {
             }
         });
         
-        if (error) throw error;
+        if (error) {
+            // FIX: Handle "user already exists" gracefully
+            if (error.message && (
+                error.message.includes('User already registered') ||
+                error.message.includes('Email already') ||
+                error.message.includes('duplicate key') ||
+                error.message.includes('already been registered')
+            )) {
+                showToast('⚠️ This email is already registered. Please sign in.', 'warning');
+                // Switch to sign-in and pre-fill email
+                switchAuthMode('signin');
+                var signinEmail = document.getElementById('authEmail');
+                if (signinEmail) signinEmail.value = email;
+                if (btn) {
+                    btn.disabled = false;
+                    btn.textContent = '📝 Create Account';
+                }
+                return;
+            }
+            
+            // Other errors
+            showToast('❌ ' + error.message, 'error');
+            if (btn) {
+                btn.disabled = false;
+                btn.textContent = '📝 Create Account';
+            }
+            return;
+        }
         
-        showToast('✅ Account created! Please check your email to confirm.', 'success');
-        
-        // Reset form
-        document.getElementById('authFirstName').value = '';
-        if (document.getElementById('authMiddleName')) document.getElementById('authMiddleName').value = '';
-        document.getElementById('authEmailRegister').value = '';
-        document.getElementById('authPasswordRegister').value = '';
-        document.getElementById('authPasswordConfirm').value = '';
-        
-        switchAuthMode('signin');
-        showToast('📨 Confirmation email sent! Check your inbox.', 'info');
+        if (data && data.user) {
+            showToast('✅ Account created successfully!', 'success');
+            
+            // Reset form
+            if (firstNameInput) firstNameInput.value = '';
+            if (middleNameInput) middleNameInput.value = '';
+            if (emailInput) emailInput.value = '';
+            if (passwordInput) passwordInput.value = '';
+            if (confirmInput) confirmInput.value = '';
+            
+            // Try auto-login
+            try {
+                var { error: signInError } = await sb.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+                
+                if (!signInError) {
+                    var modal = document.getElementById('authModal');
+                    if (modal) modal.remove();
+                    showToast('✅ Account created and logged in!', 'success');
+                    window.location.reload();
+                    return;
+                }
+            } catch (e) {
+                console.warn('Auto-login failed:', e);
+            }
+            
+            // If auto-login fails, switch to sign-in
+            var needsConfirmation = !(data.user && data.user.confirmed_at);
+            if (needsConfirmation) {
+                showToast('📨 Please check your email to confirm your account.', 'info');
+            } else {
+                showToast('✅ Account created! Please log in.', 'success');
+            }
+            
+            switchAuthMode('signin');
+            var signinEmail = document.getElementById('authEmail');
+            if (signinEmail) signinEmail.value = email;
+        }
         
     } catch (err) {
+        console.error('Registration error:', err);
         showToast('❌ ' + err.message, 'error');
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.textContent = '📝 Create Account';
+        }
     }
 }
-
 function switchAuthMode(mode) {
     var signinForm = document.getElementById('signinForm');
     var registerForm = document.getElementById('registerForm');
     var signinTab = document.getElementById('authSignInTab');
     var registerTab = document.getElementById('authRegisterTab');
     
-    if (!signinForm || !registerForm || !signinTab || !registerTab) return;
+    if (!signinForm || !registerForm || !signinTab || !registerTab) {
+        console.warn('Auth form elements not found');
+        return;
+    }
     
     if (mode === 'signin') {
         signinForm.style.display = 'block';
@@ -3210,6 +3292,13 @@ function switchAuthMode(mode) {
         signinTab.style.color = 'white';
         registerTab.style.background = 'transparent';
         registerTab.style.color = 'var(--text-muted)';
+        
+        // Clear register form
+        ['authEmailRegister', 'authPasswordRegister', 'authPasswordConfirm', 'authFirstName', 'authMiddleName'].forEach(function(id) {
+            var el = document.getElementById(id);
+            if (el) el.value = '';
+        });
+        
     } else {
         signinForm.style.display = 'none';
         registerForm.style.display = 'block';
@@ -3217,6 +3306,12 @@ function switchAuthMode(mode) {
         registerTab.style.color = 'white';
         signinTab.style.background = 'transparent';
         signinTab.style.color = 'var(--text-muted)';
+        
+        // Clear signin form
+        ['authEmail', 'authPassword'].forEach(function(id) {
+            var el = document.getElementById(id);
+            if (el) el.value = '';
+        });
     }
 }
 
