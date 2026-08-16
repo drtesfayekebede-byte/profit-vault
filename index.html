@@ -4036,7 +4036,7 @@ async function loadSocialPosts(groupId) {
             return;
         }
 
-        // FIX: Get user data for all posts
+        // FIX: Get unique user IDs from posts
         var userIds = [];
         for (var i = 0; i < posts.length; i++) {
             var uid = posts[i].user_id;
@@ -4046,60 +4046,38 @@ async function loadSocialPosts(groupId) {
         }
         
         console.log('📝 User IDs in posts:', userIds);
-        console.log('📝 Current user ID:', AppState.userId);
         
         var userMap = {};
         
+        // FIX: Fetch user data from users table
         if (userIds.length > 0) {
             try {
-                // FIX: Use eq with or conditions instead of .in() for UUIDs
-                var query = sb.from('users').select('user_id, first_name, middle_name, last_name, email, profile_pic_url, is_teacher, is_admin');
-                
-                // Build OR conditions for each user_id
-                if (userIds.length === 1) {
-                    query = query.eq('user_id', userIds[0]);
-                } else {
-                    var orConditions = userIds.map(function(id) { return 'user_id.eq.' + id; }).join(',');
-                    query = query.or(orConditions);
-                }
-                
-                var { data: users, error: usersError } = await query;
-                
+                var { data: users, error: usersError } = await sb
+                    .from('users')
+                    .select('user_id, first_name, middle_name, last_name, email, profile_pic_url, is_teacher, is_admin')
+                    .in('user_id', userIds);
+
                 if (usersError) {
                     console.warn('Could not fetch users:', usersError.message);
-                    // Try alternative approach: fetch users one by one
-                    for (var i = 0; i < userIds.length; i++) {
-                        try {
-                            var { data: singleUser, error: singleError } = await sb
-                                .from('users')
-                                .select('user_id, first_name, middle_name, last_name, email, profile_pic_url, is_teacher, is_admin')
-                                .eq('user_id', userIds[i])
-                                .single();
-                            
-                            if (!singleError && singleUser) {
-                                users = users || [];
-                                users.push(singleUser);
-                            }
-                        } catch (e) {
-                            console.warn('Could not fetch user:', userIds[i], e);
-                        }
-                    }
                 }
 
                 if (users && users.length > 0) {
                     console.log('📝 Found users in table:', users.length);
                     for (var i = 0; i < users.length; i++) {
                         var user = users[i];
+                        // Build full name
                         var fullName = user.first_name || '';
                         if (user.middle_name) fullName += ' ' + user.middle_name;
                         if (user.last_name) fullName += ' ' + user.last_name;
-                        if (!fullName) fullName = user.email ? user.email.split('@')[0] : 'User';
-                        user.full_name = fullName;
+                        if (!fullName || fullName.trim() === '') {
+                            fullName = user.email ? user.email.split('@')[0] : 'User';
+                        }
+                        user.full_name = fullName.trim();
                         if (!user.profile_pic_url) {
                             user.profile_pic_url = 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app-assets/1780156694418.png';
                         }
                         userMap[user.user_id] = user;
-                        console.log('✅ Mapped user:', user.user_id, '→', fullName);
+                        console.log('✅ Mapped user:', user.user_id, '→', user.full_name);
                     }
                 } else {
                     console.warn('⚠️ No users found in users table for these IDs:', userIds);
@@ -4109,7 +4087,7 @@ async function loadSocialPosts(groupId) {
             }
         }
 
-        // Check user interactions (likes, dislikes)
+        // FIX: Check user interactions (likes, dislikes)
         if (AppState.userId) {
             var postIds = [];
             for (var i = 0; i < posts.length; i++) {
@@ -4138,48 +4116,40 @@ async function loadSocialPosts(groupId) {
                     post.user_liked = likedPostIds.indexOf(post.id) !== -1;
                     post.user_disliked = dislikedPostIds.indexOf(post.id) !== -1;
                     
-                    // FIX: Map user data with proper fallback
+                    // FIX: Set author data from userMap
                     var user = userMap[post.user_id];
                     
-                    // FIX: If user not found, try to get from auth if it's the current user
-                    if (!user) {
+                    if (user) {
+                        post.author_name = user.full_name || user.first_name || (user.email ? user.email.split('@')[0] : 'User');
+                        post.author_pic = user.profile_pic_url || 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app-assets/1780156694418.png';
+                        post.is_verified = user.is_teacher || user.is_admin || false;
+                    } else {
+                        // FIX: Fallback if user not found
                         if (post.user_id === AppState.userId && AppState.currentUser) {
-                            // Use current user data from AppState
-                            var fullName = AppState.firstName || AppState.currentUser.email?.split('@')[0] || 'User';
-                            user = {
-                                full_name: fullName,
-                                first_name: AppState.firstName || fullName,
-                                profile_pic_url: AppState.profilePicUrl || 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app-assets/1780156694418.png',
-                                is_teacher: AppState.isTeacher || false,
-                                is_admin: AppState.isAdmin || false
+                            post.author_name = AppState.firstName || AppState.currentUser.email?.split('@')[0] || 'User';
+                            post.author_pic = AppState.profilePicUrl || 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app-assets/1780156694418.png';
+                            post.is_verified = AppState.isTeacher || AppState.isAdmin || false;
+                            // Add to map
+                            userMap[post.user_id] = {
+                                full_name: post.author_name,
+                                profile_pic_url: post.author_pic,
+                                is_teacher: AppState.isTeacher,
+                                is_admin: AppState.isAdmin
                             };
-                            userMap[post.user_id] = user;
-                            console.log('✅ Added current user to map:', fullName);
                         } else {
-                            // Fallback: Use email or ID with a more user-friendly name
-                            var fallbackName = 'User_' + post.user_id.substring(0, 8);
-                            user = {
-                                full_name: fallbackName,
-                                first_name: fallbackName,
-                                profile_pic_url: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app-assets/1780156694418.png',
-                                is_teacher: false,
-                                is_admin: false
-                            };
-                            userMap[post.user_id] = user;
-                            console.warn('⚠️ No user data found for user:', post.user_id, '- using fallback');
+                            post.author_name = 'User';
+                            post.author_pic = 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app-assets/1780156694418.png';
+                            post.is_verified = false;
+                            console.warn('⚠️ No user data found for user:', post.user_id);
                         }
                     }
-                    
-                    // Set post author data
-                    post.author_name = user.full_name || user.first_name || 'User';
-                    post.author_pic = user.profile_pic_url || 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app-assets/1780156694418.png';
-                    post.is_verified = user.is_teacher || user.is_admin || false;
                 }
             } catch (err) {
                 console.warn('Error checking user interactions:', err);
             }
         }
         
+        // FIX: Render posts with author data
         var html = '';
         for (var i = 0; i < posts.length; i++) {
             html += renderPostCard(posts[i], userMap);
@@ -4198,13 +4168,10 @@ async function loadSocialPosts(groupId) {
 // ================================================================
 
 function renderPostCard(post, userMap) {
-    // FIX: Get user data with proper fallbacks
-    var user = userMap ? userMap[post.user_id] : null;
-    
-    // FIX: Use author_name from post if available (set in loadSocialPosts)
-    var authorName = post.author_name || (user ? (user.full_name || user.first_name || (user.email ? user.email.split('@')[0] : 'User')) : 'User');
-    var authorPic = post.author_pic || (user ? (user.profile_pic_url || 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app-assets/1780156694418.png') : 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app-assets/1780156694418.png');
-    var isVerified = post.is_verified !== undefined ? post.is_verified : (user ? (user.is_teacher || user.is_admin) : false);
+    // FIX: Get author data from post (set in loadSocialPosts)
+    var authorName = post.author_name || 'User';
+    var authorPic = post.author_pic || 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app-assets/1780156694418.png';
+    var isVerified = post.is_verified || false;
     
     var isOwner = post.user_id === AppState.userId;
     var isAdmin = AppState.isAdmin;
@@ -4275,7 +4242,7 @@ function renderPostCard(post, userMap) {
         })(post.id, post.original_post_id);
     }
     
-    // Escape content to prevent XSS
+    // Escape content for safety
     var safeDisplayContent = displayContent.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     var safeFullContent = fullContent.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     
@@ -4322,7 +4289,6 @@ function renderPostCard(post, userMap) {
         '<\/div>' +
     '<\/div>';
 }
-
 // ================================================================
 // POST INTERACTIONS
 // ================================================================
