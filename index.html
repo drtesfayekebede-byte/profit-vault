@@ -4032,74 +4032,151 @@ async function loadSocialPosts(groupId) {
         if (error) throw error;
         
         if (!posts || posts.length === 0) {
-            container.innerHTML = '<div class="loading" style="color:var(--text-muted);">No posts yet. Create the first post!<\/div>';
+            container.innerHTML = '<div class="loading" style="color:var(--text-muted);">No posts yet. Create the first post!</div>';
             return;
         }
 
-        // Get user data for all posts - FIX #133: Show real names
+        // FIX: Get user data for all posts
         var userIds = [];
         for (var i = 0; i < posts.length; i++) {
-            if (userIds.indexOf(posts[i].user_id) === -1) {
-                userIds.push(posts[i].user_id);
+            var uid = posts[i].user_id;
+            if (uid && userIds.indexOf(uid) === -1) {
+                userIds.push(uid);
             }
         }
         
-        var { data: users, error: usersError } = await sb
-            .from('users')
-            .select('user_id, first_name, middle_name, last_name, email, profile_pic_url, is_teacher, is_admin')
-            .in('user_id', userIds);
-
-        if (usersError) {
-            console.warn('Could not fetch users:', usersError.message);
-        }
-
+        console.log('📝 User IDs in posts:', userIds);
+        console.log('📝 Current user ID:', AppState.userId);
+        
         var userMap = {};
-        if (users) {
-            for (var i = 0; i < users.length; i++) {
-                var user = users[i];
-                var fullName = user.first_name || '';
-                if (user.middle_name) fullName += ' ' + user.middle_name;
-                if (user.last_name) fullName += ' ' + user.last_name;
-                if (!fullName) fullName = user.email ? user.email.split('@')[0] : 'User';
-                user.full_name = fullName;
-                userMap[user.user_id] = user;
+        
+        if (userIds.length > 0) {
+            try {
+                // FIX: Use eq with or conditions instead of .in() for UUIDs
+                var query = sb.from('users').select('user_id, first_name, middle_name, last_name, email, profile_pic_url, is_teacher, is_admin');
+                
+                // Build OR conditions for each user_id
+                if (userIds.length === 1) {
+                    query = query.eq('user_id', userIds[0]);
+                } else {
+                    var orConditions = userIds.map(function(id) { return 'user_id.eq.' + id; }).join(',');
+                    query = query.or(orConditions);
+                }
+                
+                var { data: users, error: usersError } = await query;
+                
+                if (usersError) {
+                    console.warn('Could not fetch users:', usersError.message);
+                    // Try alternative approach: fetch users one by one
+                    for (var i = 0; i < userIds.length; i++) {
+                        try {
+                            var { data: singleUser, error: singleError } = await sb
+                                .from('users')
+                                .select('user_id, first_name, middle_name, last_name, email, profile_pic_url, is_teacher, is_admin')
+                                .eq('user_id', userIds[i])
+                                .single();
+                            
+                            if (!singleError && singleUser) {
+                                users = users || [];
+                                users.push(singleUser);
+                            }
+                        } catch (e) {
+                            console.warn('Could not fetch user:', userIds[i], e);
+                        }
+                    }
+                }
+
+                if (users && users.length > 0) {
+                    console.log('📝 Found users in table:', users.length);
+                    for (var i = 0; i < users.length; i++) {
+                        var user = users[i];
+                        var fullName = user.first_name || '';
+                        if (user.middle_name) fullName += ' ' + user.middle_name;
+                        if (user.last_name) fullName += ' ' + user.last_name;
+                        if (!fullName) fullName = user.email ? user.email.split('@')[0] : 'User';
+                        user.full_name = fullName;
+                        if (!user.profile_pic_url) {
+                            user.profile_pic_url = 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app-assets/1780156694418.png';
+                        }
+                        userMap[user.user_id] = user;
+                        console.log('✅ Mapped user:', user.user_id, '→', fullName);
+                    }
+                } else {
+                    console.warn('⚠️ No users found in users table for these IDs:', userIds);
+                }
+            } catch (err) {
+                console.warn('Error fetching users:', err);
             }
         }
 
-        // Check user interactions
+        // Check user interactions (likes, dislikes)
         if (AppState.userId) {
             var postIds = [];
             for (var i = 0; i < posts.length; i++) {
                 postIds.push(posts[i].id);
             }
             
-            var { data: userLikes } = await sb
-                .from('social_post_likes')
-                .select('post_id')
-                .eq('user_id', AppState.userId)
-                .in('post_id', postIds);
-            
-            var likedPostIds = userLikes ? userLikes.map(function(l) { return l.post_id; }) : [];
-            
-            var { data: userDislikes } = await sb
-                .from('social_post_dislikes')
-                .select('post_id')
-                .eq('user_id', AppState.userId)
-                .in('post_id', postIds);
-            
-            var dislikedPostIds = userDislikes ? userDislikes.map(function(d) { return d.post_id; }) : [];
-            
-            for (var i = 0; i < posts.length; i++) {
-                var post = posts[i];
-                post.user_liked = likedPostIds.indexOf(post.id) !== -1;
-                post.user_disliked = dislikedPostIds.indexOf(post.id) !== -1;
+            try {
+                var { data: userLikes } = await sb
+                    .from('social_post_likes')
+                    .select('post_id')
+                    .eq('user_id', AppState.userId)
+                    .in('post_id', postIds);
                 
-                var user = userMap[post.user_id];
-                if (user) {
-                    post.author_name = user.full_name || user.first_name || (user.email ? user.email.split('@')[0] : 'User');
+                var likedPostIds = userLikes ? userLikes.map(function(l) { return l.post_id; }) : [];
+                
+                var { data: userDislikes } = await sb
+                    .from('social_post_dislikes')
+                    .select('post_id')
+                    .eq('user_id', AppState.userId)
+                    .in('post_id', postIds);
+                
+                var dislikedPostIds = userDislikes ? userDislikes.map(function(d) { return d.post_id; }) : [];
+                
+                for (var i = 0; i < posts.length; i++) {
+                    var post = posts[i];
+                    post.user_liked = likedPostIds.indexOf(post.id) !== -1;
+                    post.user_disliked = dislikedPostIds.indexOf(post.id) !== -1;
+                    
+                    // FIX: Map user data with proper fallback
+                    var user = userMap[post.user_id];
+                    
+                    // FIX: If user not found, try to get from auth if it's the current user
+                    if (!user) {
+                        if (post.user_id === AppState.userId && AppState.currentUser) {
+                            // Use current user data from AppState
+                            var fullName = AppState.firstName || AppState.currentUser.email?.split('@')[0] || 'User';
+                            user = {
+                                full_name: fullName,
+                                first_name: AppState.firstName || fullName,
+                                profile_pic_url: AppState.profilePicUrl || 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app-assets/1780156694418.png',
+                                is_teacher: AppState.isTeacher || false,
+                                is_admin: AppState.isAdmin || false
+                            };
+                            userMap[post.user_id] = user;
+                            console.log('✅ Added current user to map:', fullName);
+                        } else {
+                            // Fallback: Use email or ID with a more user-friendly name
+                            var fallbackName = 'User_' + post.user_id.substring(0, 8);
+                            user = {
+                                full_name: fallbackName,
+                                first_name: fallbackName,
+                                profile_pic_url: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app-assets/1780156694418.png',
+                                is_teacher: false,
+                                is_admin: false
+                            };
+                            userMap[post.user_id] = user;
+                            console.warn('⚠️ No user data found for user:', post.user_id, '- using fallback');
+                        }
+                    }
+                    
+                    // Set post author data
+                    post.author_name = user.full_name || user.first_name || 'User';
                     post.author_pic = user.profile_pic_url || 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app-assets/1780156694418.png';
-                    post.is_verified = user.is_teacher || user.is_admin;
+                    post.is_verified = user.is_teacher || user.is_admin || false;
                 }
+            } catch (err) {
+                console.warn('Error checking user interactions:', err);
             }
         }
         
@@ -4112,7 +4189,7 @@ async function loadSocialPosts(groupId) {
         
     } catch (err) {
         console.error('Load posts error:', err);
-        container.innerHTML = '<div class="loading" style="color:var(--red-error);">Failed to load posts<\/div>';
+        container.innerHTML = '<div class="loading" style="color:var(--red-error);">Failed to load posts</div>';
     }
 }
 
@@ -4121,10 +4198,13 @@ async function loadSocialPosts(groupId) {
 // ================================================================
 
 function renderPostCard(post, userMap) {
+    // FIX: Get user data with proper fallbacks
     var user = userMap ? userMap[post.user_id] : null;
-    var authorName = user ? (user.full_name || user.first_name || (user.email ? user.email.split('@')[0] : 'User')) : 'User';
-    var authorPic = user ? (user.profile_pic_url || 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app-assets/1780156694418.png') : 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app-assets/1780156694418.png';
-    var isVerified = user ? (user.is_teacher || user.is_admin) : false;
+    
+    // FIX: Use author_name from post if available (set in loadSocialPosts)
+    var authorName = post.author_name || (user ? (user.full_name || user.first_name || (user.email ? user.email.split('@')[0] : 'User')) : 'User');
+    var authorPic = post.author_pic || (user ? (user.profile_pic_url || 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app-assets/1780156694418.png') : 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app-assets/1780156694418.png');
+    var isVerified = post.is_verified !== undefined ? post.is_verified : (user ? (user.is_teacher || user.is_admin) : false);
     
     var isOwner = post.user_id === AppState.userId;
     var isAdmin = AppState.isAdmin;
@@ -4195,6 +4275,10 @@ function renderPostCard(post, userMap) {
         })(post.id, post.original_post_id);
     }
     
+    // Escape content to prevent XSS
+    var safeDisplayContent = displayContent.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    var safeFullContent = fullContent.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    
     return '<div class="post-card ' + viralGlow + '" id="post-' + post.id + '">' +
         '<div class="post-header">' +
             '<div class="post-avatar"><img src="' + authorPic + '" alt="' + authorName + '"><\/div>' +
@@ -4211,8 +4295,8 @@ function renderPostCard(post, userMap) {
         '<\/div>' +
         repostInfo +
         '<div class="post-content" id="postContent-' + post.id + '">' +
-            '<span id="postContentText-' + post.id + '">' + displayContent.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '<\/span>' +
-            (showReadMore ? '<span class="read-more" onclick="togglePostContent(\'' + post.id + '\', \'' + fullContent.replace(/'/g, "\\'").replace(/\n/g, ' ').replace(/</g, '&lt;').replace(/>/g, '&gt;') + '\')" id="readMoreBtn-' + post.id + '">Read More<\/span>' : '') +
+            '<span id="postContentText-' + post.id + '">' + safeDisplayContent + '<\/span>' +
+            (showReadMore ? '<span class="read-more" onclick="togglePostContent(\'' + post.id + '\', \'' + safeFullContent.replace(/'/g, "\\'").replace(/\n/g, ' ') + '\')" id="readMoreBtn-' + post.id + '">Read More<\/span>' : '') +
         '<\/div>' +
         (post.image_url ? '<img src="' + post.image_url + '" alt="Post image" class="post-image">' : '') +
         (post.link_url ? '<a href="' + post.link_url + '" target="_blank" class="post-link">🔗 ' + post.link_url + '<\/a>' : '') +
@@ -4230,7 +4314,7 @@ function renderPostCard(post, userMap) {
             '<\/div>' +
         '<\/div>' +
         '<div class="post-edit" id="editPost-' + post.id + '">' +
-            '<textarea id="editContent-' + post.id + '" rows="3">' + post.content + '<\/textarea>' +
+            '<textarea id="editContent-' + post.id + '" rows="3">' + safeFullContent + '<\/textarea>' +
             '<input type="file" id="editImage-' + post.id + '" accept="image/*">' +
             '<input type="url" id="editLink-' + post.id + '" placeholder="Link URL" value="' + (post.link_url || '') + '">' +
             '<button class="save-edit-btn" onclick="savePostEdit(\'' + post.id + '\')">Save<\/button>' +
