@@ -1019,10 +1019,6 @@ html, body {
 .portal-menu {
     position: fixed !important;
     margin: 0 !important;
-    top: auto !important;
-    right: auto !important;
-    bottom: auto !important;
-    left: auto !important;
     z-index: 99999 !important;
 }
 
@@ -2122,11 +2118,23 @@ function closeOpenMenu() {
     try {
         const el = AppState.openMenuEl;
         el.classList.remove('portal-open', 'portal-menu', 'show');
-        el.style.top = ''; el.style.left = ''; el.style.right = ''; el.style.bottom = '';
+        // Clear inline positioning so the CSS default takes over again
+        el.style.position = '';
+        el.style.top = '';
+        el.style.left = '';
+        el.style.right = '';
+        el.style.bottom = '';
         el.style.minWidth = '';
+        el.style.display = '';
+        el.style.visibility = '';
+        // Return the menu to its original DOM position (or remove if it was ephemeral)
         if (el._portalPlaceholder && el._portalPlaceholder.parentNode) {
             el._portalPlaceholder.parentNode.insertBefore(el, el._portalPlaceholder);
             el._portalPlaceholder.remove();
+            delete el._portalPlaceholder;
+        } else {
+            // Ephemeral menu (created fresh each open) — remove it
+            el.remove();
         }
     } catch (e) { console.warn('closeOpenMenu error:', e); }
     if (AppState.openMenuCloseHandler) {
@@ -2143,16 +2151,24 @@ function closeOpenMenu() {
 function openPortalMenu(menuEl, buttonEl) {
     if (!menuEl || !buttonEl) return;
     closeOpenMenu();
-    const placeholder = document.createElement('span');
-    placeholder.style.display = 'none';
-    if (menuEl.parentNode) {
+    // Add a placeholder so we remember where to put the menu back (only if it's a persistent menu)
+    const isEphemeral = menuEl.dataset && menuEl.dataset.ephemeral === 'true';
+    if (!isEphemeral && menuEl.parentNode) {
+        const placeholder = document.createElement('span');
+        placeholder.style.display = 'none';
         menuEl.parentNode.insertBefore(placeholder, menuEl);
         menuEl._portalPlaceholder = placeholder;
     }
     document.getElementById('portal-root').appendChild(menuEl);
     menuEl.classList.add('portal-menu', 'portal-open');
-    menuEl.style.visibility = 'hidden';
+    // Clear any inline positioning that may have been set before (fresh start)
+    menuEl.style.position = '';
+    menuEl.style.top = '';
+    menuEl.style.left = '';
+    menuEl.style.right = '';
+    menuEl.style.bottom = '';
     menuEl.style.display = 'block';
+    menuEl.style.visibility = 'hidden';
     requestAnimationFrame(() => {
         const btnRect = buttonEl.getBoundingClientRect();
         const menuRect = menuEl.getBoundingClientRect();
@@ -2166,8 +2182,6 @@ function openPortalMenu(menuEl, buttonEl) {
         if (top < 8) top = 8;
         menuEl.style.top = top + 'px';
         menuEl.style.left = left + 'px';
-        menuEl.style.right = 'auto';
-        menuEl.style.bottom = 'auto';
         menuEl.style.visibility = 'visible';
     });
     const handler = function(e) {
@@ -3981,12 +3995,16 @@ async function submitEditGroup() {
 
 function toggleClassHeaderMenu(event) {
     event?.stopPropagation();
-    const menuId = 'classHeaderMenuPortal';
-    const existing = document.getElementById(menuId);
-    if (existing) { closeOpenMenu(); return; }
+    // If any menu is already open, close it
+    if (AppState.openMenuEl) { closeOpenMenu(); return; }
+    // Remove any stale menu from a previous open
+    const stale = document.getElementById('classHeaderMenuPortal');
+    if (stale) stale.remove();
     const btn = event.currentTarget;
+    if (!btn) return;
     const menu = document.createElement('div');
-    menu.id = menuId;
+    menu.id = 'classHeaderMenuPortal';
+    menu.dataset.ephemeral = 'true';
     menu.innerHTML = `
         <div onclick="showModal('createGroupModal');closeOpenMenu();">➕ Create New Group</div>
         <div class="divider"></div>
@@ -4000,12 +4018,14 @@ function toggleClassHeaderMenu(event) {
 
 function toggleClassMenu(event) {
     event?.stopPropagation();
-    const menuId = 'classMenuPortal';
-    const existing = document.getElementById(menuId);
-    if (existing) { closeOpenMenu(); return; }
+    if (AppState.openMenuEl) { closeOpenMenu(); return; }
+    const stale = document.getElementById('classMenuPortal');
+    if (stale) stale.remove();
     const btn = event.currentTarget;
+    if (!btn) return;
     const menu = document.createElement('div');
-    menu.id = menuId;
+    menu.id = 'classMenuPortal';
+    menu.dataset.ephemeral = 'true';
     menu.innerHTML = `
         <div onclick="showModal('addFileModal');closeOpenMenu();">📂 Add file/content</div>
         <div onclick="showModal('editGroupModal');closeOpenMenu();">✏️ Edit Group Info</div>
@@ -4016,7 +4036,6 @@ function toggleClassMenu(event) {
     document.body.appendChild(menu);
     openPortalMenu(menu, btn);
 }
-
 function classAction(action) {
     closeOpenMenu();
     if (action === 'Delete Group' && AppState.currentGroupId) deleteGroup(AppState.currentGroupId);
@@ -4024,12 +4043,15 @@ function classAction(action) {
 
 function toggleThreeDotMenu(type, event) {
     event?.stopPropagation();
+    if (AppState.openMenuEl) { closeOpenMenu(); return; }
     const menuId = `threeDot_${type}`;
-    const existing = document.getElementById(menuId);
-    if (existing) { closeOpenMenu(); return; }
+    const stale = document.getElementById(menuId);
+    if (stale) stale.remove();
     const btn = event.currentTarget;
+    if (!btn) return;
     const menu = document.createElement('div');
     menu.id = menuId;
+    menu.dataset.ephemeral = 'true';
     if (type === 'bstore') {
         menu.innerHTML = `<div onclick="showModal('bstoreUploadModal');closeOpenMenu();">📤 Upload Book</div><div onclick="showToast('Coming soon','info');closeOpenMenu();">📋 My Books</div>`;
     } else if (type === 'jobs') {
