@@ -276,8 +276,8 @@ html, body {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: var(--navy);
-    border: 1.5px solid var(--navy-lighter);
+    background: var(--navy-light);
+    border: none;
     border-radius: 10px;
     color: #ffffff;
     cursor: pointer;
@@ -289,14 +289,16 @@ html, body {
     white-space: nowrap;
     transition: 0.2s;
     text-align: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
 }
 .content-tab.active {
     color: #ffffff;
-    border-color: var(--teal);
     background: var(--teal);
+    box-shadow: 0 2px 8px rgba(0,128,128,0.4);
 }
 .content-tab:hover:not(.active) {
-    background: rgba(255,255,255,0.06);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.35);
 }
 
 /* ===== DRAWER ===== */
@@ -660,8 +662,8 @@ html, body {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: var(--navy);
-    border: 1.5px solid var(--navy-lighter);
+    background: var(--navy-light);
+    border: none;
     border-radius: 10px;
     color: #ffffff;
     cursor: pointer;
@@ -673,13 +675,17 @@ html, body {
     white-space: nowrap;
     transition: 0.2s;
     text-align: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
 }
 .tab-card.active {
     color: #ffffff;
-    border-color: var(--teal);
     background: var(--teal);
+    box-shadow: 0 2px 8px rgba(0,128,128,0.4);
 }
-.tab-card:hover:not(.active) { background: rgba(255,255,255,0.06); }
+.tab-card:hover:not(.active) {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.35);
+}
 .tab-card .tab-icon { display: none; }
 
 /* ===== CONTENT CARDS ===== */
