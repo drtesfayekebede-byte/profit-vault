@@ -253,7 +253,6 @@ html, body {
 .profile-avatar img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
 .profile-avatar:hover { transform: scale(1.05); border-color: var(--gold); }
 
-/* Header Row 2 - New dashed tab style */
 /* Header Row 2 — dual mode: user strip OR filter tabs */
 .header-row-2 {
     height: var(--header-row2-height);
@@ -752,7 +751,7 @@ html, body {
     margin: 0;
 }
 
-/* ===== GROUP FEED TABS (new dashed style) ===== */
+/* ===== GROUP FEED TABS ===== */
 .tabs-row {
     display: flex;
     gap: 6px;
@@ -792,6 +791,10 @@ html, body {
     box-shadow: 0 2px 6px rgba(0,0,0,0.35);
 }
 .tab-card .tab-icon { display: none; }
+
+/* Class content sections — hidden unless active */
+.class-content { display: none; }
+.class-content.active { display: block; }
 
 /* ===== CONTENT CARDS ===== */
 .content-card, .book-card, .job-card, .research-card, .teacher-card, .post-card, .question-box, .profile-card {
@@ -1418,8 +1421,12 @@ html, body {
         <div id="tabContentContainer" class="tab-scroll-area"></div>
     </div>
 
-    <!-- ===== HIDDEN TEMPLATES ===== -->
-    <div style="display:none;">
+    <!-- ===== HIDDEN TEMPLATES =====
+         Wrapped in a real <template> element so the browser treats its
+         content as inert — child IDs are NOT registered in the document,
+         preventing the "duplicate id" bug where getElementById() returned
+         the hidden template instead of the visible clone. -->
+    <template id="tabTemplates">
 
         <!-- ===== CLASS TAB ===== -->
         <div id="class-tab">
@@ -1466,12 +1473,12 @@ html, body {
                     <span class="pulse-dot"></span> 🔴 Go Live
                 </button>
                 <div class="group-banner-actions" id="groupBannerActions">
-                    <button class="btn" id="joinClassBtn" onclick="toggleGroupJoin(this)">➕ Join Class</button>
+                    <button class="btn" id="joinClassBtn" onclick="toggleGroupJoin(this, event)">➕ Join Class</button>
                     <button class="btn btn-teal" id="messageOwnerBtn" onclick="openChatWithOwner()" style="display:none;">💬 Message Owner</button>
                     <button class="btn btn-teal" id="inboxBtn" onclick="openInbox()" style="display:none;">📥 Inbox <span id="inboxCountBadge"></span></button>
                 </div>
             </div>
-            <!-- Group Feed Tabs (dashed style) -->
+            <!-- Group Feed Tabs -->
             <div class="tabs-row" id="groupTabs">
                 <button class="tab-card social active" onclick="switchGroupTab('social', this)">Social</button>
                 <button class="tab-card video" onclick="switchGroupTab('videos', this)">Video</button>
@@ -1595,7 +1602,7 @@ html, body {
             <div class="loading" style="color:var(--text-muted);">Loading admin panel...</div>
         </div>
 
-    </div><!-- end hidden templates -->
+    </template><!-- end hidden templates -->
 
     <!-- ===== TOAST ===== -->
     <div id="toast" class="toast"></div>
@@ -1844,7 +1851,7 @@ html, body {
                 <div class="form-group"><label>Mock Exam Title</label><input type="text" id="examTitle" maxlength="100"></div>
                 <div class="form-group"><label>Time Limit (minutes)</label><input type="number" id="examTimeLimit" value="5" min="1" max="120"></div>
                 <div id="examQuestionsContainer">
-                    <div style="background:#f8fafc; border-radius:12px; padding:12px; margin-bottom:12px;">
+                    <div class="exam-question-block" data-qnum="1" style="background:#f8fafc; border-radius:12px; padding:12px; margin-bottom:12px;">
                         <p style="font-weight:900; color:var(--text-dark); margin-bottom:4px;">Q1: Question</p>
                         <input type="text" id="examQ1" placeholder="Type your question..." style="width:100%; margin-bottom:6px; padding:8px; border:1px solid #eee; border-radius:8px; font-weight:700;">
                         <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
@@ -2118,22 +2125,27 @@ function closeOpenMenu() {
     try {
         const el = AppState.openMenuEl;
         el.classList.remove('portal-open', 'portal-menu', 'show');
-        // Clear inline positioning so the CSS default takes over again
+        // Restore original inline display BEFORE clearing other styles,
+        // otherwise we lose the "display:none" and the menu stays visible.
+        if (el._originalDisplay !== undefined) {
+            el.style.display = el._originalDisplay;
+            delete el._originalDisplay;
+        } else {
+            el.style.display = '';
+        }
         el.style.position = '';
         el.style.top = '';
         el.style.left = '';
         el.style.right = '';
         el.style.bottom = '';
         el.style.minWidth = '';
-        el.style.display = '';
         el.style.visibility = '';
-        // Return the menu to its original DOM position (or remove if it was ephemeral)
+        // Return the menu to its original DOM position (or remove if ephemeral)
         if (el._portalPlaceholder && el._portalPlaceholder.parentNode) {
             el._portalPlaceholder.parentNode.insertBefore(el, el._portalPlaceholder);
             el._portalPlaceholder.remove();
             delete el._portalPlaceholder;
         } else {
-            // Ephemeral menu (created fresh each open) — remove it
             el.remove();
         }
     } catch (e) { console.warn('closeOpenMenu error:', e); }
@@ -2151,7 +2163,9 @@ function closeOpenMenu() {
 function openPortalMenu(menuEl, buttonEl) {
     if (!menuEl || !buttonEl) return;
     closeOpenMenu();
-    // Add a placeholder so we remember where to put the menu back (only if it's a persistent menu)
+    // Remember original inline display so closeOpenMenu can restore it exactly.
+    menuEl._originalDisplay = menuEl.style.display || '';
+    // Add a placeholder so we remember where to put the menu back (only persistent menus)
     const isEphemeral = menuEl.dataset && menuEl.dataset.ephemeral === 'true';
     if (!isEphemeral && menuEl.parentNode) {
         const placeholder = document.createElement('span');
@@ -2161,7 +2175,6 @@ function openPortalMenu(menuEl, buttonEl) {
     }
     document.getElementById('portal-root').appendChild(menuEl);
     menuEl.classList.add('portal-menu', 'portal-open');
-    // Clear any inline positioning that may have been set before (fresh start)
     menuEl.style.position = '';
     menuEl.style.top = '';
     menuEl.style.left = '';
@@ -2249,8 +2262,17 @@ function openTabContent(tabId, specificGroupId = null) {
     else if (tabId === 'wallet') id = 'wallet-tab';
     else if (tabId === 'group-feed') id = 'group-feed';
     else return;
-    const template = document.getElementById(id);
-    if (template) container.innerHTML = template.outerHTML;
+
+    // Pull from the inert <template> so child IDs don't pollute the
+    // document and getElementById() always matches the live clone.
+    const templateRoot = document.getElementById('tabTemplates');
+    if (!templateRoot) return;
+    const source = templateRoot.content.querySelector('#' + id);
+    if (!source) return;
+
+    container.innerHTML = '';
+    container.appendChild(source.cloneNode(true));
+
     if (tabId === 'admin') loadAdminPanel();
     if (tabId === 'wallet') loadWallet();
     if (tabId === 'bstore') loadBStore();
@@ -2399,7 +2421,6 @@ function updateUIForUser() {
     const bd = document.getElementById('walletBalanceDisplay'); if (bd) bd.textContent = `${AppState.coinBalance} TENI Coins`;
     const ab = document.getElementById('appealBalance'); if (ab) ab.textContent = AppState.coinBalance;
 
-    // Header user strip
     const hua = document.getElementById('headerUserAvatar');
     if (hua) hua.src = AppState.profilePicUrl;
     const hun = document.getElementById('headerUserName');
@@ -2427,7 +2448,6 @@ function toggleFilterRow(event) {
     }
 }
 
-// Close filter row on outside tap (but not if tap is inside row 2 itself or the toggle button)
 document.addEventListener('click', function(e) {
     const row = document.getElementById('headerRow2');
     const btn = document.getElementById('filterToggleBtn');
@@ -2576,7 +2596,7 @@ async function updateTrendingGroups() {
         c.innerHTML = data.map(g => `
             <div class="teacher-card" onclick="openTabContent('group-feed', ${g.id})" style="cursor:pointer;" data-group-id="${g.id}">
                 <div class="info"><div class="name">${escapeHtml(g.name)}</div><div class="spec">👥 ${g.followers || 0} Followers</div></div>
-                <button class="join-btn ${g.owner_id === AppState.userId ? 'joined' : ''}" style="${g.owner_id === AppState.userId ? 'background:var(--gold); color:var(--text-dark);' : ''}" onclick="event.stopPropagation(); toggleGroupJoin(this)" data-group-id="${g.id}">${g.owner_id === AppState.userId ? 'Owner' : '➕ Join'}</button>
+                <button class="join-btn ${g.owner_id === AppState.userId ? 'joined' : ''}" style="${g.owner_id === AppState.userId ? 'background:var(--gold); color:var(--text-dark);' : ''}" onclick="event.stopPropagation(); toggleGroupJoin(this, event)" data-group-id="${g.id}">${g.owner_id === AppState.userId ? 'Owner' : '➕ Join'}</button>
             </div>`).join('');
     } catch (err) { console.warn('trending groups', err); }
 }
@@ -2616,7 +2636,8 @@ async function createGroup() {
     } catch (err) { showToast('Error: ' + err.message, 'error'); }
 }
 
-async function toggleGroupJoin(btn) {
+// FIXED: event is now an explicit parameter (no reliance on global `event`)
+async function toggleGroupJoin(btn, event) {
     if (event) event.stopPropagation();
     if (!AppState.userId) return showToast('Login first.', 'error');
     if (btn.innerText.includes('Owner')) return showToast('📌 This is your group!', 'info');
@@ -2672,10 +2693,18 @@ function renderUserGroups() {
 }
 
 // ================================================================
-// GROUP CONTENT (video, ppt)
+// GROUP CONTENT (video, ppt, mockexam)
 // ================================================================
 async function loadGroupContent(groupId, contentType) {
-    const c = document.getElementById(contentType); if (!c) return;
+    // FIX: mockexam renders into #mockExamListContainer so the
+    // Study/Exam mode toggle stays visible inside #mockexam.
+    let c;
+    if (contentType === 'mockexam') {
+        c = document.getElementById('mockExamListContainer');
+    } else {
+        c = document.getElementById(contentType);
+    }
+    if (!c) return;
     setLoading(c, true, `Loading ${contentType}...`);
     try {
         if (contentType === 'mockexam') { await loadMockExamsIntoContainer(c, groupId); return; }
@@ -2748,12 +2777,16 @@ async function startMockExam(id) {
 }
 
 function renderMockExamQuestion() {
-    const c = document.getElementById('mockexam'); if (!c || !AppState.currentExam) return;
+    // FIX: render into #mockExamListContainer, not #mockexam,
+    // so the Study/Exam toggle row stays visible.
+    const c = document.getElementById('mockExamListContainer');
+    if (!c || !AppState.currentExam) return;
     const q = AppState.currentExam.questions[AppState.currentQuestionIndex];
     const total = AppState.currentExam.questions.length;
     const prog = Math.round(((AppState.currentQuestionIndex + 1) / total) * 100);
     const sel = AppState.examAnswered[AppState.currentQuestionIndex];
     const isEM = AppState.examMode === 'exam';
+    const answered = sel !== null && sel !== undefined;
     c.innerHTML = `
         <div style="margin-bottom:16px;">
             ${isEM ? `<div class="exam-timer" id="examTimerContainer"><span>⏱️ Time Left:</span><span class="timer" id="examTimerDisplay">${formatTime(AppState.examTimeRemaining)}</span></div>` : ''}
@@ -2769,7 +2802,11 @@ function renderMockExamQuestion() {
                 let cls = '';
                 if (AppState.examSubmitted) { const isC = letter === q.answer; if (isC) cls = 'correct'; else if (isSel) cls = 'incorrect'; }
                 else if (isSel) cls = 'selected';
-                return `<label class="${cls}" onclick="${!AppState.examSubmitted && !isEM ? `answerMockExamQuestion('${letter}', this)` : ''}"><input type="radio" name="exa" value="${letter}" ${isSel ? 'checked' : ''} ${AppState.examSubmitted ? 'disabled' : ''}> <strong>${letter}.</strong> ${escapeHtml(opt)}</label>`;
+                // FIX: In exam mode we still allow answering. We only suppress
+                // the immediate correct/incorrect feedback (handled inside
+                // answerMockExamQuestion via AppState.examMode).
+                const onClick = (!AppState.examSubmitted && !answered) ? `onclick="answerMockExamQuestion('${letter}', this)"` : '';
+                return `<label class="${cls}" ${onClick}><input type="radio" name="exa" value="${letter}" ${isSel ? 'checked' : ''} ${AppState.examSubmitted ? 'disabled' : ''}> <strong>${letter}.</strong> ${escapeHtml(opt)}</label>`;
             }).join('')}
             <div id="examExplanation" style="display:none; margin-top:12px; padding:12px; background:#f0fdf4; border-radius:8px; border-left:4px solid var(--green-success);"></div>
         </div>
@@ -2781,43 +2818,119 @@ function renderMockExamQuestion() {
 }
 
 function answerMockExamQuestion(selected, labelEl) {
-    if (AppState.examSubmitted || AppState.examMode === 'exam') return;
+    if (AppState.examSubmitted) return;
+    // FIX: prevent double-counting if a question was already answered
+    if (AppState.examAnswered[AppState.currentQuestionIndex] !== null) return;
     const q = AppState.currentExam.questions[AppState.currentQuestionIndex];
     AppState.examAnswered[AppState.currentQuestionIndex] = selected;
+    const isEM = AppState.examMode === 'exam';
+
+    // In exam mode we record the answer but DON'T show correct/incorrect feedback.
+    if (isEM) {
+        labelEl.classList.add('selected');
+        // Re-render only the counter region is unnecessary; keep counters at 0
+        // until submission. Users see progress but no correctness.
+        // Disable further clicks on this question via examAnswered guard.
+        // We still update the selected highlight.
+        document.querySelectorAll('#mockExamListContainer .question-box label').forEach(l => l.classList.remove('selected'));
+        labelEl.classList.add('selected');
+        return;
+    }
+
     if (selected === q.answer) { AppState.correctCount++; labelEl.classList.add('correct'); }
-    else { AppState.incorrectCount++; labelEl.classList.add('incorrect'); document.querySelectorAll('#mockexam .question-box label').forEach((l, i) => { if (String.fromCharCode(65+i) === q.answer) l.classList.add('correct'); }); }
+    else {
+        AppState.incorrectCount++;
+        labelEl.classList.add('incorrect');
+        document.querySelectorAll('#mockExamListContainer .question-box label').forEach((l, i) => { if (String.fromCharCode(65+i) === q.answer) l.classList.add('correct'); });
+    }
     const cc = document.getElementById('examCorrectCount'); const ic = document.getElementById('examIncorrectCount');
     if (cc) cc.textContent = `✅ ${AppState.correctCount}`; if (ic) ic.textContent = `❌ ${AppState.incorrectCount}`;
 }
+
 function nextMockExamQuestion() { if (AppState.currentQuestionIndex < AppState.currentExam.questions.length - 1) { AppState.currentQuestionIndex++; renderMockExamQuestion(); } }
 function prevMockExamQuestion() { if (AppState.currentQuestionIndex > 0) { AppState.currentQuestionIndex--; renderMockExamQuestion(); } }
+
 function submitMockExam(tu = false) {
     if (AppState.examSubmitted) return;
-    stopExamTimer(); AppState.examSubmitted = true;
-    const t = AppState.currentExam.questions.length; const s = Math.round((AppState.correctCount / t) * 100);
+    stopExamTimer();
+    AppState.examSubmitted = true;
+
+    // If exam mode, tally correct/incorrect now from recorded answers
+    if (AppState.examMode === 'exam' && AppState.currentExam) {
+        AppState.correctCount = 0;
+        AppState.incorrectCount = 0;
+        AppState.currentExam.questions.forEach((q, i) => {
+            if (AppState.examAnswered[i] === q.answer) AppState.correctCount++;
+            else AppState.incorrectCount++;
+        });
+    }
+
+    const t = AppState.currentExam.questions.length;
+    const s = Math.round((AppState.correctCount / t) * 100);
     showToast(`Exam submitted! Score: ${s}% (${AppState.correctCount}/${t})`, 'success');
     renderMockExamResult();
 }
+
 function renderMockExamResult() {
-    const c = document.getElementById('mockexam'); if (!c) return;
-    const t = AppState.currentExam.questions.length; const s = Math.round((AppState.correctCount / t) * 100);
+    // FIX: render into #mockExamListContainer to preserve the toggle row.
+    const c = document.getElementById('mockExamListContainer');
+    if (!c) return;
+    const t = AppState.currentExam.questions.length;
+    const s = Math.round((AppState.correctCount / t) * 100);
     let h = `<div style="text-align:center; padding:20px; background:var(--navy); border-radius:var(--border-radius-card); color:white; margin-bottom:20px;"><div style="font-size:48px;">${s >= 80 ? '🎉' : s >= 60 ? '👍' : '📚'}</div><h2 style="color:var(--gold); margin:10px 0;">${s}%</h2><p style="color:rgba(255,255,255,0.8);">Correct: ${AppState.correctCount} | Incorrect: ${AppState.incorrectCount}</p></div>`;
     AppState.currentExam.questions.forEach((q, i) => {
-        const ua = AppState.examAnswered[i]; const ok = ua === q.answer;
-        h += `<div class="content-card" style="border-left: 4px solid ${ok ? 'var(--green-success)' : 'var(--red-error)'};"><div class="meta"><h4>Q${i+1}: ${escapeHtml(q.question)}</h4><p style="font-weight:700;"><span style="color:${ok ? 'var(--green-success)' : 'var(--red-error)'};">${ok ? '✅' : '❌'} Your: ${ua || 'N/A'}</span>${!ok ? ` | Correct: ${q.answer}` : ''}</p></div></div>`;
+        const ua = AppState.examAnswered[i];
+        const ok = ua === q.answer;
+        h += `<div class="content-card" style="border-left: 4px solid ${ok ? 'var(--green-success)' : 'var(--red-error)'};"><div class="meta"><h4>Q${i+1}: ${escapeHtml(q.question)}</h4><p style="font-weight:700;"><span style="color:${ok ? 'var(--green-success)' : 'var(--red-error)'};">${ok ? '✅' : '❌'} Your: ${ua || 'N/A'}</span>${!ok ? ` | Correct: ${q.answer}` : ''}</p>${q.explanation ? `<p style="font-size:12px; color:var(--text-muted); margin-top:4px;">${escapeHtml(q.explanation)}</p>` : ''}</div></div>`;
     });
     h += `<button class="btn btn-teal" onclick="finishMockExam()">🔙 Back</button>`;
     c.innerHTML = h;
 }
-function finishMockExam() { stopExamTimer(); AppState.currentExam = null; AppState.examSubmitted = false; if (AppState.currentGroupId) loadGroupContent(AppState.currentGroupId, 'mockexam'); }
+
+function finishMockExam() {
+    stopExamTimer();
+    AppState.currentExam = null;
+    AppState.examSubmitted = false;
+    AppState.examAnswered = [];
+    AppState.correctCount = 0;
+    AppState.incorrectCount = 0;
+    AppState.currentQuestionIndex = 0;
+    if (AppState.currentGroupId) loadGroupContent(AppState.currentGroupId, 'mockexam');
+}
+
 function toggleExamMode() {
     AppState.examMode = AppState.examMode === 'study' ? 'exam' : 'study';
+    // Update toggle button visuals
+    const left = document.getElementById('examModeBtn');
+    const right = document.getElementById('examModeBtnRight');
+    if (left && right) {
+        if (AppState.examMode === 'study') {
+            left.classList.add('study');
+            left.style.background = '';
+            left.style.color = '';
+            right.style.background = '#e2e8f0';
+            right.style.color = 'var(--text-dark)';
+            right.classList.remove('exam');
+        } else {
+            right.classList.add('exam');
+            right.style.background = '';
+            right.style.color = '';
+            left.style.background = '#e2e8f0';
+            left.style.color = 'var(--text-dark)';
+            left.classList.remove('study');
+        }
+    }
     if (AppState.currentExam && !AppState.examSubmitted) renderMockExamQuestion();
-    if (AppState.examMode === 'exam') startExamTimer(AppState.currentExam?.time_limit || 5);
-    else stopExamTimer();
+    if (AppState.examMode === 'exam') {
+        if (AppState.currentExam) startExamTimer(AppState.currentExam.time_limit || 5);
+    } else {
+        stopExamTimer();
+    }
 }
+
 function startExamTimer(mins) {
-    stopExamTimer(); AppState.examTimeRemaining = mins * 60; AppState.examSubmitted = false;
+    stopExamTimer();
+    AppState.examTimeRemaining = mins * 60;
     AppState.examTimer = setInterval(() => {
         AppState.examTimeRemaining--;
         const d = document.getElementById('examTimerDisplay'); if (d) d.textContent = formatTime(AppState.examTimeRemaining);
@@ -2872,7 +2985,7 @@ function renderPostCard(post, uMap) {
     const vG = (post.viral_level === 'super_viral' || post.viral_level === 'viral') ? 'viral-glow' : '';
 
     const menuHtml = canMod ? `
-        <div id="postMenu-${post.id}" style="display:none;">
+        <div id="postMenu-${post.id}" class="post-menu-portal" style="display:none;">
             ${isOwner ? `<div onclick="editPost('${post.id}')">✏️ Edit</div>` : ''}
             ${isOwner ? `<div onclick="deletePost('${post.id}')" style="color:var(--red-error);">🗑️ Delete</div>` : ''}
             ${(AppState.isAdmin || AppState.isGroupOwner) ? `<div onclick="togglePinPost('${post.id}')" style="color:var(--gold);">${post.is_pinned ? '📌 Unpin' : '📌 Pin'}</div>` : ''}
@@ -2889,7 +3002,7 @@ function renderPostCard(post, uMap) {
                 </div>
                 ${canMod ? `<div style="margin-left:auto;"><button class="post-actions-btn" onclick="togglePostMenu('${post.id}', event)">⋮</button>${menuHtml}</div>` : ''}
             </div>
-            <div class="post-content"><span id="postContentText-${post.id}">${escapeHtml(disp)}</span>${more ? `<span class="read-more" onclick="togglePostContent('${post.id}')">Read More</span>` : ''}</div>
+            <div class="post-content" data-full="${escapeHtml(full)}"><span id="postContentText-${post.id}">${escapeHtml(disp)}</span>${more ? `<span class="read-more" onclick="togglePostContent('${post.id}')">Read More</span>` : ''}</div>
             ${post.image_url ? `<img src="${post.image_url}" class="post-image" alt="">` : ''}
             ${post.link_url ? `<a href="${post.link_url}" target="_blank" class="post-link">🔗 ${post.link_url}</a>` : ''}
             <div class="post-actions">
@@ -2897,7 +3010,7 @@ function renderPostCard(post, uMap) {
                 <button onclick="toggleDislikePost('${post.id}')" id="dislikeBtn-${post.id}" class="${post.user_disliked ? 'disliked' : ''}"><i class="fas fa-heart-broken"></i> <span id="dislikeCount-${post.id}">${post.dislikes || 0}</span></button>
                 <button onclick="togglePostComment(this)"><i class="fas fa-comment"></i> <span id="commentCount-${post.id}">${post.comment_count || 0}</span></button>
                 <div class="share-btn"><button onclick="toggleShareOptions('${post.id}', event)"><i class="fas fa-share"></i> <span id="shareCount-${post.id}">${post.share_count || 0}</span></button>
-                    <div id="shareOptions-${post.id}" style="display:none;">
+                    <div id="shareOptions-${post.id}" class="share-options" style="display:none;">
                         <div onclick="sharePost('${post.id}','external')">📤 Share External</div>
                         <div onclick="sharePost('${post.id}','group')">📬 Repost</div>
                     </div>
@@ -2912,14 +3025,23 @@ function renderPostCard(post, uMap) {
 }
 
 function togglePostContent(postId) {
-    const sp = document.getElementById(`postContentText-${postId}`); if (!sp) return;
-    const card = sp.closest('.post-card'); const btn = card.querySelector('.read-more');
-    const post = Array.from(document.querySelectorAll(`#post-${postId}`)).length > 0;
-    // Simple toggle: expand by showing full content from edit textarea
-    const ta = document.getElementById(`editContent-${postId}`);
-    if (!ta) return;
-    if (sp.textContent.includes('...')) { sp.textContent = ta.value; btn.textContent = 'Read Less'; }
-    else { sp.textContent = ta.value.substring(0, 150) + '...'; btn.textContent = 'Read More'; }
+    // FIX: read full content from data-full attribute on .post-content,
+    // so this works on both home cards and group cards.
+    const sp = document.getElementById(`postContentText-${postId}`);
+    if (!sp) return;
+    const card = sp.closest('.post-card');
+    if (!card) return;
+    const contentDiv = card.querySelector('.post-content');
+    if (!contentDiv) return;
+    const full = contentDiv.dataset.full || sp.textContent;
+    const btn = contentDiv.querySelector('.read-more');
+    if (sp.textContent.includes('...')) {
+        sp.textContent = full;
+        if (btn) btn.textContent = 'Read Less';
+    } else {
+        sp.textContent = full.substring(0, 150) + '...';
+        if (btn) btn.textContent = 'Read More';
+    }
 }
 
 // ================================================================
@@ -2932,7 +3054,6 @@ async function toggleLikePost(postId) {
     if (!btn || !span) return;
     const wasLiked = btn.classList.contains('liked');
     const oldCount = parseInt(span.textContent) || 0;
-    // Optimistic
     if (wasLiked) { btn.classList.remove('liked'); span.textContent = Math.max(0, oldCount - 1); }
     else { btn.classList.add('liked'); span.textContent = oldCount + 1; }
     try {
@@ -2940,7 +3061,6 @@ async function toggleLikePost(postId) {
             await sb.from('social_post_likes').delete().eq('post_id', postId).eq('user_id', AppState.userId);
             await sb.from('social_posts').update({ likes: Math.max(0, oldCount - 1) }).eq('id', postId);
         } else {
-            // Remove dislike if exists
             const { data: d } = await sb.from('social_post_dislikes').select('*').eq('post_id', postId).eq('user_id', AppState.userId).single();
             if (d) {
                 await sb.from('social_post_dislikes').delete().eq('post_id', postId).eq('user_id', AppState.userId);
@@ -2955,7 +3075,6 @@ async function toggleLikePost(postId) {
         }
         debouncedViralScore(postId);
     } catch (err) {
-        // Revert
         if (wasLiked) { btn.classList.add('liked'); span.textContent = oldCount; }
         else { btn.classList.remove('liked'); span.textContent = oldCount; }
         showToast('Could not save like', 'error');
@@ -3025,7 +3144,6 @@ async function addPostComment(postId) {
     const input = document.getElementById(`commentInput-${postId}`); if (!input || !input.value.trim()) return;
     const text = input.value.trim();
     input.value = '';
-    // Optimistic append
     const list = document.getElementById(`commentList-${postId}`);
     const countEl = document.getElementById(`commentCount-${postId}`);
     const newCount = (parseInt(countEl?.textContent) || 0) + 1;
@@ -3048,7 +3166,9 @@ async function addPostComment(postId) {
 }
 
 async function togglePostComment(btn) {
-    const s = btn.closest('.post-card').querySelector('.post-comments');
+    const card = btn.closest('.post-card');
+    if (!card) return;
+    const s = card.querySelector('.post-comments');
     if (!s) return;
     s.style.display = s.style.display === 'block' ? 'none' : 'block';
     if (s.style.display === 'block') loadPostComments(s.id.replace('comments-', ''));
@@ -3071,7 +3191,7 @@ function togglePostMenu(postId, event) {
     event?.stopPropagation();
     const btn = event?.currentTarget;
     if (!btn) return;
-    // Scope the lookup to the button's parent subtree to avoid matching menus in other cards
+    // Scope lookup to the button's parent subtree to avoid matching menus in other cards
     const scope = btn.parentNode || document;
     const menu = scope.querySelector(`[id="postMenu-${postId}"]`);
     if (!menu) return;
@@ -3086,6 +3206,8 @@ async function savePostEdit(postId) {
         await sb.from('social_posts').update({ content, is_edited: true, edited_at: new Date() }).eq('id', postId);
         const sp = document.getElementById(`postContentText-${postId}`);
         if (sp) sp.textContent = content.substring(0, 150) + (content.length > 150 ? '...' : '');
+        const pc = sp?.closest('.post-content');
+        if (pc) pc.dataset.full = content;
         document.getElementById(`editPost-${postId}`).style.display = 'none';
         showToast('✅ Post updated', 'success');
     } catch (err) { showToast('Error: ' + err.message, 'error'); }
@@ -3113,7 +3235,6 @@ function toggleShareOptions(postId, event) {
     event?.stopPropagation();
     const btn = event?.currentTarget;
     if (!btn) return;
-    // The share menu is a sibling of the button inside .share-btn
     const shareContainer = btn.closest('.share-btn') || btn.parentNode;
     const menu = shareContainer ? shareContainer.querySelector(`[id="shareOptions-${postId}"]`) : null;
     if (!menu) return;
@@ -3169,7 +3290,7 @@ async function createPost() {
 // SWITCH GROUP TAB
 // ================================================================
 function switchGroupTab(tabId, btn) {
-    document.querySelectorAll('.tab-card').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('#groupTabs .tab-card').forEach(t => t.classList.remove('active'));
     btn.classList.add('active');
     document.querySelectorAll('.class-content').forEach(c => c.classList.remove('active'));
     const el = document.getElementById(tabId); if (el) el.classList.add('active');
@@ -3203,6 +3324,7 @@ async function loadTrendingContent(tab) {
 
         const mapQueries = {
             social: async () => {
+                if (!gIds.length) return [];
                 const { data } = await sb.from('social_posts').select('*').in('group_id', gIds).neq('viral_level', 'normal').order('viral_score', { ascending: false }).limit(15);
                 if (!data || data.length === 0) {
                     const { data: recent } = await sb.from('social_posts').select('*').in('group_id', gIds).order('created_at', { ascending: false }).limit(15);
@@ -3210,9 +3332,9 @@ async function loadTrendingContent(tab) {
                 }
                 return data;
             },
-            video: async () => (await sb.from('group_content').select('*').eq('content_type', 'video').in('group_id', gIds).order('views', { ascending: false }).limit(15)).data || [],
-            ppt: async () => (await sb.from('group_content').select('*').eq('content_type', 'ppt').in('group_id', gIds).order('views', { ascending: false }).limit(15)).data || [],
-            mockexam: async () => (await sb.from('mock_exams').select('*').in('group_id', gIds).order('attempts', { ascending: false }).limit(15)).data || [],
+            video: async () => { if (!gIds.length) return []; return (await sb.from('group_content').select('*').eq('content_type', 'video').in('group_id', gIds).order('views', { ascending: false }).limit(15)).data || []; },
+            ppt: async () => { if (!gIds.length) return []; return (await sb.from('group_content').select('*').eq('content_type', 'ppt').in('group_id', gIds).order('views', { ascending: false }).limit(15)).data || []; },
+            mockexam: async () => { if (!gIds.length) return []; return (await sb.from('mock_exams').select('*').in('group_id', gIds).order('attempts', { ascending: false }).limit(15)).data || []; },
             book: async () => (await sb.from('bstore_books').select('*').eq('status', 'approved').order('created_at', { ascending: false }).limit(15)).data || [],
             research: async () => (await sb.from('research_papers').select('*').eq('status', 'approved').order('created_at', { ascending: false }).limit(15)).data || [],
             job: async () => (await sb.from('jobs').select('*').order('created_at', { ascending: false }).limit(15)).data || []
@@ -3225,7 +3347,6 @@ async function loadTrendingContent(tab) {
         }
 
         if (tab === 'social') {
-            // Full post cards, interactive, opening group on header tap
             const uids = [...new Set(items.map(p => p.user_id))];
             const { data: users } = await sb.from('users').select('user_id, first_name, email, profile_pic_url, is_teacher, is_admin').in('user_id', uids);
             const uMap = (users || []).reduce((a, u) => { a[u.user_id] = u; return a; }, {});
@@ -3357,7 +3478,6 @@ async function loadTrendingContent(tab) {
     } catch (err) { console.error(err); c.innerHTML = '<div class="loading" style="color:var(--red-error);">Failed to load.</div>'; }
 }
 
-// Render a full interactive post on home (avatar/name tap opens group)
 function renderHomePostCard(post, uMap) {
     const u = uMap?.[post.user_id];
     const name = u?.first_name || u?.email?.split('@')[0] || 'User';
@@ -3375,7 +3495,7 @@ function renderHomePostCard(post, uMap) {
     const vBd = isV ? ' <span class="verification-badge"><span class="star">★</span></span>' : '';
     const vG = (post.viral_level === 'super_viral' || post.viral_level === 'viral') ? 'viral-glow' : '';
     const menuHtml = canMod ? `
-        <div id="homePostMenu-${post.id}" style="display:none;">
+        <div id="homePostMenu-${post.id}" class="post-menu-portal" style="display:none;">
             ${isOwner ? `<div onclick="editHomePost('${post.id}')">✏️ Edit</div>` : ''}
             ${isOwner ? `<div onclick="deleteHomePost('${post.id}')" style="color:var(--red-error);">🗑️ Delete</div>` : ''}
         </div>` : '';
@@ -3390,7 +3510,7 @@ function renderHomePostCard(post, uMap) {
                 </div>
                 ${canMod ? `<div style="margin-left:auto;"><button class="post-actions-btn" onclick="event.stopPropagation(); toggleHomePostMenu('${post.id}', event)">⋮</button>${menuHtml}</div>` : ''}
             </div>
-            <div class="post-content" onclick="openHomePostGroup('${post.id}', ${post.group_id})" style="cursor:pointer;">${escapeHtml(full)}</div>
+            <div class="post-content" data-full="${escapeHtml(full)}" onclick="openHomePostGroup('${post.id}', ${post.group_id})" style="cursor:pointer;"><span id="postContentText-${post.id}">${escapeHtml(full)}</span></div>
             ${post.image_url ? `<img src="${post.image_url}" class="post-image" alt="" onclick="openHomePostGroup('${post.id}', ${post.group_id})" style="cursor:pointer;">` : ''}
             ${post.link_url ? `<a href="${post.link_url}" target="_blank" class="post-link">🔗 ${post.link_url}</a>` : ''}
             <div class="post-actions">
@@ -3398,7 +3518,7 @@ function renderHomePostCard(post, uMap) {
                 <button onclick="toggleDislikePost('${post.id}')" id="dislikeBtn-${post.id}" class="${post.user_disliked ? 'disliked' : ''}"><i class="fas fa-heart-broken"></i> <span id="dislikeCount-${post.id}">${post.dislikes || 0}</span></button>
                 <button onclick="togglePostComment(this)"><i class="fas fa-comment"></i> <span id="commentCount-${post.id}">${post.comment_count || 0}</span></button>
                 <div class="share-btn"><button onclick="toggleShareOptions('${post.id}', event)"><i class="fas fa-share"></i> <span id="shareCount-${post.id}">${post.share_count || 0}</span></button>
-                    <div id="shareOptions-${post.id}" style="display:none;">
+                    <div id="shareOptions-${post.id}" class="share-options" style="display:none;">
                         <div onclick="sharePost('${post.id}','external')">📤 Share External</div>
                         <div onclick="sharePost('${post.id}','group')">📬 Repost</div>
                     </div>
@@ -3411,11 +3531,9 @@ function renderHomePostCard(post, uMap) {
         </div>`;
 }
 
-// Open home post's group and highlight the post
 async function openHomePostGroup(postId, groupId) {
     if (!groupId) return showToast('Group not found', 'error');
     await openTabContent('group-feed', groupId);
-    // Wait for the group feed to render, then scroll to the post
     setTimeout(() => {
         const el = document.getElementById(`post-${postId}`);
         if (!el) return;
@@ -3452,7 +3570,7 @@ async function deleteHomePost(postId) {
     } catch (err) { showToast('Error: ' + err.message, 'error'); }
 }
 
-// Home inline video player
+// Home inline video player — uses on* handlers to avoid stacking listeners
 function playHomeVideo(id, url, thumb) {
     const t = document.getElementById(`hm-thumbnail-${id}`);
     const p = document.getElementById(`hm-video-player-${id}`);
@@ -3460,12 +3578,12 @@ function playHomeVideo(id, url, thumb) {
     if (!t || !p || !v) return;
     t.style.display = 'none'; p.style.display = 'block';
     v.src = url; v.load(); v.play().catch(() => {});
-    v.addEventListener('timeupdate', () => {
+    v.ontimeupdate = () => {
         const pf = document.getElementById(`hm-progressFill-${id}`);
         const td = document.getElementById(`hm-timeDisplay-${id}`);
         if (pf && v.duration) pf.style.width = (v.currentTime / v.duration * 100) + '%';
         if (td && v.duration) td.textContent = `${formatTime(v.currentTime)} / ${formatTime(v.duration)}`;
-    });
+    };
 }
 function toggleHomeVideoPlay(id) { const v = document.getElementById(`hm-video-${id}`); if (!v) return; if (v.paused) v.play(); else v.pause(); }
 function seekHomeVideo(e, id) { const b = e.currentTarget; const r = b.getBoundingClientRect(); const x = (e.clientX - r.left) / r.width; const v = document.getElementById(`hm-video-${id}`); if (v && v.duration) v.currentTime = Math.max(0, Math.min(x * v.duration, v.duration)); }
@@ -3510,7 +3628,6 @@ async function processSubscription(bookId, tier) {
         showToast('✅ Subscribed', 'success');
     } catch (err) { showToast('Error: ' + err.message, 'error'); }
 }
-function openBook(id) { showToast('Opening book...', 'info'); }
 
 async function submitBStoreBook() {
     if (!AppState.isAdmin && !AppState.isTeacher) return showToast('Only verified users.', 'error');
@@ -3725,7 +3842,6 @@ async function openChatThread(groupId, partnerId) {
             const { data: created } = await sb.from('dm_threads').insert({ group_id: groupId, member_id: AppState.userId, owner_id: partnerId }).select().single();
             thread = created;
         } else {
-            // Reset unread for member
             await sb.from('dm_threads').update({ unread_for_member: 0 }).eq('id', thread.id);
         }
         if (!thread) return showToast('Could not open chat', 'error');
@@ -3808,7 +3924,6 @@ async function sendChatMessage() {
     const text = input?.value.trim();
     if (!text || !AppState.currentThreadId) return;
     input.value = '';
-    // Optimistic append
     const c = document.getElementById('chatMessages');
     if (c) {
         const div = document.createElement('div');
@@ -3949,8 +4064,6 @@ async function updateInboxButtonBadge() {
 // ================================================================
 async function toggleNotificationDropdown(event) {
     event?.stopPropagation();
-    const dropdown = document.getElementById('notificationDropdown');
-    // Not used in this version — bell is now just a badge indicator
     showToast('Notifications coming soon', 'info');
 }
 async function markAllNotificationsRead() { showToast('Marked all read', 'success'); }
@@ -4005,9 +4118,7 @@ async function submitEditGroup() {
 
 function toggleClassHeaderMenu(event) {
     event?.stopPropagation();
-    // If any menu is already open, close it
     if (AppState.openMenuEl) { closeOpenMenu(); return; }
-    // Remove any stale menu from a previous open
     const stale = document.getElementById('classHeaderMenuPortal');
     if (stale) stale.remove();
     const btn = event.currentTarget;
@@ -4089,6 +4200,8 @@ function addExamQuestion() {
     const c = document.getElementById('examQuestionsContainer'); if (!c) return;
     const n = AppState.examQuestionCount;
     const div = document.createElement('div');
+    div.className = 'exam-question-block';
+    div.dataset.qnum = n;
     div.style.cssText = 'background:#f8fafc; border-radius:12px; padding:12px; margin-bottom:12px;';
     div.innerHTML = `<p style="font-weight:900; margin-bottom:4px;">Q${n}: Question</p>
         <input type="text" id="examQ${n}" placeholder="Question..." style="width:100%; margin-bottom:6px; padding:8px; border:1px solid #eee; border-radius:8px;">
@@ -4097,7 +4210,7 @@ function addExamQuestion() {
         <div style="margin-top:6px;"><label>Explanation:</label> <input type="text" id="examExp${n}" placeholder="Explain..." style="width:100%;"></div>`;
     c.appendChild(div);
 }
-function removeExamQuestion(btn) { btn.closest('div[style*="background"]')?.remove(); }
+function removeExamQuestion(btn) { btn.closest('.exam-question-block')?.remove(); }
 
 async function uploadFileToStorage() {
     const f = document.getElementById('addFileInput')?.files?.[0];
@@ -4126,9 +4239,9 @@ async function submitAddFile() {
         const tl = parseInt(document.getElementById('examTimeLimit')?.value) || 5;
         const qs = [];
         const c = document.getElementById('examQuestionsContainer');
-        const divs = c?.querySelectorAll('div[style*="background"]') || [];
-        divs.forEach((d, i) => {
-            const n = i + 1;
+        const divs = c?.querySelectorAll('.exam-question-block') || [];
+        divs.forEach((d) => {
+            const n = d.dataset.qnum || (qs.length + 1);
             qs.push({
                 question: document.getElementById(`examQ${n}`)?.value || '',
                 options: [
@@ -4159,7 +4272,7 @@ async function submitAddFile() {
 }
 
 // ================================================================
-// VIDEO PLAYER
+// VIDEO PLAYER (group feed)
 // ================================================================
 function playInlineVideo(id, url, thumb) {
     const t = document.getElementById(`thumbnail-${id}`);
@@ -4168,8 +4281,9 @@ function playInlineVideo(id, url, thumb) {
     if (!t || !p || !v) return;
     t.style.display = 'none'; p.style.display = 'block';
     v.src = url; v.load(); v.play().catch(() => {});
-    v.addEventListener('timeupdate', () => updateVideoProgress(id));
-    v.addEventListener('loadedmetadata', () => updateVideoProgress(id));
+    // Use on* handlers to avoid stacking listeners on repeated open/close
+    v.ontimeupdate = () => updateVideoProgress(id);
+    v.onloadedmetadata = () => updateVideoProgress(id);
 }
 function toggleVideoPlay(id) { const v = document.getElementById(`video-${id}`); if (!v) return; if (v.paused) v.play(); else v.pause(); }
 function updateVideoProgress(id) {
@@ -4256,7 +4370,7 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.js').then(() => console.log('SW registered')).catch(() => {});
 }
 
-console.log('🚀 TENI v4.0 — Mega File Loaded');
+console.log('🚀 TENI v4.1 — Bug-fixed build loaded');
 </script>
 
 </body>
