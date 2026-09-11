@@ -932,6 +932,22 @@ html, body {
     font-weight: 700;
 }
 
+/* Inline view counter inside post action row */
+.post-view-inline {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+    padding: 6px 8px;
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 700;
+    white-space: nowrap;
+}
+.post-view-inline .view-counter {
+    font-size: 12px;
+    font-weight: 700;
+}
+
 /* ===== POST CARDS ===== */
 .post-card .post-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
 .post-card .post-header .post-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--teal); display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 18px; overflow: hidden; flex-shrink: 0; }
@@ -942,14 +958,14 @@ html, body {
 .post-card .post-content { font-size: 15px; color: var(--text-dark); margin-bottom: 10px; font-weight: 700; word-wrap: break-word; white-space: pre-wrap; }
 .post-card .post-image { width: 100%; border-radius: 8px; margin-bottom: 10px; max-height: 400px; object-fit: cover; }
 .post-card .post-link { color: var(--teal); text-decoration: underline; font-weight: 700; word-break: break-all; }
-.post-card .post-actions { display: flex; gap: 20px; border-top: 1px solid #eee; padding-top: 14px; flex-wrap: wrap; align-items: center; margin-top: 4px; }
-.post-card .post-actions button { background: none; border: none; font-size: 16px; font-weight: 800; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 30px; transition: 0.2s; min-height: 44px; min-width: 60px; }
+.post-card .post-actions { display: flex; gap: 4px; border-top: 1px solid #eee; padding-top: 12px; flex-wrap: nowrap; align-items: center; margin-top: 4px; justify-content: space-between; }
+.post-card .post-actions button { background: none; border: none; font-size: 14px; font-weight: 800; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 4px; padding: 6px 8px; border-radius: 20px; transition: 0.2s; flex-shrink: 0; }
 .post-card .post-actions button:hover { background: var(--card-hover); }
 .post-card .post-actions button.liked { color: var(--red-error); }
 .post-card .post-actions button.liked i { animation: heartBeat 0.3s; }
 .post-card .post-actions button.disliked { color: #000; }
-.post-card .post-actions button i { font-size: 20px; }
-.post-card .post-actions button span { font-size: 15px; font-weight: 800; }
+.post-card .post-actions button i { font-size: 16px; }
+.post-card .post-actions button span { font-size: 12px; font-weight: 800; }
 .post-card .post-actions .share-btn { position: relative; }
 .post-card .viral-badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: 900; margin-left: 4px; }
 .post-card .viral-badge.super { background: linear-gradient(135deg, #f59e0b, #ef4444); color: white; }
@@ -1120,11 +1136,13 @@ html, body {
     cursor: pointer;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 8px 14px;
-    border-radius: 30px;
+    gap: 4px;
+    padding: 6px 8px;
+    border-radius: 20px;
     transition: 0.2s;
+    flex-shrink: 0;
 }
+.post-save-btn i { font-size: 16px; }
 .post-save-btn:hover { background: var(--card-hover); color: var(--navy); }
 
 /* ===== EXAM ===== */
@@ -1718,9 +1736,12 @@ html, body {
     .tab-card { font-size: 10px; padding: 5px 3px; min-width: 44px; }
     .exam-timer .timer { font-size: 16px; }
     .group-banner .go-live-btn { font-size: 10px; padding: 4px 10px; top: 8px; right: 8px; }
-    .post-card .post-actions button { font-size: 14px; padding: 6px 10px; min-height: 38px; min-width: 50px; }
-    .post-card .post-actions button i { font-size: 18px; }
-    .post-card .post-actions button span { font-size: 13px; }
+    .post-card .post-actions { gap: 2px; }
+    .post-card .post-actions button { font-size: 13px; padding: 5px 5px; }
+    .post-card .post-actions button i { font-size: 15px; }
+    .post-card .post-actions button span { font-size: 11px; }
+    .post-view-inline { padding: 5px 4px; font-size: 11px; }
+    .post-view-inline .view-counter { font-size: 11px; }
     .video-wrapper .video-controls { gap: 6px; padding: 6px 8px; }
     .video-wrapper .video-controls button { font-size: 14px; }
     .video-wrapper .video-controls .time-display { font-size: 10px; min-width: 60px; }
@@ -1777,7 +1798,6 @@ html, body {
             </div>
         </div>
 
-        <!-- Row 2 — user strip OR filter tabs -->
         <div class="header-row-2" id="headerRow2">
             <div class="header-user-strip" id="headerUserStrip">
                 <div class="header-user-avatar" onclick="openTabContent('profile')">
@@ -1804,14 +1824,12 @@ html, body {
         </div>
     </div>
 
-    <!-- ===== HOME MAIN ===== -->
     <div id="appMain" class="app-main">
         <div class="app-grid-wrapper">
             <div id="globalTrendingContainer"><div class="loading"><div class="spinner"></div>Loading content...</div></div>
         </div>
     </div>
 
-    <!-- ===== TAB WRAPPER ===== -->
     <div id="tabContentWrapper" class="tab-content-wrapper">
         <div id="tabContentContainer" class="tab-scroll-area"></div>
     </div>
@@ -1819,7 +1837,6 @@ html, body {
     <!-- ===== HIDDEN TEMPLATES ===== -->
     <template id="tabTemplates">
 
-        <!-- ===== CLASS TAB ===== -->
         <div id="class-tab">
             <div class="class-header">
                 <h2>📚 Class</h2>
@@ -1844,7 +1861,6 @@ html, body {
             <div id="trendingGroupsContainer"></div>
         </div>
 
-        <!-- ===== GROUP FEED ===== -->
         <div id="group-feed">
             <div class="group-banner" id="groupBanner">
                 <div style="display:flex; align-items:center; gap:12px; justify-content:center; flex-wrap:wrap;">
@@ -1897,7 +1913,6 @@ html, body {
             </div>
         </div>
 
-        <!-- ===== B-STORE TAB ===== -->
         <div id="bstore-tab">
             <div class="books-header">
                 <h2>📖 B-Store</h2>
@@ -1912,13 +1927,11 @@ html, body {
             <div id="bstoreContainer"><div class="loading">Loading books...</div></div>
         </div>
 
-        <!-- ===== MEDICAL CALCULATOR TAB ===== -->
         <div id="mcalc-tab">
             <div class="books-header"><h2>🧮 M-Calc</h2></div>
             <div id="calculatorContainer"><div class="loading">Loading calculators...</div></div>
         </div>
 
-        <!-- ===== JOBS TAB ===== -->
         <div id="jobs-tab">
             <div class="jobs-header">
                 <h2>💼 Job Vacancies</h2>
@@ -1938,7 +1951,6 @@ html, body {
             <div id="jobsContainer"><div class="loading">Loading jobs...</div></div>
         </div>
 
-        <!-- ===== RESEARCH TAB ===== -->
         <div id="research-tab">
             <div class="research-header">
                 <h2>🔬 Research Journals</h2>
@@ -1953,7 +1965,6 @@ html, body {
             <div id="researchContainer"><div class="loading">Loading research...</div></div>
         </div>
 
-        <!-- ===== PROFILE TAB ===== -->
         <div id="profile-tab">
             <div class="profile-card">
                 <div class="avatar-lg" id="profileAvatarLarge" onclick="changeProfilePic()">
@@ -1972,7 +1983,6 @@ html, body {
             </div>
         </div>
 
-        <!-- ===== SETTINGS TAB ===== -->
         <div id="settings-tab">
             <div class="books-header"><h2>⚙️ Settings</h2></div>
 
@@ -2065,7 +2075,6 @@ html, body {
             </div>
         </div>
 
-        <!-- ===== WALLET TAB ===== -->
         <div id="wallet-tab">
             <div class="wallet-balance">
                 <div class="label">💰 Balance</div>
@@ -2080,17 +2089,14 @@ html, body {
             </div>
         </div>
 
-        <!-- ===== ADMIN TAB ===== -->
         <div id="admin-tab">
             <div class="loading" style="color:var(--text-muted);">Loading admin panel...</div>
         </div>
 
     </template>
 
-    <!-- ===== TOAST ===== -->
     <div id="toast" class="toast"></div>
 
-    <!-- ===== DRAWER ===== -->
     <div class="drawer-backdrop" id="drawerBackdrop" onclick="closeDrawer()"></div>
     <div class="drawer" id="drawer">
         <div class="drawer-user">
@@ -2156,7 +2162,6 @@ html, body {
         </div>
     </div>
 
-    <!-- ===== DM CHAT OVERLAY ===== -->
     <div class="chat-overlay" id="chatOverlay">
         <div class="chat-header">
             <button class="chat-back-btn" onclick="closeChat()"><i class="fas fa-arrow-left"></i></button>
@@ -2179,7 +2184,6 @@ html, body {
         <div class="chat-blocked-banner" id="chatBlockedBanner" style="display:none;">You can no longer message this user.</div>
     </div>
 
-    <!-- ===== INBOX OVERLAY ===== -->
     <div class="chat-overlay" id="inboxOverlay">
         <div class="chat-header">
             <button class="chat-back-btn" onclick="closeInbox()"><i class="fas fa-arrow-left"></i></button>
@@ -2191,7 +2195,6 @@ html, body {
         <div class="chat-messages" id="inboxList" style="padding: 0; background: #f8fafc;"></div>
     </div>
 
-    <!-- ===== MEMBERS OVERLAY ===== -->
     <div class="chat-overlay" id="membersOverlay">
         <div class="chat-header">
             <button class="chat-back-btn" onclick="closeMembers()"><i class="fas fa-arrow-left"></i></button>
@@ -2211,7 +2214,6 @@ html, body {
 
     <!-- ===== MODALS ===== -->
 
-    <!-- Appeal Modal -->
     <div id="appealModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('appealModal')">&times;</span>
@@ -2243,7 +2245,6 @@ html, body {
         </div>
     </div>
 
-    <!-- Create Group Modal -->
     <div id="createGroupModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('createGroupModal')">&times;</span>
@@ -2255,7 +2256,6 @@ html, body {
         </div>
     </div>
 
-    <!-- Create Content Modal (unified) -->
     <div id="createContentModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('createContentModal')">&times;</span>
@@ -2268,14 +2268,12 @@ html, body {
                 <button class="ct-tab" data-type="mockexam" onclick="switchCreateType('mockexam', this)">📝 Exam</button>
             </div>
 
-            <!-- POST FORM -->
             <div id="createForm-post" class="create-form active">
                 <div class="form-group"><label>Post Content</label><textarea id="postContent" rows="4" maxlength="5000" placeholder="What's on your mind?"></textarea></div>
                 <div class="form-group"><label>Add Image (optional)</label><input type="file" id="postImage" accept="image/*"></div>
                 <div class="form-group"><label>Add Link (optional)</label><input type="url" id="postLink" placeholder="https://example.com"></div>
             </div>
 
-            <!-- VIDEO FORM -->
             <div id="createForm-video" class="create-form">
                 <div class="form-group"><label>Title</label><input type="text" id="videoTitle" maxlength="100"></div>
                 <div class="form-group"><label>Description</label><textarea id="videoDesc" rows="3" maxlength="500" placeholder="Description..."></textarea></div>
@@ -2291,7 +2289,6 @@ html, body {
                 <input type="hidden" id="videoFileUrl">
             </div>
 
-            <!-- PPT FORM -->
             <div id="createForm-ppt" class="create-form">
                 <div class="form-group"><label>Title</label><input type="text" id="pptTitle" maxlength="100"></div>
                 <div class="form-group"><label>Description</label><textarea id="pptDesc" rows="3" maxlength="500" placeholder="Description..."></textarea></div>
@@ -2307,7 +2304,6 @@ html, body {
                 <input type="hidden" id="pptFileUrl">
             </div>
 
-            <!-- EXAM FORM -->
             <div id="createForm-mockexam" class="create-form">
                 <div class="form-group"><label>Exam Title</label><input type="text" id="examTitle" maxlength="100"></div>
                 <div class="form-group"><label>Time Limit (minutes)</label><input type="number" id="examTimeLimit" value="5" min="1" max="120"></div>
@@ -2340,7 +2336,6 @@ html, body {
         </div>
     </div>
 
-    <!-- Edit Group Modal -->
     <div id="editGroupModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('editGroupModal')">&times;</span>
@@ -2351,7 +2346,6 @@ html, body {
         </div>
     </div>
 
-    <!-- Edit Name Modal -->
     <div id="editNameModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('editNameModal')">&times;</span>
@@ -2362,7 +2356,6 @@ html, body {
         </div>
     </div>
 
-    <!-- Add Member Modal -->
     <div id="addMemberModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('addMemberModal')">&times;</span>
@@ -2381,7 +2374,6 @@ html, body {
         </div>
     </div>
 
-    <!-- Paste Contacts Modal -->
     <div id="pasteContactsModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('pasteContactsModal')">&times;</span>
@@ -2394,7 +2386,6 @@ html, body {
         </div>
     </div>
 
-    <!-- Deposit Modal -->
     <div id="depositModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('depositModal')">&times;</span>
@@ -2405,7 +2396,6 @@ html, body {
         </div>
     </div>
 
-    <!-- Payment Modal -->
     <div id="paymentModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('paymentModal')">&times;</span>
@@ -2421,7 +2411,6 @@ html, body {
         </div>
     </div>
 
-    <!-- Job Apply Modal -->
     <div id="jobApplyModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('jobApplyModal')">&times;</span>
@@ -2435,7 +2424,6 @@ html, body {
         </div>
     </div>
 
-    <!-- Buy Coins Modal -->
     <div id="buyCoinsModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('buyCoinsModal')">&times;</span>
@@ -2446,7 +2434,6 @@ html, body {
         </div>
     </div>
 
-    <!-- B-Store Upload Modal -->
     <div id="bstoreUploadModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('bstoreUploadModal')">&times;</span>
@@ -2474,7 +2461,6 @@ html, body {
         </div>
     </div>
 
-    <!-- Create Calculator Modal (Admin) -->
     <div id="createCalculatorModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('createCalculatorModal')">&times;</span>
@@ -2492,7 +2478,6 @@ html, body {
         </div>
     </div>
 
-    <!-- Add Job Modal -->
     <div id="addJobModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('addJobModal')">&times;</span>
@@ -2519,7 +2504,6 @@ html, body {
         </div>
     </div>
 
-    <!-- Upload Research Modal -->
     <div id="uploadResearchModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('uploadResearchModal')">&times;</span>
@@ -2544,7 +2528,6 @@ html, body {
         </div>
     </div>
 
-    <!-- Group Settings Modal -->
     <div id="groupSettingsModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('groupSettingsModal')">&times;</span>
@@ -2557,7 +2540,6 @@ html, body {
         </div>
     </div>
 
-    <!-- Calculator Modal -->
     <div id="calculatorModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('calculatorModal')">&times;</span>
@@ -2565,7 +2547,6 @@ html, body {
         </div>
     </div>
 
-    <!-- Wallet Modal -->
     <div id="walletModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('walletModal')">&times;</span>
@@ -2575,7 +2556,6 @@ html, body {
         </div>
     </div>
 
-    <!-- Portal Root -->
     <div id="portal-root"></div>
 
 </div><!-- end appContent -->
@@ -2661,11 +2641,11 @@ const AppState = {
     // Create content
     createContentType: 'post',
     // View counting (Problem 15 — YouTube-style)
-    lastViewTimes: {},           // "table-id" -> ms timestamp (debounce)
-    videoWatchTimers: {},        // videoId -> accumulated play seconds
-    videoWatchers: {},           // videoId -> interval handle
-    postViewTimers: {},          // postId -> timeout handle (3s)
-    examViewTimers: {},          // examId -> timeout handle (3s)
+    lastViewTimes: {},
+    videoWatchTimers: {},
+    videoWatchers: {},
+    postViewTimers: {},
+    examViewTimers: {},
     // Members (Problem 14)
     membersList: [],
     addMemberSelection: new Set(),
@@ -3000,7 +2980,6 @@ function openTabContent(tabId, specificGroupId = null) {
                         if (msgBtn) msgBtn.style.display = joined ? 'inline-flex' : 'none';
                     });
                 }
-                // Deep-link check (Problem 10)
                 if (AppState.pendingDeepLink) {
                     const dl = AppState.pendingDeepLink;
                     setTimeout(() => switchGroupTab(dl.tabId, dl.triggerBtn || null), 200);
@@ -3014,7 +2993,6 @@ function openTabContent(tabId, specificGroupId = null) {
         updateTrendingGroups();
     }
 
-    // Handle B-Store / Research / Jobs deep-link (Problem 10)
     if (AppState.pendingDeepLink && ['bstore', 'research', 'jobs'].includes(tabId)) {
         const dl = AppState.pendingDeepLink;
         setTimeout(() => {
@@ -3038,7 +3016,6 @@ function handleSearch(event) {
     }
 }
 
-// Wait for element to exist in DOM (Problem 10)
 function waitForElement(id, timeoutMs = 5000) {
     return new Promise(resolve => {
         const start = Date.now();
@@ -3052,12 +3029,10 @@ function waitForElement(id, timeoutMs = 5000) {
     });
 }
 
-// Highlight + scroll to element (Problem 10)
 function highlightElement(el, autoExpand = true) {
     if (!el) return;
     el.scrollIntoView({ behavior: 'smooth', block: 'center' });
     el.classList.add('deep-link-highlight');
-    // Auto-expand truncated text
     if (autoExpand) {
         const toggle = el.querySelector('.read-more-toggle[data-expanded="false"]');
         if (toggle) toggleLongText(toggle);
@@ -3065,13 +3040,11 @@ function highlightElement(el, autoExpand = true) {
     setTimeout(() => { el.classList.remove('deep-link-highlight'); }, 2200);
 }
 
-// Deep-link launcher: open group feed + switch to specific tab + scroll (Problem 10)
 async function openGroupItem(groupId, tabId, itemId, domIdPrefix) {
     if (!groupId) return showToast('Group not found', 'error');
     const domId = `${domIdPrefix}-${itemId}`;
     AppState.pendingDeepLink = { tabId, itemId, domId };
     await openTabContent('group-feed', groupId);
-    // After openTabContent finishes, the group tab must be switched and item waited-for
     setTimeout(async () => {
         if (typeof switchGroupTab === 'function') {
             switchGroupTab(tabId, null);
@@ -3083,7 +3056,6 @@ async function openGroupItem(groupId, tabId, itemId, domIdPrefix) {
     }, 500);
 }
 
-// Deep-link for tab-level items (B-Store, Research, Jobs)
 async function openTabItem(tabName, itemId, domIdPrefix) {
     const domId = `${domIdPrefix}-${itemId}`;
     AppState.pendingDeepLink = { tabId: tabName, itemId, domId };
@@ -3180,13 +3152,12 @@ function updateUIForUser() {
         const badge = isVerified ? ' <span class="verification-badge"><span class="star">★</span></span>' : '';
         hun.innerHTML = `${fullName}${badge}`;
     }
-    // Settings screen live values
     const sd = document.getElementById('settingsDisplayName'); if (sd) sd.textContent = fullName;
     const se = document.getElementById('settingsEmail'); if (se) se.textContent = AppState.currentUser?.email || '';
 }
 
 // ================================================================
-// AUTH MODAL (Problem 3 + 4 — birth date, gender, password eye)
+// AUTH MODAL (Problem 3 + 4)
 // ================================================================
 function showAuthModal() {
     if (document.getElementById('authModal')) return;
@@ -3244,7 +3215,6 @@ function showAuthModal() {
     document.body.appendChild(m);
 }
 
-// Password eye toggle (Problem 4)
 function togglePasswordVisibility(inputId, toggleEl) {
     const input = document.getElementById(inputId);
     if (!input) return;
@@ -3383,7 +3353,7 @@ async function updateTrendingGroups() {
 }
 
 // ================================================================
-// SETTINGS SCREEN (Problem 12 / Q5)
+// SETTINGS SCREEN
 // ================================================================
 function loadSettingsFromStorage() {
     try {
@@ -3395,14 +3365,12 @@ function saveSettingsToStorage() {
     try { localStorage.setItem('teni_settings', JSON.stringify(AppState.settings)); } catch (e) {}
 }
 function loadSettingsScreen() {
-    // reflect current settings state into toggles
     Object.keys(AppState.settings).forEach(key => {
         if (['postNotif', 'commentNotif', 'messageNotif', 'showNameInComments', 'allowDMs'].includes(key)) {
             const el = document.getElementById('toggle-' + key);
             if (el) el.classList.toggle('on', !!AppState.settings[key]);
         }
     });
-    // theme picker
     document.querySelectorAll('.settings-theme-picker button').forEach(b => {
         b.classList.toggle('active', b.dataset.theme === AppState.settings.theme);
     });
@@ -3424,7 +3392,6 @@ function applyTheme() {
     const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
     const dark = t === 'dark' || (t === 'auto' && prefersDark);
     document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
-    // Light theme adjustments only — full dark CSS not implemented to avoid breaking existing styles
 }
 function changeEmailPrompt() {
     const newEmail = prompt('Enter new email:');
@@ -3599,7 +3566,6 @@ async function submitEditGroup() {
     } catch (err) { showToast('Error: ' + err.message, 'error'); }
 }
 
-// Portal menu toggles (Problem 1 — full toggle-on-second-click)
 function toggleClassHeaderMenu(event) {
     if (event && event._menuToggleHandled) { event._menuToggleHandled = false; return; }
     event?.stopPropagation();
@@ -3701,7 +3667,6 @@ async function incrementViewCount(table, id, currentViews = null, bypassDebounce
     } catch (err) { console.warn('view increment failed', err); }
 }
 
-// Video watch timer — counts as view once 10s accumulated (Problem 15)
 function startVideoWatchTimer(videoId, table = 'group_content') {
     AppState.videoWatchTimers[videoId] = 0;
     if (AppState.videoWatchers[videoId]) clearInterval(AppState.videoWatchers[videoId]);
@@ -3724,7 +3689,6 @@ function stopVideoWatchTimer(videoId) {
     }
 }
 
-// Post view timer (3s comment section open — Problem 15)
 function startPostViewTimer(postId) {
     if (AppState.postViewTimers[postId]) clearTimeout(AppState.postViewTimers[postId]);
     AppState.postViewTimers[postId] = setTimeout(() => {
@@ -3739,7 +3703,6 @@ function cancelPostViewTimer(postId) {
     }
 }
 
-// Exam view timer (3s after start — Problem 15)
 function startExamViewTimer(examId) {
     if (AppState.examViewTimers[examId]) clearTimeout(AppState.examViewTimers[examId]);
     AppState.examViewTimers[examId] = setTimeout(() => {
@@ -3776,11 +3739,6 @@ function downloadPostImage(postId, url) {
 }
 
 // ================================================================
-// PASSWORD EYE — also works for dynamically-created modals
-// ================================================================
-// (Handled inline via onclick="togglePasswordVisibility(...)")
-
-// ================================================================
 // PROFILE PIC CHANGE (Problem 7)
 // ================================================================
 function changeProfilePic() {
@@ -3789,7 +3747,6 @@ function changeProfilePic() {
         const f = e.target.files[0]; if (!f) return;
         if (f.size > 5 * 1024 * 1024) return showToast('Image too large (max 5MB)', 'error');
         if (!f.type.startsWith('image/')) return showToast('Only image files allowed', 'error');
-        // Show spinner on big avatar
         const bigAvatar = document.getElementById('profileAvatarLarge');
         let spinnerEl = null;
         if (bigAvatar) {
@@ -3807,7 +3764,6 @@ function changeProfilePic() {
             await sb.from('users').update({ profile_pic_url: u.publicUrl }).eq('user_id', AppState.userId);
             AppState.profilePicUrl = u.publicUrl;
             updateUIForUser();
-            // Refresh visible feeds
             if (document.getElementById('appMain')?.style.display !== 'none') {
                 loadTrendingContent(AppState.currentTrendingTab);
             } else if (AppState.currentGroupId) {
@@ -3821,7 +3777,7 @@ function changeProfilePic() {
 }
 
 // ================================================================
-// GROUP CONTENT (videos, ppts, mockexam) — with view counters, deep-link IDs
+// GROUP CONTENT (videos, ppts, mockexam)
 // ================================================================
 async function loadGroupContent(groupId, contentType) {
     let c;
@@ -3904,7 +3860,6 @@ async function startMockExam(id) {
         AppState.currentQuestionIndex = 0; AppState.correctCount = 0; AppState.incorrectCount = 0;
         AppState.examAnswered = new Array(AppState.currentExam.questions.length).fill(null);
         AppState.examSubmitted = false;
-        // View counter — 3s grace
         startExamViewTimer(id);
         renderMockExamQuestion();
         if (AppState.examMode === 'exam') startExamTimer(AppState.currentExam.time_limit);
@@ -4099,7 +4054,6 @@ function renderPostCard(post, uMap) {
                 <div>
                     <div class="post-name">${escapeHtml(name)}${vBd} ${vB} ${pB}</div>
                     <div class="post-time">${new Date(post.created_at).toLocaleDateString()} ${new Date(post.created_at).toLocaleTimeString()}</div>
-                    <div style="margin-top:2px;">${buildViewCounterHtml('social_posts', post.id, post.views || 0)}</div>
                 </div>
                 ${canMod ? `<div style="margin-left:auto;"><button class="post-actions-btn" onclick="togglePostMenu('${post.id}', event)">⋮</button>${menuHtml}</div>` : ''}
             </div>
@@ -4110,13 +4064,14 @@ function renderPostCard(post, uMap) {
                 <button onclick="toggleLikePost('${post.id}')" id="likeBtn-${post.id}" class="${post.user_liked ? 'liked' : ''}"><i class="fas fa-heart"></i> <span id="likeCount-${post.id}">${post.likes || 0}</span></button>
                 <button onclick="toggleDislikePost('${post.id}')" id="dislikeBtn-${post.id}" class="${post.user_disliked ? 'disliked' : ''}"><i class="fas fa-heart-broken"></i> <span id="dislikeCount-${post.id}">${post.dislikes || 0}</span></button>
                 <button onclick="togglePostComment(this)" data-post-id="${post.id}"><i class="fas fa-comment"></i> <span id="commentCount-${post.id}">${post.comment_count || 0}</span></button>
-                ${post.image_url ? `<button class="post-save-btn" onclick="downloadPostImage('${post.id}','${post.image_url}')"><i class="fas fa-download"></i> Save</button>` : ''}
                 <div class="share-btn"><button onclick="toggleShareOptions('${post.id}', event)"><i class="fas fa-share"></i> <span id="shareCount-${post.id}">${post.share_count || 0}</span></button>
                     <div id="shareOptions-${post.id}" class="share-options" style="display:none;">
                         <div onclick="sharePost('${post.id}','external')">📤 Share External</div>
                         <div onclick="sharePost('${post.id}','group')">📬 Repost</div>
                     </div>
                 </div>
+                ${post.image_url ? `<button class="post-save-btn" onclick="downloadPostImage('${post.id}','${post.image_url}')"><i class="fas fa-download"></i> Save</button>` : ''}
+                <span class="post-view-inline">${buildViewCounterHtml('social_posts', post.id, post.views || 0)}</span>
             </div>
             <div class="post-comments" id="comments-${post.id}" data-post-id="${post.id}">
                 <div id="commentList-${post.id}"></div>
@@ -4246,12 +4201,10 @@ async function loadPostComments(postId) {
         const c = document.getElementById(`commentList-${postId}`); if (!c) return;
         if (!allComments?.length) { c.innerHTML = '<div style="color:var(--text-muted); font-size:13px; font-weight:700;">No comments yet.</div>'; return; }
 
-        // Fetch author info
         const uids = [...new Set(allComments.map(x => x.user_id))];
         const { data: users } = await sb.from('users').select('user_id, first_name, middle_name, email, profile_pic_url, is_teacher, is_admin').in('user_id', uids);
         const uMap = (users || []).reduce((a, u) => { a[u.user_id] = u; return a; }, {});
 
-        // Fetch my likes / dislikes
         let myLikes = new Set(), myDislikes = new Set();
         if (AppState.userId) {
             const cids = allComments.map(x => x.id);
@@ -4340,7 +4293,6 @@ async function toggleLikeComment(commentId, btn) {
             await sb.from('comment_likes').delete().eq('comment_id', commentId).eq('user_id', AppState.userId);
             await sb.from('social_comments').update({ likes: Math.max(0, oldCount - 1) }).eq('id', commentId);
         } else {
-            // Remove dislike if exists
             await sb.from('comment_dislikes').delete().eq('comment_id', commentId).eq('user_id', AppState.userId);
             await sb.from('comment_likes').insert({ comment_id: commentId, user_id: AppState.userId });
             await sb.from('social_comments').update({ likes: oldCount + 1 }).eq('id', commentId);
@@ -4435,7 +4387,6 @@ async function saveCommentEdit(commentId) {
     try {
         await sb.from('social_comments').update({ comment: newText, is_edited: true, edited_at: new Date() }).eq('id', commentId);
         showToast('✅ Comment updated', 'success');
-        // reload the comments for the post containing this comment
         const el = document.getElementById(`comment-${commentId}`);
         const postComments = el?.closest('.post-comments');
         const postId = postComments?.dataset.postId;
@@ -4447,7 +4398,6 @@ async function deleteComment(commentId) {
     if (!confirm('Delete this comment?')) return;
     closeOpenMenu();
     try {
-        // Delete replies first
         await sb.from('social_comments').delete().eq('parent_id', commentId);
         await sb.from('social_comments').delete().eq('id', commentId);
         const el = document.getElementById(`comment-${commentId}`);
@@ -4762,7 +4712,6 @@ function renderHomePostCard(post, uMap) {
                 <div>
                     <div class="post-name">${escapeHtml(name)}${vBd} ${vB} ${pB}</div>
                     <div class="post-time">${new Date(post.created_at).toLocaleDateString()} ${post._groupName ? '• 📂 ' + escapeHtml(post._groupName) : ''}</div>
-                    <div style="margin-top:2px;">${buildViewCounterHtml('social_posts', post.id, post.views || 0)}</div>
                 </div>
                 ${canMod ? `<div style="margin-left:auto;"><button class="post-actions-btn" onclick="event.stopPropagation(); toggleHomePostMenu('${post.id}', event)">⋮</button>${menuHtml}</div>` : ''}
             </div>
@@ -4773,13 +4722,14 @@ function renderHomePostCard(post, uMap) {
                 <button onclick="toggleLikePost('${post.id}')" id="likeBtn-${post.id}" class="${post.user_liked ? 'liked' : ''}"><i class="fas fa-heart"></i> <span id="likeCount-${post.id}">${post.likes || 0}</span></button>
                 <button onclick="toggleDislikePost('${post.id}')" id="dislikeBtn-${post.id}" class="${post.user_disliked ? 'disliked' : ''}"><i class="fas fa-heart-broken"></i> <span id="dislikeCount-${post.id}">${post.dislikes || 0}</span></button>
                 <button onclick="togglePostComment(this)" data-post-id="${post.id}"><i class="fas fa-comment"></i> <span id="commentCount-${post.id}">${post.comment_count || 0}</span></button>
-                ${post.image_url ? `<button class="post-save-btn" onclick="downloadPostImage('${post.id}','${post.image_url}')"><i class="fas fa-download"></i> Save</button>` : ''}
                 <div class="share-btn"><button onclick="toggleShareOptions('${post.id}', event)"><i class="fas fa-share"></i> <span id="shareCount-${post.id}">${post.share_count || 0}</span></button>
                     <div id="shareOptions-${post.id}" class="share-options" style="display:none;">
                         <div onclick="sharePost('${post.id}','external')">📤 Share External</div>
                         <div onclick="sharePost('${post.id}','group')">📬 Repost</div>
                     </div>
                 </div>
+                ${post.image_url ? `<button class="post-save-btn" onclick="downloadPostImage('${post.id}','${post.image_url}')"><i class="fas fa-download"></i> Save</button>` : ''}
+                <span class="post-view-inline">${buildViewCounterHtml('social_posts', post.id, post.views || 0)}</span>
             </div>
             <div class="post-comments" id="comments-${post.id}" data-post-id="${post.id}">
                 <div id="commentList-${post.id}"></div>
@@ -4879,7 +4829,6 @@ function openPPT(id, url) {
 // ================================================================
 function openCreateContentModal(defaultType = 'post') {
     AppState.createContentType = defaultType;
-    // Reset exam question count
     AppState.examQuestionCount = 1;
     const container = document.getElementById('examQuestionsContainer');
     if (container) {
@@ -4894,7 +4843,6 @@ function openCreateContentModal(defaultType = 'post') {
             <div style="margin-top:6px;"><label style="font-size:13px; font-weight:800;">Explanation:</label> <input type="text" id="examExp1" style="margin-top:4px;"></div>
         </div>`;
     }
-    // Set active tab
     document.querySelectorAll('.ct-tab').forEach(t => t.classList.toggle('active', t.dataset.type === defaultType));
     document.querySelectorAll('.create-form').forEach(f => f.classList.remove('active'));
     const form = document.getElementById(`createForm-${defaultType}`);
@@ -5037,7 +4985,6 @@ async function submitCreateContent() {
 
 function afterCreateSuccess(tabId) {
     if (!AppState.currentGroupId) return;
-    // Refresh the group feed and switch to the correct tab
     switchGroupTab(tabId, null);
     if (tabId === 'social') loadSocialPosts(AppState.currentGroupId);
     else loadGroupContent(AppState.currentGroupId, tabId);
@@ -5193,7 +5140,7 @@ function openResearch(id, url) {
 }
 
 // ================================================================
-// WALLET
+// WALLET / LIBRARY
 // ================================================================
 async function loadWallet() {
     const bd = document.getElementById('walletBalanceDisplay'); if (bd) bd.textContent = `${AppState.coinBalance} TENI Coins`;
@@ -5271,7 +5218,6 @@ async function openChatThread(groupId, partnerId) {
         AppState.currentChatPartnerId = partnerId;
         AppState.currentChatPartnerName = getDisplayName(partner);
 
-        // Try to find existing thread between me and partner
         const meId = AppState.userId;
         const { data: existing } = await sb.from('dm_threads')
             .select('*')
@@ -5283,7 +5229,6 @@ async function openChatThread(groupId, partnerId) {
             const { data: created } = await sb.from('dm_threads').insert({ group_id: groupId, member_id: meId, owner_id: partnerId }).select().single();
             thread = created;
         } else {
-            // Reset unread for me
             const isOwnerSide = thread.owner_id === meId;
             await sb.from('dm_threads').update(isOwnerSide ? { unread_for_owner: 0 } : { unread_for_member: 0 }).eq('id', thread.id);
         }
@@ -5430,7 +5375,6 @@ async function loadInbox() {
             .order('last_message_at', { ascending: false });
         if (!threads?.length) { c.innerHTML = '<div class="inbox-empty">No messages yet.<br>Conversations will appear here.</div>'; return; }
 
-        // Determine "other user" for each thread
         const threadsWithPartner = threads.map(t => {
             const partnerId = t.owner_id === meId ? t.member_id : t.owner_id;
             return { ...t, _partnerId: partnerId };
@@ -5486,7 +5430,6 @@ async function loadMembers() {
     try {
         const { data: subs } = await sb.from('group_subscriptions').select('user_id, subscribed_at').eq('group_id', AppState.currentGroupId);
         const ownerId = AppState.currentGroupOwnerId;
-        // Include owner
         const memberIds = [...new Set([ownerId, ...((subs || []).map(s => s.user_id))].filter(Boolean))];
         const { data: users } = await sb.from('users').select('user_id, first_name, middle_name, email, profile_pic_url').in('user_id', memberIds);
         const uMap = (users || []).reduce((a, u) => { a[u.user_id] = u; return a; }, {});
@@ -5537,7 +5480,6 @@ async function removeMember(userId, userName) {
     if (!confirm(`Remove ${userName} from this group?`)) return;
     try {
         await sb.from('group_subscriptions').delete().eq('user_id', userId).eq('group_id', AppState.currentGroupId);
-        // Decrement followers
         const { data: g } = await sb.from('groups').select('followers').eq('id', AppState.currentGroupId).single();
         const nf = Math.max(0, (g?.followers || 1) - 1);
         await sb.from('groups').update({ followers: nf }).eq('id', AppState.currentGroupId);
@@ -5554,7 +5496,6 @@ function openAddMemberModal() {
     AppState.addMemberSelection = new Set();
     document.getElementById('addMemberResults').innerHTML = '';
     document.getElementById('addMemberSearch').value = '';
-    // Contact Picker feature detection
     const supportsContacts = ('contacts' in navigator) && ('ContactsManager' in window);
     document.getElementById('contactPickerBtn').style.display = supportsContacts ? 'block' : 'none';
     document.getElementById('contactPickerUnsupported').style.display = supportsContacts ? 'none' : 'block';
@@ -5653,14 +5594,12 @@ async function matchContacts({ emails, phones }) {
             const { data } = await sb.from('users').select('user_id, first_name, middle_name, email, profile_pic_url').in('email', emails);
             matches.push(...(data || []));
         }
-        // Phone matching only if column exists — safe to try, will silently fail otherwise
         if (phones.length) {
             try {
                 const { data } = await sb.from('users').select('user_id, first_name, middle_name, email, profile_pic_url').in('phone_number', phones);
                 matches.push(...(data || []));
             } catch (e) { /* phone_number column may not exist */ }
         }
-        // de-dupe
         const seen = new Set();
         matches = matches.filter(m => { if (seen.has(m.user_id)) return false; seen.add(m.user_id); return true; });
         if (!matches.length) return showToast('No matching TENI users found', 'info');
@@ -5748,7 +5687,6 @@ async function startGoLive() {
     try { await sb.from('group_notifications').insert({ group_id: AppState.currentGroupId, sender_id: AppState.userId, type: 'live_start', title: '🎥 LIVE!', message: 'Tap to join', link, is_read: false }); } catch (e) {}
 }
 
-// Filter toggle (Problem 12 — row 2 filter tabs)
 function toggleFilterRow(event) {
     if (event) event.stopPropagation();
     const row = document.getElementById('headerRow2');
