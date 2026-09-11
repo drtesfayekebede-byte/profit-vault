@@ -1335,6 +1335,22 @@ html, body {
     .app-main { padding: 24px; }
     .tab-scroll-area { padding: 24px; }
 }
+
+/* Home feed — video wrappers don't need padding offset */
+#globalTrendingContainer .video-wrapper {
+    border-radius: 0;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+}
+#globalTrendingContainer .books-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+@media (max-width: 600px) {
+    #globalTrendingContainer .books-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
 </style>
 </head>
 <body>
@@ -3187,26 +3203,249 @@ async function loadTrendingContent(tab) {
             return;
         }
 
-        c.innerHTML = items.map(p => {
-            const title = p.title || p.content || p.name || 'Content';
-            const preview = (p.content || p.description || '').substring(0, 100);
-            const gn = p.group_id ? (gMap[p.group_id] || '') : '';
-            let stats = '';
-            switch(tab) {
-                case 'social': stats = `❤️ ${p.likes || 0} • 💬 ${p.comment_count || 0} • 📤 ${p.share_count || 0}`; break;
-                case 'video':
-                case 'ppt': stats = `👁️ ${p.views || 0} views`; break;
-                case 'mockexam': stats = `📝 ${p.questions?.length || 0} questions`; break;
-                case 'book': stats = `💰 ${p.price_monthly || 0} coins/mo`; break;
-                case 'research': stats = `📖 ${p.category || ''}`; break;
-                case 'job': stats = `🏢 ${p.company || ''}`; break;
+        if (tab === 'social') {
+            // Full post cards, interactive, opening group on header tap
+            const uids = [...new Set(items.map(p => p.user_id))];
+            const { data: users } = await sb.from('users').select('user_id, first_name, email, profile_pic_url, is_teacher, is_admin').in('user_id', uids);
+            const uMap = (users || []).reduce((a, u) => { a[u.user_id] = u; return a; }, {});
+            if (AppState.userId) {
+                const pIds = items.map(p => p.id);
+                const { data: ul } = await sb.from('social_post_likes').select('post_id').eq('user_id', AppState.userId).in('post_id', pIds);
+                const liked = new Set((ul || []).map(l => l.post_id));
+                const { data: ud } = await sb.from('social_post_dislikes').select('post_id').eq('user_id', AppState.userId).in('post_id', pIds);
+                const disliked = new Set((ud || []).map(d => d.post_id));
+                items.forEach(p => { p.user_liked = liked.has(p.id); p.user_disliked = disliked.has(p.id); p._groupName = gMap[p.group_id] || ''; });
             }
-            return `<div class="content-card" onclick="openTabContent('group-feed', ${p.group_id || 0})" style="cursor:pointer;">
-                <div class="meta"><h4>${escapeHtml(title.substring(0, 80))}</h4>${preview ? `<p style="font-size:13px;">${escapeHtml(preview)}</p>` : ''}<p style="font-size:12px;">${gn ? '📂 ' + escapeHtml(gn) + ' • ' : ''}${stats}</p></div>
-            </div>`;
-        }).join('');
+            c.innerHTML = items.map(p => renderHomePostCard(p, uMap)).join('');
+            return;
+        }
+
+        if (tab === 'video') {
+            c.innerHTML = items.map(item => {
+                const thumb = item.thumbnail_url || item.cover_url || '';
+                const gn = gMap[item.group_id] || '';
+                return `<div class="content-card" style="padding-bottom:0;">
+                    <div style="margin:-16px -16px 12px -16px;">
+                        <div class="video-wrapper" id="hm-video-wrapper-${item.id}">
+                            <div class="video-thumbnail" onclick="playHomeVideo('${item.id}', '${item.file_url}', '${thumb}')" id="hm-thumbnail-${item.id}">
+                                ${thumb ? `<img src="${thumb}" alt="">` : `<div style="position:absolute; top:0; left:0; width:100%; height:100%; background:#1a1a2e; display:flex; align-items:center; justify-content:center; font-size:48px; color:var(--gold);">🎬</div>`}
+                                <div class="play-btn-overlay"><span>▶️</span></div>
+                            </div>
+                            <div id="hm-video-player-${item.id}" style="display:none; width:100%; background:#000; position:relative;">
+                                <video id="hm-video-${item.id}" src="${item.file_url}" style="width:100%; height:auto; max-height:400px; object-fit:contain; background:#000;" controls playsinline></video>
+                                <div class="video-controls">
+                                    <button onclick="toggleHomeVideoPlay('${item.id}')" id="hm-playBtn-${item.id}">⏸️</button>
+                                    <div class="progress-bar" onclick="seekHomeVideo(event, '${item.id}')"><div class="progress-fill" id="hm-progressFill-${item.id}"></div></div>
+                                    <span class="time-display" id="hm-timeDisplay-${item.id}">0:00 / 0:00</span>
+                                    <button onclick="closeHomeVideo('${item.id}')" style="color:var(--red-error);">✕</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="meta">
+                        <h4>${escapeHtml(item.title)}</h4>
+                        ${item.description ? `<p style="font-size:13px;">${escapeHtml(item.description)}</p>` : ''}
+                        <p style="font-size:12px; color:var(--text-muted); margin-top:4px;">📂 ${escapeHtml(gn)} • 👁️ ${item.views || 0} views</p>
+                    </div>
+                    <div class="actions">
+                        <button onclick="event.stopPropagation(); openTabContent('group-feed', ${item.group_id})"><i class="fas fa-folder-open"></i> <span>Open Group</span></button>
+                    </div>
+                </div>`;
+            }).join('');
+            return;
+        }
+
+        if (tab === 'ppt') {
+            c.innerHTML = items.map(item => {
+                const gn = gMap[item.group_id] || '';
+                return `<div class="content-card" onclick="openPPT('${item.file_url}')" style="cursor:pointer;">
+                    <div style="margin:-16px -16px 12px -16px; background:#1a1a2e; padding-bottom:56.25%; position:relative; border-top-left-radius:12px; border-top-right-radius:12px; overflow:hidden;">
+                        ${item.cover_url ? `<img src="${item.cover_url}" style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover;">` : `<div style="position:absolute; top:0; left:0; width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:48px; color:var(--gold);">📊</div>`}
+                    </div>
+                    <div class="meta">
+                        <h4>${escapeHtml(item.title)}</h4>
+                        ${item.description ? `<p style="font-size:13px;">${escapeHtml(item.description)}</p>` : ''}
+                        <p style="font-size:12px; color:var(--text-muted); margin-top:4px;">📂 ${escapeHtml(gn)} • 👁️ ${item.views || 0} views</p>
+                    </div>
+                    <div class="actions">
+                        <button onclick="event.stopPropagation(); openPPT('${item.file_url}')"><i class="fas fa-external-link-alt"></i> <span>Open PPT</span></button>
+                        <button onclick="event.stopPropagation(); openTabContent('group-feed', ${item.group_id})"><i class="fas fa-folder-open"></i> <span>Open Group</span></button>
+                    </div>
+                </div>`;
+            }).join('');
+            return;
+        }
+
+        if (tab === 'mockexam') {
+            c.innerHTML = items.map(item => {
+                const gn = gMap[item.group_id] || '';
+                return `<div class="content-card">
+                    <div class="meta">
+                        <h4>📝 ${escapeHtml(item.title)}</h4>
+                        <p style="font-size:13px;">${item.questions?.length || 0} questions • ${item.time_limit || 5} min • 📂 ${escapeHtml(gn)}</p>
+                    </div>
+                    <div class="actions" style="gap:8px;">
+                        <button class="btn-sm btn-teal" style="margin:0;" onclick="startMockExam(${item.id})">▶️ Start Exam</button>
+                        <button class="btn-sm" style="margin:0; background:#f8fafc; color:var(--text-dark);" onclick="openTabContent('group-feed', ${item.group_id})">Open Group</button>
+                    </div>
+                </div>`;
+            }).join('');
+            return;
+        }
+
+        if (tab === 'book') {
+            c.innerHTML = `<div class="books-grid">${items.map(b => `
+                <div class="book-card">
+                    <div class="book-cover" onclick="subscribeToBook(${b.id})" style="cursor:pointer;">${b.cover_url ? `<img src="${b.cover_url}" alt="">` : '📖'}</div>
+                    <div class="title">${escapeHtml(b.title)}</div>
+                    <div class="author">By ${escapeHtml(b.author)}</div>
+                    <div style="font-size:14px; color:var(--gold); font-weight:800; margin:8px 0;">💰 ${b.price_monthly || 0} Coins/mo</div>
+                    <button class="btn-sm btn-teal" onclick="subscribeToBook(${b.id})" style="width:100%;">📖 Subscribe</button>
+                </div>`).join('')}</div>`;
+            return;
+        }
+
+        if (tab === 'research') {
+            c.innerHTML = items.map(r => `
+                <div class="content-card">
+                    <div class="meta">
+                        <h4>${escapeHtml(r.title)}</h4>
+                        <p style="font-size:13px;">By ${escapeHtml(r.author)} • 📂 ${escapeHtml(r.category || '')}</p>
+                    </div>
+                    <div class="actions">
+                        <button class="btn-sm btn-teal" style="margin:0;" onclick="if('${r.file_url}') window.open('${r.file_url}', '_blank'); else showToast('No PDF','error');">📖 Read</button>
+                    </div>
+                </div>`).join('');
+            return;
+        }
+
+        if (tab === 'job') {
+            c.innerHTML = items.map(j => `
+                <div class="content-card">
+                    <div class="meta">
+                        <h4>${escapeHtml(j.title)}</h4>
+                        <p style="font-size:13px;">🏢 ${escapeHtml(j.company)} • 📍 ${escapeHtml(j.location || '')} • ${escapeHtml(j.job_type || '')}</p>
+                        ${j.salary_range ? `<p style="font-size:13px; color:var(--gold); font-weight:800;">💰 ${escapeHtml(j.salary_range)}</p>` : ''}
+                    </div>
+                    <div class="actions">
+                        <button class="btn-sm btn-teal" style="margin:0;" onclick="applyToJob(${j.id})">📋 Apply</button>
+                    </div>
+                </div>`).join('');
+            return;
+        }
     } catch (err) { console.error(err); c.innerHTML = '<div class="loading" style="color:var(--red-error);">Failed to load.</div>'; }
 }
+
+// Render a full interactive post on home (avatar/name tap opens group)
+function renderHomePostCard(post, uMap) {
+    const u = uMap?.[post.user_id];
+    const name = u?.first_name || u?.email?.split('@')[0] || 'User';
+    const pic = u?.profile_pic_url || AppState.profilePicUrl;
+    const isV = u?.is_teacher || u?.is_admin;
+    const isOwner = post.user_id === AppState.userId;
+    const canMod = isOwner || AppState.isAdmin;
+    const full = post.content || '';
+    let vB = '';
+    if (post.viral_level === 'super_viral') vB = '<span class="viral-badge super">⭐ Super Viral</span>';
+    else if (post.viral_level === 'viral') vB = '<span class="viral-badge viral">💎 Viral</span>';
+    else if (post.viral_level === 'trending') vB = '<span class="viral-badge trending">🔥 Trending</span>';
+    else if (post.viral_level === 'rising') vB = '<span class="viral-badge rising">⬆️ Rising</span>';
+    const pB = post.is_pinned ? '<span class="pinned-badge">📌 Pinned</span>' : '';
+    const vBd = isV ? ' <span class="verification-badge"><span class="star">★</span></span>' : '';
+    const vG = (post.viral_level === 'super_viral' || post.viral_level === 'viral') ? 'viral-glow' : '';
+    const menuHtml = canMod ? `
+        <div id="homePostMenu-${post.id}" style="display:none;">
+            ${isOwner ? `<div onclick="editHomePost('${post.id}')">✏️ Edit</div>` : ''}
+            ${isOwner ? `<div onclick="deleteHomePost('${post.id}')" style="color:var(--red-error);">🗑️ Delete</div>` : ''}
+        </div>` : '';
+
+    return `
+        <div class="post-card ${vG}" id="home-post-${post.id}">
+            <div class="post-header" onclick="openHomePostGroup('${post.id}', ${post.group_id})" style="cursor:pointer;">
+                <div class="post-avatar"><img src="${pic}" alt=""></div>
+                <div>
+                    <div class="post-name">${escapeHtml(name)}${vBd} ${vB} ${pB}</div>
+                    <div class="post-time">${new Date(post.created_at).toLocaleDateString()} ${new Date(post.created_at).toLocaleTimeString()} ${post._groupName ? '• 📂 ' + escapeHtml(post._groupName) : ''}</div>
+                </div>
+                ${canMod ? `<div style="margin-left:auto;"><button class="post-actions-btn" onclick="event.stopPropagation(); toggleHomePostMenu('${post.id}', event)">⋮</button>${menuHtml}</div>` : ''}
+            </div>
+            <div class="post-content" onclick="openHomePostGroup('${post.id}', ${post.group_id})" style="cursor:pointer;">${escapeHtml(full)}</div>
+            ${post.image_url ? `<img src="${post.image_url}" class="post-image" alt="" onclick="openHomePostGroup('${post.id}', ${post.group_id})" style="cursor:pointer;">` : ''}
+            ${post.link_url ? `<a href="${post.link_url}" target="_blank" class="post-link">🔗 ${post.link_url}</a>` : ''}
+            <div class="post-actions">
+                <button onclick="toggleLikePost('${post.id}')" id="likeBtn-${post.id}" class="${post.user_liked ? 'liked' : ''}"><i class="fas fa-heart"></i> <span id="likeCount-${post.id}">${post.likes || 0}</span></button>
+                <button onclick="toggleDislikePost('${post.id}')" id="dislikeBtn-${post.id}" class="${post.user_disliked ? 'disliked' : ''}"><i class="fas fa-heart-broken"></i> <span id="dislikeCount-${post.id}">${post.dislikes || 0}</span></button>
+                <button onclick="togglePostComment(this)"><i class="fas fa-comment"></i> <span id="commentCount-${post.id}">${post.comment_count || 0}</span></button>
+                <div class="share-btn"><button onclick="toggleShareOptions('${post.id}', event)"><i class="fas fa-share"></i> <span id="shareCount-${post.id}">${post.share_count || 0}</span></button>
+                    <div id="shareOptions-${post.id}" style="display:none;">
+                        <div onclick="sharePost('${post.id}','external')">📤 Share External</div>
+                        <div onclick="sharePost('${post.id}','group')">📬 Repost</div>
+                    </div>
+                </div>
+            </div>
+            <div class="post-comments" id="comments-${post.id}">
+                <div id="commentList-${post.id}"></div>
+                <div class="comment-input-wrapper"><input type="text" placeholder="Write a comment..." id="commentInput-${post.id}"><button onclick="addPostComment('${post.id}')">Post</button></div>
+            </div>
+        </div>`;
+}
+
+// Open home post's group and highlight the post
+async function openHomePostGroup(postId, groupId) {
+    if (!groupId) return showToast('Group not found', 'error');
+    await openTabContent('group-feed', groupId);
+    // Wait for the group feed to render, then scroll to the post
+    setTimeout(() => {
+        const el = document.getElementById(`post-${postId}`);
+        if (!el) return;
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        el.style.transition = 'box-shadow 0.3s';
+        el.style.boxShadow = '0 0 0 3px var(--gold), 0 8px 24px rgba(255,215,0,0.3)';
+        setTimeout(() => { el.style.boxShadow = ''; }, 2000);
+    }, 700);
+}
+
+function toggleHomePostMenu(postId, event) {
+    event?.stopPropagation();
+    const menu = document.getElementById(`homePostMenu-${postId}`);
+    const btn = event?.currentTarget;
+    if (!menu || !btn) return;
+    if (menu.classList.contains('portal-open')) { closeOpenMenu(); return; }
+    openPortalMenu(menu, btn);
+}
+function editHomePost(postId) {
+    closeOpenMenu();
+    showToast('Switch to the group to edit this post', 'info');
+}
+async function deleteHomePost(postId) {
+    closeOpenMenu();
+    if (!confirm('⚠️ Delete this post permanently?')) return;
+    try {
+        await sb.from('social_posts').delete().eq('id', postId);
+        const card = document.getElementById(`home-post-${postId}`);
+        if (card) { card.style.transition = 'opacity 0.2s'; card.style.opacity = '0'; setTimeout(() => card.remove(), 200); }
+        showToast('🗑️ Post deleted', 'info');
+    } catch (err) { showToast('Error: ' + err.message, 'error'); }
+}
+
+// Home inline video player
+function playHomeVideo(id, url, thumb) {
+    const t = document.getElementById(`hm-thumbnail-${id}`);
+    const p = document.getElementById(`hm-video-player-${id}`);
+    const v = document.getElementById(`hm-video-${id}`);
+    if (!t || !p || !v) return;
+    t.style.display = 'none'; p.style.display = 'block';
+    v.src = url; v.load(); v.play().catch(() => {});
+    v.addEventListener('timeupdate', () => {
+        const pf = document.getElementById(`hm-progressFill-${id}`);
+        const td = document.getElementById(`hm-timeDisplay-${id}`);
+        if (pf && v.duration) pf.style.width = (v.currentTime / v.duration * 100) + '%';
+        if (td && v.duration) td.textContent = `${formatTime(v.currentTime)} / ${formatTime(v.duration)}`;
+    });
+}
+function toggleHomeVideoPlay(id) { const v = document.getElementById(`hm-video-${id}`); if (!v) return; if (v.paused) v.play(); else v.pause(); }
+function seekHomeVideo(e, id) { const b = e.currentTarget; const r = b.getBoundingClientRect(); const x = (e.clientX - r.left) / r.width; const v = document.getElementById(`hm-video-${id}`); if (v && v.duration) v.currentTime = Math.max(0, Math.min(x * v.duration, v.duration)); }
+function closeHomeVideo(id) { const p = document.getElementById(`hm-video-player-${id}`); const t = document.getElementById(`hm-thumbnail-${id}`); const v = document.getElementById(`hm-video-${id}`); if (p) p.style.display = 'none'; if (t) t.style.display = 'block'; if (v) { v.pause(); v.src = ''; } }
 
 // ================================================================
 // B-STORE
