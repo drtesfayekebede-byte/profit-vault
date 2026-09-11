@@ -262,12 +262,14 @@ html, body {
     align-items: center;
     gap: 8px;
     padding: 8px 12px;
-    overflow-x: auto;
     scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
     max-width: 900px;
     width: 100%;
     margin: 0 auto;
+}
+.header-row-2.filter-open {
+    overflow-x: auto;
 }
 .header-row-2::-webkit-scrollbar { display: none; }
 .header-row-2.filter-open {
@@ -278,12 +280,13 @@ html, body {
 .header-user-strip {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     cursor: pointer;
-    padding: 4px 8px 4px 4px;
+    padding: 4px 10px 4px 4px;
     border-radius: 30px;
     transition: 0.2s;
-    flex-shrink: 0;
+    flex: 1;
+    min-width: 0;
 }
 .header-user-strip:hover {
     background: rgba(255,255,255,0.06);
@@ -303,16 +306,41 @@ html, body {
     object-fit: cover;
 }
 .header-user-name {
-    font-size: 14px;
-    font-weight: 800;
+    font-size: 16px;
+    font-weight: 900;
     color: #ffffff;
+    letter-spacing: 0.2px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 180px;
+    flex: 1;
+    min-width: 0;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
+}
+
+/* ===== VERIFICATION BADGE ===== */
+.verification-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    background: #008080;
+    border-radius: 50%;
+    margin-left: 8px;
+    flex-shrink: 0;
+    vertical-align: middle;
+    border: 1.5px solid rgba(255,255,255,0.25);
+    box-shadow: 0 0 5px rgba(0,128,128,0.7);
+}
+.verification-badge .star {
+    color: #FFD700;
+    font-size: 11px;
+    line-height: 1;
+    font-weight: 900;
+    text-shadow: 0 0 2px rgba(255,215,0,0.6);
 }
 
 /* Filter tabs (hidden by default in row 2) */
@@ -1339,7 +1367,7 @@ html, body {
                     <span id="notificationBadge" class="notification-badge">0</span>
                 </div>
                 <button class="filter-toggle-btn" id="filterToggleBtn" onclick="toggleFilterRow(event)" aria-label="Filter" title="Filter content">
-                    <i class="fas fa-sliders-h"></i>
+                    <i class="fas fa-filter"></i>
                 </button>
             </div>
         </div>
