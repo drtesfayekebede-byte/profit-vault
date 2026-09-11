@@ -254,12 +254,13 @@ html, body {
 .profile-avatar:hover { transform: scale(1.05); border-color: var(--gold); }
 
 /* Header Row 2 - New dashed tab style */
+/* Header Row 2 — dual mode: user strip OR filter tabs */
 .header-row-2 {
     height: var(--header-row2-height);
     background: var(--navy);
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
     padding: 8px 12px;
     overflow-x: auto;
     scrollbar-width: none;
@@ -269,7 +270,83 @@ html, body {
     margin: 0 auto;
 }
 .header-row-2::-webkit-scrollbar { display: none; }
+.header-row-2.filter-open {
+    gap: 6px;
+}
 
+/* User strip (avatar + name) — default row 2 content */
+.header-user-strip {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    padding: 4px 8px 4px 4px;
+    border-radius: 30px;
+    transition: 0.2s;
+    flex-shrink: 0;
+}
+.header-user-strip:hover {
+    background: rgba(255,255,255,0.06);
+}
+.header-user-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--teal);
+    overflow: hidden;
+    flex-shrink: 0;
+    border: 2px solid var(--gold);
+}
+.header-user-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.header-user-name {
+    font-size: 14px;
+    font-weight: 800;
+    color: #ffffff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 180px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Filter tabs (hidden by default in row 2) */
+.header-filters {
+    display: none;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+    min-width: 0;
+}
+.header-row-2.filter-open .header-filters { display: flex; }
+.header-row-2.filter-open .header-user-strip { display: none; }
+
+/* Filter toggle button in row 1 */
+.filter-toggle-btn {
+    background: none;
+    border: none;
+    color: var(--text-light);
+    font-size: 20px;
+    cursor: pointer;
+    padding: 6px 8px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: 0.2s;
+    min-width: 40px;
+    min-height: 40px;
+}
+.filter-toggle-btn:hover { background: rgba(255,255,255,0.08); }
+.filter-toggle-btn.active { background: rgba(32, 178, 170, 0.2); color: var(--teal-light); }
+
+/* Content tabs inside header row 2 */
 .content-tab {
     flex: 1 1 0;
     min-width: 60px;
@@ -1242,7 +1319,6 @@ html, body {
 
 <!-- ===== APP CONTENT ===== -->
 <div id="appContent" style="display: none;">
-
     <!-- ===== HEADER ===== -->
     <div class="header">
         <!-- Row 1 -->
@@ -1262,21 +1338,31 @@ html, body {
                     <span class="bell-icon">🔔</span>
                     <span id="notificationBadge" class="notification-badge">0</span>
                 </div>
-                <div class="profile-avatar" id="profileAvatar" onclick="openTabContent('profile')">
-                    <img loading="lazy" id="profileImage" src="https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app-assets/1780156694418.png" alt="TENI">
-                </div>
+                <button class="filter-toggle-btn" id="filterToggleBtn" onclick="toggleFilterRow(event)" aria-label="Filter" title="Filter content">
+                    <i class="fas fa-sliders-h"></i>
+                </button>
             </div>
         </div>
 
-        <!-- Row 2 - Content filter tabs (dashed style) -->
-        <div class="header-row-2" id="headerContentTabs">
-            <button class="content-tab social active" onclick="switchTrendingTab('social', this)" data-tab="social">Social</button>
-            <button class="content-tab video" onclick="switchTrendingTab('video', this)" data-tab="video">Video</button>
-            <button class="content-tab ppt" onclick="switchTrendingTab('ppt', this)" data-tab="ppt">PPT</button>
-            <button class="content-tab exam" onclick="switchTrendingTab('mockexam', this)" data-tab="mockexam">Exam</button>
-            <button class="content-tab book" onclick="switchTrendingTab('book', this)" data-tab="book">Book</button>
-            <button class="content-tab research" onclick="switchTrendingTab('research', this)" data-tab="research">Research</button>
-            <button class="content-tab job" onclick="switchTrendingTab('job', this)" data-tab="job">Job</button>
+        <!-- Row 2 — dual mode: user strip OR filter tabs -->
+        <div class="header-row-2" id="headerRow2">
+            <!-- User strip (default) -->
+            <div class="header-user-strip" id="headerUserStrip" onclick="openTabContent('profile')">
+                <div class="header-user-avatar">
+                    <img id="headerUserAvatar" src="https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app-assets/1780156694418.png" alt="User">
+                </div>
+                <div class="header-user-name" id="headerUserName">Medical Student</div>
+            </div>
+            <!-- Filter tabs (hidden by default) -->
+            <div class="header-filters" id="headerFilters">
+                <button class="content-tab social active" onclick="switchTrendingTab('social', this)" data-tab="social">Social</button>
+                <button class="content-tab video" onclick="switchTrendingTab('video', this)" data-tab="video">Video</button>
+                <button class="content-tab ppt" onclick="switchTrendingTab('ppt', this)" data-tab="ppt">PPT</button>
+                <button class="content-tab exam" onclick="switchTrendingTab('mockexam', this)" data-tab="mockexam">Exam</button>
+                <button class="content-tab book" onclick="switchTrendingTab('book', this)" data-tab="book">Book</button>
+                <button class="content-tab research" onclick="switchTrendingTab('research', this)" data-tab="research">Research</button>
+                <button class="content-tab job" onclick="switchTrendingTab('job', this)" data-tab="job">Job</button>
+            </div>
         </div>
     </div>
 
@@ -2254,7 +2340,46 @@ function updateUIForUser() {
     const de = document.getElementById('drawerEmail'); if (de && AppState.currentUser) de.innerText = AppState.currentUser.email;
     const bd = document.getElementById('walletBalanceDisplay'); if (bd) bd.textContent = `${AppState.coinBalance} TENI Coins`;
     const ab = document.getElementById('appealBalance'); if (ab) ab.textContent = AppState.coinBalance;
+
+    // Header user strip
+    const hua = document.getElementById('headerUserAvatar');
+    if (hua) hua.src = AppState.profilePicUrl;
+    const hun = document.getElementById('headerUserName');
+    if (hun) {
+        const badge = isVerified ? ' <span class="verification-badge"><span class="star">★</span></span>' : '';
+        hun.innerHTML = `${AppState.firstName}${badge}`;
+    }
 }
+
+// ================================================================
+// HEADER FILTER TOGGLE
+// ================================================================
+function toggleFilterRow(event) {
+    if (event) event.stopPropagation();
+    const row = document.getElementById('headerRow2');
+    const btn = document.getElementById('filterToggleBtn');
+    if (!row || !btn) return;
+    const isOpen = row.classList.contains('filter-open');
+    if (isOpen) {
+        row.classList.remove('filter-open');
+        btn.classList.remove('active');
+    } else {
+        row.classList.add('filter-open');
+        btn.classList.add('active');
+    }
+}
+
+// Close filter row on outside tap (but not if tap is inside row 2 itself or the toggle button)
+document.addEventListener('click', function(e) {
+    const row = document.getElementById('headerRow2');
+    const btn = document.getElementById('filterToggleBtn');
+    if (!row || !btn) return;
+    if (!row.classList.contains('filter-open')) return;
+    if (row.contains(e.target)) return;
+    if (btn.contains(e.target)) return;
+    row.classList.remove('filter-open');
+    btn.classList.remove('active');
+});
 
 function showAuthModal() {
     if (document.getElementById('authModal')) return;
