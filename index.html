@@ -3072,9 +3072,11 @@ function togglePostMenu(postId, event) {
     const menu = document.getElementById(`postMenu-${postId}`);
     const btn = event?.currentTarget;
     if (!menu || !btn) return;
-    if (menu.classList.contains('portal-open')) { closeOpenMenu(); return; }
+    // Identity check: is this exact menu the currently-open one?
+    if (AppState.openMenuEl === menu) { closeOpenMenu(); return; }
     openPortalMenu(menu, btn);
 }
+
 function editPost(postId) { closeOpenMenu(); const el = document.getElementById(`editPost-${postId}`); if (el) el.style.display = el.style.display === 'block' ? 'none' : 'block'; }
 function cancelPostEdit(postId) { const el = document.getElementById(`editPost-${postId}`); if (el) el.style.display = 'none'; }
 async function savePostEdit(postId) {
@@ -3111,7 +3113,7 @@ function toggleShareOptions(postId, event) {
     const menu = document.getElementById(`shareOptions-${postId}`);
     const btn = event?.currentTarget;
     if (!menu || !btn) return;
-    if (menu.classList.contains('portal-open')) { closeOpenMenu(); return; }
+    if (AppState.openMenuEl === menu) { closeOpenMenu(); return; }
     openPortalMenu(menu, btn);
 }
 async function sharePost(postId, type) {
@@ -3424,9 +3426,10 @@ function toggleHomePostMenu(postId, event) {
     const menu = document.getElementById(`homePostMenu-${postId}`);
     const btn = event?.currentTarget;
     if (!menu || !btn) return;
-    if (menu.classList.contains('portal-open')) { closeOpenMenu(); return; }
+    if (AppState.openMenuEl === menu) { closeOpenMenu(); return; }
     openPortalMenu(menu, btn);
 }
+
 function editHomePost(postId) {
     closeOpenMenu();
     showToast('Switch to the group to edit this post', 'info');
