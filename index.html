@@ -1840,10 +1840,8 @@ html, body {
         <div id="class-tab">
             <div class="class-header">
                 <h2>📚 Class</h2>
-                <div class="class-header-menu" onclick="toggleClassHeaderMenu(event)">
-                    <i class="fas fa-ellipsis-v"></i>
-                </div>
             </div>
+
             <div id="appealBanner" style="background:var(--navy); border-radius:var(--border-radius-card); padding:16px 20px; margin-bottom:16px; display:none; align-items:center; justify-content:space-between; width:100%; border:2px solid var(--gold);">
                 <div>
                     <h4 style="color:var(--gold); font-size:16px; font-weight:900;">👑 Want to become a Verified Teacher?</h4>
@@ -1878,11 +1876,8 @@ html, body {
                 </div>
                 <button class="go-live-btn" onclick="startGoLive()" id="goLiveBtn" style="display:none;">
                     <span class="pulse-dot"></span> 🔴 Go Live
-                </button>
-                <div class="group-banner-actions" id="groupBannerActions">
+                </button>                <div class="group-banner-actions" id="groupBannerActions">
                     <button class="btn" id="joinClassBtn" onclick="toggleGroupJoin(this, event)">➕ Join Class</button>
-                    <button class="btn btn-teal" id="messageOwnerBtn" onclick="openChatWithOwner()" style="display:none;">💬 Message Owner</button>
-                    <button class="btn btn-teal" id="inboxBtn" onclick="openInbox()" style="display:none;">📥 Inbox <span id="inboxCountBadge"></span></button>
                 </div>
             </div>
 
@@ -1964,7 +1959,6 @@ html, body {
             </div>
             <div id="researchContainer"><div class="loading">Loading research...</div></div>
         </div>
-
         <div id="profile-tab">
             <div class="profile-card">
                 <div class="avatar-lg" id="profileAvatarLarge" onclick="changeProfilePic()">
@@ -1973,9 +1967,7 @@ html, body {
                 </div>
                 <h3 id="profileName">Medical Student</h3>
                 <p id="profileEmail">student@email.com</p>
-                <button class="btn btn-teal" style="margin-top:8px;" onclick="changeProfilePic()">🖼️ Change Profile Picture</button>
                 <button class="btn" style="margin-top:8px;" onclick="showModal('depositModal')">💳 Premium: 600 ETB/month</button>
-                <button class="btn btn-danger" onclick="logout()">🚪 Logout</button>
             </div>
             <div style="margin-top:16px;">
                 <h3 style="color:var(--navy); font-weight:900; margin-bottom:12px;">📚 My Library</h3>
@@ -1999,10 +1991,6 @@ html, body {
                 <div class="settings-row">
                     <div class="settings-label">Password<small>Update your password</small></div>
                     <button class="settings-btn" onclick="changePasswordPrompt()">Change</button>
-                </div>
-                <div class="settings-row">
-                    <div class="settings-label">Profile Picture<small>Tap to change</small></div>
-                    <button class="settings-btn" onclick="changeProfilePic()">Change</button>
                 </div>
             </div>
 
@@ -2100,7 +2088,7 @@ html, body {
     <div class="drawer-backdrop" id="drawerBackdrop" onclick="closeDrawer()"></div>
     <div class="drawer" id="drawer">
         <div class="drawer-user">
-            <div class="drawer-avatar" onclick="changeProfilePic()">
+            <div class="drawer-avatar" onclick="closeDrawer(); openTabContent('profile');">
                 <img id="drawerAvatarImg" src="https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app-assets/1780156694418.png" alt="User">
             </div>
             <div class="drawer-user-info">
@@ -2133,11 +2121,6 @@ html, body {
                 <span class="drawer-item-icon">🔬</span>
                 <span>Research</span>
             </div>
-            <div class="drawer-item" data-drawer="messages" id="drawerMessagesItem" onclick="drawerNav('messages')" style="display:none;">
-                <span class="drawer-item-icon">💬</span>
-                <span>Messages</span>
-                <span class="drawer-badge" id="drawerMessagesBadge" style="display:none;">0</span>
-            </div>
             <div class="drawer-item" data-drawer="wallet" onclick="drawerNav('wallet')">
                 <span class="drawer-item-icon">💳</span>
                 <span>Wallet</span>
@@ -2146,18 +2129,10 @@ html, body {
                 <span class="drawer-item-icon">👤</span>
                 <span>Profile</span>
             </div>
-            <div class="drawer-item" data-drawer="settings" onclick="drawerNav('settings')">
-                <span class="drawer-item-icon">⚙️</span>
-                <span>Settings</span>
-            </div>
             <div class="drawer-divider"></div>
             <div class="drawer-item" data-drawer="admin" id="drawerAdminItem" onclick="drawerNav('admin')" style="display:none;">
                 <span class="drawer-item-icon">🛠️</span>
                 <span>Admin</span>
-            </div>
-            <div class="drawer-item logout-item" data-drawer="logout" onclick="logout()">
-                <span class="drawer-item-icon">🚪</span>
-                <span>Logout</span>
             </div>
         </div>
     </div>
@@ -2181,9 +2156,11 @@ html, body {
             <input type="text" class="chat-input" id="chatInput" placeholder="Type a message..." onkeypress="if(event.key==='Enter')sendChatMessage()">
             <button class="chat-send-btn" id="chatSendBtn" onclick="sendChatMessage()"><i class="fas fa-paper-plane"></i></button>
         </div>
-        <div class="chat-blocked-banner" id="chatBlockedBanner" style="display:none;">You can no longer message this user.</div>
+        <div class="chat-blocked-banner" id="chatBlockedBanner" style="display:none;">
+            🚫 You have blocked this user.
+            <button class="settings-btn" onclick="unblockCurrentChat()" style="margin-left:8px; padding:4px 12px;">Unblock</button>
+        </div>
     </div>
-
     <div class="chat-overlay" id="inboxOverlay">
         <div class="chat-header">
             <button class="chat-back-btn" onclick="closeInbox()"><i class="fas fa-arrow-left"></i></button>
@@ -2191,8 +2168,22 @@ html, body {
                 <div class="chat-header-name">Messages</div>
                 <div class="chat-header-sub">All conversations</div>
             </div>
+            <button class="chat-header-menu-btn" onclick="openNewChatModal()" title="New chat">
+                <i class="fas fa-plus"></i>
+            </button>
         </div>
         <div class="chat-messages" id="inboxList" style="padding: 0; background: #f8fafc;"></div>
+    </div>
+
+    <div id="newChatModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('newChatModal')">&times;</span>
+            <h3>💬 New Chat</h3>
+            <div class="form-group">
+                <input type="text" id="newChatSearch" placeholder="Search users by name..." oninput="searchUsersForNewChat(this.value)">
+            </div>
+            <div id="newChatResults"><div style="text-align:center; color:var(--text-muted); padding:20px;">Type at least 2 characters to search...</div></div>
+        </div>
     </div>
 
     <div class="chat-overlay" id="membersOverlay">
@@ -2965,20 +2956,10 @@ function openTabContent(tabId, specificGroupId = null) {
                 const pen = document.getElementById('groupPenIcon'); if (pen) pen.style.display = (AppState.isGroupOwner || AppState.isAdmin) ? 'flex' : 'none';
                 const cpc = document.getElementById('createPostContainer'); if (cpc) cpc.style.display = (AppState.isGroupOwner || AppState.isAdmin) ? 'block' : 'none';
                 const joinBtn = document.getElementById('joinClassBtn');
-                const msgBtn = document.getElementById('messageOwnerBtn');
-                const inboxBtn = document.getElementById('inboxBtn');
                 if (AppState.isGroupOwner || AppState.isAdmin) {
                     if (joinBtn) joinBtn.style.display = 'none';
-                    if (msgBtn) msgBtn.style.display = 'none';
-                    if (inboxBtn) inboxBtn.style.display = 'inline-flex';
-                    updateInboxButtonBadge();
                 } else {
                     if (joinBtn) joinBtn.style.display = 'inline-flex';
-                    if (msgBtn) msgBtn.style.display = 'inline-flex';
-                    if (inboxBtn) inboxBtn.style.display = 'none';
-                    checkIfJoinedGroup(specificGroupId).then(joined => {
-                        if (msgBtn) msgBtn.style.display = joined ? 'inline-flex' : 'none';
-                    });
                 }
                 if (AppState.pendingDeepLink) {
                     const dl = AppState.pendingDeepLink;
@@ -3566,29 +3547,6 @@ async function submitEditGroup() {
     } catch (err) { showToast('Error: ' + err.message, 'error'); }
 }
 
-function toggleClassHeaderMenu(event) {
-    if (event && event._menuToggleHandled) { event._menuToggleHandled = false; return; }
-    event?.stopPropagation();
-    if (AppState.openMenuEl) { closeOpenMenu(); return; }
-    const stale = document.getElementById('classHeaderMenuPortal');
-    if (stale) stale.remove();
-    const btn = event.currentTarget;
-    if (!btn) return;
-    const menu = document.createElement('div');
-    menu.id = 'classHeaderMenuPortal';
-    menu.dataset.ephemeral = 'true';
-    menu.innerHTML = `
-        <div onclick="showModal('createGroupModal');closeOpenMenu();">➕ Create New Group</div>
-        <div class="divider"></div>
-        <div onclick="openTabContent('profile');closeOpenMenu();">👤 Profile</div>
-        <div onclick="openTabContent('settings');closeOpenMenu();">⚙️ Settings</div>
-        <div onclick="openTabContent('wallet');closeOpenMenu();">💳 Wallet</div>
-        <div class="logout-item" onclick="logout();closeOpenMenu();">🚪 Logout</div>`;
-    menu.classList.add('class-header-dropdown');
-    document.body.appendChild(menu);
-    openPortalMenu(menu, btn);
-}
-
 function toggleClassMenu(event) {
     if (event && event._menuToggleHandled) { event._menuToggleHandled = false; return; }
     event?.stopPropagation();
@@ -3601,17 +3559,10 @@ function toggleClassMenu(event) {
     menu.id = 'classMenuPortal';
     menu.dataset.ephemeral = 'true';
     menu.innerHTML = `
-        <div onclick="showModal('editGroupModal');closeOpenMenu();">✏️ Edit Group Info</div>
-        <div onclick="showToast('Boost coming soon','info');closeOpenMenu();">🚀 Boost group</div>
-        <div onclick="openTabContent('wallet');closeOpenMenu();">💳 Wallet</div>
-        <div style="color:var(--red-error);font-weight:800;" onclick="classAction('Delete Group');">⛔ Delete group</div>`;
+        <div onclick="showToast('Boost coming soon','info');closeOpenMenu();">🚀 Boost group</div>`;
     menu.classList.add('three-dot-dropdown');
     document.body.appendChild(menu);
     openPortalMenu(menu, btn);
-}
-function classAction(action) {
-    closeOpenMenu();
-    if (action === 'Delete Group' && AppState.currentGroupId) deleteGroup(AppState.currentGroupId);
 }
 
 function toggleThreeDotMenu(type, event) {
@@ -5203,17 +5154,10 @@ async function createCalculator() {
 // ================================================================
 // DM CHAT (owner ↔ member AND member ↔ member)
 // ================================================================
-async function openChatWithOwner() {
-    if (!AppState.currentGroupId) return showToast('Open a group first', 'error');
-    if (!AppState.currentGroupOwnerId) return showToast('Owner unknown', 'error');
-    if (AppState.currentGroupOwnerId === AppState.userId) return showToast('This is your group', 'info');
-    const joined = await checkIfJoinedGroup(AppState.currentGroupId);
-    if (!joined) return showToast('Join the class first to message', 'error');
-    await openChatThread(AppState.currentGroupId, AppState.currentGroupOwnerId);
-}
 
 async function openChatThread(groupId, partnerId) {
     try {
+        if (partnerId === AppState.userId) return showToast("That's you", 'info');
         const { data: partner } = await sb.from('users').select('user_id, first_name, middle_name, email, profile_pic_url').eq('user_id', partnerId).single();
         AppState.currentChatPartnerId = partnerId;
         AppState.currentChatPartnerName = getDisplayName(partner);
@@ -5234,7 +5178,14 @@ async function openChatThread(groupId, partnerId) {
         }
         if (!thread) return showToast('Could not open chat', 'error');
         AppState.currentThreadId = thread.id;
-        AppState.isBlockedInChat = thread.is_blocked || false;
+
+        // Check if I've blocked this person (my own block status)
+        const { data: myBlock } = await sb.from('user_blocks')
+            .select('*')
+            .eq('blocker_id', AppState.userId)
+            .eq('blocked_id', partnerId)
+            .maybeSingle();
+        AppState.isBlockedInChat = !!myBlock;
 
         document.getElementById('chatHeaderAvatar').src = partner?.profile_pic_url || AppState.profilePicUrl;
         document.getElementById('chatHeaderName').textContent = AppState.currentChatPartnerName;
@@ -5252,7 +5203,6 @@ async function openChatThread(groupId, partnerId) {
         updateAllBadges();
     } catch (err) { console.error(err); showToast('Error opening chat', 'error'); }
 }
-
 async function openChatThreadAsOwner(threadId, memberId, memberName, groupId) {
     try {
         const { data: thread } = await sb.from('dm_threads').select('*').eq('id', threadId).single();
@@ -5262,7 +5212,12 @@ async function openChatThreadAsOwner(threadId, memberId, memberName, groupId) {
         AppState.currentChatPartnerId = memberId;
         AppState.currentChatPartnerName = memberName;
         AppState.currentGroupId = groupId;
-        AppState.isBlockedInChat = thread.is_blocked || false;
+        const { data: myBlock } = await sb.from('user_blocks')
+            .select('*')
+            .eq('blocker_id', AppState.userId)
+            .eq('blocked_id', memberId)
+            .maybeSingle();
+        AppState.isBlockedInChat = !!myBlock;
 
         const { data: group } = await sb.from('groups').select('name, owner_id').eq('id', groupId).single();
         AppState.currentGroupName = group?.name || '';
@@ -5299,8 +5254,26 @@ async function loadChatMessages() {
     const c = document.getElementById('chatMessages'); if (!c || !AppState.currentThreadId) return;
     const { data: msgs, error } = await sb.from('dm_messages').select('*').eq('thread_id', AppState.currentThreadId).order('created_at', { ascending: true });
     if (error) return;
-    if (!msgs?.length) { c.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:30px 20px; font-weight:700; font-size:13px;">Start the conversation 👋</div>'; return; }
-    c.innerHTML = msgs.map(m => {
+
+    // Get everyone I've blocked + their block date
+    const { data: myBlocks } = await sb.from('user_blocks')
+        .select('blocked_id, created_at')
+        .eq('blocker_id', AppState.userId);
+    const myBlockMap = new Map((myBlocks || []).map(b => [b.blocked_id, new Date(b.created_at)]));
+
+    // Filter: hide messages from users I've blocked, sent AFTER the block date
+    const visible = (msgs || []).filter(m => {
+        const blockDate = myBlockMap.get(m.sender_id);
+        if (blockDate && new Date(m.created_at) > blockDate) return false;
+        return true;
+    });
+
+    if (!visible.length) {
+        c.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:30px 20px; font-weight:700; font-size:13px;">Start the conversation 👋</div>';
+        return;
+    }
+
+    c.innerHTML = visible.map(m => {
         const mine = m.sender_id === AppState.userId;
         return `<div class="chat-bubble-row ${mine ? 'mine' : 'theirs'}"><div class="chat-bubble">${m.message ? escapeHtml(m.message) : ''}${m.image_url ? `<img src="${m.image_url}" alt="">` : ''}<div class="chat-time">${new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div></div></div>`;
     }).join('');
@@ -5341,12 +5314,56 @@ function subscribeToChat() {
 
 function toggleChatMenu(event) {
     event?.stopPropagation();
+    if (!AppState.currentChatPartnerId) return;
     const blocked = AppState.isBlockedInChat;
-    const action = blocked ? 'Unblock' : 'Block';
-    if (!confirm(`${action} this user?`)) return;
-    sb.from('dm_threads').update({ is_blocked: !blocked }).eq('id', AppState.currentThreadId).then(() => {
-        AppState.isBlockedInChat = !blocked;
-        showToast(`User ${action.toLowerCase()}ed`, 'success');
+    if (blocked) {
+        if (!confirm('Unblock this user?')) return;
+        unblockUser(AppState.currentChatPartnerId).then(() => {
+            AppState.isBlockedInChat = false;
+            const banner = document.getElementById('chatBlockedBanner');
+            const bar = document.getElementById('chatInputBar');
+            if (banner) banner.style.display = 'none';
+            if (bar) bar.style.display = 'flex';
+            showToast('✅ User unblocked', 'success');
+        });
+    } else {
+        if (!confirm('Block this user? You will no longer receive their messages.')) return;
+        blockUser(AppState.currentChatPartnerId).then(() => {
+            AppState.isBlockedInChat = true;
+            const banner = document.getElementById('chatBlockedBanner');
+            const bar = document.getElementById('chatInputBar');
+            if (banner) banner.style.display = 'block';
+            if (bar) bar.style.display = 'none';
+            showToast('🚫 User blocked', 'info');
+        });
+    }
+}
+
+async function blockUser(userId) {
+    try {
+        await sb.from('user_blocks').insert({ blocker_id: AppState.userId, blocked_id: userId });
+    } catch (err) {
+        if (!err.message.includes('duplicate')) showToast('Error blocking: ' + err.message, 'error');
+    }
+}
+
+async function unblockUser(userId) {
+    try {
+        await sb.from('user_blocks').delete().eq('blocker_id', AppState.userId).eq('blocked_id', userId);
+    } catch (err) {
+        showToast('Error unblocking: ' + err.message, 'error');
+    }
+}
+
+function unblockCurrentChat() {
+    if (!AppState.currentChatPartnerId) return;
+    unblockUser(AppState.currentChatPartnerId).then(() => {
+        AppState.isBlockedInChat = false;
+        const banner = document.getElementById('chatBlockedBanner');
+        const bar = document.getElementById('chatInputBar');
+        if (banner) banner.style.display = 'none';
+        if (bar) bar.style.display = 'flex';
+        showToast('✅ User unblocked', 'success');
     });
 }
 
@@ -5446,7 +5463,7 @@ async function loadMembers() {
 function renderMembersList(filter = '') {
     const c = document.getElementById('membersList'); if (!c) return;
     const q = filter.toLowerCase();
-    const list = AppState.membersList.filter(m => !q || getDisplayName(m).toLowerCase().includes(q) || (m.email || '').toLowerCase().includes(q));
+    const list = AppState.membersList.filter(m => !q || getDisplayName(m).toLowerCase().includes(q));
     if (!list.length) { c.innerHTML = '<div class="inbox-empty">No members found.</div>'; return; }
     c.innerHTML = list.map(m => {
         const name = getDisplayName(m);
@@ -5454,16 +5471,14 @@ function renderMembersList(filter = '') {
         const isOwner = m.user_id === AppState.currentGroupOwnerId;
         const isMe = m.user_id === AppState.userId;
         const canRemove = (AppState.isGroupOwner || AppState.isAdmin) && !isOwner && !isMe;
-        return `<div class="inbox-item">
+        const safeName = escapeHtml(name).replace(/'/g, '&#39;');
+        const clickHandler = isMe ? `onclick="showToast('That\\'s you','info')"` : `onclick="dmMember('${m.user_id}', '${safeName}')"`;
+        return `<div class="inbox-item" style="cursor:pointer;" ${clickHandler}>
             <div class="inbox-avatar"><img src="${pic}" alt=""></div>
             <div class="inbox-info">
                 <div class="inbox-name">${escapeHtml(name)} ${isOwner ? '<span class="member-crown">👑 Owner</span>' : ''}</div>
-                <div class="inbox-preview">${escapeHtml(m.email || '')}</div>
             </div>
-            <div style="display:flex; gap:6px; flex-shrink:0;">
-                ${!isMe ? `<button class="member-action-btn" onclick="dmMember('${m.user_id}', '${escapeHtml(name).replace(/'/g, '&#39;')}')">💬 Message</button>` : ''}
-                ${canRemove ? `<button class="member-action-btn remove" onclick="removeMember('${m.user_id}', '${escapeHtml(name).replace(/'/g, '&#39;')}')">❌</button>` : ''}
-            </div>
+            ${canRemove ? `<button class="member-action-btn remove" onclick="event.stopPropagation(); removeMember('${m.user_id}', '${safeName}')">❌</button>` : ''}
         </div>`;
     }).join('');
 }
