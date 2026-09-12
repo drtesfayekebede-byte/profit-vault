@@ -1083,7 +1083,12 @@ html, body {
     font-weight: 700;
     font-size: 13px;
     margin: 0;
+    color: var(--text-dark) !important;
+    -webkit-text-fill-color: var(--text-dark) !important;
+    caret-color: var(--text-dark);
+    background: #ffffff;
 }
+.comment-reply-input input::placeholder { color: var(--text-muted); opacity: 1; }
 .comment-reply-input button {
     background: var(--teal);
     color: white;
@@ -1112,8 +1117,8 @@ html, body {
 .comment-edit-input .save-edit-btn { background: var(--gold); color: var(--text-dark); border: none; padding: 4px 14px; border-radius: 20px; font-weight: 800; cursor: pointer; font-size: 12px; }
 .comment-edit-input .cancel-edit-btn { background: #e2e8f0; color: var(--text-dark); border: none; padding: 4px 14px; border-radius: 20px; font-weight: 800; cursor: pointer; font-size: 12px; margin-left: 6px; }
 .comment-input-wrapper { display: flex; gap: 8px; margin-top: 8px; }
-.comment-input-wrapper input { flex: 1; padding: 10px 14px; border: 1px solid #eee; border-radius: 20px; font-weight: 700; font-size: 14px; }
-.comment-input-wrapper button { background: var(--teal); color: white; border: none; padding: 8px 20px; border-radius: 20px; font-weight: 800; cursor: pointer; font-size: 14px; }
+.comment-input-wrapper input { flex: 1; padding: 10px 14px; border: 1px solid #eee; border-radius: 20px; font-weight: 700; font-size: 14px; color: var(--text-dark) !important; -webkit-text-fill-color: var(--text-dark) !important; caret-color: var(--text-dark); background: #ffffff; }
+.comment-input-wrapper input::placeholder { color: var(--text-muted); opacity: 1; }
 
 /* ===== READ MORE / LESS ===== */
 .long-text-body { white-space: pre-wrap; word-wrap: break-word; }
@@ -1563,8 +1568,12 @@ html, body {
     outline: none;
     font-family: var(--font-main);
     background: #f8fafc;
+    color: var(--text-dark) !important;
+    -webkit-text-fill-color: var(--text-dark) !important;
+    caret-color: var(--text-dark);
 }
-.chat-input:focus { border-color: var(--teal); background: white; }
+.chat-input:focus { border-color: var(--teal); background: white; color: var(--text-dark) !important; }
+.chat-input::placeholder { color: var(--text-muted); opacity: 1; }
 .chat-send-btn {
     background: var(--gold);
     border: none;
@@ -3090,6 +3099,7 @@ async function checkSession() {
             startTrendingUpdates();
             loadGlobalTrending();
             updateAllBadges();
+            subscribeToInbox();
         } else {
             showAuthModal();
             document.getElementById('loadingOverlay').style.display = 'none';
@@ -5170,7 +5180,15 @@ async function openChatThread(groupId, partnerId) {
 
         let thread = existing;
         if (!thread) {
-            const { data: created } = await sb.from('dm_threads').insert({ group_id: groupId, member_id: meId, owner_id: partnerId }).select().single();
+            const { data: created } = await sb.from('dm_threads').insert({
+                group_id: groupId,
+                member_id: meId,
+                owner_id: partnerId,
+                last_message_at: new Date(),
+                last_message_preview: '',
+                unread_for_owner: 0,
+                unread_for_member: 0
+            }).select().single();
             thread = created;
         } else {
             const isOwnerSide = thread.owner_id === meId;
@@ -5287,10 +5305,26 @@ async function sendChatMessage() {
     input.value = '';
     try {
         await sb.from('dm_messages').insert({ thread_id: AppState.currentThreadId, sender_id: AppState.userId, message: text });
-        await sb.from('dm_threads').update({ last_message_at: new Date(), last_message_preview: text.substring(0, 60) }).eq('id', AppState.currentThreadId);
+
+        // Figure out whether I'm owner or member in this thread, then bump the OTHER side's unread
+        const { data: thread } = await sb.from('dm_threads').select('owner_id, member_id, unread_for_owner, unread_for_member').eq('id', AppState.currentThreadId).single();
+        if (thread) {
+            const iAmOwner = thread.owner_id === AppState.userId;
+            const update = {
+                last_message_at: new Date(),
+                last_message_preview: text.substring(0, 60)
+            };
+            if (iAmOwner) {
+                update.unread_for_member = (thread.unread_for_member || 0) + 1;
+            } else {
+                update.unread_for_owner = (thread.unread_for_owner || 0) + 1;
+            }
+            await sb.from('dm_threads').update(update).eq('id', AppState.currentThreadId);
+        }
+
         await loadChatMessages();
+        updateAllBadges();
     } catch (err) { showToast('Could not send', 'error'); }
-}
 
 async function sendChatImage(event) {
     const file = event.target.files?.[0]; if (!file || !AppState.currentThreadId) return;
@@ -5424,7 +5458,13 @@ async function loadInbox() {
 function subscribeToInbox() {
     if (AppState.inboxRealtimeChannel) { sb.removeChannel(AppState.inboxRealtimeChannel); AppState.inboxRealtimeChannel = null; }
     AppState.inboxRealtimeChannel = sb.channel('inbox_' + AppState.userId)
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'dm_threads' }, () => { loadInbox(); updateAllBadges(); })
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'dm_threads' }, () => {
+            if (document.getElementById('inboxOverlay')?.classList.contains('open')) loadInbox();
+            updateAllBadges();
+        })
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'dm_messages' }, () => {
+            updateAllBadges();
+        })
         .subscribe();
 }
 
@@ -5675,7 +5715,54 @@ async function updateInboxButtonBadge() {
 // ================================================================
 async function toggleNotificationDropdown(event) {
     event?.stopPropagation();
-    showToast('Notifications coming soon', 'info');
+    if (AppState.openMenuEl) { closeOpenMenu(); return; }
+    const btn = event.currentTarget;
+    if (!btn) return;
+
+    const menu = document.createElement('div');
+    menu.id = 'notificationMenuPortal';
+    menu.dataset.ephemeral = 'true';
+
+    try {
+        const meId = AppState.userId;
+        // 1. Unread DMs
+        const { data: threads } = await sb.from('dm_threads')
+            .select('id, owner_id, member_id, unread_for_owner, unread_for_member, last_message_preview, last_message_at')
+            .or(`owner_id.eq.${meId},member_id.eq.${meId}`)
+            .order('last_message_at', { ascending: false })
+            .limit(20);
+
+        const items = [];
+        (threads || []).forEach(t => {
+            const isOwnerSide = t.owner_id === meId;
+            const unread = isOwnerSide ? (t.unread_for_owner || 0) : (t.unread_for_member || 0);
+            if (unread > 0) {
+                const partnerId = isOwnerSide ? t.member_id : t.owner_id;
+                items.push({
+                    type: 'dm',
+                    partnerId,
+                    preview: t.last_message_preview || 'New message',
+                    time: t.last_message_at
+                });
+            }
+        });
+
+        if (!items.length) {
+            menu.innerHTML = '<div style="padding:16px; color:var(--text-muted); text-align:center; font-weight:700;">No new notifications</div>';
+        } else {
+            menu.innerHTML = items.slice(0, 10).map(i => `
+                <div onclick="closeOpenMenu(); openChatThread(null, '${i.partnerId}')" style="cursor:pointer;">
+                    💬 ${escapeHtml(i.preview.substring(0, 40))}${i.preview.length > 40 ? '…' : ''}
+                </div>
+            `).join('');
+        }
+    } catch (err) {
+        menu.innerHTML = '<div style="padding:16px; color:var(--red-error); text-align:center; font-weight:700;">Could not load</div>';
+    }
+
+    menu.classList.add('class-header-dropdown');
+    document.body.appendChild(menu);
+    openPortalMenu(menu, btn);
 }
 
 // ================================================================
