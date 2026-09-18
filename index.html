@@ -3125,12 +3125,27 @@ function openTabContent(tabId, specificGroupId = null) {
                 const live = document.getElementById('goLiveBtn'); if (live) live.style.display = (AppState.isGroupOwner || AppState.isAdmin) ? 'flex' : 'none';
                 const pen = document.getElementById('groupPenIcon'); if (pen) pen.style.display = (AppState.isGroupOwner || AppState.isAdmin) ? 'flex' : 'none';
                 const cpc = document.getElementById('createPostContainer'); if (cpc) cpc.style.display = (AppState.isGroupOwner || AppState.isAdmin) ? 'block' : 'none';
-                const joinBtn = document.getElementById('joinClassBtn');
-                if (AppState.isGroupOwner || AppState.isAdmin) {
-                    if (joinBtn) joinBtn.style.display = 'none';
-                } else {
-                    if (joinBtn) joinBtn.style.display = 'inline-flex';
-                }
+const joinBtn = document.getElementById('joinClassBtn');
+if (AppState.isGroupOwner || AppState.isAdmin) {
+    if (joinBtn) joinBtn.style.display = 'none';
+} else if (joinBtn) {
+    joinBtn.style.display = 'inline-flex';
+    // Check if I already joined this group and update the button accordingly
+    sb.from('group_subscriptions')
+        .select('user_id')
+        .eq('user_id', AppState.userId)
+        .eq('group_id', specificGroupId)
+        .maybeSingle()
+        .then(({ data }) => {
+            if (data) {
+                joinBtn.innerText = '✅ Joined';
+                joinBtn.className = 'btn btn-teal';
+            } else {
+                joinBtn.innerText = '➕ Join Class';
+                joinBtn.className = 'btn';
+            }
+        });
+}
                 if (AppState.pendingDeepLink) {
                     const dl = AppState.pendingDeepLink;
                     setTimeout(() => switchGroupTab(dl.tabId, dl.triggerBtn || null), 200);
@@ -3619,8 +3634,11 @@ async function toggleGroupJoin(btn, event) {
     if (event) event.stopPropagation();
     if (!AppState.userId) return showToast('Login first.', 'error');
     if (btn.innerText.includes('Owner')) return showToast('📌 This is your group!', 'info');
-    let gid = btn.dataset.groupId;
-    if (!gid) { const c = btn.closest('.teacher-card'); if (c?.dataset.groupId) gid = c.dataset.groupId; }
+    let gid = btn.dataset.groupId
+           || btn.closest('.teacher-card')?.dataset.groupId
+           || btn.closest('.group-banner')?.dataset.groupId
+           || (document.getElementById('groupBanner')?.dataset.groupId)
+           || AppState.currentGroupId;
     if (!gid) return showToast('❌ Cannot identify group.', 'error');
     try {
         let g = AppState.groups.find(x => x.id == gid);
