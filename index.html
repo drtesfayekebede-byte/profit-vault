@@ -3157,8 +3157,8 @@ if (AppState.isGroupOwner || AppState.isAdmin) {
             }, 400);
         }
     }
-
     if (tabId === 'class') {
+        applyVerificationUI();   // ← the missing piece
         renderUserGroups();
         updateTrendingGroups();
     }
@@ -3291,6 +3291,26 @@ async function checkSession() {
     }
 }
 
+function applyVerificationUI() {
+    const isVerified = AppState.isAdmin || AppState.isTeacher;
+
+    // 1. Appeal banner (visible only for un-verified users)
+    const appealBanner = document.getElementById('appealBanner');
+    if (appealBanner) appealBanner.style.display = isVerified ? 'none' : 'flex';
+
+    // 2. Legacy appeal button containers
+    document.querySelectorAll('#appealBtnContainer, #appealBtnContainerClass').forEach(el => {
+        el.style.display = isVerified ? 'none' : 'block';
+    });
+
+    // 3. Create Group button — verified users only, and only if they don't own one yet
+    const createGroupBtn = document.getElementById('createGroupBtn');
+    if (createGroupBtn) {
+        const hasGroup = (AppState.groups || []).some(g => g.owner_id === AppState.userId);
+        createGroupBtn.style.display = (isVerified && !hasGroup) ? 'block' : 'none';
+    }
+}
+
 function updateUIForUser() {
     const isVerified = AppState.isAdmin || AppState.isTeacher;
     const fullName = getDisplayName({ first_name: AppState.firstName, middle_name: AppState.middleName, email: AppState.currentUser?.email });
@@ -3298,11 +3318,7 @@ function updateUIForUser() {
     if (adminItem) adminItem.style.display = AppState.isAdmin ? 'flex' : 'none';
     const msgs = document.getElementById('drawerMessagesItem');
     if (msgs) msgs.style.display = 'flex';
-    document.querySelectorAll('#appealBtnContainer, #appealBtnContainerClass').forEach(el => { el.style.display = isVerified ? 'none' : 'block'; });
-    const appealBanner = document.getElementById('appealBanner');
-    if (appealBanner) appealBanner.style.display = isVerified ? 'none' : 'flex';
-    const createGroupBtn = document.getElementById('createGroupBtn');
-    if (createGroupBtn) createGroupBtn.style.display = (AppState.isAdmin || AppState.isTeacher) ? 'block' : 'none';
+    applyVerificationUI();
     const profileName = document.getElementById('profileName');
     if (profileName) {
         const badge = isVerified ? ' <span class="verification-badge"><span class="star">★</span></span>' : '';
