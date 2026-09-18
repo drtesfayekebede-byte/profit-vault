@@ -5376,11 +5376,21 @@ async function openChatThread(groupId, partnerId) {
         document.getElementById('chatOverlay').classList.add('open');
         document.getElementById('chatBlockedBanner').style.display = AppState.isBlockedInChat ? 'block' : 'none';
         document.getElementById('chatInputBar').style.display = AppState.isBlockedInChat ? 'none' : 'flex';
-        await loadChatMessages();
-        await markMessagesSeen();
-        await loadChatMessages(); // refresh to show ✓✓ on other side instantly
+
+        const c = document.getElementById('chatMessages');
+        if (c) c.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:30px; font-weight:700; font-size:13px;"><div class="spinner" style="margin:0 auto 8px;"></div>Loading messages…</div>';
+
         subscribeToChat();
-        updateAllBadges();
+        loadChatMessages().then(() => {
+            markMessagesSeen().then(() => {
+                document.querySelectorAll('.chat-status').forEach(el => {
+                    if (el.classList.contains('sent')) {
+                        el.className = 'chat-status seen';
+                        el.textContent = '✓✓ seen';
+                    }
+                });
+            });
+        });
     } catch (err) { console.error(err); showToast('Error opening chat', 'error'); }
 }
 async function openChatThreadAsOwner(threadId, memberId, memberName, groupId) {
@@ -5411,17 +5421,29 @@ async function openChatThreadAsOwner(threadId, memberId, memberName, groupId) {
         if (menuBtn) menuBtn.style.display = 'flex';
 
         await sb.from('dm_threads').update({ unread_for_owner: 0, unread_for_member: 0 }).eq('id', threadId);
-
         document.getElementById('chatOverlay').classList.add('open');
         document.getElementById('chatBlockedBanner').style.display = 'none';
         document.getElementById('chatInputBar').style.display = 'flex';
 
+        // Show a loading state immediately
+        const c = document.getElementById('chatMessages');
+        if (c) c.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:30px; font-weight:700; font-size:13px;"><div class="spinner" style="margin:0 auto 8px;"></div>Loading messages…</div>';
+
         closeInbox();
-       await loadChatMessages();
-       await markMessagesSeen();
-       await loadChatMessages();
-       subscribeToChat();
-       updateAllBadges();
+
+        // Fire these in parallel — no waiting on each other
+        subscribeToChat();
+        loadChatMessages().then(() => {
+            markMessagesSeen().then(() => {
+                // Only re-render the tick statuses, not the whole message list
+                document.querySelectorAll('.chat-status').forEach(el => {
+                    if (el.classList.contains('sent')) {
+                        el.className = 'chat-status seen';
+                        el.textContent = '✓✓ seen';
+                    }
+                });
+            });
+        });
     } catch (err) { console.error(err); showToast('Error opening chat', 'error'); }
 }
 
@@ -6025,8 +6047,9 @@ async function matchContacts({ emails, phones }) {
 // ================================================================
 // BADGES
 // ================================================================
-async function updateAllBadges() {
-    await Promise.all([updateNotificationBadge(), updateMessagesBadge(), updateInboxButtonBadge()]);
+function updateAllBadges() {
+    // Fire and forget — don't block UI
+    Promise.all([updateNotificationBadge(), updateMessagesBadge(), updateInboxButtonBadge()]).catch(() => {});
 }
 async function updateNotificationBadge() {
     try {
