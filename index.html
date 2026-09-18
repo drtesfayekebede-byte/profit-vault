@@ -1744,7 +1744,7 @@ html, body {
 }
 .inbox-info { flex: 1; min-width: 0; }
 .inbox-name { font-size: 15px; font-weight: 900; color: var(--text-dark); display: flex; align-items: center; gap: 6px; }
-.inbox-name .unread-indicator { color: var(--gold); font-size: 14px; }
+
 .inbox-preview {
     font-size: 13px;
     color: var(--text-muted);
@@ -1754,10 +1754,33 @@ html, body {
     text-overflow: ellipsis;
     margin-top: 2px;
 }
-.inbox-meta { text-align: right; flex-shrink: 0; }
+.inbox-item.unread .inbox-name {
+    font-weight: 900;
+    color: var(--navy);
+}
+.inbox-item.unread .inbox-preview {
+    font-weight: 900;
+    color: var(--text-dark);
+}
+.inbox-meta { text-align: right; flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; min-width: 52px; }
 .inbox-time { font-size: 11px; color: var(--text-muted); font-weight: 700; }
+.inbox-item.unread .inbox-time { color: var(--teal); font-weight: 900; }
 .inbox-group { font-size: 11px; color: var(--teal); font-weight: 700; margin-top: 2px; }
-.inbox-empty { padding: 40px 20px; text-align: center; color: var(--text-muted); font-weight: 700; }
+.inbox-unread-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 22px;
+    height: 22px;
+    padding: 0 7px;
+    background: var(--teal);
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 900;
+    border-radius: 11px;
+    box-shadow: 0 2px 6px rgba(0,128,128,0.35);
+    line-height: 1;
+}
 .member-action-btn {
     background: var(--teal);
     color: white;
@@ -2791,6 +2814,17 @@ function showModal(id) {
 function closeModal(id) {
     const modal = document.getElementById(id);
     if (modal) modal.classList.remove('active');
+}
+
+function formatInboxTime(d) {
+    const now = new Date();
+    const sameDay = d.toDateString() === now.toDateString();
+    const yest = new Date(); yest.setDate(now.getDate() - 1);
+    if (sameDay) return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    if (d.toDateString() === yest.toDateString()) return 'Yesterday';
+    const diffDays = (now - d) / 86400000;
+    if (diffDays < 7) return d.toLocaleDateString(undefined, { weekday: 'short' });
+    return d.toLocaleDateString(undefined, { day: 'numeric', month: 'short' });
 }
 
 function formatChatDate(d) {
@@ -5381,6 +5415,25 @@ async function openChatThreadAsOwner(threadId, memberId, memberName, groupId) {
     } catch (err) { console.error(err); showToast('Error opening chat', 'error'); }
 }
 
+async function markMessagesSeen() {
+    if (!AppState.currentThreadId || !AppState.userId) return;
+    try {
+        await sb.from('dm_messages')
+            .update({ seen: true, seen_at: new Date() })
+            .eq('thread_id', AppState.currentThreadId)
+            .neq('sender_id', AppState.userId)
+            .eq('seen', false);
+
+        const { data: thread } = await sb.from('dm_threads').select('owner_id, member_id').eq('id', AppState.currentThreadId).single();
+        if (thread) {
+            const iAmOwner = thread.owner_id === AppState.userId;
+            const update = iAmOwner ? { owner_last_seen_at: new Date() } : { member_last_seen_at: new Date() };
+            await sb.from('dm_threads').update(update).eq('id', AppState.currentThreadId);
+        }
+    } catch (e) { /* silent */ }
+}
+
+
 function closeChat() {
     document.getElementById('chatOverlay').classList.remove('open');
     if (AppState.chatRealtimeChannel) { sb.removeChannel(AppState.chatRealtimeChannel); AppState.chatRealtimeChannel = null; }
@@ -5712,31 +5765,43 @@ async function loadInbox() {
         const { data: groups } = await sb.from('groups').select('id, name').in('id', groupIds);
         const uMap = (users || []).reduce((a, u) => { a[u.user_id] = u; return a; }, {});
         const gMap = (groups || []).reduce((a, g) => { a[g.id] = g.name; return a; }, {});
-
         c.innerHTML = threadsWithPartner.map(t => {
             const u = uMap[t._partnerId] || {};
             const name = getDisplayName(u);
-            const unread = t.owner_id === meId ? (t.unread_for_owner || 0) > 0 : (t.unread_for_member || 0) > 0;
-            const timeStr = t.last_message_at ? new Date(t.last_message_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
-            return `<div class="inbox-item ${unread ? 'unread' : ''}" onclick="openChatThreadAsOwner('${t.id}', '${t._partnerId}', '${escapeHtml(name)}', ${t.group_id})">
-                <div class="inbox-avatar"><img src="${u.profile_pic_url || AppState.profilePicUrl}" alt="">${unread ? '<span class="unread-dot"></span>' : ''}</div>
+            // Actual unread NUMBER (not just boolean)
+            const unreadCount = t.owner_id === meId ? (t.unread_for_owner || 0) : (t.unread_for_member || 0);
+            const isUnread = unreadCount > 0;
+
+            // Time: show "2:45 PM" if today, "Yesterday", or a date
+            const timeStr = t.last_message_at ? formatInboxTime(new Date(t.last_message_at)) : '';
+
+            // Seen tick (✓✓) logic — only meaningful if I sent the last message
+            const partnerLastSeen = t.owner_id === meId ? t.member_last_seen_at : t.owner_last_seen_at;
+            const myLastSeen      = t.owner_id === meId ? t.owner_last_seen_at  : t.member_last_seen_at;
+            const seen = partnerLastSeen && myLastSeen && new Date(partnerLastSeen) >= new Date(myLastSeen);
+            const preview = escapeHtml(t.last_message_preview || 'No messages yet');
+
+            const badgeHtml = isUnread
+                ? `<div class="inbox-unread-badge">${unreadCount > 99 ? '99+' : unreadCount}</div>`
+                : '';
+
+            return `<div class="inbox-item ${isUnread ? 'unread' : ''}" onclick="openChatThreadAsOwner('${t.id}', '${t._partnerId}', '${escapeHtml(name)}', ${t.group_id})">
+                <div class="inbox-avatar">
+                    <img src="${u.profile_pic_url || AppState.profilePicUrl}" alt="">
+                    ${isUnread ? '<span class="unread-dot"></span>' : ''}
+                </div>
                 <div class="inbox-info">
-                    <div class="inbox-name">${escapeHtml(name)} ${unread ? '<span class="unread-indicator">●</span>' : ''}</div>
-                    <div class="inbox-preview">${(() => {
-    const preview = escapeHtml(t.last_message_preview || 'No messages yet');
-    const myField = t.owner_id === meId ? 'unread_for_owner' : 'unread_for_member';
-    const partnerLastSeen = t.owner_id === meId ? t.member_last_seen_at : t.owner_last_seen_at;
-    const myLastSeen = t.owner_id === meId ? t.owner_last_seen_at : t.member_last_seen_at;
-    // Show ✓✓ if the partner's last_seen is newer than my last_seen (i.e. they've been in the chat since)
-    const seen = partnerLastSeen && myLastSeen && new Date(partnerLastSeen) >= new Date(myLastSeen);
-    return `${seen ? '<span class="seen-tick">✓✓</span>' : ''}${preview}`;
-})()}</div>
+                    <div class="inbox-name">${escapeHtml(name)}</div>
+                    <div class="inbox-preview">${seen ? '<span class="seen-tick">✓✓</span>' : ''}${preview}</div>
                     <div class="inbox-group">📂 ${escapeHtml(gMap[t.group_id] || '')}</div>
                 </div>
-                <div class="inbox-meta"><div class="inbox-time">${timeStr}</div></div>
+                <div class="inbox-meta">
+                    <div class="inbox-time">${timeStr}</div>
+                    ${badgeHtml}
+                </div>
             </div>`;
         }).join('');
-    } catch (err) { console.error(err); c.innerHTML = '<div class="inbox-empty">Could not load messages.</div>'; }
+ } catch (err) { console.error(err); c.innerHTML = '<div class="inbox-empty">Could not load messages.</div>'; }
 }
 
 function subscribeToInbox() {
