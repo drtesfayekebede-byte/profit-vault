@@ -1344,11 +1344,229 @@ html, body {
     color: var(--teal);
 }
 
-/* ===== ADMIN ===== */
-#admin-tab .card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--border-radius-card); padding: 20px; margin-bottom: 18px; transition: all 0.3s ease; }
-#admin-tab .card:hover { background: var(--card-hover); box-shadow: var(--shadow-sm); }
-#admin-tab .card h3 { margin-bottom: 15px; font-size: 20px; font-weight: 900; border-left: 4px solid var(--gold); padding-left: 12px; color: var(--navy); }
+/* ===== ADMIN PANEL v2 ===== */
+#admin-tab { padding-bottom: 40px; }
 
+.admin-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    padding: 0 4px;
+}
+.admin-header h2 {
+    color: var(--navy);
+    font-size: 22px;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.admin-tabs {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding: 4px 0 12px 0;
+    margin-bottom: 4px;
+    border-bottom: 2px solid var(--card-border);
+}
+.admin-tabs::-webkit-scrollbar { display: none; }
+
+.admin-tab-btn {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 20px;
+    border: none;
+    background: var(--card-bg);
+    color: var(--text-dark);
+    font-family: var(--font-main);
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: 0.2s;
+    position: relative;
+}
+.admin-tab-btn:hover { background: var(--card-hover); }
+.admin-tab-btn.active {
+    background: var(--navy);
+    color: white;
+}
+.admin-tab-btn .admin-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    background: var(--red-error);
+    color: white;
+    font-size: 10px;
+    font-weight: 900;
+    border-radius: 9px;
+    line-height: 1;
+}
+.admin-tab-btn.active .admin-badge { background: var(--gold); color: var(--navy); }
+
+.admin-pane { display: none; animation: fadeIn 0.2s; }
+.admin-pane.active { display: block; }
+
+.admin-empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-muted);
+    font-weight: 700;
+    background: var(--card-bg);
+    border-radius: 16px;
+    border: 1px dashed var(--card-border);
+}
+.admin-empty .admin-empty-icon { font-size: 42px; margin-bottom: 10px; display: block; }
+
+.admin-item {
+    background: white;
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 12px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    box-shadow: var(--shadow-sm);
+    transition: 0.2s;
+}
+.admin-item:hover { box-shadow: var(--shadow-md); }
+.admin-item-thumb {
+    width: 60px;
+    height: 60px;
+    border-radius: 10px;
+    background: var(--navy);
+    color: var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+.admin-item-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.admin-item-body { flex: 1; min-width: 0; }
+.admin-item-title {
+    font-size: 15px;
+    font-weight: 900;
+    color: var(--text-dark);
+    margin-bottom: 3px;
+    word-wrap: break-word;
+}
+.admin-item-meta {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 700;
+    margin-bottom: 8px;
+    word-wrap: break-word;
+}
+.admin-item-actions {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 6px;
+}
+.admin-btn {
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: none;
+    font-family: var(--font-main);
+    font-size: 12px;
+    font-weight: 900;
+    cursor: pointer;
+    transition: 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+.admin-btn:active { transform: scale(0.96); }
+.admin-btn.approve { background: var(--green-success); color: white; }
+.admin-btn.approve:hover { background: #059669; }
+.admin-btn.reject { background: #fee2e2; color: var(--red-error); }
+.admin-btn.reject:hover { background: #fecaca; }
+.admin-btn.danger { background: var(--red-error); color: white; }
+.admin-btn.danger:hover { background: #dc2626; }
+.admin-btn.neutral { background: var(--card-bg); color: var(--text-dark); border: 1px solid var(--card-border); }
+.admin-btn.neutral:hover { background: var(--card-hover); }
+.admin-btn.gold { background: var(--gold); color: var(--text-dark); }
+.admin-btn.gold:hover { background: var(--gold-dark); }
+
+.admin-user-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    background: white;
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    margin-bottom: 8px;
+}
+.admin-user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--teal);
+    overflow: hidden;
+    flex-shrink: 0;
+}
+.admin-user-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.admin-user-info { flex: 1; min-width: 0; }
+.admin-user-name {
+    font-size: 14px;
+    font-weight: 900;
+    color: var(--text-dark);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+.admin-user-email {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 700;
+    word-wrap: break-word;
+}
+.admin-user-actions {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+.admin-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 900;
+    margin-left: 4px;
+}
+.admin-tag.verified { background: rgba(0,128,128,0.15); color: var(--teal); }
+.admin-tag.banned { background: #fee2e2; color: var(--red-error); }
+.admin-tag.admin { background: rgba(255,215,0,0.2); color: var(--gold-dark); }
+
+.admin-search {
+    width: 100%;
+    padding: 10px 16px;
+    border: 1px solid var(--card-border);
+    border-radius: 24px;
+    font-family: var(--font-main);
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    background: white;
+    outline: none;
+}
+.admin-search:focus { border-color: var(--navy); }
 /* ===== WALLET ===== */
 .wallet-balance { background: var(--navy); border-radius: var(--border-radius-card); padding: 20px; text-align: center; color: white; margin-bottom: 16px; }
 .wallet-balance .amount { font-size: 36px; color: var(--gold); font-weight: 900; }
@@ -5377,22 +5595,586 @@ async function loadMyLibrary() {
 }
 
 // ================================================================
-// ADMIN
+// ADMIN PANEL v2 — full functional panel
 // ================================================================
+const ADMIN_TABS = [
+    { key: 'books',       icon: '📖', label: 'Books' },
+    { key: 'research',    icon: '🔬', label: 'Research' },
+    { key: 'appeals',     icon: '👑', label: 'Appeals' },
+    { key: 'coins',       icon: '💰', label: 'Coins' },
+    { key: 'payments',    icon: '💳', label: 'Payments' },
+    { key: 'withdrawals', icon: '📤', label: 'Withdraw' },
+    { key: 'reports',     icon: '🚨', label: 'Reports' },
+    { key: 'users',       icon: '👥', label: 'Users' }
+];
+
+let _adminActiveTab = 'books';
+let _adminCounts = {};
+let _adminUserCache = {};
+
 async function loadAdminPanel() {
-    const c = document.getElementById('tabContentContainer'); if (!c) return;
-    if (!AppState.isAdmin) { c.innerHTML = '<div class="card"><h3>⛔ Access Denied</h3></div>'; return; }
+    const c = document.getElementById('admin-tab'); if (!c) return;
+    if (!AppState.isAdmin) {
+        c.innerHTML = '<div class="admin-empty"><span class="admin-empty-icon">⛔</span>Access Denied.<br>Only admins can view this page.</div>';
+        return;
+    }
+
     c.innerHTML = `
-        <div class="card"><h3>⚙️ TENI Admin</h3></div>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
-            <div class="card" onclick="showModal('bstoreUploadModal')" style="cursor:pointer;"><div style="font-size:32px;">📖</div><h4>Upload Book</h4></div>
-            <div class="card" onclick="showModal('createCalculatorModal')" style="cursor:pointer;"><div style="font-size:32px;">🧮</div><h4>Calculator</h4></div>
-        </div>`;
+        <div class="admin-header">
+            <h2>⚙️ Admin Panel</h2>
+            <button class="admin-btn neutral" onclick="refreshAdminPanel()">🔄 Refresh</button>
+        </div>
+        <div class="admin-tabs" id="adminTabsRow">
+            ${ADMIN_TABS.map(t => `
+                <button class="admin-tab-btn ${t.key === _adminActiveTab ? 'active' : ''}"
+                        id="adminTabBtn-${t.key}"
+                        onclick="switchAdminTab('${t.key}')">
+                    ${t.icon} ${t.label}
+                    <span class="admin-badge" id="adminBadge-${t.key}" style="display:none;">0</span>
+                </button>
+            `).join('')}
+        </div>
+        <div id="adminPaneWrap">
+            ${ADMIN_TABS.map(t => `<div class="admin-pane ${t.key === _adminActiveTab ? 'active' : ''}" id="adminPane-${t.key}">
+                <div class="loading"><div class="spinner"></div>Loading…</div>
+            </div>`).join('')}
+        </div>
+    `;
+
+    await Promise.all([refreshAdminCounts(), renderAdminTab(_adminActiveTab)]);
 }
-async function approveBook(id) { await sb.from('bstore_books').update({ status: 'approved' }).eq('id', id); showToast('✅ Approved', 'success'); loadBStore(); }
-async function rejectBook(id) { await sb.from('bstore_books').update({ status: 'rejected' }).eq('id', id); showToast('Rejected', 'info'); }
-async function approveResearch(id) { await sb.from('research_papers').update({ status: 'approved' }).eq('id', id); showToast('✅ Approved', 'success'); loadResearch(); }
-async function rejectResearch(id) { await sb.from('research_papers').update({ status: 'rejected' }).eq('id', id); showToast('Rejected', 'info'); }
+
+async function refreshAdminPanel() {
+    const c = document.getElementById('admin-tab'); if (!c || !AppState.isAdmin) return;
+    await Promise.all([refreshAdminCounts(), renderAdminTab(_adminActiveTab)]);
+    showToast('🔄 Refreshed', 'success');
+}
+
+function switchAdminTab(key) {
+    _adminActiveTab = key;
+    document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.remove('active'));
+    const btn = document.getElementById('adminTabBtn-' + key);
+    if (btn) btn.classList.add('active');
+    document.querySelectorAll('.admin-pane').forEach(p => p.classList.remove('active'));
+    const pane = document.getElementById('adminPane-' + key);
+    if (pane) pane.classList.add('active');
+    renderAdminTab(key);
+}
+
+async function refreshAdminCounts() {
+    const counts = { books: 0, research: 0, appeals: 0, coins: 0, payments: 0, withdrawals: 0, reports: 0, users: 0 };
+    try {
+        const [books, research, appeals, coins, payments, withdrawals, reports] = await Promise.all([
+            sb.from('bstore_books').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
+            sb.from('research_papers').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
+            sb.from('appeals').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
+            sb.from('coin_requests').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
+            sb.from('payments').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
+            sb.from('withdrawals').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
+            sb.from('post_reports').select('*', { count: 'exact', head: true }).eq('status', 'pending')
+        ]);
+        counts.books = books.count || 0;
+        counts.research = research.count || 0;
+        counts.appeals = appeals.count || 0;
+        counts.coins = coins.count || 0;
+        counts.payments = payments.count || 0;
+        counts.withdrawals = withdrawals.count || 0;
+        counts.reports = reports.count || 0;
+    } catch (e) { console.warn('admin counts', e); }
+    _adminCounts = counts;
+    Object.keys(counts).forEach(k => {
+        const badge = document.getElementById('adminBadge-' + k);
+        if (!badge) return;
+        if (counts[k] > 0) { badge.textContent = counts[k] > 99 ? '99+' : counts[k]; badge.style.display = 'inline-flex'; }
+        else badge.style.display = 'none';
+    });
+}
+
+async function renderAdminTab(key) {
+    const pane = document.getElementById('adminPane-' + key); if (!pane) return;
+    try {
+        if (key === 'books') return renderAdminBooks(pane);
+        if (key === 'research') return renderAdminResearch(pane);
+        if (key === 'appeals') return renderAdminAppeals(pane);
+        if (key === 'coins') return renderAdminCoins(pane);
+        if (key === 'payments') return renderAdminPayments(pane);
+        if (key === 'withdrawals') return renderAdminWithdrawals(pane);
+        if (key === 'reports') return renderAdminReports(pane);
+        if (key === 'users') return renderAdminUsers(pane);
+    } catch (e) {
+        console.error('admin render', e);
+        pane.innerHTML = '<div class="admin-empty"><span class="admin-empty-icon">❌</span>Failed to load</div>';
+    }
+}
+
+async function adminFetchUsers(userIds) {
+    if (!userIds || !userIds.length) return {};
+    const unique = [...new Set(userIds.filter(Boolean))];
+    const missing = unique.filter(id => !_adminUserCache[id]);
+    if (missing.length) {
+        const { data } = await sb.from('users').select('user_id, first_name, middle_name, email, profile_pic_url, is_teacher, is_admin, is_banned').in('user_id', missing);
+        (data || []).forEach(u => { _adminUserCache[u.user_id] = u; });
+    }
+    const out = {};
+    unique.forEach(id => { out[id] = _adminUserCache[id] || {}; });
+    return out;
+}
+
+// ---------- BOOKS ----------
+async function renderAdminBooks(pane) {
+    const { data } = await sb.from('bstore_books').select('*').eq('status', 'pending').order('created_at', { ascending: false });
+    if (!data || !data.length) {
+        pane.innerHTML = '<div class="admin-empty"><span class="admin-empty-icon">📖</span>No pending books.</div>';
+        return;
+    }
+    const uMap = await adminFetchUsers(data.map(b => b.teacher_id));
+    pane.innerHTML = data.map(b => {
+        const uploader = getDisplayName(uMap[b.teacher_id]);
+        return `
+        <div class="admin-item">
+            <div class="admin-item-thumb">${b.cover_url ? `<img src="${b.cover_url}" alt="">` : '📖'}</div>
+            <div class="admin-item-body">
+                <div class="admin-item-title">${escapeHtml(b.title || 'Untitled')}</div>
+                <div class="admin-item-meta">By ${escapeHtml(b.author || '—')} • Uploaded by ${escapeHtml(uploader)} • ${new Date(b.created_at).toLocaleDateString()}</div>
+                ${b.description ? `<div class="admin-item-meta">${escapeHtml(b.description).substring(0, 140)}${b.description.length > 140 ? '…' : ''}</div>` : ''}
+                <div class="admin-item-actions">
+                    ${b.file_url ? `<a class="admin-btn neutral" href="${b.file_url}" target="_blank" rel="noopener">👁️ Preview</a>` : ''}
+                    <button class="admin-btn approve" onclick="adminApproveBook('${b.id}')">✅ Approve</button>
+                    <button class="admin-btn reject" onclick="adminRejectBook('${b.id}')">❌ Reject</button>
+                </div>
+            </div>
+        </div>`;
+    }).join('');
+}
+async function adminApproveBook(id) {
+    const { error } = await sb.from('bstore_books').update({ status: 'approved' }).eq('id', id);
+    if (error) return showToast('❌ ' + error.message, 'error');
+    showToast('✅ Book approved', 'success');
+    await refreshAdminPanel();
+}
+async function adminRejectBook(id) {
+    const reason = prompt('Rejection reason (optional):') || '';
+    const { error } = await sb.from('bstore_books').update({ status: 'rejected', rejection_reason: reason }).eq('id', id);
+    if (error) return showToast('❌ ' + error.message, 'error');
+    showToast('Book rejected', 'info');
+    await refreshAdminPanel();
+}
+
+// ---------- RESEARCH ----------
+async function renderAdminResearch(pane) {
+    const { data } = await sb.from('research_papers').select('*').eq('status', 'pending').order('created_at', { ascending: false });
+    if (!data || !data.length) {
+        pane.innerHTML = '<div class="admin-empty"><span class="admin-empty-icon">🔬</span>No pending research.</div>';
+        return;
+    }
+    const uMap = await adminFetchUsers(data.map(r => r.uploaded_by));
+    pane.innerHTML = data.map(r => `
+        <div class="admin-item">
+            <div class="admin-item-thumb">📄</div>
+            <div class="admin-item-body">
+                <div class="admin-item-title">${escapeHtml(r.title || 'Untitled')}</div>
+                <div class="admin-item-meta">By ${escapeHtml(r.author || '—')} • Uploaded by ${escapeHtml(getDisplayName(uMap[r.uploaded_by]))} • ${new Date(r.created_at).toLocaleDateString()}</div>
+                <div class="admin-item-actions">
+                    ${r.file_url ? `<a class="admin-btn neutral" href="${r.file_url}" target="_blank" rel="noopener">👁️ Preview</a>` : ''}
+                    <button class="admin-btn approve" onclick="adminApproveResearch('${r.id}')">✅ Approve</button>
+                    <button class="admin-btn reject" onclick="adminRejectResearch('${r.id}')">❌ Reject</button>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+async function adminApproveResearch(id) {
+    const { error } = await sb.from('research_papers').update({ status: 'approved' }).eq('id', id);
+    if (error) return showToast('❌ ' + error.message, 'error');
+    showToast('✅ Research approved', 'success');
+    await refreshAdminPanel();
+}
+async function adminRejectResearch(id) {
+    const reason = prompt('Rejection reason (optional):') || '';
+    const { error } = await sb.from('research_papers').update({ status: 'rejected', rejection_reason: reason }).eq('id', id);
+    if (error) return showToast('❌ ' + error.message, 'error');
+    showToast('Research rejected', 'info');
+    await refreshAdminPanel();
+}
+
+// ---------- APPEALS ----------
+async function renderAdminAppeals(pane) {
+    const { data } = await sb.from('appeals').select('*').eq('status', 'pending').order('created_at', { ascending: false });
+    if (!data || !data.length) {
+        pane.innerHTML = '<div class="admin-empty"><span class="admin-empty-icon">👑</span>No pending appeals.</div>';
+        return;
+    }
+    const uMap = await adminFetchUsers(data.map(a => a.user_id));
+    pane.innerHTML = data.map(a => {
+        const u = uMap[a.user_id] || {};
+        return `
+        <div class="admin-item">
+            <div class="admin-item-thumb">👑</div>
+            <div class="admin-item-body">
+                <div class="admin-item-title">${escapeHtml(getDisplayName(u))}</div>
+                <div class="admin-item-meta">${escapeHtml(u.email || '')}</div>
+                <div class="admin-item-meta">${escapeHtml(a.profession || '—')} • ${escapeHtml(a.university || '—')} • Fee: ${a.fee_coins || 6000} coins</div>
+                <div class="admin-item-actions">
+                    ${a.id_image_url ? `<a class="admin-btn neutral" href="${a.id_image_url}" target="_blank" rel="noopener">🪪 ID</a>` : ''}
+                    ${a.certificate_url ? `<a class="admin-btn neutral" href="${a.certificate_url}" target="_blank" rel="noopener">📜 Certificate</a>` : ''}
+                    <button class="admin-btn approve" onclick="adminApproveAppeal('${a.id}')">✅ Approve</button>
+                    <button class="admin-btn reject" onclick="adminRejectAppeal('${a.id}')">❌ Reject</button>
+                </div>
+            </div>
+        </div>`;
+    }).join('');
+}
+async function adminApproveAppeal(id) {
+    const { data: a } = await sb.from('appeals').select('*').eq('id', id).single();
+    if (!a) return showToast('Appeal not found', 'error');
+    const { error: e1 } = await sb.from('users').update({ is_teacher: true }).eq('user_id', a.user_id);
+    if (e1) return showToast('❌ ' + e1.message, 'error');
+    await sb.from('appeals').update({ status: 'approved', reviewed_by: AppState.userId, reviewed_at: new Date() }).eq('id', id);
+    try {
+        await sb.from('notifications').insert({
+            user_id: a.user_id,
+            actor_id: AppState.userId,
+            type: 'appeal_status',
+            title: '✅ Verification approved',
+            message: 'You are now a Verified Teacher. You can create your class.',
+            link_type: 'user',
+            link_id: a.user_id
+        });
+    } catch (e) {}
+    showToast('✅ User verified', 'success');
+    await refreshAdminPanel();
+}
+async function adminRejectAppeal(id) {
+    const reason = prompt('Rejection reason (coins will be refunded):') || 'Rejected';
+    const { data: a } = await sb.from('appeals').select('*').eq('id', id).single();
+    if (!a) return showToast('Appeal not found', 'error');
+    const refund = a.fee_coins || 6000;
+    const { data: u } = await sb.from('users').select('coin_balance').eq('user_id', a.user_id).single();
+    const newBal = (u?.coin_balance || 0) + refund;
+    await sb.from('users').update({ coin_balance: newBal }).eq('user_id', a.user_id);
+    await sb.from('appeals').update({ status: 'rejected', rejection_reason: reason, refunded: true, reviewed_by: AppState.userId, reviewed_at: new Date() }).eq('id', id);
+    await sb.from('transactions').insert({
+        user_id: a.user_id, type: 'earn', amount: refund,
+        description: 'Refund — verification appeal rejected',
+        reference_id: id, reference_type: 'appeal'
+    }).catch(() => {});
+    try {
+        await sb.from('notifications').insert({
+            user_id: a.user_id,
+            actor_id: AppState.userId,
+            type: 'appeal_status',
+            title: '❌ Verification rejected',
+            message: reason + ' — ' + refund + ' coins refunded.',
+            link_type: 'user',
+            link_id: a.user_id
+        });
+    } catch (e) {}
+    showToast('Appeal rejected & refunded', 'info');
+    await refreshAdminPanel();
+}
+
+// ---------- COINS ----------
+async function renderAdminCoins(pane) {
+    const { data } = await sb.from('coin_requests').select('*').eq('status', 'pending').order('created_at', { ascending: false });
+    if (!data || !data.length) {
+        pane.innerHTML = '<div class="admin-empty"><span class="admin-empty-icon">💰</span>No pending coin requests.</div>';
+        return;
+    }
+    const uMap = await adminFetchUsers(data.map(c => c.user_id));
+    pane.innerHTML = data.map(c => {
+        const u = uMap[c.user_id] || {};
+        return `
+        <div class="admin-item">
+            <div class="admin-item-thumb">💰</div>
+            <div class="admin-item-body">
+                <div class="admin-item-title">${escapeHtml(getDisplayName(u))}</div>
+                <div class="admin-item-meta">${escapeHtml(u.email || '')} • ${c.amount_etb} ETB → ${c.coins_requested} coins</div>
+                <div class="admin-item-meta">Telebirr TX: <strong>${escapeHtml(c.telebirr_tx || '—')}</strong></div>
+                <div class="admin-item-actions">
+                    ${c.receipt_url ? `<a class="admin-btn neutral" href="${c.receipt_url}" target="_blank" rel="noopener">🧾 Receipt</a>` : ''}
+                    <button class="admin-btn approve" onclick="adminApproveCoin('${c.id}')">✅ Approve</button>
+                    <button class="admin-btn reject" onclick="adminRejectCoin('${c.id}')">❌ Reject</button>
+                </div>
+            </div>
+        </div>`;
+    }).join('');
+}
+async function adminApproveCoin(id) {
+    const { data: cr } = await sb.from('coin_requests').select('*').eq('id', id).single();
+    if (!cr) return showToast('Request not found', 'error');
+    const { data: u } = await sb.from('users').select('coin_balance').eq('user_id', cr.user_id).single();
+    const newBal = (u?.coin_balance || 0) + (cr.coins_requested || 0);
+    await sb.from('users').update({ coin_balance: newBal }).eq('user_id', cr.user_id);
+    await sb.from('coin_requests').update({ status: 'approved', reviewed_by: AppState.userId, reviewed_at: new Date() }).eq('id', id);
+    await sb.from('transactions').insert({
+        user_id: cr.user_id, type: 'buy', amount: cr.coins_requested,
+        description: `Coin purchase approved (${cr.amount_etb} ETB)`,
+        reference_id: id, reference_type: 'coin_request'
+    }).catch(() => {});
+    try {
+        await sb.from('notifications').insert({
+            user_id: cr.user_id,
+            actor_id: AppState.userId,
+            type: 'coin_status',
+            title: '💰 Coins added',
+            message: `${cr.coins_requested} coins added to your wallet.`,
+            link_type: 'user', link_id: cr.user_id
+        });
+    } catch (e) {}
+    showToast('✅ Coins credited', 'success');
+    await refreshAdminPanel();
+}
+async function adminRejectCoin(id) {
+    const reason = prompt('Rejection reason (optional):') || '';
+    await sb.from('coin_requests').update({ status: 'rejected', rejection_reason: reason, reviewed_by: AppState.userId, reviewed_at: new Date() }).eq('id', id);
+    showToast('Rejected', 'info');
+    await refreshAdminPanel();
+}
+
+// ---------- PAYMENTS ----------
+async function renderAdminPayments(pane) {
+    const { data } = await sb.from('payments').select('*').eq('status', 'pending').order('created_at', { ascending: false });
+    if (!data || !data.length) {
+        pane.innerHTML = '<div class="admin-empty"><span class="admin-empty-icon">💳</span>No pending premium payments.</div>';
+        return;
+    }
+    const uMap = await adminFetchUsers(data.map(p => p.user_id));
+    pane.innerHTML = data.map(p => {
+        const u = uMap[p.user_id] || {};
+        return `
+        <div class="admin-item">
+            <div class="admin-item-thumb">💳</div>
+            <div class="admin-item-body">
+                <div class="admin-item-title">${escapeHtml(getDisplayName(u))}</div>
+                <div class="admin-item-meta">${escapeHtml(u.email || '')} • ${p.amount_etb} ETB • ${p.days} days</div>
+                <div class="admin-item-meta">Telebirr TX: <strong>${escapeHtml(p.telebirr_tx || '—')}</strong></div>
+                <div class="admin-item-actions">
+                    ${p.receipt_url ? `<a class="admin-btn neutral" href="${p.receipt_url}" target="_blank" rel="noopener">🧾 Receipt</a>` : ''}
+                    <button class="admin-btn approve" onclick="adminApprovePayment('${p.id}')">✅ Approve</button>
+                    <button class="admin-btn reject" onclick="adminRejectPayment('${p.id}')">❌ Reject</button>
+                </div>
+            </div>
+        </div>`;
+    }).join('');
+}
+async function adminApprovePayment(id) {
+    const { data: p } = await sb.from('payments').select('*').eq('id', id).single();
+    if (!p) return showToast('Payment not found', 'error');
+    const { data: u } = await sb.from('users').select('premium_until').eq('user_id', p.user_id).single();
+    const now = new Date();
+    const base = (u?.premium_until && new Date(u.premium_until) > now) ? new Date(u.premium_until) : now;
+    const newUntil = new Date(base.getTime() + (p.days || 30) * 86400000);
+    await sb.from('users').update({ premium_until: newUntil.toISOString() }).eq('user_id', p.user_id);
+    await sb.from('payments').update({ status: 'approved', reviewed_by: AppState.userId, reviewed_at: new Date() }).eq('id', id);
+    try {
+        await sb.from('notifications').insert({
+            user_id: p.user_id,
+            actor_id: AppState.userId,
+            type: 'payment_status',
+            title: '💳 Premium activated',
+            message: `Your premium is active until ${newUntil.toLocaleDateString()}.`,
+            link_type: 'user', link_id: p.user_id
+        });
+    } catch (e) {}
+    showToast('✅ Premium activated', 'success');
+    await refreshAdminPanel();
+}
+async function adminRejectPayment(id) {
+    const reason = prompt('Rejection reason (optional):') || '';
+    await sb.from('payments').update({ status: 'rejected', rejection_reason: reason, reviewed_by: AppState.userId, reviewed_at: new Date() }).eq('id', id);
+    showToast('Rejected', 'info');
+    await refreshAdminPanel();
+}
+
+// ---------- WITHDRAWALS ----------
+async function renderAdminWithdrawals(pane) {
+    const { data } = await sb.from('withdrawals').select('*').eq('status', 'pending').order('created_at', { ascending: false });
+    if (!data || !data.length) {
+        pane.innerHTML = '<div class="admin-empty"><span class="admin-empty-icon">📤</span>No pending withdrawals.</div>';
+        return;
+    }
+    const uMap = await adminFetchUsers(data.map(w => w.user_id));
+    pane.innerHTML = data.map(w => {
+        const u = uMap[w.user_id] || {};
+        return `
+        <div class="admin-item">
+            <div class="admin-item-thumb">📤</div>
+            <div class="admin-item-body">
+                <div class="admin-item-title">${escapeHtml(getDisplayName(u))}</div>
+                <div class="admin-item-meta">${escapeHtml(u.email || '')} • ${w.coins_requested} coins → ${w.etb_amount} ETB</div>
+                <div class="admin-item-meta">Method: <strong>${escapeHtml(w.method || '—')}</strong> • ${escapeHtml(w.account_info || '')}</div>
+                <div class="admin-item-actions">
+                    <button class="admin-btn approve" onclick="adminApproveWithdrawal('${w.id}')">✅ Approve (paid)</button>
+                    <button class="admin-btn reject" onclick="adminRejectWithdrawal('${w.id}')">❌ Reject</button>
+                </div>
+            </div>
+        </div>`;
+    }).join('');
+}
+async function adminApproveWithdrawal(id) {
+    const { data: w } = await sb.from('withdrawals').select('*').eq('id', id).single();
+    if (!w) return showToast('Not found', 'error');
+    const { data: u } = await sb.from('users').select('coin_balance').eq('user_id', w.user_id).single();
+    if ((u?.coin_balance || 0) < (w.coins_requested || 0)) return showToast('User balance insufficient now', 'error');
+    const newBal = (u?.coin_balance || 0) - (w.coins_requested || 0);
+    await sb.from('users').update({ coin_balance: newBal }).eq('user_id', w.user_id);
+    await sb.from('withdrawals').update({ status: 'approved', reviewed_by: AppState.userId, reviewed_at: new Date() }).eq('id', id);
+    await sb.from('transactions').insert({
+        user_id: w.user_id, type: 'withdraw', amount: w.coins_requested,
+        description: `Withdrawal paid (${w.etb_amount} ETB)`,
+        reference_id: id, reference_type: 'withdrawal'
+    }).catch(() => {});
+    try {
+        await sb.from('notifications').insert({
+            user_id: w.user_id,
+            actor_id: AppState.userId,
+            type: 'withdrawal_status',
+            title: '✅ Withdrawal approved',
+            message: `${w.etb_amount} ETB sent via ${w.method || 'your account'}.`,
+            link_type: 'user', link_id: w.user_id
+        });
+    } catch (e) {}
+    showToast('✅ Withdrawal approved', 'success');
+    await refreshAdminPanel();
+}
+async function adminRejectWithdrawal(id) {
+    const reason = prompt('Rejection reason (optional):') || '';
+    await sb.from('withdrawals').update({ status: 'rejected', rejection_reason: reason, reviewed_by: AppState.userId, reviewed_at: new Date() }).eq('id', id);
+    showToast('Rejected', 'info');
+    await refreshAdminPanel();
+}
+
+// ---------- REPORTS ----------
+async function renderAdminReports(pane) {
+    const { data } = await sb.from('post_reports').select('*').eq('status', 'pending').order('created_at', { ascending: false });
+    if (!data || !data.length) {
+        pane.innerHTML = '<div class="admin-empty"><span class="admin-empty-icon">🚨</span>No pending reports.</div>';
+        return;
+    }
+    const postIds = data.map(r => r.post_id);
+    const repIds = data.map(r => r.reporter_id);
+    const { data: posts } = await sb.from('social_posts').select('*').in('id', postIds);
+    const pMap = (posts || []).reduce((a, p) => { a[p.id] = p; return a; }, {});
+    const uMap = await adminFetchUsers([...postIds.map(id => pMap[id]?.user_id), ...repIds]);
+    pane.innerHTML = data.map(r => {
+        const p = pMap[r.post_id] || {};
+        const authorName = getDisplayName(uMap[p.user_id]);
+        const reporterName = getDisplayName(uMap[r.reporter_id]);
+        return `
+        <div class="admin-item">
+            <div class="admin-item-thumb">🚨</div>
+            <div class="admin-item-body">
+                <div class="admin-item-title">Post by ${escapeHtml(authorName)}</div>
+                <div class="admin-item-meta">Reported by ${escapeHtml(reporterName)} • ${new Date(r.created_at).toLocaleDateString()}</div>
+                <div class="admin-item-meta">Reason: <strong>${escapeHtml(r.reason)}</strong>${r.details ? ' — ' + escapeHtml(r.details) : ''}</div>
+                ${p.content ? `<div class="admin-item-meta">📝 "${escapeHtml(p.content).substring(0, 160)}${p.content.length > 160 ? '…' : ''}"</div>` : ''}
+                <div class="admin-item-actions">
+                    <button class="admin-btn neutral" onclick="adminGoToPost('${r.post_id}', '${p.group_id || ''}')">👁️ View Post</button>
+                    <button class="admin-btn reject" onclick="adminDismissReport('${r.id}')">✅ Dismiss</button>
+                    <button class="admin-btn danger" onclick="adminDeleteReportedPost('${r.id}', '${r.post_id}')">🗑️ Delete Post</button>
+                    ${p.user_id ? `<button class="admin-btn danger" onclick="adminBanFromReport('${r.id}', '${p.user_id}')">🚫 Ban Author</button>` : ''}
+                </div>
+            </div>
+        </div>`;
+    }).join('');
+}
+async function adminDismissReport(id) {
+    await sb.from('post_reports').update({ status: 'dismissed', reviewed_by: AppState.userId, reviewed_at: new Date() }).eq('id', id);
+    showToast('Report dismissed', 'info');
+    await refreshAdminPanel();
+}
+async function adminDeleteReportedPost(reportId, postId) {
+    if (!confirm('Delete this post permanently?')) return;
+    await sb.from('social_posts').delete().eq('id', postId);
+    await sb.from('post_reports').update({ status: 'actioned', reviewed_by: AppState.userId, reviewed_at: new Date() }).eq('id', reportId);
+    showToast('🗑️ Post deleted', 'success');
+    await refreshAdminPanel();
+}
+async function adminBanFromReport(reportId, userId) {
+    if (!confirm('Ban this user?')) return;
+    const reason = prompt('Ban reason:') || 'Violation of community guidelines';
+    await sb.from('users').update({ is_banned: true, banned_at: new Date(), banned_reason: reason }).eq('user_id', userId);
+    await sb.from('post_reports').update({ status: 'actioned', reviewed_by: AppState.userId, reviewed_at: new Date() }).eq('id', reportId);
+    showToast('🚫 User banned', 'success');
+    await refreshAdminPanel();
+}
+async function adminGoToPost(postId, groupId) {
+    if (!groupId) return showToast('Group not available', 'info');
+    await openGroupItem(groupId, 'social', postId, 'post');
+}
+
+// ---------- USERS ----------
+let _adminUsersFilter = '';
+async function renderAdminUsers(pane) {
+    pane.innerHTML = `
+        <input type="text" class="admin-search" id="adminUserSearch" placeholder="🔍 Search users by name or email…" value="${escapeHtml(_adminUsersFilter)}" oninput="_adminUsersFilter=this.value; adminRenderUsersList();">
+        <div id="adminUsersList"><div class="loading"><div class="spinner"></div>Loading users…</div></div>
+    `;
+    await adminRenderUsersList();
+}
+async function adminRenderUsersList() {
+    const list = document.getElementById('adminUsersList'); if (!list) return;
+    const q = (_adminUsersFilter || '').trim().toLowerCase();
+    let query = sb.from('users').select('user_id, first_name, middle_name, email, profile_pic_url, is_teacher, is_admin, is_banned, coin_balance, premium_until').order('created_at', { ascending: false }).limit(100);
+    if (q) {
+        query = query.or(`first_name.ilike.%${q}%,middle_name.ilike.%${q}%,email.ilike.%${q}%`);
+    }
+    const { data, error } = await query;
+    if (error) { list.innerHTML = '<div class="admin-empty">Failed to load users</div>'; return; }
+    if (!data || !data.length) {
+        list.innerHTML = '<div class="admin-empty"><span class="admin-empty-icon">👥</span>No users found.</div>';
+        return;
+    }
+    list.innerHTML = data.map(u => {
+        const name = getDisplayName(u);
+        const tags = [];
+        if (u.is_admin) tags.push('<span class="admin-tag admin">ADMIN</span>');
+        else if (u.is_teacher) tags.push('<span class="admin-tag verified">VERIFIED</span>');
+        if (u.is_banned) tags.push('<span class="admin-tag banned">BANNED</span>');
+        const isMe = u.user_id === AppState.userId;
+        return `
+        <div class="admin-user-row">
+            <div class="admin-user-avatar"><img src="${u.profile_pic_url || AppState.profilePicUrl}" alt=""></div>
+            <div class="admin-user-info">
+                <div class="admin-user-name">${escapeHtml(name)} ${tags.join(' ')}</div>
+                <div class="admin-user-email">${escapeHtml(u.email || '')} • 💰 ${u.coin_balance || 0}</div>
+            </div>
+            <div class="admin-user-actions">
+                ${isMe ? '<span class="admin-tag">You</span>' : `
+                    ${u.is_teacher || u.is_admin
+                        ? `<button class="admin-btn neutral" onclick="adminToggleVerify('${u.user_id}', false)">❌ Unverify</button>`
+                        : `<button class="admin-btn approve" onclick="adminToggleVerify('${u.user_id}', true)">✅ Verify</button>`}
+                    ${u.is_banned
+                        ? `<button class="admin-btn approve" onclick="adminToggleBan('${u.user_id}', false)">✅ Unban</button>`
+                        : `<button class="admin-btn danger" onclick="adminToggleBan('${u.user_id}', true)">🚫 Ban</button>`}
+                `}
+            </div>
+        </div>`;
+    }).join('');
+}
+async function adminToggleVerify(userId, verify) {
+    const { error } = await sb.from('users').update({ is_teacher: verify }).eq('user_id', userId);
+    if (error) return showToast('❌ ' + error.message, 'error');
+    showToast(verify ? '✅ User verified' : 'User unverified', 'info');
+    await adminRenderUsersList();
+    await refreshAdminCounts();
+}
+async function adminToggleBan(userId, ban) {
+    const reason = ban ? (prompt('Ban reason:') || 'Violation of community guidelines') : null;
+    const patch = ban
+        ? { is_banned: true, banned_at: new Date(), banned_reason: reason }
+        : { is_banned: false, banned_at: null, banned_reason: null };
+    const { error } = await sb.from('users').update(patch).eq('user_id', userId);
+    if (error) return showToast('❌ ' + error.message, 'error');
+    showToast(ban ? '🚫 User banned' : '✅ User unbanned', 'success');
+    await adminRenderUsersList();
+}
+
+// Legacy wrappers (in case called elsewhere)
+async function approveBook(id) { return adminApproveBook(id); }
+async function rejectBook(id) { return adminRejectBook(id); }
+async function approveResearch(id) { return adminApproveResearch(id); }
+async function rejectResearch(id) { return adminRejectResearch(id); }
 
 // ================================================================
 // CALCULATORS
