@@ -3101,7 +3101,11 @@ function openTabContent(tabId, specificGroupId = null) {
             (async () => {
                 try {
                     const { data } = await sb.from('groups').select('*').eq('id', specificGroupId).single();
-                    if (data) { group = data; AppState.groups.push(group); updateGroupUI(group); }
+                    if (data) {
+                        group = data;
+                        // DON'T push into AppState.groups — that array is only for groups I own
+                        updateGroupUI(group);
+                    }
                 } catch (err) { console.error('fetch group', err); }
             })();
         } else updateGroupUI(group);
@@ -3266,7 +3270,7 @@ async function checkSession() {
             }
             if (session.user.email === 'drtesfayekebede@gmail.com') { AppState.isAdmin = true; AppState.isTeacher = true; }
             const { data: groupData } = await sb.from('groups').select('*').eq('owner_id', AppState.userId);
-            AppState.groups = groupData || [];
+            AppState.groups = (groupData || []).filter(g => g.owner_id === AppState.userId);
             loadSettingsFromStorage();
             applyTheme();
             document.getElementById('appContent').style.display = 'flex';
@@ -3723,10 +3727,19 @@ async function checkIfJoinedGroup(groupId) {
 
 function renderUserGroups() {
     const c = document.getElementById('myGroupsContainer'); if (!c) return;
-    if (AppState.groups?.length > 0) {
+        // Only render groups where I'm actually the owner
+    const myOwnedGroups = (AppState.groups || []).filter(g => g.owner_id === AppState.userId);
+
+    if (myOwnedGroups.length > 0) {
         let html = `<div class="join-header"><h2>📂 My Groups</h2></div>`;
-        AppState.groups.forEach(g => {
-            html += `<div class="teacher-card" style="cursor:pointer;" onclick="openTabContent('group-feed', ${g.id})" data-group-id="${g.id}"><div class="info"><div class="name">${escapeHtml(g.name)}</div><div class="spec">👥 ${g.followers || 0} Followers</div></div><button class="join-btn joined" style="background:var(--gold); color:var(--text-dark); cursor:default;">Owner</button></div>`;
+        myOwnedGroups.forEach(g => {
+            html += `<div class="teacher-card" style="cursor:pointer;" onclick="openTabContent('group-feed', ${g.id})" data-group-id="${g.id}">
+                <div class="info">
+                    <div class="name">${escapeHtml(g.name)}</div>
+                    <div class="spec">👥 ${g.followers || 0} Followers</div>
+                </div>
+                <button class="join-btn joined" style="background:var(--gold); color:var(--text-dark); cursor:default;">Owner</button>
+            </div>`;
         });
         c.innerHTML = html;
     } else {
