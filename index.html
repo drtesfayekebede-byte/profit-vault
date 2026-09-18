@@ -3511,11 +3511,38 @@ async function updateTrendingGroups() {
         if (error) throw error;
         const c = document.getElementById('trendingGroupsContainer'); if (!c) return;
         if (!data?.length) { c.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:20px; font-weight:700;">No trending groups yet.</div>'; return; }
-        c.innerHTML = data.map(g => `
+
+        // Fetch which of these groups the current user has already joined
+        let joinedSet = new Set();
+        if (AppState.userId && data.length) {
+            const gIds = data.map(g => g.id);
+            const { data: subs } = await sb.from('group_subscriptions')
+                .select('group_id')
+                .eq('user_id', AppState.userId)
+                .in('group_id', gIds);
+            joinedSet = new Set((subs || []).map(s => s.group_id));
+        }
+
+        c.innerHTML = data.map(g => {
+            const isOwner = g.owner_id === AppState.userId;
+            const hasJoined = joinedSet.has(g.id);
+            let btnLabel = '➕ Join';
+            let btnClass = 'join-btn';
+            let btnStyle = '';
+            if (isOwner) {
+                btnLabel = 'Owner';
+                btnClass = 'join-btn joined';
+                btnStyle = 'background:var(--gold); color:var(--text-dark);';
+            } else if (hasJoined) {
+                btnLabel = '✅ Joined';
+                btnClass = 'join-btn joined';
+            }
+            return `
             <div class="teacher-card" onclick="openTabContent('group-feed', ${g.id})" style="cursor:pointer;" data-group-id="${g.id}">
                 <div class="info"><div class="name">${escapeHtml(g.name)}</div><div class="spec">👥 ${g.followers || 0} Followers</div></div>
-                <button class="join-btn ${g.owner_id === AppState.userId ? 'joined' : ''}" style="${g.owner_id === AppState.userId ? 'background:var(--gold); color:var(--text-dark);' : ''}" onclick="event.stopPropagation(); toggleGroupJoin(this, event)" data-group-id="${g.id}">${g.owner_id === AppState.userId ? 'Owner' : '➕ Join'}</button>
-            </div>`).join('');
+                <button class="${btnClass}" style="${btnStyle}" onclick="event.stopPropagation(); toggleGroupJoin(this, event)" data-group-id="${g.id}">${btnLabel}</button>
+            </div>`;
+        }).join('');
     } catch (err) { console.warn('trending groups', err); }
 }
 
@@ -3633,38 +3660,57 @@ async function createGroup() {
 async function toggleGroupJoin(btn, event) {
     if (event) event.stopPropagation();
     if (!AppState.userId) return showToast('Login first.', 'error');
-    if (btn.innerText.includes('Owner')) return showToast('📌 This is your group!', 'info');
-    let gid = btn.dataset.groupId
-           || btn.closest('.teacher-card')?.dataset.groupId
-           || btn.closest('.group-banner')?.dataset.groupId
-           || (document.getElementById('groupBanner')?.dataset.groupId)
-           || AppState.currentGroupId;
+
+    let gid = btn.dataset.groupId;
+    if (!gid) { const c = btn.closest('.teacher-card'); if (c?.dataset.groupId) gid = c.dataset.groupId; }
     if (!gid) return showToast('❌ Cannot identify group.', 'error');
+
     try {
+        // 1. Load the group
         let g = AppState.groups.find(x => x.id == gid);
-        if (!g) { const { data } = await sb.from('groups').select('*').eq('id', gid).single(); if (!data) return showToast('Group not found.', 'error'); g = data; AppState.groups.push(g); }
-        const cur = g.followers || 0;
-        if (!btn.innerText.includes('Joined') && !btn.innerText.includes('✅')) {
-            const nf = cur + 1;
-            await sb.from('groups').update({ followers: nf }).eq('id', g.id);
+        if (!g) {
+            const { data } = await sb.from('groups').select('*').eq('id', gid).single();
+            if (!data) return showToast('Group not found.', 'error');
+            g = data;
+        }
+        if (g.owner_id === AppState.userId) return showToast('📌 This is your group!', 'info');
+
+        // 2. Ask the DB: have I already joined?
+        const { data: existingSub } = await sb.from('group_subscriptions')
+            .select('*')
+            .eq('user_id', AppState.userId)
+            .eq('group_id', gid)
+            .maybeSingle();
+
+        const hasJoined = !!existingSub;
+
+        if (!hasJoined) {
+            // ---- JOIN ----
+            const nf = (g.followers || 0) + 1;
+            await sb.from('groups').update({ followers: nf }).eq('id', gid);
             g.followers = nf;
-            try { await sb.from('group_subscriptions').upsert({ user_id: AppState.userId, group_id: g.id, subscribed_at: new Date(), status: 'active' }); } catch (e) {}
-            btn.innerText = '✅ Joined'; btn.className = 'join-btn joined';
+            await sb.from('group_subscriptions').upsert(
+                { user_id: AppState.userId, group_id: gid, subscribed_at: new Date(), status: 'active' },
+                { onConflict: 'user_id,group_id' }
+            );
+            btn.innerText = '✅ Joined';
+            btn.className = 'join-btn joined';
             const bf = document.getElementById('groupFollowers'); if (bf) bf.textContent = nf;
             showToast('✅ Joined!', 'success');
-            const msgBtn = document.getElementById('messageOwnerBtn'); if (msgBtn) msgBtn.style.display = 'inline-flex';
-            updateTrendingGroups();
         } else {
-            const nf = Math.max(1, cur - 1);
-            await sb.from('groups').update({ followers: nf }).eq('id', g.id);
+            // ---- LEAVE ----
+            const nf = Math.max(0, (g.followers || 1) - 1);
+            await sb.from('groups').update({ followers: nf }).eq('id', gid);
             g.followers = nf;
-            try { await sb.from('group_subscriptions').delete().eq('user_id', AppState.userId).eq('group_id', g.id); } catch (e) {}
-            btn.innerText = '➕ Join Class'; btn.className = 'join-btn';
+            await sb.from('group_subscriptions').delete().eq('user_id', AppState.userId).eq('group_id', gid);
+            btn.innerText = '➕ Join';
+            btn.className = 'join-btn';
             const bf = document.getElementById('groupFollowers'); if (bf) bf.textContent = nf;
             showToast('📌 Left the class.', 'info');
-            const msgBtn = document.getElementById('messageOwnerBtn'); if (msgBtn) msgBtn.style.display = 'none';
-            updateTrendingGroups();
         }
+
+        // 3. Refresh the trending list so all cards reflect the truth
+        updateTrendingGroups();
     } catch (err) { showToast('❌ ' + err.message, 'error'); }
 }
 
