@@ -1511,18 +1511,22 @@ html, body {
 .chat-bubble-row {
     display: flex;
     animation: bubbleIn 0.2s ease-out;
+    width: 100%;
 }
 .chat-bubble-row.mine { justify-content: flex-end; }
 .chat-bubble-row.theirs { justify-content: flex-start; }
 .chat-bubble {
+    display: inline-block;
     max-width: 75%;
-    padding: 10px 14px;
+    padding: 8px 12px;
     border-radius: 16px;
     font-size: 14px;
     font-weight: 700;
     word-wrap: break-word;
+    overflow-wrap: anywhere;
     white-space: pre-wrap;
     position: relative;
+    line-height: 1.35;
 }
 .chat-bubble-row.mine .chat-bubble {
     background: var(--navy);
