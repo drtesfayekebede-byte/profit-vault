@@ -1494,8 +1494,20 @@ html, body {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    background: #f8fafc;
+    background: linear-gradient(160deg, #eef4fb 0%, #e6eef8 40%, #dfeaf6 100%);
+    background-attachment: fixed;
+    position: relative;
 }
+.chat-messages::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+        radial-gradient(circle at 20% 10%, rgba(0,128,128,0.06), transparent 40%),
+        radial-gradient(circle at 85% 90%, rgba(255,215,0,0.07), transparent 45%);
+    pointer-events: none;
+}
+.chat-messages > * { position: relative; z-index: 1; }
 .chat-bubble-row {
     display: flex;
     animation: bubbleIn 0.2s ease-out;
@@ -1513,9 +1525,10 @@ html, body {
     position: relative;
 }
 .chat-bubble-row.mine .chat-bubble {
-    background: var(--gold);
-    color: var(--text-dark);
+    background: var(--navy);
+    color: #ffffff;
     border-bottom-right-radius: 4px;
+    box-shadow: 0 2px 6px rgba(10,37,64,0.25);
 }
 .chat-bubble-row.theirs .chat-bubble {
     background: white;
@@ -1600,6 +1613,96 @@ html, body {
     font-size: 13px;
     font-weight: 800;
     text-align: center;
+}
+
+/* ===== CHAT: DATE SEPARATOR ===== */
+.chat-date-separator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 14px 0 6px;
+    gap: 10px;
+    color: var(--text-muted);
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+}
+.chat-date-separator::before,
+.chat-date-separator::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: rgba(10,37,64,0.1);
+    max-width: 80px;
+}
+.chat-date-separator span {
+    background: rgba(255,255,255,0.85);
+    padding: 3px 12px;
+    border-radius: 12px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+/* ===== CHAT: STATUS TICKS ===== */
+.chat-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 10px;
+    font-weight: 800;
+    margin-left: 6px;
+    opacity: 0.9;
+    letter-spacing: 0.3px;
+}
+.chat-status.sending { color: rgba(255,255,255,0.65); }
+.chat-status.sent    { color: rgba(255,255,255,0.85); }
+.chat-status.seen    { color: #4ade80; }
+.chat-status.failed  { color: #fca5a5; }
+
+.chat-bubble-row.theirs .chat-status { color: var(--text-muted); }
+
+/* ===== CHAT: IMAGE UPLOAD PROGRESS ===== */
+.chat-upload-bubble {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 180px;
+}
+.chat-upload-bubble .spinner {
+    width: 18px;
+    height: 18px;
+    border-width: 2px;
+    border-top-color: #ffffff;
+    border-color: rgba(255,255,255,0.3);
+    border-top-color: #ffffff;
+}
+.chat-upload-text {
+    font-size: 12px;
+    font-weight: 800;
+    color: rgba(255,255,255,0.85);
+}
+.chat-bubble.failed-bubble {
+    background: #7f1d1d !important;
+    color: #fff !important;
+}
+.chat-retry-btn {
+    background: rgba(255,255,255,0.2);
+    border: none;
+    color: #fff;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 800;
+    cursor: pointer;
+    margin-left: 6px;
+}
+.chat-retry-btn:hover { background: rgba(255,255,255,0.35); }
+
+/* ===== INBOX: seen tick preview ===== */
+.inbox-preview .seen-tick {
+    color: var(--teal);
+    font-weight: 900;
+    margin-right: 4px;
 }
 
 /* ===== INBOX / MEMBERS LIST ===== */
@@ -2685,6 +2788,16 @@ function closeModal(id) {
     const modal = document.getElementById(id);
     if (modal) modal.classList.remove('active');
 }
+
+function formatChatDate(d) {
+    const today = new Date();
+    const yest = new Date(); yest.setDate(today.getDate() - 1);
+    const sameDay = (a, b) => a.toDateString() === b.toDateString();
+    if (sameDay(d, today)) return 'Today';
+    if (sameDay(d, yest))  return 'Yesterday';
+    return d.toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
 function formatTime(seconds) {
     if (seconds < 0) seconds = 0;
     const mins = Math.floor(seconds / 60);
@@ -5215,8 +5328,9 @@ async function openChatThread(groupId, partnerId) {
         document.getElementById('chatOverlay').classList.add('open');
         document.getElementById('chatBlockedBanner').style.display = AppState.isBlockedInChat ? 'block' : 'none';
         document.getElementById('chatInputBar').style.display = AppState.isBlockedInChat ? 'none' : 'flex';
-
         await loadChatMessages();
+        await markMessagesSeen();
+        await loadChatMessages(); // refresh to show ✓✓ on other side instantly
         subscribeToChat();
         updateAllBadges();
     } catch (err) { console.error(err); showToast('Error opening chat', 'error'); }
@@ -5255,9 +5369,11 @@ async function openChatThreadAsOwner(threadId, memberId, memberName, groupId) {
         document.getElementById('chatInputBar').style.display = 'flex';
 
         closeInbox();
-        await loadChatMessages();
-        subscribeToChat();
-        updateAllBadges();
+       await loadChatMessages();
+       await markMessagesSeen();
+       await loadChatMessages();
+       subscribeToChat();
+       updateAllBadges();
     } catch (err) { console.error(err); showToast('Error opening chat', 'error'); }
 }
 
@@ -5291,10 +5407,41 @@ async function loadChatMessages() {
         return;
     }
 
-    c.innerHTML = visible.map(m => {
+    // Build HTML with date separators + status ticks
+    let html = '';
+    let lastDateKey = null;
+    visible.forEach(m => {
+        const msgDate = new Date(m.created_at);
+        const dateKey = msgDate.toDateString();
+        if (dateKey !== lastDateKey) {
+            html += `<div class="chat-date-separator"><span>${formatChatDate(msgDate)}</span></div>`;
+            lastDateKey = dateKey;
+        }
         const mine = m.sender_id === AppState.userId;
-        return `<div class="chat-bubble-row ${mine ? 'mine' : 'theirs'}"><div class="chat-bubble">${m.message ? escapeHtml(m.message) : ''}${m.image_url ? `<img src="${m.image_url}" alt="">` : ''}<div class="chat-time">${new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div></div></div>`;
-    }).join('');
+        const timeStr = msgDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+        let statusHtml = '';
+        if (mine) {
+            if (m._pending) {
+                statusHtml = `<span class="chat-status sending">⏳ sending</span>`;
+            } else if (m._failed) {
+                statusHtml = `<span class="chat-status failed">❌ failed</span>`;
+            } else if (m.seen) {
+                statusHtml = `<span class="chat-status seen">✓✓ seen</span>`;
+            } else {
+                statusHtml = `<span class="chat-status sent">✓ sent</span>`;
+            }
+        }
+
+        html += `<div class="chat-bubble-row ${mine ? 'mine' : 'theirs'}" data-msg-id="${m.id || ''}">
+            <div class="chat-bubble">
+                ${m.message ? escapeHtml(m.message) : ''}
+                ${m.image_url ? `<img src="${m.image_url}" alt="">` : ''}
+                <div class="chat-time">${timeStr}${statusHtml}</div>
+            </div>
+        </div>`;
+    });
+    c.innerHTML = html;
     c.scrollTop = c.scrollHeight;
 }
 
@@ -5303,48 +5450,172 @@ async function sendChatMessage() {
     const text = input?.value.trim();
     if (!text || !AppState.currentThreadId) return;
     input.value = '';
-    try {
-        await sb.from('dm_messages').insert({ thread_id: AppState.currentThreadId, sender_id: AppState.userId, message: text });
 
-        // Figure out whether I'm owner or member in this thread, then bump the OTHER side's unread
-        const { data: thread } = await sb.from('dm_threads').select('owner_id, member_id, unread_for_owner, unread_for_member').eq('id', AppState.currentThreadId).single();
-        if (thread) {
-            const iAmOwner = thread.owner_id === AppState.userId;
-            const update = {
-                last_message_at: new Date(),
-                last_message_preview: text.substring(0, 60)
-            };
-            if (iAmOwner) {
-                update.unread_for_member = (thread.unread_for_member || 0) + 1;
-            } else {
-                update.unread_for_owner = (thread.unread_for_owner || 0) + 1;
-            }
-            await sb.from('dm_threads').update(update).eq('id', AppState.currentThreadId);
+    const tempId = 'temp_' + Date.now();
+    const threadId = AppState.currentThreadId;
+    const c = document.getElementById('chatMessages');
+
+    // Optimistic bubble
+    if (c) {
+        const empty = c.querySelector('div[style*="Start the conversation"]');
+        if (empty) empty.remove();
+        c.insertAdjacentHTML('beforeend', `
+            <div class="chat-bubble-row mine" data-msg-id="${tempId}">
+                <div class="chat-bubble">
+                    ${escapeHtml(text)}
+                    <div class="chat-time">${new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})} <span class="chat-status sending">⏳ sending</span></div>
+                </div>
+            </div>`);
+        c.scrollTop = c.scrollHeight;
+    }
+
+    try {
+        const { data: inserted, error } = await sb.from('dm_messages')
+            .insert({ thread_id: threadId, sender_id: AppState.userId, message: text, seen: false })
+            .select()
+            .single();
+        if (error) throw error;
+
+        // Flip to "sent"
+        const row = document.querySelector(`[data-msg-id="${tempId}"]`);
+        if (row) {
+            row.dataset.msgId = inserted.id;
+            const st = row.querySelector('.chat-status');
+            if (st) { st.className = 'chat-status sent'; st.textContent = '✓ sent'; }
         }
 
-        await loadChatMessages();
+        // Update thread preview + unread counter for the other side
+        const { data: thread } = await sb.from('dm_threads').select('owner_id, member_id, unread_for_owner, unread_for_member').eq('id', threadId).single();
+        if (thread) {
+            const iAmOwner = thread.owner_id === AppState.userId;
+            const update = { last_message_at: new Date(), last_message_preview: text.substring(0, 60) };
+            if (iAmOwner) update.unread_for_member = (thread.unread_for_member || 0) + 1;
+            else update.unread_for_owner = (thread.unread_for_owner || 0) + 1;
+            await sb.from('dm_threads').update(update).eq('id', threadId);
+        }
         updateAllBadges();
-    } catch (err) { showToast('Could not send', 'error'); }
+    } catch (err) {
+        const row = document.querySelector(`[data-msg-id="${tempId}"]`);
+        if (row) {
+            const st = row.querySelector('.chat-status');
+            if (st) { st.className = 'chat-status failed'; st.textContent = '❌ failed'; }
+            const bubble = row.querySelector('.chat-bubble');
+            if (bubble) {
+                bubble.insertAdjacentHTML('beforeend',
+                    `<button class="chat-retry-btn" onclick="retryMessage('${tempId}', '${escapeHtml(text).replace(/'/g,'&#39;')}')">↻ Retry</button>`);
+            }
+        }
+        showToast('Message failed to send', 'error');
+    }
+}
+
+async function retryMessage(tempId, text) {
+    if (!AppState.currentThreadId) return;
+    const row = document.querySelector(`[data-msg-id="${tempId}"]`);
+    if (row) {
+        const st = row.querySelector('.chat-status');
+        if (st) { st.className = 'chat-status sending'; st.textContent = '⏳ sending'; }
+        const btn = row.querySelector('.chat-retry-btn'); if (btn) btn.remove();
+    }
+    try {
+        const { data: inserted, error } = await sb.from('dm_messages')
+            .insert({ thread_id: AppState.currentThreadId, sender_id: AppState.userId, message: text, seen: false })
+            .select().single();
+        if (error) throw error;
+        if (row) {
+            row.dataset.msgId = inserted.id;
+            const st = row.querySelector('.chat-status');
+            if (st) { st.className = 'chat-status sent'; st.textContent = '✓ sent'; }
+        }
+    } catch (err) {
+        if (row) {
+            const st = row.querySelector('.chat-status');
+            if (st) { st.className = 'chat-status failed'; st.textContent = '❌ failed'; }
+        }
+    }
 }
 
 async function sendChatImage(event) {
-    const file = event.target.files?.[0]; if (!file || !AppState.currentThreadId) return;
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file || !AppState.currentThreadId) return;
+    if (file.size > 10 * 1024 * 1024) return showToast('Image > 10MB', 'error');
+
+    const threadId = AppState.currentThreadId;
+    const tempId = 'temp_img_' + Date.now();
+    const c = document.getElementById('chatMessages');
+
+    // Show uploading bubble with spinner
+    if (c) {
+        const empty = c.querySelector('div[style*="Start the conversation"]');
+        if (empty) empty.remove();
+        c.insertAdjacentHTML('beforeend', `
+            <div class="chat-bubble-row mine" data-msg-id="${tempId}">
+                <div class="chat-bubble">
+                    <div class="chat-upload-bubble">
+                        <div class="spinner"></div>
+                        <div class="chat-upload-text">Uploading image…</div>
+                    </div>
+                    <div class="chat-time">${new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})} <span class="chat-status sending">⏳ sending</span></div>
+                </div>
+            </div>`);
+        c.scrollTop = c.scrollHeight;
+    }
+
     try {
-        if (file.size > 10 * 1024 * 1024) return showToast('Image > 10MB', 'error');
         const ext = file.name.split('.').pop();
         const path = `dm_images/${AppState.userId}_${Date.now()}.${ext}`;
-        await sb.storage.from('app-assets').upload(path, file, { cacheControl: '3600' });
+        const { error: upErr } = await sb.storage.from('app-assets').upload(path, file, { cacheControl: '3600' });
+        if (upErr) throw upErr;
         const { data: u } = sb.storage.from('app-assets').getPublicUrl(path);
-        await sb.from('dm_messages').insert({ thread_id: AppState.currentThreadId, sender_id: AppState.userId, message: '', image_url: u.publicUrl });
-        event.target.value = '';
-        await loadChatMessages();
-    } catch (err) { showToast('Could not send image', 'error'); }
+
+        const { data: inserted, error } = await sb.from('dm_messages')
+            .insert({ thread_id: threadId, sender_id: AppState.userId, message: '', image_url: u.publicUrl, seen: false })
+            .select().single();
+        if (error) throw error;
+
+        // Replace spinner bubble with real image
+        const row = document.querySelector(`[data-msg-id="${tempId}"]`);
+        if (row) {
+            row.dataset.msgId = inserted.id;
+            const bubble = row.querySelector('.chat-bubble');
+            if (bubble) {
+                bubble.innerHTML = `<img src="${u.publicUrl}" alt="">
+                    <div class="chat-time">${new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})} <span class="chat-status sent">✓ sent</span></div>`;
+            }
+        }
+
+        // Update thread preview
+        const { data: thread } = await sb.from('dm_threads').select('owner_id, member_id, unread_for_owner, unread_for_member').eq('id', threadId).single();
+        if (thread) {
+            const iAmOwner = thread.owner_id === AppState.userId;
+            const update = { last_message_at: new Date(), last_message_preview: '📷 Photo' };
+            if (iAmOwner) update.unread_for_member = (thread.unread_for_member || 0) + 1;
+            else update.unread_for_owner = (thread.unread_for_owner || 0) + 1;
+            await sb.from('dm_threads').update(update).eq('id', threadId);
+        }
+        updateAllBadges();
+    } catch (err) {
+        const row = document.querySelector(`[data-msg-id="${tempId}"]`);
+        if (row) {
+            const bubble = row.querySelector('.chat-bubble');
+            if (bubble) {
+                bubble.classList.add('failed-bubble');
+                bubble.innerHTML = `<div class="chat-upload-text">❌ Upload failed</div>
+                    <div class="chat-time">${new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})} <span class="chat-status failed">failed</span></div>`;
+            }
+        }
+        showToast('Image upload failed', 'error');
+    }
 }
 
 function subscribeToChat() {
     if (AppState.chatRealtimeChannel) { sb.removeChannel(AppState.chatRealtimeChannel); AppState.chatRealtimeChannel = null; }
     if (!AppState.currentThreadId) return;
-    AppState.chatRealtimeChannel = sb.channel('dm_' + AppState.currentThreadId).on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'dm_messages', filter: `thread_id=eq.${AppState.currentThreadId}` }, () => { loadChatMessages(); }).subscribe();
+    AppState.chatRealtimeChannel = sb.channel('dm_' + AppState.currentThreadId)
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'dm_messages', filter: `thread_id=eq.${AppState.currentThreadId}` }, () => { loadChatMessages(); })
+        .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'dm_messages', filter: `thread_id=eq.${AppState.currentThreadId}` }, () => { loadChatMessages(); })
+        .subscribe();
 }
 
 function toggleChatMenu(event) {
@@ -5447,7 +5718,15 @@ async function loadInbox() {
                 <div class="inbox-avatar"><img src="${u.profile_pic_url || AppState.profilePicUrl}" alt="">${unread ? '<span class="unread-dot"></span>' : ''}</div>
                 <div class="inbox-info">
                     <div class="inbox-name">${escapeHtml(name)} ${unread ? '<span class="unread-indicator">●</span>' : ''}</div>
-                    <div class="inbox-preview">${escapeHtml(t.last_message_preview || 'No messages yet')}</div>
+                    <div class="inbox-preview">${(() => {
+    const preview = escapeHtml(t.last_message_preview || 'No messages yet');
+    const myField = t.owner_id === meId ? 'unread_for_owner' : 'unread_for_member';
+    const partnerLastSeen = t.owner_id === meId ? t.member_last_seen_at : t.owner_last_seen_at;
+    const myLastSeen = t.owner_id === meId ? t.owner_last_seen_at : t.member_last_seen_at;
+    // Show ✓✓ if the partner's last_seen is newer than my last_seen (i.e. they've been in the chat since)
+    const seen = partnerLastSeen && myLastSeen && new Date(partnerLastSeen) >= new Date(myLastSeen);
+    return `${seen ? '<span class="seen-tick">✓✓</span>' : ''}${preview}`;
+})()}</div>
                     <div class="inbox-group">📂 ${escapeHtml(gMap[t.group_id] || '')}</div>
                 </div>
                 <div class="inbox-meta"><div class="inbox-time">${timeStr}</div></div>
