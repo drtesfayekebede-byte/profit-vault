@@ -2090,6 +2090,92 @@ html, body {
     border-radius: 12px;
 }
 
+/* ===== BAN SCREEN ===== */
+#banScreen {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(160deg, #0a2540 0%, #153e60 100%);
+    z-index: 999999;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 24px;
+    text-align: center;
+    color: white;
+    font-family: var(--font-main);
+    overflow-y: auto;
+}
+#banScreen.show { display: flex; }
+.ban-icon {
+    font-size: 84px;
+    margin-bottom: 20px;
+    filter: drop-shadow(0 4px 12px rgba(239,68,68,0.5));
+}
+.ban-title {
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--red-error);
+    margin-bottom: 12px;
+    letter-spacing: 0.3px;
+}
+.ban-subtitle {
+    font-size: 15px;
+    color: rgba(255,255,255,0.85);
+    font-weight: 700;
+    max-width: 420px;
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+.ban-card {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 16px;
+    padding: 16px 20px;
+    max-width: 420px;
+    width: 100%;
+    margin-bottom: 20px;
+    text-align: left;
+}
+.ban-card .ban-label {
+    font-size: 11px;
+    color: rgba(255,255,255,0.6);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 4px;
+}
+.ban-card .ban-value {
+    font-size: 14px;
+    color: white;
+    font-weight: 800;
+    word-wrap: break-word;
+    margin-bottom: 12px;
+}
+.ban-card .ban-value:last-child { margin-bottom: 0; }
+.ban-contact {
+    font-size: 13px;
+    color: rgba(255,255,255,0.7);
+    font-weight: 700;
+    margin-bottom: 24px;
+}
+.ban-contact a { color: var(--gold); text-decoration: underline; font-weight: 900; }
+.ban-signout-btn {
+    background: var(--red-error);
+    color: white;
+    border: none;
+    padding: 14px 32px;
+    border-radius: 30px;
+    font-size: 15px;
+    font-weight: 900;
+    cursor: pointer;
+    font-family: var(--font-main);
+    transition: 0.2s;
+    min-width: 160px;
+}
+.ban-signout-btn:hover { background: #dc2626; transform: scale(1.03); }
+.ban-signout-btn:active { transform: scale(0.97); }
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 600px) {
     .app-logo h1 { font-size: 18px; }
@@ -2137,6 +2223,23 @@ html, body {
 <div id="loadingOverlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#ffffff; z-index:10000; display:flex; justify-content:center; align-items:center; flex-direction:column;">
     <div style="font-size: 48px; color: var(--teal);">📚</div>
     <div style="margin-top: 20px; color: var(--teal); font-weight: 800; font-size: 18px;" id="loadingText">Loading TENI...</div>
+</div>
+
+<!-- ===== BAN SCREEN ===== -->
+<div id="banScreen">
+    <div class="ban-icon">🚫</div>
+    <div class="ban-title">Account Suspended</div>
+    <div class="ban-subtitle">Your TENI account has been banned and you can no longer use the app.</div>
+    <div class="ban-card">
+        <div class="ban-label">Reason</div>
+        <div class="ban-value" id="banReason">No reason provided</div>
+        <div class="ban-label">Banned on</div>
+        <div class="ban-value" id="banDate">—</div>
+        <div class="ban-label">Account</div>
+        <div class="ban-value" id="banEmail">—</div>
+    </div>
+    <div class="ban-contact">If you believe this is a mistake, contact <a href="mailto:support@teni.app">support@teni.app</a></div>
+    <button class="ban-signout-btn" onclick="banSignOut()">Sign Out</button>
 </div>
 
 <!-- ===== APP CONTENT ===== -->
@@ -2977,7 +3080,7 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 // GLOBAL STATE
 // ================================================================
 const AppState = {
-    userId: null, isAdmin: false, isTeacher: false, isPremium: false,
+    userId: null, isAdmin: false, isTeacher: false, isPremium: false, isBanned: false,
     currentUser: null, isLoggingOut: false, authCheckDone: false,
     pendingPrice: 600, coinBalance: 0, groupCount: 0, groups: [],
     currentGroupId: null, currentGroupType: null, currentGroupName: null,
@@ -3456,6 +3559,47 @@ async function openTabItem(tabName, itemId, domIdPrefix) {
 }
 
 // ================================================================
+// BAN SYSTEM
+// ================================================================
+function showBanScreen(user) {
+    // Hide everything else
+    const appContent = document.getElementById('appContent');
+    if (appContent) appContent.style.display = 'none';
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    if (loadingOverlay) loadingOverlay.style.display = 'none';
+    const authModal = document.getElementById('authModal');
+    if (authModal) authModal.remove();
+
+    // Fill ban screen
+    const reasonEl = document.getElementById('banReason');
+    const dateEl = document.getElementById('banDate');
+    const emailEl = document.getElementById('banEmail');
+    if (reasonEl) reasonEl.textContent = user?.banned_reason || 'No reason provided';
+    if (dateEl) dateEl.textContent = user?.banned_at
+        ? new Date(user.banned_at).toLocaleString()
+        : '—';
+    if (emailEl) emailEl.textContent = user?.email || AppState.currentUser?.email || '—';
+
+    const banScreen = document.getElementById('banScreen');
+    if (banScreen) banScreen.classList.add('show');
+
+    // Stop all background tasks
+    try { stopHeartbeat(); } catch (e) {}
+    try { stopTrendingUpdates(); } catch (e) {}
+    try { stopExamTimer(); } catch (e) {}
+    if (AppState.chatRealtimeChannel) { sb.removeChannel(AppState.chatRealtimeChannel); AppState.chatRealtimeChannel = null; }
+    if (AppState.inboxRealtimeChannel) { sb.removeChannel(AppState.inboxRealtimeChannel); AppState.inboxRealtimeChannel = null; }
+}
+
+async function banSignOut() {
+    try { await sb.auth.signOut(); } catch (e) {}
+    const banScreen = document.getElementById('banScreen');
+    if (banScreen) banScreen.classList.remove('show');
+    AppState.authCheckDone = false;
+    location.reload();
+}
+
+// ================================================================
 // AUTH
 // ================================================================
 async function checkSession() {
@@ -3468,7 +3612,15 @@ async function checkSession() {
             AppState.currentUser = session.user;
             AppState.firstName = session.user.user_metadata?.first_name || session.user.email?.split('@')[0] || 'User';
             AppState.middleName = session.user.user_metadata?.middle_name || '';
-            const { data: userData, error: userError } = await sb.from('users').select('is_admin, is_teacher, coin_balance, profile_pic_url, first_name, middle_name').eq('user_id', AppState.userId).single();
+                        const { data: userData, error: userError } = await sb.from('users').select('is_admin, is_teacher, coin_balance, profile_pic_url, first_name, middle_name, is_banned, banned_at, banned_reason, email').eq('user_id', AppState.userId).single();
+
+            // 🚫 BAN CHECK — must happen before anything else
+            if (userData && userData.is_banned === true) {
+                AppState.isBanned = true;
+                showBanScreen(userData);
+                return;
+            }
+
             if (userError && userError.code === 'PGRST116') {
                 await sb.from('users').insert({
                     user_id: AppState.userId,
@@ -6139,11 +6291,8 @@ async function adminRenderUsersList() {
                 <div class="admin-user-name">${escapeHtml(name)} ${tags.join(' ')}</div>
                 <div class="admin-user-email">${escapeHtml(u.email || '')} • 💰 ${u.coin_balance || 0}</div>
             </div>
-            <div class="admin-user-actions">
+                        <div class="admin-user-actions">
                 ${isMe ? '<span class="admin-tag">You</span>' : `
-                    ${u.is_teacher || u.is_admin
-                        ? `<button class="admin-btn neutral" onclick="adminToggleVerify('${u.user_id}', false)">❌ Unverify</button>`
-                        : `<button class="admin-btn approve" onclick="adminToggleVerify('${u.user_id}', true)">✅ Verify</button>`}
                     ${u.is_banned
                         ? `<button class="admin-btn approve" onclick="adminToggleBan('${u.user_id}', false)">✅ Unban</button>`
                         : `<button class="admin-btn danger" onclick="adminToggleBan('${u.user_id}', true)">🚫 Ban</button>`}
