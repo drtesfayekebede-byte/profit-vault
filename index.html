@@ -2437,7 +2437,6 @@ html, body {
                 </div>
                 <h3 id="profileName">Medical Student</h3>
                 <p id="profileEmail">student@email.com</p>
-                <button class="btn" style="margin-top:8px;" onclick="showModal('depositModal')">💳 Premium: 600 ETB/month</button>
             </div>
             <div style="margin-top:16px;">
                 <h3 style="color:var(--navy); font-weight:900; margin-bottom:12px;">📚 My Library</h3>
@@ -2844,31 +2843,6 @@ html, body {
                 <textarea id="pasteContactsInput" rows="8" placeholder="abebe@example.com&#10;kebede@example.com&#10;+251911234567" style="font-family:monospace; font-size:13px;"></textarea>
             </div>
             <button class="btn btn-teal" onclick="pasteContactsAndMatch()">🔍 Find Matches</button>
-        </div>
-    </div>
-
-    <div id="depositModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('depositModal')">&times;</span>
-            <h3>🔓 Premium Subscription</h3>
-            <p style="color:var(--text-muted); margin-bottom:15px; font-weight:700;">Unlock all premium books, research, and content.</p>
-            <div style="background:#f8fafc; border-radius:12px; padding:20px; text-align:center; margin-bottom:15px;"><div style="font-size:24px; font-weight:900; color:var(--teal);">600 ETB</div><div style="font-size:14px; color:var(--text-muted); font-weight:700;">30-day access</div></div>
-            <button class="btn" onclick="showPaymentModal()">💳 Subscribe Now</button>
-        </div>
-    </div>
-
-    <div id="paymentModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('paymentModal')">&times;</span>
-            <h3>📱 Send Payment</h3>
-            <div style="background:#f8fafc; border-radius:12px; padding:16px; margin-bottom:16px;">
-                <p style="font-weight:800; margin-bottom:8px;">Send <strong style="color:var(--gold);" id="payAmount">600 ETB</strong> to:</p>
-                <div style="background:white; padding:12px; border-radius:8px; border:1px solid #eee;"><strong>Telebirr:</strong> <span id="adminTelebirr">+251935983470</span></div>
-                <div style="background:white; padding:12px; border-radius:8px; border:1px solid #eee; margin-top:8px;"><strong>Awash Bank:</strong> <span id="adminBank">11009983837737</span></div>
-            </div>
-            <div class="form-group"><input type="text" id="payTxId" placeholder="Transaction ID"></div>
-            <div class="form-group"><input type="file" id="payReceipt" accept="image/*"></div>
-            <button class="btn btn-teal" onclick="submitPayment()">📤 Submit for Approval</button>
         </div>
     </div>
 
@@ -5754,7 +5728,6 @@ const ADMIN_TABS = [
     { key: 'research',    icon: '🔬', label: 'Research' },
     { key: 'appeals',     icon: '👑', label: 'Appeals' },
     { key: 'coins',       icon: '💰', label: 'Coins' },
-    { key: 'payments',    icon: '💳', label: 'Payments' },
     { key: 'withdrawals', icon: '📤', label: 'Withdraw' },
     { key: 'reports',     icon: '🚨', label: 'Reports' },
     { key: 'users',       icon: '👥', label: 'Users' }
@@ -5814,14 +5787,13 @@ function switchAdminTab(key) {
 }
 
 async function refreshAdminCounts() {
-    const counts = { books: 0, research: 0, appeals: 0, coins: 0, payments: 0, withdrawals: 0, reports: 0, users: 0 };
+    const counts = { books: 0, research: 0, appeals: 0, coins: 0, withdrawals: 0, reports: 0, users: 0 };
     try {
-        const [books, research, appeals, coins, payments, withdrawals, reports] = await Promise.all([
+        const [books, research, appeals, coins, withdrawals, reports] = await Promise.all([
             sb.from('bstore_books').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
             sb.from('research_papers').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
             sb.from('appeals').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
             sb.from('coin_requests').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
-            sb.from('payments').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
             sb.from('withdrawals').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
             sb.from('post_reports').select('*', { count: 'exact', head: true }).eq('status', 'pending')
         ]);
@@ -5829,7 +5801,6 @@ async function refreshAdminCounts() {
         counts.research = research.count || 0;
         counts.appeals = appeals.count || 0;
         counts.coins = coins.count || 0;
-        counts.payments = payments.count || 0;
         counts.withdrawals = withdrawals.count || 0;
         counts.reports = reports.count || 0;
     } catch (e) { console.warn('admin counts', e); }
@@ -5849,7 +5820,6 @@ async function renderAdminTab(key) {
         if (key === 'research') return renderAdminResearch(pane);
         if (key === 'appeals') return renderAdminAppeals(pane);
         if (key === 'coins') return renderAdminCoins(pane);
-        if (key === 'payments') return renderAdminPayments(pane);
         if (key === 'withdrawals') return renderAdminWithdrawals(pane);
         if (key === 'reports') return renderAdminReports(pane);
         if (key === 'users') return renderAdminUsers(pane);
@@ -6079,61 +6049,6 @@ async function adminApproveCoin(id) {
 async function adminRejectCoin(id) {
     const reason = prompt('Rejection reason (optional):') || '';
     await sb.from('coin_requests').update({ status: 'rejected', rejection_reason: reason, reviewed_by: AppState.userId, reviewed_at: new Date() }).eq('id', id);
-    showToast('Rejected', 'info');
-    await refreshAdminPanel();
-}
-
-// ---------- PAYMENTS ----------
-async function renderAdminPayments(pane) {
-    const { data } = await sb.from('payments').select('*').eq('status', 'pending').order('created_at', { ascending: false });
-    if (!data || !data.length) {
-        pane.innerHTML = '<div class="admin-empty"><span class="admin-empty-icon">💳</span>No pending premium payments.</div>';
-        return;
-    }
-    const uMap = await adminFetchUsers(data.map(p => p.user_id));
-    pane.innerHTML = data.map(p => {
-        const u = uMap[p.user_id] || {};
-        return `
-        <div class="admin-item">
-            <div class="admin-item-thumb">💳</div>
-            <div class="admin-item-body">
-                <div class="admin-item-title">${escapeHtml(getDisplayName(u))}</div>
-                <div class="admin-item-meta">${escapeHtml(u.email || '')} • ${p.amount_etb} ETB • ${p.days} days</div>
-                <div class="admin-item-meta">Telebirr TX: <strong>${escapeHtml(p.telebirr_tx || '—')}</strong></div>
-                <div class="admin-item-actions">
-                    ${p.receipt_url ? `<a class="admin-btn neutral" href="${p.receipt_url}" target="_blank" rel="noopener">🧾 Receipt</a>` : ''}
-                    <button class="admin-btn approve" onclick="adminApprovePayment('${p.id}')">✅ Approve</button>
-                    <button class="admin-btn reject" onclick="adminRejectPayment('${p.id}')">❌ Reject</button>
-                </div>
-            </div>
-        </div>`;
-    }).join('');
-}
-async function adminApprovePayment(id) {
-    const { data: p } = await sb.from('payments').select('*').eq('id', id).single();
-    if (!p) return showToast('Payment not found', 'error');
-    const { data: u } = await sb.from('users').select('premium_until').eq('user_id', p.user_id).single();
-    const now = new Date();
-    const base = (u?.premium_until && new Date(u.premium_until) > now) ? new Date(u.premium_until) : now;
-    const newUntil = new Date(base.getTime() + (p.days || 30) * 86400000);
-    await sb.from('users').update({ premium_until: newUntil.toISOString() }).eq('user_id', p.user_id);
-    await sb.from('payments').update({ status: 'approved', reviewed_by: AppState.userId, reviewed_at: new Date() }).eq('id', id);
-    try {
-        await sb.from('notifications').insert({
-            user_id: p.user_id,
-            actor_id: AppState.userId,
-            type: 'payment_status',
-            title: '💳 Premium activated',
-            message: `Your premium is active until ${newUntil.toLocaleDateString()}.`,
-            link_type: 'user', link_id: p.user_id
-        });
-    } catch (e) {}
-    showToast('✅ Premium activated', 'success');
-    await refreshAdminPanel();
-}
-async function adminRejectPayment(id) {
-    const reason = prompt('Rejection reason (optional):') || '';
-    await sb.from('payments').update({ status: 'rejected', rejection_reason: reason, reviewed_by: AppState.userId, reviewed_at: new Date() }).eq('id', id);
     showToast('Rejected', 'info');
     await refreshAdminPanel();
 }
@@ -7177,8 +7092,7 @@ async function toggleNotificationDropdown(event) {
 function toggleLike(btn, id) { btn.classList.toggle('liked'); const s = btn.querySelector('span'); if (s) { const c = parseInt(s.innerText) || 0; s.innerText = btn.classList.contains('liked') ? c + 1 : Math.max(0, c - 1); } }
 function toggleComment(btn) { const s = btn.closest('.content-card')?.querySelector('.comment-section'); if (s) s.style.display = s.style.display === 'block' ? 'none' : 'block'; }
 function shareContent() { if (navigator.share) navigator.share({ title: 'TENI', url: window.location.href }).catch(() => {}); else showToast('📋 Copied', 'success'); }
-function showPaymentModal() { closeModal('depositModal'); showModal('paymentModal'); }
-async function submitPayment() { showToast('✅ Submitted', 'success'); closeModal('paymentModal'); }
+
 async function submitAppeal() {
     if (AppState.coinBalance < 6000) return showToast('Need 6000 coins', 'error');
     try {
