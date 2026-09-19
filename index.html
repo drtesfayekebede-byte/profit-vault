@@ -2991,6 +2991,33 @@ html, body {
         </div>
     </div>
 
+    <div id="reportPostModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('reportPostModal')">&times;</span>
+            <h3>🚨 Report Post</h3>
+            <p style="color:var(--text-muted); font-size:13px; font-weight:700; margin-bottom:14px;">
+                Your report is anonymous. This post will also be hidden from your feed.
+            </p>
+            <div class="form-group">
+                <label>Reason</label>
+                <select id="reportReason">
+                    <option value="">— Select a reason —</option>
+                    <option value="spam">🚫 Spam or misleading</option>
+                    <option value="harassment">😠 Harassment or bullying</option>
+                    <option value="misinformation">❗ False medical information</option>
+                    <option value="inappropriate">🔞 Inappropriate content</option>
+                    <option value="other">💬 Other</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Details (optional)</label>
+                <textarea id="reportDetails" rows="3" maxlength="500" placeholder="Add any extra context for the admin…"></textarea>
+            </div>
+            <input type="hidden" id="reportPostId">
+            <button class="btn btn-danger" onclick="submitPostReport()">🚨 Submit & Hide</button>
+        </div>
+    </div>
+
     <div id="portal-root"></div>
 
 </div><!-- end appContent -->
@@ -3086,6 +3113,8 @@ const AppState = {
     addMemberSelection: new Set(),
     // Deep-link (Problem 10)
     pendingDeepLink: null,
+    // Reported/hidden posts (Problem 5)
+    hiddenPostIds: new Set(),
     // Settings (Problem 12 / Q5)
     settings: { postNotif: true, commentNotif: true, messageNotif: true, showNameInComments: true, allowDMs: true, theme: 'auto' }
 };
@@ -3615,6 +3644,13 @@ async function checkSession() {
             if (session.user.email === 'drtesfayekebede@gmail.com') { AppState.isAdmin = true; AppState.isTeacher = true; }
             const { data: groupData } = await sb.from('groups').select('*').eq('owner_id', AppState.userId);
             AppState.groups = (groupData || []).filter(g => g.owner_id === AppState.userId);
+
+            // Preload hidden post ids so we can filter them out everywhere
+            try {
+                const { data: hides } = await sb.from('post_hides').select('post_id').eq('user_id', AppState.userId);
+                AppState.hiddenPostIds = new Set((hides || []).map(h => h.post_id));
+            } catch (e) { AppState.hiddenPostIds = new Set(); }
+
             loadSettingsFromStorage();
             applyTheme();
             document.getElementById('appContent').style.display = 'flex';
@@ -4563,9 +4599,11 @@ async function loadSocialPosts(groupId) {
     const c = document.getElementById('socialPostsContainer'); if (!c) return;
     setLoading(c, true, 'Loading posts...');
     try {
-        const { data: posts, error } = await sb.from('social_posts').select('*').eq('group_id', groupId).order('created_at', { ascending: false });
+        const { data: postsRaw, error } = await sb.from('social_posts').select('*').eq('group_id', groupId).order('created_at', { ascending: false });
         if (error) throw error;
-        if (!posts?.length) { c.innerHTML = '<div class="loading" style="color:var(--text-muted);">No posts yet.</div>'; return; }
+        const hidden = AppState.hiddenPostIds || new Set();
+        const posts = (postsRaw || []).filter(p => !hidden.has(p.id));
+        if (!posts.length) { c.innerHTML = '<div class="loading" style="color:var(--text-muted);">No posts yet.</div>'; return; }
         const uids = [...new Set(posts.map(p => p.user_id))];
         const { data: users } = await sb.from('users').select('user_id, first_name, middle_name, email, profile_pic_url, is_teacher, is_admin').in('user_id', uids);
         const uMap = (users || []).reduce((a, u) => { a[u.user_id] = u; return a; }, {});
@@ -4598,13 +4636,13 @@ function renderPostCard(post, uMap) {
     const vBd = isV ? ' <span class="verification-badge"><span class="star">★</span></span>' : '';
     const vG = (post.viral_level === 'super_viral' || post.viral_level === 'viral') ? 'viral-glow' : '';
 
-    const menuHtml = canMod ? `
+    const menuHtml = `
         <div id="postMenu-${post.id}" class="post-menu-portal" style="display:none;">
             ${isOwner ? `<div onclick="editPost('${post.id}')">✏️ Edit</div>` : ''}
             ${isOwner ? `<div onclick="deletePost('${post.id}')" style="color:var(--red-error);">🗑️ Delete</div>` : ''}
             ${(AppState.isAdmin || AppState.isGroupOwner) ? `<div onclick="togglePinPost('${post.id}')" style="color:var(--gold);">${post.is_pinned ? '📌 Unpin' : '📌 Pin'}</div>` : ''}
-            ${AppState.isAdmin ? `<div onclick="reportPost('${post.id}')" style="color:var(--red-error);">🚨 Report</div>` : ''}
-        </div>` : '';
+            ${!isOwner ? `<div onclick="openReportPostModal('${post.id}')" style="color:var(--red-error);">🚨 Report Post</div>` : ''}
+        </div>`;
 
     return `
         <div class="post-card ${vG}" id="post-${post.id}">
@@ -4614,7 +4652,7 @@ function renderPostCard(post, uMap) {
                     <div class="post-name">${escapeHtml(name)}${vBd} ${vB} ${pB}</div>
                     <div class="post-time">${new Date(post.created_at).toLocaleDateString()} ${new Date(post.created_at).toLocaleTimeString()}</div>
                 </div>
-                ${canMod ? `<div style="margin-left:auto;"><button class="post-actions-btn" onclick="togglePostMenu('${post.id}', event)">⋮</button>${menuHtml}</div>` : ''}
+               <div style="margin-left:auto;"><button class="post-actions-btn" onclick="togglePostMenu('${post.id}', event)">⋮</button>${menuHtml}</div>
             </div>
             <div class="post-content">${buildLongTextHtml(full, 150)}</div>
             ${post.image_url ? `<img src="${post.image_url}" class="post-image" alt="">` : ''}
@@ -5010,7 +5048,79 @@ async function togglePinPost(postId) {
         if (AppState.currentGroupId) loadSocialPosts(AppState.currentGroupId);
     } catch (err) { showToast('Error: ' + err.message, 'error'); }
 }
-function reportPost(postId) { closeOpenMenu(); showToast('🚨 Reported to admin', 'info'); }
+
+function openReportPostModal(postId) {
+    closeOpenMenu();
+    const inp = document.getElementById('reportPostId');
+    const reason = document.getElementById('reportReason');
+    const details = document.getElementById('reportDetails');
+    if (inp) inp.value = postId;
+    if (reason) reason.value = '';
+    if (details) details.value = '';
+    showModal('reportPostModal');
+}
+
+async function submitPostReport() {
+    const postId = document.getElementById('reportPostId')?.value;
+    const reason = document.getElementById('reportReason')?.value;
+    const details = document.getElementById('reportDetails')?.value?.trim() || '';
+    if (!postId) return showToast('Post not found', 'error');
+    if (!reason) return showToast('Please select a reason', 'error');
+    if (!AppState.userId) return showToast('Login first', 'error');
+
+    try {
+        // 1. Save the report
+        const { error } = await sb.from('post_reports').insert({
+            post_id: postId,
+            reporter_id: AppState.userId,
+            reason,
+            details,
+            status: 'pending'
+        });
+        if (error) throw error;
+
+        // 2. Hide this post for me permanently
+        try {
+            await sb.from('post_hides').upsert(
+                { post_id: postId, user_id: AppState.userId },
+                { onConflict: 'post_id,user_id' }
+            );
+            if (!AppState.hiddenPostIds) AppState.hiddenPostIds = new Set();
+            AppState.hiddenPostIds.add(postId);
+        } catch (e) { console.warn('hide insert failed', e); }
+
+        // 3. Notify all admins
+        try {
+            const { data: admins } = await sb.from('users').select('user_id').eq('is_admin', true);
+            if (admins && admins.length) {
+                const rows = admins.map(a => ({
+                    user_id: a.user_id,
+                    actor_id: AppState.userId,
+                    type: 'new_report',
+                    title: '🚨 New post report',
+                    message: `Reason: ${reason}`,
+                    link_type: 'post',
+                    link_id: postId
+                }));
+                await sb.from('notifications').insert(rows);
+            }
+        } catch (e) { /* non-blocking */ }
+
+        // 4. Immediately hide from current view without reload
+        const card = document.getElementById(`post-${postId}`) || document.getElementById(`home-post-${postId}`);
+        if (card) {
+            card.style.transition = 'opacity 0.2s, transform 0.2s';
+            card.style.opacity = '0';
+            card.style.transform = 'scale(0.98)';
+            setTimeout(() => card.remove(), 200);
+        }
+
+        closeModal('reportPostModal');
+        showToast('✅ Reported & hidden from your feed', 'success');
+    } catch (err) {
+        showToast('❌ ' + err.message, 'error');
+    }
+}
 
 function toggleShareOptions(postId, event) {
     if (event && event._menuToggleHandled) { event._menuToggleHandled = false; return; }
@@ -5087,12 +5197,15 @@ async function loadTrendingContent(tab) {
         const mapQueries = {
             social: async () => {
                 if (!gIds.length) return [];
-                const { data } = await sb.from('social_posts').select('*').in('group_id', gIds).neq('viral_level', 'normal').order('viral_score', { ascending: false }).limit(15);
+                const hidden = AppState.hiddenPostIds || new Set();
+                let { data } = await sb.from('social_posts').select('*').in('group_id', gIds).neq('viral_level', 'normal').order('viral_score', { ascending: false }).limit(30);
                 if (!data || data.length === 0) {
-                    const { data: recent } = await sb.from('social_posts').select('*').in('group_id', gIds).order('created_at', { ascending: false }).limit(15);
-                    return recent || [];
+                    const { data: recent } = await sb.from('social_posts').select('*').in('group_id', gIds).order('created_at', { ascending: false }).limit(30);
+                    data = recent || [];
                 }
-                return data;
+                // Filter out hidden posts
+                data = (data || []).filter(p => !hidden.has(p.id));
+                return data.slice(0, 15);
             },
             video: async () => { if (!gIds.length) return []; return (await sb.from('group_content').select('*').eq('content_type', 'video').in('group_id', gIds).order('views', { ascending: false }).limit(15)).data || []; },
             ppt: async () => { if (!gIds.length) return []; return (await sb.from('group_content').select('*').eq('content_type', 'ppt').in('group_id', gIds).order('views', { ascending: false }).limit(15)).data || []; },
@@ -5258,11 +5371,12 @@ function renderHomePostCard(post, uMap) {
     const pB = post.is_pinned ? '<span class="pinned-badge">📌 Pinned</span>' : '';
     const vBd = isV ? ' <span class="verification-badge"><span class="star">★</span></span>' : '';
     const vG = (post.viral_level === 'super_viral' || post.viral_level === 'viral') ? 'viral-glow' : '';
-    const menuHtml = canMod ? `
+    const menuHtml = `
         <div id="homePostMenu-${post.id}" class="post-menu-portal" style="display:none;">
             ${isOwner ? `<div onclick="editHomePost('${post.id}')">✏️ Edit</div>` : ''}
             ${isOwner ? `<div onclick="deleteHomePost('${post.id}')" style="color:var(--red-error);">🗑️ Delete</div>` : ''}
-        </div>` : '';
+            ${!isOwner ? `<div onclick="openReportPostModal('${post.id}')" style="color:var(--red-error);">🚨 Report Post</div>` : ''}
+        </div>`;
 
     return `
         <div class="post-card ${vG}" id="home-post-${post.id}">
@@ -5272,7 +5386,7 @@ function renderHomePostCard(post, uMap) {
                     <div class="post-name">${escapeHtml(name)}${vBd} ${vB} ${pB}</div>
                     <div class="post-time">${new Date(post.created_at).toLocaleDateString()} ${post._groupName ? '• 📂 ' + escapeHtml(post._groupName) : ''}</div>
                 </div>
-                ${canMod ? `<div style="margin-left:auto;"><button class="post-actions-btn" onclick="event.stopPropagation(); toggleHomePostMenu('${post.id}', event)">⋮</button>${menuHtml}</div>` : ''}
+                <div style="margin-left:auto;"><button class="post-actions-btn" onclick="event.stopPropagation(); toggleHomePostMenu('${post.id}', event)">⋮</button>${menuHtml}</div>
             </div>
             <div class="post-content" onclick="openHomePostGroup('${post.id}', ${post.group_id})" style="cursor:pointer;">${buildLongTextHtml(full, 150)}</div>
             ${post.image_url ? `<img src="${post.image_url}" class="post-image" alt="" onclick="openHomePostGroup('${post.id}', ${post.group_id})" style="cursor:pointer;">` : ''}
