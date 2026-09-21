@@ -5843,8 +5843,8 @@ async function loadInbox() {
             const preview = escapeHtml(t.last_message_preview || 'No messages');
             const badgeHtml = isUnread ? `<div class="inbox-unread-badge">${unreadCount > 99 ? '99+' : unreadCount}</div>` : '';
             const groupArg = t.group_id ? `'${t.group_id}'` : 'null';
-            return `<div class="inbox-item ${isUnread ? 'unread' : ''}" const safeNameJs = String(getDisplayName(u) || '').replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'\\"').replace(/\n/g,' ');
-return `<div class="inbox-item ${isUnread ? 'unread' : ''}" onclick="openChatThreadAsOwner('${t.id}', '${partnerId}', '${safeNameJs}', ${groupArg})">`
+            const safeNameJs = String(getDisplayName(u) || '').replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'\\"').replace(/\n/g,' ');
+            return `<div class="inbox-item ${isUnread ? 'unread' : ''}" onclick="openChatThreadAsOwner('${t.id}', '${partnerId}', '${safeNameJs}', ${groupArg})">
                 <div class="inbox-avatar"><img src="${u.profile_pic_url || AppState.profilePicUrl}" loading="lazy">${isUnread ? '<span class="unread-dot"></span>' : ''}</div>
                 <div class="inbox-info"><div class="inbox-name">${escapeHtml(getDisplayName(u))}</div><div class="inbox-preview">${preview}</div>${t.group_id ? `<div class="inbox-group">📂 ${escapeHtml(gMap[t.group_id] || '')}</div>` : ''}</div>
                 <div class="inbox-meta"><div class="inbox-time">${timeStr}</div>${badgeHtml}</div>
@@ -5852,7 +5852,6 @@ return `<div class="inbox-item ${isUnread ? 'unread' : ''}" onclick="openChatThr
         }).join('');
     } catch (err) { c.innerHTML = '<div class="inbox-empty">Could not load.</div>'; }
 }
-
 function subscribeToInbox() {
     if (AppState.inboxRealtimeChannel) { sb.removeChannel(AppState.inboxRealtimeChannel); AppState.inboxRealtimeChannel = null; }
     AppState.inboxRealtimeChannel = sb.channel('inbox_' + AppState.userId)
