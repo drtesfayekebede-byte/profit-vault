@@ -397,6 +397,106 @@ html, body { height: 100dvh; width: 100%; margin: 0; padding: 0; overflow: hidde
 .content-mod-actions { display: flex; gap: 4px; flex-shrink: 0; }
 .bulk-bar { position: sticky; top: 0; z-index: 5; background: var(--navy); color: white; padding: 10px 14px; border-radius: 12px; display: flex; align-items: center; gap: 10px; margin-bottom: 12px; box-shadow: var(--shadow-md); }
 .bulk-bar .bulk-count { font-weight: 900; flex: 1; }
+.fab-create {
+    position: fixed;
+    bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+    right: 24px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--teal);
+    color: white;
+    border: none;
+    font-size: 28px;
+    font-weight: 900;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 16px rgba(0,128,128,0.4), 0 2px 6px rgba(0,0,0,0.2);
+    z-index: 500;
+    transition: 0.2s;
+    line-height: 1;
+    padding-bottom: 4px;
+}
+.fab-create:hover { transform: scale(1.08); box-shadow: 0 6px 20px rgba(0,128,128,0.55); }
+.fab-create:active { transform: scale(0.95); }
+.fab-create.visible { display: flex; }
+.admin-single-view {
+    display: none;
+    flex-direction: column;
+    min-height: 100%;
+}
+.admin-single-view.active { display: flex; }
+.admin-back-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding: 4px 0;
+}
+.admin-back-btn {
+    background: var(--card-bg);
+    border: 2px solid var(--card-border);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    font-size: 22px;
+    font-weight: 900;
+    cursor: pointer;
+    color: var(--text-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: 0.2s;
+    padding: 0;
+    line-height: 1;
+}
+.admin-back-btn:hover {
+    background: var(--card-hover);
+    border-color: var(--gold);
+    transform: translateX(-3px);
+}
+.admin-single-title {
+    font-size: 20px;
+    font-weight: 900;
+    color: var(--text-dark);
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.admin-single-title .admin-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 22px;
+    height: 22px;
+    padding: 0 7px;
+    background: var(--red-error);
+    color: white;
+    font-size: 11px;
+    font-weight: 900;
+    border-radius: 11px;
+}
+.admin-single-refresh {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-weight: 800;
+    font-size: 12px;
+    cursor: pointer;
+    color: var(--text-dark);
+    flex-shrink: 0;
+    transition: 0.2s;
+}
+.admin-single-refresh:hover { background: var(--card-hover); }
+#admin-pane-wrap-full { display: none; }
+#admin-pane-wrap-full.active { display: block; }
+#admin-grid-view { display: block; }
+#admin-grid-view.hidden { display: none; }
 .wallet-balance { background: var(--navy); border-radius: var(--border-radius-card); padding: 20px; text-align: center; color: white; margin-bottom: 16px; }
 .wallet-balance .amount { font-size: 36px; color: var(--gold); font-weight: 900; }
 .wallet-balance .label { font-size: 14px; color: rgba(255,255,255,0.7); font-weight: 700; }
@@ -663,9 +763,7 @@ html, body { height: 100dvh; width: 100%; margin: 0; padding: 0; overflow: hidde
                 <button class="tab-card ppt" onclick="switchGroupTab('ppts', this)">PPT</button>
                 <button class="tab-card exam" onclick="switchGroupTab('mockexam', this)">Exam</button>
             </div>
-            <div style="margin-bottom:16px;" id="createPostContainer">
-                <button class="btn btn-teal" onclick="openCreateContentModal('post')">➕ Create Content</button>
-            </div>
+            <div id="createPostContainer" style="display:none;"></div>
             <div id="social" class="class-content active"><div id="socialPostsContainer"></div></div>
             <div id="videos" class="class-content"></div>
             <div id="ppts" class="class-content"></div>
@@ -1283,9 +1381,11 @@ html, body { height: 100dvh; width: 100%; margin: 0; padding: 0; overflow: hidde
             <button class="btn" onclick="applyBoost()">🚀 Boost Now</button>
         </div>
     </div>
+    <button class="fab-create" id="fabCreateBtn" onclick="openCreateContentFromFab()" aria-label="Create content">+</button>
 
     <div id="portal-root"></div>
 </div>
+
 <script>
 const SUPABASE_URL = 'https://ogtlaffkybpesaxastvx.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ndGxhZmZreWJwZXNheGFzdHZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTA4NTQsImV4cCI6MjA5NTM4Njg1NH0.toDw1_DsAjHjUuCg0hvRdEGyjA7mW2DJNlSWoVBT1qY';
@@ -1603,6 +1703,7 @@ function goToHome() {
     const wrapper = document.getElementById('tabContentWrapper');
     if (appMain) appMain.style.display = 'block';
     if (wrapper) wrapper.classList.remove('active');
+    updateFabVisibility();
     AppState.currentGroupId = null;
     document.querySelectorAll('.drawer-item').forEach(el => el.classList.remove('active'));
 }
@@ -1631,6 +1732,7 @@ function openTabContent(tabId, specificGroupId = null) {
     container.appendChild(source.cloneNode(true));
 
     if (tabId === 'admin') loadAdminPanel();
+    updateFabVisibility();
     if (tabId === 'wallet') loadWallet();
     if (tabId === 'bstore') loadBStore();
     if (tabId === 'mcalc') loadCalculators();
@@ -1723,6 +1825,69 @@ function updateGroupUI(group) {
             setTimeout(() => switchGroupTab(dl.tabId, null), 200);
         }
     }, 400);
+}
+
+function updateFabVisibility() {
+    const fab = document.getElementById('fabCreateBtn');
+    if (!fab) return;
+    const canCreate = (AppState.isGroupOwner || AppState.isAdmin) && !!AppState.currentGroupId;
+    const mainHidden = document.getElementById('appMain')?.style.display === 'none';
+    const wrapperActive = document.getElementById('tabContentWrapper')?.classList.contains('active');
+    if (canCreate && mainHidden && wrapperActive) fab.classList.add('visible');
+    else fab.classList.remove('visible');
+}
+
+function openCreateContentFromFab() {
+    const tabMap = { social: 'post', videos: 'video', ppts: 'ppt', mockexam: 'mockexam' };
+    const activeTab = document.querySelector('.class-content.active')?.id || 'social';
+    const type = tabMap[activeTab] || 'post';
+    openCreateContentModal(type);
+}
+
+let _adminReturnTab = null;
+
+function openAdminSingleView(key) {
+    const grid = document.getElementById('admin-grid-view');
+    const full = document.getElementById('admin-pane-wrap-full');
+    const title = document.getElementById('adminSingleTitle');
+    const badge = document.getElementById('adminSingleBadge');
+    if (!grid || !full) return;
+
+    const tabMeta = ADMIN_TABS.find(t => t.key === key);
+    if (!tabMeta) return;
+
+    _adminActiveTab = key;
+    _adminReturnTab = key;
+
+    grid.classList.add('hidden');
+    full.classList.add('active');
+
+    title.innerHTML = `<span>${tabMeta.icon} ${tabMeta.label}</span>`;
+    const count = _adminCounts[key] || 0;
+    if (badge) {
+        if (count > 0) { badge.textContent = count > 99 ? '99+' : count; badge.style.display = 'inline-flex'; }
+        else badge.style.display = 'none';
+    }
+
+    document.querySelectorAll('.admin-pane').forEach(p => p.classList.remove('active'));
+    const pane = document.getElementById('adminPane-' + key);
+    if (pane) pane.classList.add('active');
+    renderAdminTab(key);
+}
+
+function closeAdminSingleView() {
+    const grid = document.getElementById('admin-grid-view');
+    const full = document.getElementById('admin-pane-wrap-full');
+    if (grid) grid.classList.remove('hidden');
+    if (full) full.classList.remove('active');
+    refreshAdminCounts();
+}
+
+function refreshAdminSingleView() {
+    _adminUserCache = {};
+    refreshAdminCounts();
+    renderAdminTab(_adminActiveTab);
+    showToast('🔄 Refreshed', 'success');
 }
 
 function handleSearch(event) {
@@ -4366,32 +4531,45 @@ async function loadAdminPanel() {
         c.innerHTML = '<div class="admin-empty"><span class="admin-empty-icon">⛔</span>Access Denied.</div>';
         return;
     }
+    _adminActiveTab = 'stats';
     c.innerHTML = `
-        <div class="admin-header">
-            <h2>⚙️ Admin Panel</h2>
-            <button class="admin-btn neutral" onclick="refreshAdminPanel()">🔄 Refresh</button>
-        </div>
-        <div class="admin-grid">
-            <div class="admin-grid-row" style="grid-template-columns:1fr;">
-                <button class="admin-tab-btn ${_adminActiveTab === 'stats' ? 'active' : ''}" id="adminTabBtn-stats" onclick="switchAdminTab('stats')" style="flex-direction:row; justify-content:center; gap:8px; min-height:56px;">
-                    <span class="admin-tab-icon">📊</span><span class="admin-tab-label" style="font-size:14px;">Platform Stats</span>
-                </button>
+        <div id="admin-grid-view">
+            <div class="admin-header">
+                <h2>⚙️ Admin Panel</h2>
+                <button class="admin-btn neutral" onclick="refreshAdminPanel()">🔄 Refresh</button>
             </div>
-            <div class="admin-grid-row">
-                ${ADMIN_TABS.slice(1).map(t => `
-                    <button class="admin-tab-btn ${t.key === _adminActiveTab ? 'active' : ''}" id="adminTabBtn-${t.key}" onclick="switchAdminTab('${t.key}')">
-                        <span class="admin-tab-icon">${t.icon}</span>
-                        <span class="admin-tab-label">${t.label}</span>
-                        <span class="admin-badge" id="adminBadge-${t.key}" style="display:none;">0</span>
+            <div class="admin-grid">
+                <div class="admin-grid-row" style="grid-template-columns:1fr;">
+                    <button class="admin-tab-btn" id="adminTabBtn-stats" onclick="openAdminSingleView('stats')" style="flex-direction:row; justify-content:center; gap:8px; min-height:56px;">
+                        <span class="admin-tab-icon">📊</span><span class="admin-tab-label" style="font-size:14px;">Platform Stats</span>
                     </button>
-                `).join('')}
+                </div>
+                <div class="admin-grid-row">
+                    ${ADMIN_TABS.slice(1).map(t => `
+                        <button class="admin-tab-btn" id="adminTabBtn-${t.key}" onclick="openAdminSingleView('${t.key}')">
+                            <span class="admin-tab-icon">${t.icon}</span>
+                            <span class="admin-tab-label">${t.label}</span>
+                            <span class="admin-badge" id="adminBadge-${t.key}" style="display:none;">0</span>
+                        </button>
+                    `).join('')}
+                </div>
             </div>
         </div>
-        <div id="adminPaneWrap">
-            ${ADMIN_TABS.map(t => `<div class="admin-pane ${t.key === _adminActiveTab ? 'active' : ''}" id="adminPane-${t.key}"><div class="loading"><div class="spinner"></div>Loading…</div></div>`).join('')}
+        <div id="admin-pane-wrap-full" class="admin-single-view">
+            <div class="admin-back-row">
+                <button class="admin-back-btn" onclick="closeAdminSingleView()" aria-label="Back">←</button>
+                <div class="admin-single-title" id="adminSingleTitle">
+                    <span>—</span>
+                    <span class="admin-badge" id="adminSingleBadge" style="display:none;">0</span>
+                </div>
+                <button class="admin-single-refresh" onclick="refreshAdminSingleView()">🔄 Refresh</button>
+            </div>
+            <div id="adminPaneWrapFull">
+                ${ADMIN_TABS.map(t => `<div class="admin-pane" id="adminPane-${t.key}"><div class="loading"><div class="spinner"></div>Loading…</div></div>`).join('')}
+            </div>
         </div>
     `;
-    await Promise.all([refreshAdminCounts(), renderAdminTab(_adminActiveTab)]);
+    await refreshAdminCounts();
 }
 
 async function refreshAdminPanel() {
@@ -4401,12 +4579,7 @@ async function refreshAdminPanel() {
 }
 
 function switchAdminTab(key) {
-    _adminActiveTab = key;
-    document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('adminTabBtn-' + key)?.classList.add('active');
-    document.querySelectorAll('.admin-pane').forEach(p => p.classList.remove('active'));
-    document.getElementById('adminPane-' + key)?.classList.add('active');
-    renderAdminTab(key);
+    openAdminSingleView(key);
 }
 
 async function refreshAdminCounts() {
