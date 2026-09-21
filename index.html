@@ -397,31 +397,6 @@ html, body { height: 100dvh; width: 100%; margin: 0; padding: 0; overflow: hidde
 .content-mod-actions { display: flex; gap: 4px; flex-shrink: 0; }
 .bulk-bar { position: sticky; top: 0; z-index: 5; background: var(--navy); color: white; padding: 10px 14px; border-radius: 12px; display: flex; align-items: center; gap: 10px; margin-bottom: 12px; box-shadow: var(--shadow-md); }
 .bulk-bar .bulk-count { font-weight: 900; flex: 1; }
-.fab-create {
-    position: fixed;
-    bottom: calc(24px + env(safe-area-inset-bottom, 0px));
-    right: 24px;
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    background: var(--teal);
-    color: white;
-    border: none;
-    font-size: 28px;
-    font-weight: 900;
-    cursor: pointer;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 16px rgba(0,128,128,0.4), 0 2px 6px rgba(0,0,0,0.2);
-    z-index: 500;
-    transition: 0.2s;
-    line-height: 1;
-    padding-bottom: 4px;
-}
-.fab-create:hover { transform: scale(1.08); box-shadow: 0 6px 20px rgba(0,128,128,0.55); }
-.fab-create:active { transform: scale(0.95); }
-.fab-create.visible { display: flex; }
 .admin-single-view {
     display: none;
     flex-direction: column;
@@ -751,10 +726,11 @@ html, body { height: 100dvh; width: 100%; margin: 0; padding: 0; overflow: hidde
                         </div>
                     </div>
                 </div>
-                <button class="go-live-btn" onclick="startGoLive()" id="goLiveBtn" style="display:none;"><span class="pulse-dot"></span> 🔴 Go Live</button>
                 <div class="group-banner-actions" id="groupBannerActions">
                     <button class="btn" id="joinClassBtn" onclick="toggleGroupJoin(this, event)">➕ Join Class</button>
                     <button class="btn" id="boostGroupBtn" style="display:none; background:var(--gold); color:#1e293b;" onclick="openBoostModal()">🚀 Boost</button>
+                    <button class="btn" id="createContentBtn" style="display:none; background:var(--gold); color:#1e293b;" onclick="openCreateContentFromBanner()">➕</button>
+                    <button class="btn" id="goLiveBtn" style="display:none; background:var(--red-error); color:white;" onclick="startGoLive()"><span class="pulse-dot"></span> 🔴 Go Live</button>
                 </div>
             </div>
             <div class="tabs-row" id="groupTabs">
@@ -1381,7 +1357,6 @@ html, body { height: 100dvh; width: 100%; margin: 0; padding: 0; overflow: hidde
             <button class="btn" onclick="applyBoost()">🚀 Boost Now</button>
         </div>
     </div>
-    <button class="fab-create" id="fabCreateBtn" onclick="openCreateContentFromFab()" aria-label="Create content">+</button>
 
     <div id="portal-root"></div>
 </div>
@@ -1788,12 +1763,8 @@ function updateGroupUI(group) {
         const displayFollowers = (group.followers || 0) + (boostActive ? (group.boosted_followers || 0) : 0);
         if (f) f.innerText = displayFollowers;
         const o = document.getElementById('groupOnline'); if (o) o.innerText = group.online || 0;
-        const live = document.getElementById('goLiveBtn');
-        if (live) live.style.display = (AppState.isGroupOwner || AppState.isAdmin) ? 'flex' : 'none';
         const pen = document.getElementById('groupPenIcon');
         if (pen) pen.style.display = (AppState.isGroupOwner || AppState.isAdmin) ? 'flex' : 'none';
-        const cpc = document.getElementById('createPostContainer');
-        if (cpc) cpc.style.display = (AppState.isGroupOwner || AppState.isAdmin) ? 'block' : 'none';
         const boostBtn = document.getElementById('boostGroupBtn');
         if (boostBtn) boostBtn.style.display = (AppState.isGroupOwner || AppState.isAdmin) ? 'inline-flex' : 'none';
         const boostBadge = document.getElementById('groupBoostedBadge');
@@ -1828,22 +1799,19 @@ function updateGroupUI(group) {
 }
 
 function updateFabVisibility() {
-    const fab = document.getElementById('fabCreateBtn');
-    if (!fab) return;
+    const btn = document.getElementById('createContentBtn');
+    const live = document.getElementById('goLiveBtn');
     const canCreate = (AppState.isGroupOwner || AppState.isAdmin) && !!AppState.currentGroupId;
-    const mainHidden = document.getElementById('appMain')?.style.display === 'none';
-    const wrapperActive = document.getElementById('tabContentWrapper')?.classList.contains('active');
-    if (canCreate && mainHidden && wrapperActive) fab.classList.add('visible');
-    else fab.classList.remove('visible');
+    if (btn) btn.style.display = canCreate ? 'inline-flex' : 'none';
+    if (live) live.style.display = canCreate ? 'inline-flex' : 'none';
 }
 
-function openCreateContentFromFab() {
+function openCreateContentFromBanner() {
     const tabMap = { social: 'post', videos: 'video', ppts: 'ppt', mockexam: 'mockexam' };
     const activeTab = document.querySelector('.class-content.active')?.id || 'social';
     const type = tabMap[activeTab] || 'post';
     openCreateContentModal(type);
 }
-
 let _adminReturnTab = null;
 
 function openAdminSingleView(key) {
