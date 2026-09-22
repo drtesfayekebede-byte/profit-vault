@@ -524,12 +524,22 @@ html, body {
     position: relative; width: 100%; background: #000;
     border-radius: 12px; overflow: hidden; margin-bottom: 10px; cursor: pointer;
 }
-.video-wrapper video { width: 100%; height: auto; display: block; max-height: 400px; object-fit: contain; background: #000; }
+
 .video-wrapper .video-thumbnail {
     position: relative; width: 100%; padding-bottom: 56.25%;
     background: #1a1a2e; display: flex; align-items: center; justify-content: center; cursor: pointer;
 }
 .video-wrapper .video-thumbnail img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
+.video-wrapper { background: #000; display: flex; align-items: center; justify-content: center; }
+.video-wrapper video {
+    width: 100%;
+    height: auto;
+    display: block;
+    max-height: 70vh;
+    object-fit: contain;
+    background: #000;
+    aspect-ratio: auto;
+}
 .video-wrapper .video-thumbnail .play-btn-overlay {
     position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
     width: 60px; height: 60px; background: rgba(0,0,0,0.6); border-radius: 50%;
@@ -4456,6 +4466,7 @@ async function sharePost(postId, type) {
    GROUP TAB SWITCHING
    ============================================================ */
 function switchGroupTab(tabId, btn) {
+    pauseAllOtherVideos(null);  // ← NEW: stop all videos when leaving the tab
     document.querySelectorAll('#groupTabs .tab-card').forEach(t => t.classList.remove('active'));
     if (btn) btn.classList.add('active');
     else {
@@ -4479,6 +4490,7 @@ function switchGroupTab(tabId, btn) {
 async function loadGlobalTrending() { await loadTrendingContent('social'); }
 
 async function switchTrendingTab(tab, btn) {
+    pauseAllOtherVideos(null);  // ← NEW: stop all videos when leaving the tab
     document.querySelectorAll('.content-tab').forEach(t => t.classList.remove('active'));
     btn.classList.add('active');
     AppState.currentTrendingTab = tab;
@@ -4759,6 +4771,20 @@ async function deleteHomePost(postId) {
     } catch (err) {}
 }
 
+/* Pauses every other video on the page so only one plays at a time.
+   Pass the ID of the video that should keep playing, or null to pause all. */
+function pauseAllOtherVideos(exceptId) {
+    document.querySelectorAll('video').forEach(v => {
+        const isCurrent = exceptId && (
+            v.id === `video-${exceptId}` ||
+            v.id === `hm-video-${exceptId}`
+        );
+        if (!isCurrent && !v.paused) {
+            try { v.pause(); } catch (e) {}
+        }
+    });
+}
+
 /* ============================================================
    VIDEO PLAYERS (group + home)
    ============================================================ */
@@ -4767,6 +4793,7 @@ function playInlineVideo(id, url) {
     const p = document.getElementById(`video-player-${id}`);
     const v = document.getElementById(`video-${id}`);
     if (!t || !p || !v) return;
+    pauseAllOtherVideos(id);  // ← NEW: stop any other video
     t.style.display = 'none'; p.style.display = 'block';
     v.src = url; v.load(); v.play().catch(() => {});
     v.ontimeupdate = () => updateVideoProgress(id);
@@ -4817,6 +4844,7 @@ function playHomeVideo(id, url) {
     const p = document.getElementById(`hm-video-player-${id}`);
     const v = document.getElementById(`hm-video-${id}`);
     if (!t || !p || !v) return;
+    pauseAllOtherVideos(id);  // ← NEW: stop any other video
     t.style.display = 'none'; p.style.display = 'block';
     v.src = url; v.load(); v.play().catch(() => {});
     v.ontimeupdate = () => {
@@ -5843,7 +5871,7 @@ async function loadInbox() {
             const preview = escapeHtml(t.last_message_preview || 'No messages');
             const badgeHtml = isUnread ? `<div class="inbox-unread-badge">${unreadCount > 99 ? '99+' : unreadCount}</div>` : '';
             const groupArg = t.group_id ? `'${t.group_id}'` : 'null';
-            const safeNameJs = String(getDisplayName(u) || '').replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'\\"').replace(/\n/g,' ');
+            const safeNameJs = String(getDisplayName(u) || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, ' ');
             return `<div class="inbox-item ${isUnread ? 'unread' : ''}" onclick="openChatThreadAsOwner('${t.id}', '${partnerId}', '${safeNameJs}', ${groupArg})">
                 <div class="inbox-avatar"><img src="${u.profile_pic_url || AppState.profilePicUrl}" loading="lazy">${isUnread ? '<span class="unread-dot"></span>' : ''}</div>
                 <div class="inbox-info"><div class="inbox-name">${escapeHtml(getDisplayName(u))}</div><div class="inbox-preview">${preview}</div>${t.group_id ? `<div class="inbox-group">📂 ${escapeHtml(gMap[t.group_id] || '')}</div>` : ''}</div>
