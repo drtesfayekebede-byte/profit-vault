@@ -10,7 +10,6 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>TENI | Complete Medical Ecosystem</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 /* ============================================================
@@ -88,7 +87,6 @@ html, body {
 @keyframes menuPop { from { opacity: 0; transform: translateY(-4px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
 @keyframes bubbleIn { from { opacity: 0; transform: translateY(6px) scale(0.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
 @keyframes chatSlideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-@keyframes countdownSlide { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 .spinner {
     display: inline-block; width: 24px; height: 24px;
     border: 3px solid rgba(0,0,0,0.1); border-radius: 50%;
@@ -97,7 +95,9 @@ html, body {
 
 #appContent { display: none; height: 100dvh; width: 100%; flex-direction: column; overflow: hidden; }
 
-/* HEADER */
+/* ============================================================
+   HEADER
+   ============================================================ */
 .header {
     flex-shrink: 0; width: 100%; z-index: 100; background: var(--navy);
     box-shadow: 0 2px 8px rgba(0,0,0,0.2); display: flex; flex-direction: column;
@@ -226,7 +226,9 @@ html, body {
 .content-tab.active { transform: translateY(-1px); filter: brightness(1.18); box-shadow: 0 4px 14px rgba(0,0,0,0.35); }
 .content-tab:hover:not(.active) { transform: translateY(-1px); filter: brightness(1.1); }
 
-/* DRAWER */
+/* ============================================================
+   DRAWER
+   ============================================================ */
 .drawer-backdrop {
     display: none; position: fixed; inset: 0;
     background: rgba(0,0,0,0.5); z-index: 99998;
@@ -466,7 +468,7 @@ html, body {
 .content-card-menu-btn:hover { background: rgba(0,0,0,0.8); transform: scale(1.05); }
 
 /* ============================================================
-   VIDEO PLAYER — 16:9 fixed aspect
+   VIDEO PLAYER — 16:9, edge-to-edge, no wrap
    ============================================================ */
 .video-wrapper {
     position: relative; width: 100%; background: #000;
@@ -495,9 +497,7 @@ html, body {
 .video-wrapper .video-controls {
     display: flex; align-items: center; gap: 12px;
     padding: 8px 12px; background: rgba(0,0,0,0.8); color: white;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    scrollbar-width: none;
+    flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
 }
 .video-wrapper .video-controls::-webkit-scrollbar { display: none; }
@@ -505,123 +505,39 @@ html, body {
 .video-wrapper .video-controls button { background: none; border: none; color: white; font-size: 18px; cursor: pointer; padding: 4px; }
 .video-wrapper .video-controls .progress-bar { flex: 1; height: 4px; background: rgba(255,255,255,0.3); border-radius: 2px; cursor: pointer; min-width: 60px; margin: 0; }
 .video-wrapper .video-controls .progress-bar .progress-fill { height: 100%; background: var(--teal); border-radius: 2px; }
-.video-wrapper .video-controls .time-display { font-size: 12px; color: rgba(255,255,255,0.8); font-weight: 700; min-width: 80px; font-family: monospace; }
+.video-wrapper .video-controls .time-display { font-size: 12px; color: rgba(255,255,255,0.8); font-weight: 700; min-width: 76px; font-family: monospace; }
 .video-wrapper .video-controls .volume-slider { width: 60px; height: 4px; -webkit-appearance: none; appearance: none; background: rgba(255,255,255,0.3); border-radius: 2px; outline: none; }
 .video-wrapper .video-controls .speed-control,
 .video-wrapper .video-controls .download-btn { background: rgba(255,255,255,0.1); border: none; color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 800; cursor: pointer; }
 
 /* ============================================================
-   PINNED VIDEO PLAYER (YouTube-style)
+   VIDEO CARD — edge-to-edge, no white padding
    ============================================================ */
-.pinned-video-shell {
-    display: none;
-    position: sticky; top: 0; z-index: 50;
-    background: var(--bg-white);
-    border-bottom: 1px solid var(--card-border);
-    padding: 12px;
-    margin: -16px -16px 16px -16px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+.content-card[data-content-key^="video:"] {
+    padding: 0 !important;
 }
-.pinned-video-shell.active { display: block; }
-.pinned-video-inner {
-    display: flex; flex-direction: column; gap: 12px;
-    max-width: 900px; margin: 0 auto;
-}
-.pinned-video-player {
-    position: relative;
-    width: 100%;
-    background: #000;
-    border-radius: 12px;
+.content-card[data-content-key^="video:"] > .video-wrapper {
+    margin: 0 !important;
+    border-radius: 12px 12px 0 0;
     overflow: hidden;
 }
-.pinned-video-player video {
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    display: block;
-    object-fit: contain;
-    background: #000;
+.content-card[data-content-key^="video:"] > .meta {
+    padding: 12px 16px 4px 16px;
 }
-.pinned-video-controls {
-    display: flex; align-items: center; gap: 12px;
-    padding: 8px 12px; background: rgba(0,0,0,0.85); color: white;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    scrollbar-width: none;
+.content-card[data-content-key^="video:"] > .actions {
+    padding: 0 16px 12px 16px;
 }
-.pinned-video-controls::-webkit-scrollbar { display: none; }
-.pinned-video-controls > * { flex-shrink: 0; }
-.pinned-video-controls button { background: none; border: none; color: white; font-size: 18px; cursor: pointer; padding: 4px; }
-.pinned-video-controls .progress-bar { flex: 1; height: 4px; background: rgba(255,255,255,0.3); border-radius: 2px; cursor: pointer; min-width: 60px; margin: 0; }
-.pinned-video-controls .progress-bar .progress-fill { height: 100%; background: var(--teal); border-radius: 2px; }
-.pinned-video-controls .time-display { font-size: 12px; color: rgba(255,255,255,0.8); font-weight: 700; min-width: 80px; font-family: monospace; }
-
-.pinned-video-meta {
-    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
-    padding: 8px 4px 0 4px;
+.content-card[data-content-key^="video:"] > .content-comments {
+    padding: 0 16px 12px 16px;
 }
-.pinned-video-meta .pv-title { font-size: 15px; font-weight: 900; color: var(--text-dark); flex: 1; min-width: 0; }
-.pinned-video-meta .pv-group { font-size: 12px; color: var(--text-muted); font-weight: 700; }
-.pinned-video-close {
-    background: rgba(239,68,68,0.15); color: var(--red-error);
-    border: none; border-radius: 20px; padding: 6px 14px;
-    font-weight: 900; font-size: 12px; cursor: pointer;
+.content-card[data-content-key^="video:"] > .content-card-menu-btn {
+    top: 12px;
+    right: 12px;
 }
 
-/* Right-side column with list (desktop) */
-.yt-layout {
-    display: block;
-}
-@media (min-width: 901px) {
-    .yt-layout.split {
-        display: grid;
-        grid-template-columns: 1fr 340px;
-        gap: 16px;
-        align-items: start;
-    }
-    .yt-layout.split .yt-main { grid-column: 1; }
-    .yt-layout.split .yt-side { grid-column: 2; position: sticky; top: 12px; max-height: calc(100vh - 200px); overflow-y: auto; }
-}
-
-.pinned-video-shell .yt-side {
-    display: none;
-}
-@media (min-width: 901px) {
-    .pinned-video-shell.yt-active .yt-side { display: block; }
-}
-
-/* Countdown overlay (autoplay next) */
-.yt-countdown {
-    position: absolute;
-    bottom: 60px; right: 16px;
-    background: rgba(0,0,0,0.85); color: white;
-    border-radius: 12px;
-    padding: 12px 16px;
-    display: flex; align-items: center; gap: 12px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-    animation: countdownSlide 0.25s ease-out;
-    z-index: 10;
-    max-width: 280px;
-}
-.yt-countdown .yt-cd-label { font-size: 12px; font-weight: 800; color: rgba(255,255,255,0.8); }
-.yt-countdown .yt-cd-title { font-size: 13px; font-weight: 900; color: white; margin: 2px 0 6px 0; line-height: 1.2; }
-.yt-countdown .yt-cd-timer {
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 34px; height: 34px; border-radius: 50%;
-    background: var(--gold); color: #1e293b; font-weight: 900; font-size: 14px;
-    flex-shrink: 0;
-}
-.yt-countdown .yt-cd-cancel {
-    background: rgba(255,255,255,0.15); border: none; color: white;
-    padding: 6px 12px; border-radius: 20px; font-weight: 900; font-size: 11px; cursor: pointer;
-}
-
-/* Highlight card currently pinned in list */
-.content-card.pinned-source {
-    opacity: 0.5;
-    pointer-events: none;
-}
-
-/* CONTENT ACTIONS */
+/* ============================================================
+   CONTENT ACTIONS
+   ============================================================ */
 .content-card .meta h4 { font-size: 16px; font-weight: 800; color: var(--text-dark); margin-bottom: 4px; }
 .content-card .meta p { font-size: 13px; color: var(--text-muted); font-weight: 700; }
 .content-card .actions { display: flex; gap: 16px; margin-top: 12px; border-top: 1px solid var(--card-border); padding-top: 12px; flex-wrap: wrap; }
@@ -632,7 +548,9 @@ html, body {
 .content-card .actions button.disliked { color: var(--text-dark); }
 .view-counter { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: var(--text-muted); font-weight: 700; }
 
-/* COMMENTS (unified) */
+/* ============================================================
+   COMMENTS (unified)
+   ============================================================ */
 .content-comments { margin-top: 12px; display: none; padding: 8px 0; }
 .comment-item { padding: 10px 0; border-bottom: 1px solid var(--card-border); position: relative; }
 .comment-item:last-child { border-bottom: none; }
@@ -661,7 +579,9 @@ html, body {
 .long-text-body { white-space: pre-wrap; word-wrap: break-word; }
 .read-more-toggle { color: var(--teal); cursor: pointer; font-weight: 800; margin-left: 4px; }
 
-/* EXAM */
+/* ============================================================
+   EXAM
+   ============================================================ */
 .exam-toggle { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
 .exam-toggle span { font-weight: 800; color: var(--text-dark); }
 .toggle-btn { background: var(--card-border); border: none; border-radius: 30px; padding: 6px 16px; font-weight: 800; font-size: 12px; cursor: pointer; transition: 0.2s; }
@@ -682,7 +602,9 @@ html, body {
 .exam-timer .timer { font-size: 20px; color: var(--gold); font-family: monospace; font-weight: 900; }
 .exam-question-block { background: var(--card-bg); border-radius: 12px; padding: 12px; margin-bottom: 12px; }
 
-/* TEACHERS / BOOKS / PROFILE */
+/* ============================================================
+   TEACHERS / BOOKS / PROFILE
+   ============================================================ */
 .join-header h2 { color: var(--text-dark); font-size: 20px; font-weight: 900; margin-bottom: 16px; }
 .teacher-card { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; margin-bottom: 12px; }
 .teacher-card .info .name { font-weight: 800; color: var(--text-dark); font-size: 16px; }
@@ -722,7 +644,9 @@ html, body {
 .profile-card h3 { color: var(--text-dark); font-size: 20px; font-weight: 900; display: flex; align-items: center; justify-content: center; gap: 6px; }
 .profile-card p { color: var(--text-muted); font-size: 14px; font-weight: 700; }
 
-/* SETTINGS */
+/* ============================================================
+   SETTINGS
+   ============================================================ */
 .settings-section { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 16px 18px; margin-bottom: 14px; }
 .settings-section h3 { color: var(--text-dark); font-size: 15px; font-weight: 900; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
 .settings-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--card-border); gap: 12px; }
@@ -752,7 +676,9 @@ html, body {
 }
 .settings-theme-picker button.active { border-color: var(--teal); background: rgba(0,128,128,0.1); color: var(--teal); }
 
-/* ADMIN */
+/* ============================================================
+   ADMIN
+   ============================================================ */
 #admin-tab { padding-bottom: 40px; }
 .admin-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; padding: 0 4px; }
 .admin-header h2 { color: var(--text-dark); font-size: 22px; font-weight: 900; display: flex; align-items: center; gap: 8px; }
@@ -891,7 +817,9 @@ html, body {
 #admin-grid-view { display: block; }
 #admin-grid-view.hidden { display: none; }
 
-/* WALLET */
+/* ============================================================
+   WALLET
+   ============================================================ */
 .wallet-balance { background: var(--navy); border-radius: var(--border-radius-card); padding: 20px; text-align: center; color: white; margin-bottom: 16px; }
 .wallet-balance .amount { font-size: 36px; color: var(--gold); font-weight: 900; }
 .wallet-balance .label { font-size: 14px; color: rgba(255,255,255,0.7); font-weight: 700; }
@@ -899,9 +827,11 @@ html, body {
 .wallet-transaction .positive { color: var(--green-success); }
 .wallet-transaction .negative { color: var(--red-error); }
 
-/* B-STORE */
+/* ============================================================
+   B-STORE inside group
+   ============================================================ */
 .bstore-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.bstore-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--border-radius-card); padding: 16px; text-align: center; transition: all 0.3s ease; position: relative; cursor: pointer; }
+.bstore-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--border-radius-card); padding: 16px; text-align: center; transition: all 0.3s ease; position: relative; }
 .bstore-card .book-cover { width: 100%; height: 180px; background: var(--navy); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--gold); font-size: 48px; margin-bottom: 8px; overflow: hidden; }
 .bstore-card .book-cover img { width: 100%; height: 100%; object-fit: cover; }
 .bstore-card .title { font-weight: 800; color: var(--text-dark); font-size: 15px; }
@@ -909,7 +839,9 @@ html, body {
 .bstore-card .price { font-size: 14px; color: var(--gold-dark); font-weight: 800; margin: 8px 0; }
 .bstore-card .buy-btn { background: var(--teal); color: white; border: none; padding: 10px 16px; border-radius: 30px; font-weight: 800; cursor: pointer; width: 100%; margin-top: 8px; }
 
-/* PORTAL */
+/* ============================================================
+   PORTAL
+   ============================================================ */
 .three-dot-menu { position: relative; cursor: pointer; font-size: 20px; color: var(--text-dark); }
 #portal-root { position: fixed; inset: 0; pointer-events: none; z-index: 99997; }
 #portal-root > * { pointer-events: auto; }
@@ -940,7 +872,9 @@ html, body {
 .portal-menu.share-options div:hover,
 .portal-menu.chat-theme-portal div:hover { background: var(--card-hover); }
 
-/* CHAT */
+/* ============================================================
+   CHAT
+   ============================================================ */
 .chat-overlay { display: none; position: fixed; inset: 0; background: var(--bg-white); z-index: 100002; flex-direction: column; }
 .chat-overlay.open { display: flex; animation: chatSlideUp 0.25s ease-out; }
 .chat-header {
@@ -1080,159 +1014,6 @@ html, body {
 .create-form.active { display: block; }
 .deep-link-highlight { box-shadow: 0 0 0 3px var(--gold), 0 8px 24px rgba(255,215,0,0.3) !important; transition: box-shadow 0.3s; border-radius: 12px; }
 
-/* ============================================================
-   BOOK / DOC READER OVERLAY
-   ============================================================ */
-#bookReaderOverlay {
-    display: none;
-    position: fixed; inset: 0;
-    background: var(--bg-white);
-    z-index: 100003;
-    flex-direction: column;
-}
-#bookReaderOverlay.open { display: flex; animation: chatSlideUp 0.25s ease-out; }
-.reader-header {
-    flex-shrink: 0; background: var(--navy); color: white;
-    display: flex; align-items: center; gap: 10px;
-    padding: 12px 14px;
-    padding-top: calc(12px + env(safe-area-inset-top, 0px));
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-}
-.reader-back-btn { background: none; border: none; color: white; font-size: 22px; cursor: pointer; padding: 6px; border-radius: 8px; }
-.reader-back-btn:hover { background: rgba(255,255,255,0.08); }
-.reader-title {
-    flex: 1; min-width: 0;
-    font-size: 14px; font-weight: 900; color: white;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.reader-page-info {
-    font-size: 12px; font-weight: 800; color: var(--gold);
-    background: rgba(255,255,255,0.08);
-    padding: 4px 10px; border-radius: 12px;
-    white-space: nowrap;
-    font-family: monospace;
-}
-.reader-menu-btn { background: none; border: none; color: white; font-size: 18px; cursor: pointer; padding: 6px 10px; border-radius: 8px; }
-.reader-body {
-    flex: 1; overflow: auto;
-    background: #1a1a1a;
-    display: flex; flex-direction: column; align-items: center;
-    padding: 12px;
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior: contain;
-    gap: 16px;
-}
-.reader-page-wrap {
-    background: white;
-    border-radius: 4px;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
-    max-width: 100%;
-    overflow: hidden;
-}
-.reader-page-wrap canvas { display: block; max-width: 100%; height: auto; }
-.reader-media-wrap { max-width: 100%; width: 100%; display: flex; justify-content: center; }
-.reader-media-wrap img { max-width: 100%; max-height: 80vh; object-fit: contain; border-radius: 4px; }
-.reader-media-wrap video { max-width: 100%; max-height: 80vh; border-radius: 4px; background: #000; }
-.reader-media-wrap audio { width: 100%; max-width: 600px; }
-.reader-text-wrap {
-    background: white; color: #1e293b;
-    padding: 24px; border-radius: 6px;
-    max-width: 780px; width: 100%;
-    font-family: 'Courier New', monospace;
-    font-size: 14px; line-height: 1.6;
-    white-space: pre-wrap; word-wrap: break-word;
-}
-.reader-office-wrap { width: 100%; max-width: 900px; }
-.reader-office-wrap iframe { width: 100%; height: 70vh; border: none; border-radius: 6px; background: white; }
-.reader-unsupported {
-    background: var(--card-bg); border: 2px dashed var(--card-border);
-    border-radius: 14px; padding: 40px 24px; text-align: center;
-    max-width: 500px; color: white;
-}
-.reader-unsupported .icon { font-size: 56px; margin-bottom: 12px; }
-.reader-unsupported .msg { font-size: 15px; font-weight: 800; margin-bottom: 16px; color: white; }
-.reader-unsupported .sub { font-size: 12px; color: rgba(255,255,255,0.7); margin-bottom: 20px; }
-.reader-footer {
-    flex-shrink: 0;
-    background: var(--navy);
-    display: flex; align-items: center; gap: 8px;
-    padding: 10px 12px;
-    padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
-    box-shadow: 0 -2px 8px rgba(0,0,0,0.2);
-    color: white;
-}
-.reader-footer button {
-    background: rgba(255,255,255,0.1);
-    border: none; color: white;
-    padding: 10px 16px; border-radius: 20px;
-    font-weight: 900; font-size: 13px;
-    cursor: pointer; flex-shrink: 0;
-    transition: 0.15s;
-}
-.reader-footer button:hover { background: rgba(255,255,255,0.2); }
-.reader-footer button:disabled { opacity: 0.3; cursor: not-allowed; }
-.reader-page-slider {
-    flex: 1; display: flex; align-items: center; gap: 8px;
-    min-width: 0;
-}
-.reader-page-slider input[type="range"] {
-    flex: 1; height: 4px; -webkit-appearance: none; appearance: none;
-    background: rgba(255,255,255,0.3); border-radius: 2px; outline: none;
-}
-.reader-page-slider input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none; appearance: none;
-    width: 16px; height: 16px; border-radius: 50%;
-    background: var(--gold); cursor: pointer;
-}
-.reader-page-slider input[type="range"]::-moz-range-thumb {
-    width: 16px; height: 16px; border-radius: 50%;
-    background: var(--gold); cursor: pointer; border: none;
-}
-.reader-loading { display: flex; flex-direction: column; align-items: center; gap: 12px; color: white; padding: 40px; }
-.reader-loading .spinner { border-color: rgba(255,255,255,0.2); border-top-color: var(--gold); width: 40px; height: 40px; }
-.reader-loading .msg { font-weight: 800; font-size: 14px; }
-.reader-paywall {
-    background: var(--navy);
-    border: 3px solid var(--gold);
-    border-radius: 16px;
-    padding: 32px 24px;
-    text-align: center;
-    color: white;
-    max-width: 480px;
-    width: 100%;
-    margin: 24px auto;
-    box-shadow: 0 8px 32px rgba(255,215,0,0.2);
-}
-.reader-paywall .pw-icon { font-size: 56px; margin-bottom: 12px; }
-.reader-paywall .pw-title { font-size: 22px; font-weight: 900; color: var(--gold); margin-bottom: 8px; }
-.reader-paywall .pw-sub { font-size: 14px; color: rgba(255,255,255,0.8); margin-bottom: 6px; }
-.reader-paywall .pw-price {
-    display: inline-block;
-    padding: 6px 18px; border-radius: 20px;
-    background: rgba(255,215,0,0.15); color: var(--gold);
-    font-weight: 900; font-size: 15px; margin: 12px 0 20px;
-}
-.reader-paywall .pw-actions { display: flex; flex-direction: column; gap: 10px; }
-.reader-paywall .pw-actions button {
-    padding: 14px 20px; border-radius: 30px; border: none;
-    font-weight: 900; font-size: 15px; cursor: pointer; transition: 0.2s;
-}
-.reader-paywall .pw-actions .primary { background: var(--gold); color: #1e293b; }
-.reader-paywall .pw-actions .primary:hover { background: var(--gold-dark); }
-.reader-paywall .pw-actions .secondary { background: transparent; border: 2px solid rgba(255,255,255,0.3); color: white; }
-.reader-paywall .pw-actions .secondary:hover { background: rgba(255,255,255,0.08); }
-
-.reader-more-badge {
-    background: rgba(255,215,0,0.12);
-    border: 2px dashed var(--gold);
-    color: var(--gold);
-    padding: 12px 20px;
-    border-radius: 12px;
-    font-weight: 900; font-size: 13px;
-    text-align: center;
-}
-
-/* Ban screen */
 #banScreen {
     position: fixed; inset: 0;
     background: linear-gradient(160deg, #0a2540 0%, #153e60 100%);
@@ -1289,9 +1070,8 @@ html, body {
     .header-row-2 { gap: 4px; padding: 6px 8px; }
     .tab-card { font-size: 10px; padding: 5px 3px; min-width: 44px; }
     .exam-timer .timer { font-size: 16px; }
-    .video-wrapper .video-controls { gap: 8px; padding: 6px 8px; }
-    .video-wrapper .video-controls .time-display { font-size: 11px; min-width: 88px; font-family: monospace; }
-    .video-wrapper .video-controls .progress-bar { min-width: 80px; }
+    .video-wrapper .video-controls { gap: 6px; padding: 6px 8px; }
+    .video-wrapper .video-controls .time-display { font-size: 10px; min-width: 64px; }
     .drawer { width: 260px; }
     .chat-bubble { max-width: 85%; font-size: 13px; }
     .inbox-avatar { width: 42px; height: 42px; }
@@ -1301,11 +1081,6 @@ html, body {
     .admin-tab-btn { min-height: 64px; padding: 8px 4px; }
     .admin-tab-btn .admin-tab-icon { font-size: 18px; }
     .admin-tab-btn .admin-tab-label { font-size: 10px; }
-    .pinned-video-shell { margin: -16px -16px 16px -16px; padding: 8px; }
-    .yt-countdown { bottom: 48px; right: 8px; padding: 10px 12px; max-width: 240px; }
-    .yt-countdown .yt-cd-title { font-size: 12px; }
-    .reader-paywall { padding: 24px 16px; }
-    .reader-paywall .pw-title { font-size: 18px; }
 }
 @media (min-width: 601px) {
     .app-main { padding: 24px; }
@@ -1378,34 +1153,6 @@ html, body {
 
     <!-- HOME FEED -->
     <div id="appMain" class="app-main">
-        <!-- Pinned YouTube-style player (hidden until video plays) -->
-        <div id="pinnedVideoShellHome" class="pinned-video-shell">
-            <div class="pinned-video-inner">
-                <div class="pinned-video-player">
-                    <video id="pinnedVideoElHome" controls playsinline preload="metadata"></video>
-                    <div class="pinned-video-controls">
-                        <button onclick="togglePinnedPlayHome()">⏸️</button>
-                        <div class="progress-bar" onclick="seekPinnedHome(event)"><div class="progress-fill" id="pinnedProgressHome"></div></div>
-                        <span class="time-display" id="pinnedTimeHome">0:00 / 0:00</span>
-                        <button onclick="togglePinnedFullscreenHome()">⛶</button>
-                        <button class="download-btn" onclick="downloadPinnedHome()">⬇️</button>
-                    </div>
-                    <div id="pinnedCountdownHome" class="yt-countdown" style="display:none;">
-                        <div style="flex:1;">
-                            <div class="yt-cd-label">Up next</div>
-                            <div class="yt-cd-title" id="pinnedCountdownTitleHome">—</div>
-                        </div>
-                        <div class="yt-cd-timer" id="pinnedCountdownTimerHome">5</div>
-                        <button class="yt-cd-cancel" onclick="cancelPinnedAutoplayHome()">Cancel</button>
-                    </div>
-                </div>
-                <div class="pinned-video-meta">
-                    <div class="pv-title" id="pinnedTitleHome">Now playing</div>
-                    <button class="pinned-video-close" onclick="unpinVideo('home')">✕ Close</button>
-                </div>
-            </div>
-        </div>
-
         <div class="app-grid-wrapper">
             <div id="globalTrendingContainer"><div class="loading"><div class="spinner"></div>Loading content...</div></div>
         </div>
@@ -1469,35 +1216,7 @@ html, body {
                 <button class="tab-card exam" onclick="switchGroupTab('mockexam', this)">Exam</button>
             </div>
             <div id="createPostContainer" style="display:none;"></div>
-            <div id="videos" class="class-content active">
-                <!-- Pinned YouTube-style player (group) -->
-                <div id="pinnedVideoShellGroup" class="pinned-video-shell" style="margin:0 0 16px 0;">
-                    <div class="pinned-video-inner">
-                        <div class="pinned-video-player">
-                            <video id="pinnedVideoElGroup" controls playsinline preload="metadata"></video>
-                            <div class="pinned-video-controls">
-                                <button onclick="togglePinnedPlayGroup()">⏸️</button>
-                                <div class="progress-bar" onclick="seekPinnedGroup(event)"><div class="progress-fill" id="pinnedProgressGroup"></div></div>
-                                <span class="time-display" id="pinnedTimeGroup">0:00 / 0:00</span>
-                                <button onclick="togglePinnedFullscreenGroup()">⛶</button>
-                                <button class="download-btn" onclick="downloadPinnedGroup()">⬇️</button>
-                            </div>
-                            <div id="pinnedCountdownGroup" class="yt-countdown" style="display:none;">
-                                <div style="flex:1;">
-                                    <div class="yt-cd-label">Up next</div>
-                                    <div class="yt-cd-title" id="pinnedCountdownTitleGroup">—</div>
-                                </div>
-                                <div class="yt-cd-timer" id="pinnedCountdownTimerGroup">5</div>
-                                <button class="yt-cd-cancel" onclick="cancelPinnedAutoplayGroup()">Cancel</button>
-                            </div>
-                        </div>
-                        <div class="pinned-video-meta">
-                            <div class="pv-title" id="pinnedTitleGroup">Now playing</div>
-                            <button class="pinned-video-close" onclick="unpinVideo('group')">✕ Close</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <div id="videos" class="class-content active"></div>
             <div id="books" class="class-content"><div id="groupBookStore" class="bstore-grid"><div class="loading">Loading books...</div></div></div>
             <div id="ppts" class="class-content"></div>
             <div id="mockexam" class="class-content">
@@ -1579,7 +1298,7 @@ html, body {
             </div>
             <div class="settings-section">
                 <h3>ℹ️ About</h3>
-                <div class="settings-row"><div class="settings-label">Version</div><div class="settings-value">6.2.0</div></div>
+                <div class="settings-row"><div class="settings-label">Version</div><div class="settings-value">6.1.0</div></div>
             </div>
             <div class="settings-section" style="border-color:rgba(239,68,68,0.3);">
                 <h3 style="color:var(--red-error);">⚠️ Danger Zone</h3>
@@ -1646,7 +1365,7 @@ html, body {
                 <div class="chat-header-name" id="chatHeaderName">Chat</div>
                 <div class="chat-header-sub" id="chatHeaderSub">Group</div>
             </div>
-            <button class="chat-header-menu-btn" onclick="toggleChatThemeMenu(event)" title="Chat background"><i class="fas fa-palette"></i></button>
+            <button class="chat-header-menu-btn" onclick="toggleChatThemeMenu(event)" title="Change chat background" style="color: var(--gold);"><i class="fas fa-palette"></i></button>
             <button class="chat-header-menu-btn" onclick="toggleChatMenu(event)"><i class="fas fa-ellipsis-v"></i></button>
         </div>
         <div class="chat-messages" id="chatMessages"></div>
@@ -1687,29 +1406,6 @@ html, body {
             <input type="text" id="membersSearch" placeholder="Search members..." oninput="filterMembers(this.value)" style="width:100%; padding:10px 14px; border:1px solid var(--card-border); border-radius:24px; font-weight:700; font-size:14px; outline:none; background:var(--card-bg); color:var(--text-dark);">
         </div>
         <div class="chat-messages" id="membersList" style="padding:0;"></div>
-    </div>
-
-    <!-- BOOK / DOC READER OVERLAY -->
-    <div id="bookReaderOverlay">
-        <div class="reader-header">
-            <button class="reader-back-btn" onclick="closeBookReader()" title="Back">←</button>
-            <div class="reader-title" id="readerTitle">Loading…</div>
-            <div class="reader-page-info" id="readerPageInfo">— / —</div>
-            <button class="reader-menu-btn" onclick="readerScrollToPaywall()" id="readerMenuBtn" style="display:none;" title="Jump to paywall">💰</button>
-        </div>
-        <div class="reader-body" id="readerBody">
-            <div class="reader-loading">
-                <div class="spinner"></div>
-                <div class="msg">Loading document…</div>
-            </div>
-        </div>
-        <div class="reader-footer" id="readerFooter" style="display:none;">
-            <button id="readerPrevBtn" onclick="readerPrevPage()">◀ Prev</button>
-            <div class="reader-page-slider">
-                <input type="range" id="readerPageSlider" min="1" max="1" value="1" oninput="readerGoToPage(this.value)">
-            </div>
-            <button id="readerNextBtn" onclick="readerNextPage()">Next ▶</button>
-        </div>
     </div>
 
     <!-- MODALS -->
@@ -1772,7 +1468,6 @@ html, body {
                 <button class="ct-tab active" data-type="video" onclick="switchCreateType('video', this)">📹 Video</button>
                 <button class="ct-tab" data-type="ppt" onclick="switchCreateType('ppt', this)">📊 PPT</button>
                 <button class="ct-tab" data-type="mockexam" onclick="switchCreateType('mockexam', this)">📝 Exam</button>
-                <button class="ct-tab" data-type="book" onclick="switchCreateType('book', this)">📖 Book</button>
             </div>
             <div id="createForm-video" class="create-form active">
                 <div class="form-group"><label>Title</label><input type="text" id="videoTitle" maxlength="100"></div>
@@ -1794,22 +1489,12 @@ html, body {
                 <div class="form-group">
                     <label>Upload PPT File</label>
                     <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-                        <input type="file" id="pptFileInput" accept=".pdf,.ppt,.pptx,.png,.jpg,.jpeg,.gif,.webp" style="flex:1;">
+                        <input type="file" id="pptFileInput" accept=".pdf,.ppt,.pptx" style="flex:1;">
                         <button class="btn-sm btn-teal" onclick="uploadCreateFile('ppt')" style="margin:0; width:auto;">📤 Upload</button>
                     </div>
                     <div id="pptUploadStatus" style="font-size:12px; color:var(--text-muted); margin-top:4px;">⏳ No file selected</div>
                 </div>
                 <div class="form-group"><label>Thumbnail (optional)</label><input type="file" id="pptThumb" accept="image/*"></div>
-                <div class="form-group" style="background:var(--card-bg); padding:10px 12px; border-radius:10px;">
-                    <label style="display:flex; align-items:center; gap:8px; cursor:pointer; margin:0;">
-                        <input type="checkbox" id="pptIsPaid" onchange="onPptPaidToggle(this)" style="width:auto; margin:0;">
-                        <span>💰 Make this PPT Paid (5-page preview for free users)</span>
-                    </label>
-                    <div id="pptPaidFields" style="display:none; margin-top:10px;">
-                        <label style="font-size:13px;">Preview pages (free users see this many)</label>
-                        <input type="number" id="pptPreviewPages" value="5" min="1" max="50">
-                    </div>
-                </div>
                 <input type="hidden" id="pptFileUrl">
             </div>
             <div id="createForm-mockexam" class="create-form">
@@ -1835,33 +1520,6 @@ html, body {
                     </div>
                 </div>
                 <button class="btn-sm btn-teal" onclick="addExamQuestion()" style="width:100%; margin-bottom:12px;">➕ Add Another Question</button>
-            </div>
-            <div id="createForm-book" class="create-form">
-                <div class="form-group"><label>Title</label><input type="text" id="ctBookTitle" maxlength="100"></div>
-                <div class="form-group"><label>Author</label><input type="text" id="ctBookAuthor" maxlength="100"></div>
-                <div class="form-group"><label>Description</label><textarea id="ctBookDesc" rows="3" maxlength="500"></textarea></div>
-                <div class="form-group"><label>Category</label>
-                    <select id="ctBookCategory">
-                        <option value="textbook">Textbook</option>
-                        <option value="reference">Reference</option>
-                        <option value="case_studies">Case Studies</option>
-                        <option value="review">Review</option>
-                        <option value="other">Other</option>
-                    </select>
-                </div>
-                <div class="form-group"><label>Cover</label><input type="file" id="ctBookCover" accept="image/*"></div>
-                <div class="form-group"><label>File (PDF/EPUB/MOBI/DOC)</label><input type="file" id="ctBookFile" accept=".pdf,.epub,.mobi,.doc,.docx"></div>
-                <div class="form-group" style="background:var(--card-bg); padding:10px 12px; border-radius:10px;">
-                    <div style="font-weight:900; font-size:13px; margin-bottom:8px;">💰 Prices (Coins)</div>
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-                        <div><label style="font-size:11px;">Monthly</label><input type="number" id="ctBookPriceMonthly" placeholder="0" min="0" style="margin-bottom:0;"></div>
-                        <div><label style="font-size:11px;">3 Months</label><input type="number" id="ctBookPrice3" placeholder="0" min="0" style="margin-bottom:0;"></div>
-                        <div><label style="font-size:11px;">6 Months</label><input type="number" id="ctBookPrice6" placeholder="0" min="0" style="margin-bottom:0;"></div>
-                        <div><label style="font-size:11px;">9 Months</label><input type="number" id="ctBookPrice9" placeholder="0" min="0" style="margin-bottom:0;"></div>
-                        <div style="grid-column:1 / -1;"><label style="font-size:11px;">1 Year</label><input type="number" id="ctBookPriceYearly" placeholder="0" min="0" style="margin-bottom:0;"></div>
-                    </div>
-                </div>
-                <p style="font-size:12px; color:var(--text-muted); margin-top:8px; text-align:center;">Book will be submitted for admin approval.</p>
             </div>
             <button class="btn btn-teal" onclick="submitCreateContent()">📤 Publish</button>
         </div>
@@ -2027,8 +1685,9 @@ html, body {
 </div>
 <script>
 /* ============================================================
-   TENI v6.2 — Supabase client + state
-   Adds: PDF/image/doc reader, YouTube-style pinned video, book upload via create-content
+   TENI v6.1 — Supabase client + state
+   Removed: research, m-calc, jobs, top-level b-store, social/posts
+   Added: unified comments/likes/dislikes, 16:9 video player, books in groups
    ============================================================ */
 const SUPABASE_URL = 'https://ogtlaffkybpesaxastvx.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ndGxhZmZreWJwZXNheGFzdHZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTA4NTQsImV4cCI6MjA5NTM4Njg1NH0.toDw1_DsAjHjUuCg0hvRdEGyjA7mW2DJNlSWoVBT1qY';
@@ -2036,11 +1695,6 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
     auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true },
     realtime: { params: { eventsPerSecond: 5 } }
 });
-
-// Configure PDF.js worker
-if (window.pdfjsLib) {
-    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-}
 
 const AppState = {
     userId: null, isAdmin: false, isTeacher: false, isBanned: false,
@@ -2088,28 +1742,7 @@ const AppState = {
     adminContentFilter: { type: 'all', search: '' },
     adminContentSelection: new Set(),
     navStack: [],
-    _suppressPopstate: false,
-    // Pinned video state
-    pinnedVideo: {
-        home: null,   // { id, url, title, listIds, listType }
-        group: null
-    },
-    pinnedCountdown: { home: null, group: null },   // setInterval ids
-    pinnedAutoplayTimer: { home: null, group: null }, // setTimeout ids
-    currentVideoList: { home: [], group: [] },       // cached arrays for autoplay-next
-    // Reader state
-    reader: {
-        pdf: null,
-        fileUrl: null,
-        contentType: null,     // 'book' | 'ppt'
-        contentId: null,
-        title: '',
-        totalPages: 0,
-        currentPage: 1,
-        previewLimit: null,    // null = no limit, number = preview pages
-        isPaid: false,
-        priceMonthly: 0
-    }
+    _suppressPopstate: false
 };
 
 const VIEW_THRESHOLDS = { video: 10, exam: 3 };
@@ -2139,12 +1772,16 @@ function escapeHtml(s) {
     if (s == null) return '';
     return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
+
+/* ============================================================
+   FIXED — clean time display, no decimals
+   ============================================================ */
 function formatTime(seconds) {
     if (!isFinite(seconds) || seconds < 0) seconds = 0;
-    const total = Math.floor(seconds);
-    const mins = Math.floor(total / 60);
-    const secs = total % 60;
-    return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    seconds = Math.floor(seconds);
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${String(secs).padStart(2, '0')}`;
 }
 function formatInboxTime(d) {
     const now = new Date();
@@ -2351,7 +1988,6 @@ function navigateBack() {
 }
 function performBack() {
     if (AppState.openMenuEl) { closeOpenMenu(); return true; }
-    if (document.getElementById('bookReaderOverlay')?.classList.contains('open')) { closeBookReader(); return true; }
     const activeModal = document.querySelector('.modal.active');
     if (activeModal) { activeModal.classList.remove('active'); return true; }
     if (document.getElementById('chatOverlay')?.classList.contains('open')) { closeChat(); return true; }
@@ -2395,8 +2031,6 @@ function headerSettingsClick(event) { event?.stopPropagation(); openTabContent('
 /* ---- Navigation ---- */
 function goToHome() {
     stopExamTimer(); closeOpenMenu();
-    // Unpin any running video when navigating home
-    unpinVideo('group');
     const appMain = document.getElementById('appMain');
     const wrapper = document.getElementById('tabContentWrapper');
     if (appMain) appMain.style.display = 'block';
@@ -2408,8 +2042,6 @@ function goToHome() {
 }
 function openTabContent(tabId, specificGroupId = null) {
     stopExamTimer(); closeOpenMenu();
-    // Unpin video when leaving group / home
-    unpinVideo('group');
     const appMain = document.getElementById('appMain');
     const wrapper = document.getElementById('tabContentWrapper');
     const container = document.getElementById('tabContentContainer');
@@ -2518,7 +2150,7 @@ function updateFabVisibility() {
     if (live) live.style.display = canCreate ? 'inline-flex' : 'none';
 }
 function openCreateContentFromBanner() {
-    const tabMap = { videos: 'video', ppts: 'ppt', mockexam: 'mockexam', books: 'book' };
+    const tabMap = { videos: 'video', ppts: 'ppt', mockexam: 'mockexam' };
     const activeTab = document.querySelector('.class-content.active')?.id || 'videos';
     const type = tabMap[activeTab] || 'video';
     openCreateContentModal(type);
@@ -2542,15 +2174,13 @@ async function loadGroupContent(groupId, contentType) {
         if (!visible.length) { c.innerHTML = `<div class="loading" style="color:var(--text-muted);">No ${contentType} yet.</div>`; return; }
         let likedSet = new Set(), dislikedSet = new Set();
         if (AppState.userId && visible.length) {
-            const ids = visible.map(v => v.id);
+            const ids = visible.map(v => String(v.id));
             const { data: ul } = await sb.from('content_likes').select('content_id').eq('content_type', filterType).eq('user_id', AppState.userId).in('content_id', ids);
             likedSet = new Set((ul || []).map(l => l.content_id));
             const { data: ud } = await sb.from('content_dislikes').select('content_id').eq('content_type', filterType).eq('user_id', AppState.userId).in('content_id', ids);
             dislikedSet = new Set((ud || []).map(d => d.content_id));
         }
-        // Cache the list for autoplay-next logic
-        AppState.currentVideoList.group = filterType === 'video' ? visible : AppState.currentVideoList.group;
-        c.innerHTML = visible.map(item => renderVideoOrPptCard(item, filterType, likedSet.has(item.id), dislikedSet.has(item.id))).join('');
+        c.innerHTML = visible.map(item => renderVideoOrPptCard(item, filterType, likedSet.has(String(item.id)), dislikedSet.has(String(item.id)))).join('');
     } catch (err) { c.innerHTML = `<div class="loading" style="color:var(--red-error);">Failed to load.</div>`; }
 }
 
@@ -2563,7 +2193,7 @@ function renderVideoOrPptCard(item, filterType, isLiked, isDisliked) {
     if (isVideo) {
         const thumb = item.thumbnail_url || item.cover_url || '';
         contentHtml = `<div class="video-wrapper" id="video-wrapper-${item.id}">
-            <div class="video-thumbnail" onclick="playInlineVideo('${item.id}', '${item.file_url}', '${escapeHtml(item.title)}')" id="thumbnail-${item.id}">
+            <div class="video-thumbnail" onclick="playInlineVideo('${item.id}', '${item.file_url}')" id="thumbnail-${item.id}">
                 ${thumb ? `<img src="${thumb}" alt="" loading="lazy" decoding="async">` : `<div style="position:absolute; inset:0; background:#1a1a2e; display:flex; align-items:center; justify-content:center; font-size:48px; color:var(--gold);">🎬</div>`}
                 <div class="play-btn-overlay"><span>▶️</span></div>
             </div>
@@ -2582,9 +2212,7 @@ function renderVideoOrPptCard(item, filterType, isLiked, isDisliked) {
             </div>
         </div>`;
     } else {
-        // PPT — show paid badge if is_paid
-        const paidBadge = item.is_paid ? '<span style="position:absolute; top:8px; left:8px; background:var(--gold); color:#1e293b; padding:3px 10px; border-radius:12px; font-size:11px; font-weight:900; z-index:2;">💰 PAID</span>' : '';
-        contentHtml = `<div style="cursor:pointer; position:relative; ${item.cover_url ? `background: url('${item.cover_url}') center/cover;` : 'background:#1a1a2e; display:flex; align-items:center; justify-content:center; font-size:32px; color:var(--gold);'} padding-bottom: 56.25%; border-radius:8px;" onclick="openContentReader('${filterType}', '${item.id}', '${escapeHtml(item.file_url)}', '${escapeHtml(item.title)}', ${item.is_paid ? 'true' : 'false'}, ${item.preview_pages || 5})">${paidBadge}${!item.cover_url ? '📊' : ''}</div>`;
+        contentHtml = `<div style="cursor:pointer; ${item.cover_url ? `background: url('${item.cover_url}') center/cover;` : 'background:#1a1a2e; display:flex; align-items:center; justify-content:center; font-size:32px; color:var(--gold);'} padding-bottom: 56.25%; position:relative; border-radius:8px;" onclick="openPPT('${item.id}', '${item.file_url}')">${!item.cover_url ? '📊' : ''}</div>`;
     }
     return `<div class="content-card" id="${domId}" data-content-key="${key}">
         <button class="content-card-menu-btn" onclick="openContentMenu('${filterType}', '${item.id}', event)">⋮</button>
@@ -2616,7 +2244,7 @@ async function loadMockExamsIntoContainer(container, groupId) {
         if (!visible.length) { container.innerHTML = `<div class="loading" style="color:var(--text-muted);">📝 No mock exams yet.</div>`; return; }
         let likedSet = new Set(), dislikedSet = new Set();
         if (AppState.userId && visible.length) {
-            const ids = visible.map(v => v.id);
+            const ids = visible.map(v => String(v.id));
             const { data: ul } = await sb.from('content_likes').select('content_id').eq('content_type', 'exam').eq('user_id', AppState.userId).in('content_id', ids);
             likedSet = new Set((ul || []).map(l => l.content_id));
             const { data: ud } = await sb.from('content_dislikes').select('content_id').eq('content_type', 'exam').eq('user_id', AppState.userId).in('content_id', ids);
@@ -2630,8 +2258,8 @@ async function loadMockExamsIntoContainer(container, groupId) {
                 <p style="margin-top:4px;">${buildViewCounterHtml('mock_exams', e.id, e.views || 0)}</p>
             </div>
             <div class="actions">
-                <button class="${likedSet.has(e.id) ? 'liked' : ''}" onclick="event.stopPropagation(); toggleContentLike('exam', '${e.id}', this)"><i class="fas fa-heart"></i> <span>${e.likes || 0}</span></button>
-                <button class="${dislikedSet.has(e.id) ? 'disliked' : ''}" onclick="event.stopPropagation(); toggleContentDislike('exam', '${e.id}', this)"><i class="fas fa-heart-broken"></i> <span>${e.dislikes || 0}</span></button>
+                <button class="${likedSet.has(String(e.id)) ? 'liked' : ''}" onclick="event.stopPropagation(); toggleContentLike('exam', '${e.id}', this)"><i class="fas fa-heart"></i> <span>${e.likes || 0}</span></button>
+                <button class="${dislikedSet.has(String(e.id)) ? 'disliked' : ''}" onclick="event.stopPropagation(); toggleContentDislike('exam', '${e.id}', this)"><i class="fas fa-heart-broken"></i> <span>${e.dislikes || 0}</span></button>
                 <button onclick="event.stopPropagation(); toggleContentComments('exam', '${e.id}', this)"><i class="fas fa-comment"></i> <span>${e.comment_count || 0}</span></button>
                 <button onclick="event.stopPropagation(); shareContentLink('exam', '${e.id}')"><i class="fas fa-share"></i> <span>${e.share_count || 0}</span></button>
                 <button class="btn-sm btn-teal" style="margin-left:auto;" onclick="event.stopPropagation(); startMockExam('${e.id}')">▶️ Start</button>
@@ -2655,13 +2283,13 @@ async function loadGroupBooks(groupId) {
         const { data } = await sb.from('bstore_books').select('*').eq('status', 'approved').order('created_at', { ascending: false });
         if (!data?.length) { c.innerHTML = '<div class="loading" style="color:var(--text-muted);">No books yet.</div>'; return; }
         c.innerHTML = data.map(b => `
-            <div class="bstore-card" id="bstore-item-${b.id}" data-content-key="book:${b.id}" onclick="openBookReaderById('${b.id}')">
+            <div class="bstore-card" id="bstore-item-${b.id}" data-content-key="book:${b.id}">
                 <div class="book-cover">${b.cover_url ? `<img src="${b.cover_url}" alt="" loading="lazy">` : '📖'}</div>
                 <div class="title">${escapeHtml(b.title)}</div>
                 <div class="author">By ${escapeHtml(b.author)}</div>
                 <div class="price">💰 ${b.price_monthly || 0} Coins</div>
                 <p style="font-size:12px;">${buildViewCounterHtml('bstore_books', b.id, b.views || 0)}</p>
-                <button class="buy-btn" onclick="event.stopPropagation(); subscribeToBook('${b.id}')">📖 Subscribe</button>
+                <button class="buy-btn" onclick="subscribeToBook('${b.id}')">📖 Subscribe</button>
             </div>`).join('');
     } catch (err) { c.innerHTML = '<div class="loading" style="color:var(--red-error);">Failed to load books.</div>'; }
 }
@@ -2670,6 +2298,7 @@ async function loadGroupBooks(groupId) {
 async function toggleContentLike(type, id, btn) {
     if (!AppState.userId) return showToast('Login first.', 'error');
     if (!btn) return;
+    const idStr = String(id);
     const span = btn.querySelector('span');
     const wasLiked = btn.classList.contains('liked');
     const oldCount = parseInt(span?.textContent) || 0;
@@ -2678,15 +2307,15 @@ async function toggleContentLike(type, id, btn) {
     try {
         const table = CONTENT_TABLE_MAP[type];
         if (wasLiked) {
-            await sb.from('content_likes').delete().eq('content_type', type).eq('content_id', id).eq('user_id', AppState.userId);
+            await sb.from('content_likes').delete().eq('content_type', type).eq('content_id', idStr).eq('user_id', AppState.userId);
             if (table) await sb.from(table).update({ likes: Math.max(0, oldCount - 1) }).eq('id', id);
         } else {
-            const { data: d } = await sb.from('content_dislikes').select('*').eq('content_type', type).eq('content_id', id).eq('user_id', AppState.userId).maybeSingle();
+            const { data: d } = await sb.from('content_dislikes').select('*').eq('content_type', type).eq('content_id', idStr).eq('user_id', AppState.userId).maybeSingle();
             if (d) {
-                await sb.from('content_dislikes').delete().eq('content_type', type).eq('content_id', id).eq('user_id', AppState.userId);
-                const dCard = document.querySelector(`[data-content-key="${type}:${id}"]`);
-                if (dCard) {
-                    const dBtn = dCard.querySelector('.actions button.disliked') || dCard.querySelectorAll('.actions button')[1];
+                await sb.from('content_dislikes').delete().eq('content_type', type).eq('content_id', idStr).eq('user_id', AppState.userId);
+                const card = document.querySelector(`[data-content-key="${type}:${idStr}"]`);
+                if (card) {
+                    const dBtn = card.querySelector('.actions button.disliked');
                     if (dBtn) {
                         dBtn.classList.remove('disliked');
                         const dSpan = dBtn.querySelector('span');
@@ -2694,7 +2323,7 @@ async function toggleContentLike(type, id, btn) {
                     }
                 }
             }
-            await sb.from('content_likes').insert({ content_type: type, content_id: id, user_id: AppState.userId });
+            await sb.from('content_likes').insert({ content_type: type, content_id: idStr, user_id: AppState.userId });
             if (table) await sb.from(table).update({ likes: oldCount + 1 }).eq('id', id);
         }
     } catch (err) {
@@ -2707,6 +2336,7 @@ async function toggleContentLike(type, id, btn) {
 async function toggleContentDislike(type, id, btn) {
     if (!AppState.userId) return showToast('Login first.', 'error');
     if (!btn) return;
+    const idStr = String(id);
     const span = btn.querySelector('span');
     const wasDisliked = btn.classList.contains('disliked');
     const oldCount = parseInt(span?.textContent) || 0;
@@ -2715,13 +2345,13 @@ async function toggleContentDislike(type, id, btn) {
     try {
         const table = CONTENT_TABLE_MAP[type];
         if (wasDisliked) {
-            await sb.from('content_dislikes').delete().eq('content_type', type).eq('content_id', id).eq('user_id', AppState.userId);
+            await sb.from('content_dislikes').delete().eq('content_type', type).eq('content_id', idStr).eq('user_id', AppState.userId);
             if (table) await sb.from(table).update({ dislikes: Math.max(0, oldCount - 1) }).eq('id', id);
         } else {
-            const { data: l } = await sb.from('content_likes').select('*').eq('content_type', type).eq('content_id', id).eq('user_id', AppState.userId).maybeSingle();
+            const { data: l } = await sb.from('content_likes').select('*').eq('content_type', type).eq('content_id', idStr).eq('user_id', AppState.userId).maybeSingle();
             if (l) {
-                await sb.from('content_likes').delete().eq('content_type', type).eq('content_id', id).eq('user_id', AppState.userId);
-                const card = document.querySelector(`[data-content-key="${type}:${id}"]`);
+                await sb.from('content_likes').delete().eq('content_type', type).eq('content_id', idStr).eq('user_id', AppState.userId);
+                const card = document.querySelector(`[data-content-key="${type}:${idStr}"]`);
                 if (card) {
                     const lBtn = card.querySelector('.actions button.liked');
                     if (lBtn) {
@@ -2731,7 +2361,7 @@ async function toggleContentDislike(type, id, btn) {
                     }
                 }
             }
-            await sb.from('content_dislikes').insert({ content_type: type, content_id: id, user_id: AppState.userId });
+            await sb.from('content_dislikes').insert({ content_type: type, content_id: idStr, user_id: AppState.userId });
             if (table) await sb.from(table).update({ dislikes: oldCount + 1 }).eq('id', id);
         }
     } catch (err) {
@@ -2750,10 +2380,11 @@ async function toggleContentComments(type, id, btn) {
 }
 
 async function loadContentComments(type, id) {
-    const c = document.getElementById(`commentList-${type}-${id}`);
+    const idStr = String(id);
+    const c = document.getElementById(`commentList-${type}-${idStr}`);
     if (!c) return;
     try {
-        const { data: allComments } = await sb.from('content_comments').select('*').eq('content_type', type).eq('content_id', id).order('created_at', { ascending: true });
+        const { data: allComments } = await sb.from('content_comments').select('*').eq('content_type', type).eq('content_id', idStr).order('created_at', { ascending: true });
         if (!allComments?.length) { c.innerHTML = '<div style="color:var(--text-muted); font-size:13px; font-weight:700;">No comments yet.</div>'; return; }
         const uids = [...new Set(allComments.map(x => x.user_id))];
         const uMap = await getUsersCached(uids);
@@ -2763,7 +2394,7 @@ async function loadContentComments(type, id) {
             if (!repliesByParent[x.parent_id]) repliesByParent[x.parent_id] = [];
             repliesByParent[x.parent_id].push(x);
         });
-        c.innerHTML = roots.map(cmt => renderContentCommentItem(cmt, uMap, repliesByParent[cmt.id] || [], false, type, id)).join('');
+        c.innerHTML = roots.map(cmt => renderContentCommentItem(cmt, uMap, repliesByParent[cmt.id] || [], false, type, idStr)).join('');
     } catch (err) {
         c.innerHTML = '<div style="color:var(--text-muted); font-size:12px;">Comments unavailable.</div>';
     }
@@ -2785,7 +2416,7 @@ function renderContentCommentItem(cmt, uMap, replies, isReply, type, id) {
             </div>
             <div class="comment-text">${escapeHtml(cmt.comment)}</div>
             <div class="comment-actions">
-                ${!isReply ? `<button onclick="showReplyInput('ccomment-${cmt.id}')"><i class="fas fa-reply"></i> Reply</button>` : ''}
+                ${!isReply ? `<button onclick="showReplyInput('${cmt.id}')"><i class="fas fa-reply"></i> Reply</button>` : ''}
             </div>
             <div class="comment-reply-input" id="ccomment-reply-${cmt.id}">
                 <input type="text" placeholder="Reply..." id="ccomment-reply-text-${cmt.id}">
@@ -2795,42 +2426,44 @@ function renderContentCommentItem(cmt, uMap, replies, isReply, type, id) {
         </div>`;
 }
 
-function showReplyInput(containerId) {
-    const el = document.getElementById(containerId + '-reply') || document.getElementById(containerId.replace('ccomment-', 'ccomment-reply-'));
+function showReplyInput(commentId) {
+    const el = document.getElementById(`ccomment-reply-${commentId}`);
     if (el) el.style.display = el.style.display === 'flex' ? 'none' : 'flex';
 }
 
 async function submitContentReply(parentId, type, id) {
     if (!AppState.userId) return showToast('Login first.', 'error');
+    const idStr = String(id);
     const input = document.getElementById(`ccomment-reply-text-${parentId}`);
     const text = input?.value?.trim();
     if (!text) return;
     input.value = '';
     try {
-        await sb.from('content_comments').insert({ content_type: type, content_id: id, user_id: AppState.userId, comment: text, parent_id: parentId });
+        await sb.from('content_comments').insert({ content_type: type, content_id: idStr, user_id: AppState.userId, comment: text, parent_id: parentId });
         const table = CONTENT_TABLE_MAP[type];
         if (table) {
             const { data: row } = await sb.from(table).select('comment_count').eq('id', id).single();
             await sb.from(table).update({ comment_count: (row?.comment_count || 0) + 1 }).eq('id', id);
         }
-        await loadContentComments(type, id);
+        await loadContentComments(type, idStr);
         showToast('✅ Reply added', 'success');
     } catch (err) { showToast('Error', 'error'); }
 }
 
 async function addContentComment(type, id) {
     if (!AppState.userId) return showToast('Login first.', 'error');
-    const input = document.getElementById(`commentInput-${type}-${id}`);
+    const idStr = String(id);
+    const input = document.getElementById(`commentInput-${type}-${idStr}`);
     const text = input?.value?.trim();
     if (!text) return;
     input.value = '';
     try {
-        await sb.from('content_comments').insert({ content_type: type, content_id: id, user_id: AppState.userId, comment: text });
+        await sb.from('content_comments').insert({ content_type: type, content_id: idStr, user_id: AppState.userId, comment: text });
         const table = CONTENT_TABLE_MAP[type];
         if (table) {
             const { data: row } = await sb.from(table).select('comment_count').eq('id', id).single();
             await sb.from(table).update({ comment_count: (row?.comment_count || 0) + 1 }).eq('id', id);
-            const card = document.querySelector(`[data-content-key="${type}:${id}"]`);
+            const card = document.querySelector(`[data-content-key="${type}:${idStr}"]`);
             if (card) {
                 const btns = card.querySelectorAll('.actions button');
                 btns.forEach(b => {
@@ -2841,28 +2474,30 @@ async function addContentComment(type, id) {
                 });
             }
         }
-        await loadContentComments(type, id);
+        await loadContentComments(type, idStr);
     } catch (err) { showToast('Error', 'error'); }
 }
 
 async function deleteContentComment(commentId, type, id) {
     if (!confirm('Delete this comment?')) return;
+    const idStr = String(id);
     try {
         await sb.from('content_comments').delete().eq('parent_id', commentId);
         await sb.from('content_comments').delete().eq('id', commentId);
-        await loadContentComments(type, id);
+        await loadContentComments(type, idStr);
     } catch (err) {}
 }
 
 function shareContentLink(type, id) {
-    const url = `${location.origin}${location.pathname}?content=${type}:${id}`;
+    const idStr = String(id);
+    const url = `${location.origin}${location.pathname}?content=${type}:${idStr}`;
     (async () => {
         try {
             const table = CONTENT_TABLE_MAP[type];
             if (table) {
                 const { data: row } = await sb.from(table).select('share_count').eq('id', id).single();
                 await sb.from(table).update({ share_count: (row?.share_count || 0) + 1 }).eq('id', id);
-                const card = document.querySelector(`[data-content-key="${type}:${id}"]`);
+                const card = document.querySelector(`[data-content-key="${type}:${idStr}"]`);
                 if (card) {
                     const btns = card.querySelectorAll('.actions button');
                     btns.forEach(b => {
@@ -2952,10 +2587,10 @@ async function submitContentReport() {
     if (!reason) return showToast('Please select a reason', 'error');
     if (!AppState.userId) return showToast('Login first', 'error');
     try {
-        const { error: rErr } = await sb.from('content_reports').insert({ content_type: contentType, content_id: contentId, reporter_id: AppState.userId, reason, details, status: 'pending' });
+        const { error: rErr } = await sb.from('content_reports').insert({ content_type: contentType, content_id: String(contentId), reporter_id: AppState.userId, reason, details, status: 'pending' });
         if (rErr) throw rErr;
         try {
-            await sb.from('content_hides').upsert({ content_type: contentType, content_id: contentId, user_id: AppState.userId }, { onConflict: 'content_type,content_id,user_id' });
+            await sb.from('content_hides').upsert({ content_type: contentType, content_id: String(contentId), user_id: AppState.userId }, { onConflict: 'content_type,content_id,user_id' });
             AppState.hiddenContentKeys.add(`${contentType}:${contentId}`);
         } catch (e) {}
         notifyAdmins({ type: 'new_report', title: '🚨 New content report', message: `${contentType.toUpperCase()} • ${reason}`, linkType: contentType, linkId: contentId }).catch(() => {});
@@ -2973,525 +2608,6 @@ async function notifyAdmins({ type, title, message, linkType, linkId }) {
         const rows = admins.map(a => ({ user_id: a.user_id, actor_id: AppState.userId, type, title, message, link_type: linkType || null, link_id: linkId || null }));
         await sb.from('notifications').insert(rows);
     } catch (e) {}
-}
-
-/* ============================================================
-   BOOK / DOC READER
-   ============================================================ */
-function detectFileKind(url) {
-    if (!url) return 'unknown';
-    const clean = url.split('?')[0].split('#')[0].toLowerCase();
-    const ext = clean.substring(clean.lastIndexOf('.') + 1);
-    if (ext === 'pdf') return 'pdf';
-    if (['png', 'jpg', 'jpeg', 'gif', 'webp', 'bmp', 'svg'].includes(ext)) return 'image';
-    if (['mp4', 'webm', 'ogg', 'mov'].includes(ext)) return 'video';
-    if (['mp3', 'wav', 'ogg', 'm4a'].includes(ext)) return 'audio';
-    if (['txt', 'md', 'csv', 'json'].includes(ext)) return 'text';
-    if (['ppt', 'pptx', 'doc', 'docx', 'xls', 'xlsx'].includes(ext)) return 'office';
-    return 'unknown';
-}
-
-function getReaderProgressKey(contentType, contentId) {
-    return `teni_reading_${contentType}_${contentId}`;
-}
-function getReaderProgress(contentType, contentId) {
-    try { return parseInt(localStorage.getItem(getReaderProgressKey(contentType, contentId)) || '1', 10) || 1; }
-    catch (e) { return 1; }
-}
-function saveReaderProgress(contentType, contentId, page) {
-    try { localStorage.setItem(getReaderProgressKey(contentType, contentId), String(page)); } catch (e) {}
-}
-
-async function openBookReaderById(bookId) {
-    try {
-        const { data, error } = await sb.from('bstore_books').select('*').eq('id', bookId).single();
-        if (error || !data) return showToast('Book not found', 'error');
-        incrementViewCount('bstore_books', bookId);
-        // Check subscription
-        let isSubscribed = false;
-        if (AppState.userId) {
-            const { data: sub } = await sb.from('bstore_subscriptions')
-                .select('*')
-                .eq('user_id', AppState.userId)
-                .eq('book_id', bookId)
-                .eq('is_active', true)
-                .maybeSingle();
-            if (sub && sub.expires_at && new Date(sub.expires_at) > new Date()) isSubscribed = true;
-        }
-        openBookReader({
-            fileUrl: data.file_url,
-            contentType: 'book',
-            contentId: bookId,
-            title: data.title,
-            isPaid: true,
-            previewLimit: isSubscribed ? null : 5,
-            priceMonthly: data.price_monthly || 0,
-            bookId: bookId
-        });
-    } catch (err) { showToast('Error opening book', 'error'); }
-}
-
-function openContentReader(contentType, contentId, fileUrl, title, isPaid, previewPages) {
-    const previewLimit = isPaid ? (previewPages || 5) : null;
-    openBookReader({
-        fileUrl: fileUrl,
-        contentType: contentType,   // 'ppt' for PPTs
-        contentId: contentId,
-        title: title,
-        isPaid: isPaid,
-        previewLimit: previewLimit,
-        priceMonthly: 0
-    });
-}
-
-async function openBookReader(opts) {
-    const { fileUrl, contentType, contentId, title, isPaid, previewLimit, priceMonthly, bookId } = opts;
-    AppState.reader = {
-        pdf: null,
-        fileUrl, contentType, contentId, title,
-        totalPages: 0,
-        currentPage: 1,
-        previewLimit: previewLimit,
-        isPaid: !!isPaid,
-        priceMonthly: priceMonthly || 0,
-        bookId: bookId || null
-    };
-
-    document.getElementById('readerTitle').textContent = title || 'Reader';
-    document.getElementById('readerPageInfo').textContent = '— / —';
-    document.getElementById('readerBody').innerHTML = `
-        <div class="reader-loading">
-            <div class="spinner"></div>
-            <div class="msg">Loading document…</div>
-        </div>`;
-    document.getElementById('readerFooter').style.display = 'none';
-    document.getElementById('readerMenuBtn').style.display = 'none';
-    document.getElementById('bookReaderOverlay').classList.add('open');
-    pushNav({ type: 'overlay', id: 'bookReader' });
-
-    const kind = detectFileKind(fileUrl);
-    if (kind === 'pdf') {
-        await renderPdfReader(fileUrl);
-    } else if (kind === 'image') {
-        renderImageReader(fileUrl);
-    } else if (kind === 'video') {
-        renderVideoReader(fileUrl);
-    } else if (kind === 'audio') {
-        renderAudioReader(fileUrl);
-    } else if (kind === 'text') {
-        await renderTextReader(fileUrl);
-    } else if (kind === 'office') {
-        renderOfficeReader(fileUrl);
-    } else {
-        renderUnsupportedReader(fileUrl);
-    }
-}
-
-async function renderPdfReader(fileUrl) {
-    const body = document.getElementById('readerBody');
-    try {
-        const loadingTask = pdfjsLib.getDocument(fileUrl);
-        const pdf = await loadingTask.promise;
-        AppState.reader.pdf = pdf;
-        AppState.reader.totalPages = pdf.numPages;
-
-        // Render all pages up to preview limit (or all if no limit)
-        const limit = AppState.reader.previewLimit || pdf.numPages;
-        const pagesToRender = Math.min(limit, pdf.numPages);
-
-        body.innerHTML = '';
-        const wrapAll = document.createElement('div');
-        wrapAll.style.display = 'flex';
-        wrapAll.style.flexDirection = 'column';
-        wrapAll.style.gap = '16px';
-        wrapAll.style.width = '100%';
-        wrapAll.style.alignItems = 'center';
-
-        for (let p = 1; p <= pagesToRender; p++) {
-            const pageWrap = document.createElement('div');
-            pageWrap.className = 'reader-page-wrap';
-            pageWrap.dataset.pageNum = String(p);
-            pageWrap.id = `readerPage${p}`;
-            const canvas = document.createElement('canvas');
-            pageWrap.appendChild(canvas);
-            wrapAll.appendChild(pageWrap);
-            // Render
-            const page = await pdf.getPage(p);
-            const containerWidth = Math.min(window.innerWidth - 32, 900);
-            const viewportRaw = page.getViewport({ scale: 1 });
-            const scale = Math.min(containerWidth / viewportRaw.width, 2.5);
-            const viewport = page.getViewport({ scale: scale * (window.devicePixelRatio > 1 ? 1.5 : 1) });
-            canvas.width = viewport.width;
-            canvas.height = viewport.height;
-            canvas.style.width = '100%';
-            canvas.style.height = 'auto';
-            const ctx = canvas.getContext('2d');
-            await page.render({ canvasContext: ctx, viewport: viewport }).promise;
-        }
-
-        // If there are more pages than preview, add paywall card at bottom
-        if (limit < pdf.numPages) {
-            const paywall = document.createElement('div');
-            paywall.id = 'readerPaywall';
-            paywall.className = 'reader-paywall';
-            const priceText = AppState.reader.priceMonthly > 0 ? `💰 ${AppState.reader.priceMonthly} coins / month` : 'Subscribe for full access';
-            const bookId = AppState.reader.bookId;
-            paywall.innerHTML = `
-                <div class="pw-icon">🔒</div>
-                <div class="pw-title">Preview Ended</div>
-                <div class="pw-sub">You've read the first ${limit} of ${pdf.numPages} pages.</div>
-                <div class="pw-price">${priceText}</div>
-                <div class="pw-actions">
-                    ${AppState.userId
-                        ? (bookId
-                            ? `<button class="primary" onclick="readerSubscribeClick()">📖 Subscribe Now</button>`
-                            : `<button class="primary" onclick="readerSubscribeClick()">📖 Unlock Full Access</button>`)
-                        : `<button class="primary" onclick="closeBookReader(); showAuthModal()">🔑 Login to Subscribe</button>`
-                    }
-                    <button class="secondary" onclick="closeBookReader()">Close</button>
-                </div>
-            `;
-            wrapAll.appendChild(paywall);
-            document.getElementById('readerMenuBtn').style.display = 'inline-block';
-        }
-
-        body.appendChild(wrapAll);
-
-        // Footer with page slider
-        const footer = document.getElementById('readerFooter');
-        footer.style.display = 'flex';
-        const slider = document.getElementById('readerPageSlider');
-        slider.max = String(AppState.reader.totalPages);
-        slider.value = String(getReaderProgress('reader', `${AppState.reader.contentType}_${AppState.reader.contentId}`));
-        AppState.reader.currentPage = parseInt(slider.value, 10) || 1;
-        updateReaderPageInfo();
-
-        // Scroll to saved page
-        setTimeout(() => {
-            const saved = AppState.reader.currentPage;
-            if (saved > 1 && document.getElementById(`readerPage${saved}`)) {
-                document.getElementById(`readerPage${saved}`).scrollIntoView({ behavior: 'auto', block: 'start' });
-            }
-        }, 100);
-    } catch (err) {
-        console.error('PDF render error', err);
-        // Fallback: download card
-        renderUnsupportedReader(fileUrl, 'Could not preview this PDF');
-    }
-}
-
-function renderImageReader(fileUrl) {
-    const body = document.getElementById('readerBody');
-    body.innerHTML = `
-        <div class="reader-media-wrap">
-            <img src="${fileUrl}" alt="Document" id="readerImage">
-        </div>`;
-}
-function renderVideoReader(fileUrl) {
-    const body = document.getElementById('readerBody');
-    body.innerHTML = `
-        <div class="reader-media-wrap">
-            <video src="${fileUrl}" controls playsinline></video>
-        </div>`;
-}
-function renderAudioReader(fileUrl) {
-    const body = document.getElementById('readerBody');
-    body.innerHTML = `
-        <div class="reader-media-wrap">
-            <audio src="${fileUrl}" controls></audio>
-        </div>`;
-}
-async function renderTextReader(fileUrl) {
-    const body = document.getElementById('readerBody');
-    try {
-        const res = await fetch(fileUrl);
-        const text = await res.text();
-        body.innerHTML = `<div class="reader-text-wrap">${escapeHtml(text)}</div>`;
-    } catch (err) {
-        body.innerHTML = `<div class="reader-text-wrap" style="background:#333; color:white;">Could not load text.</div>`;
-    }
-}
-function renderOfficeReader(fileUrl) {
-    const body = document.getElementById('readerBody');
-    // Microsoft Office online viewer works with public URLs
-    const officeUrl = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(fileUrl)}`;
-    body.innerHTML = `
-        <div class="reader-office-wrap">
-            <iframe id="readerOfficeFrame" src="${officeUrl}" allowfullscreen></iframe>
-        </div>
-        <div style="color:rgba(255,255,255,0.7); font-size:12px; text-align:center; padding:6px;">
-            If the preview doesn't load, <a href="${fileUrl}" target="_blank" style="color:var(--gold); text-decoration:underline;">open in a new tab ⬇️</a>
-        </div>`;
-    // 6-second fallback if iframe doesn't render
-    setTimeout(() => {
-        const frame = document.getElementById('readerOfficeFrame');
-        if (frame && frame.offsetHeight < 100) {
-            // Don't auto-switch — user may still see it. Just show helpful link. Nothing else needed.
-        }
-    }, 6000);
-}
-function renderUnsupportedReader(fileUrl, msg) {
-    const body = document.getElementById('readerBody');
-    const message = msg || 'Preview not available for this file type.';
-    body.innerHTML = `
-        <div class="reader-unsupported">
-            <div class="icon">📄</div>
-            <div class="msg">${message}</div>
-            <div class="sub">You can still download the file to view it on your device.</div>
-            <button class="btn btn-teal" style="max-width:240px; margin:0 auto;" onclick="downloadMedia('${fileUrl}', 'teni_document')">⬇️ Download</button>
-        </div>`;
-}
-
-function closeBookReader() {
-    document.getElementById('bookReaderOverlay').classList.remove('open');
-    AppState.reader.pdf = null;
-    AppState.reader.fileUrl = null;
-}
-
-function readerPrevPage() {
-    if (!AppState.reader.totalPages) return;
-    const p = Math.max(1, AppState.reader.currentPage - 1);
-    readerGoToPage(p);
-}
-function readerNextPage() {
-    if (!AppState.reader.totalPages) return;
-    const max = AppState.reader.isPaid && AppState.reader.previewLimit
-        ? AppState.reader.previewLimit
-        : AppState.reader.totalPages;
-    const p = Math.min(max, AppState.reader.currentPage + 1);
-    readerGoToPage(p);
-}
-function readerGoToPage(n) {
-    const num = Math.max(1, Math.min(parseInt(n, 10) || 1, AppState.reader.totalPages));
-    AppState.reader.currentPage = num;
-    const el = document.getElementById(`readerPage${num}`);
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    const slider = document.getElementById('readerPageSlider');
-    if (slider) slider.value = String(num);
-    updateReaderPageInfo();
-    saveReaderProgress('reader', `${AppState.reader.contentType}_${AppState.reader.contentId}`, num);
-}
-function updateReaderPageInfo() {
-    const info = document.getElementById('readerPageInfo');
-    if (!info) return;
-    const cur = AppState.reader.currentPage;
-    const total = AppState.reader.totalPages;
-    const limit = AppState.reader.previewLimit;
-    if (limit && limit < total) info.textContent = `${cur} / ${limit} (of ${total})`;
-    else info.textContent = `${cur} / ${total}`;
-}
-function readerScrollToPaywall() {
-    const el = document.getElementById('readerPaywall');
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    else showToast('No paywall on this content', 'info');
-}
-function readerSubscribeClick() {
-    const bookId = AppState.reader.bookId;
-    if (bookId) {
-        // Book subscription
-        closeBookReader();
-        setTimeout(() => subscribeToBook(bookId), 250);
-    } else {
-        // For PPTs — just show toast, payment flow is per-book only for now
-        showToast('Contact the group owner to unlock', 'info');
-    }
-}
-
-// Auto-track scroll for reader page indicator
-document.addEventListener('scroll', function(e) {
-    if (!document.getElementById('bookReaderOverlay')?.classList.contains('open')) return;
-    const target = e.target;
-    if (!target || !target.classList?.contains('reader-body')) return;
-    // Find nearest visible page
-    const pages = document.querySelectorAll('.reader-page-wrap');
-    let nearest = 1;
-    for (const p of pages) {
-        const rect = p.getBoundingClientRect();
-        if (rect.top >= -100 && rect.top < window.innerHeight * 0.5) nearest = parseInt(p.dataset.pageNum, 10) || 1;
-    }
-    if (nearest !== AppState.reader.currentPage) {
-        AppState.reader.currentPage = nearest;
-        const slider = document.getElementById('readerPageSlider');
-        if (slider) slider.value = String(nearest);
-        updateReaderPageInfo();
-        saveReaderProgress('reader', `${AppState.reader.contentType}_${AppState.reader.contentId}`, nearest);
-    }
-}, true);
-
-/* ============================================================
-   YOUTUBE-STYLE PINNED VIDEO
-   ============================================================ */
-function pinVideo(scope, videoData) {
-    // scope: 'home' | 'group'
-    unpinVideo(scope, true);
-    AppState.pinnedVideo[scope] = videoData;
-
-    const shellId = scope === 'home' ? 'pinnedVideoShellHome' : 'pinnedVideoShellGroup';
-    const shell = document.getElementById(shellId);
-    if (!shell) return;
-    shell.classList.add('active');
-
-    const videoElId = scope === 'home' ? 'pinnedVideoElHome' : 'pinnedVideoElGroup';
-    const videoEl = document.getElementById(videoElId);
-    if (!videoEl) return;
-
-    videoEl.src = videoData.url;
-    videoEl.load();
-    videoEl.play().catch(() => {});
-
-    const titleEl = document.getElementById(scope === 'home' ? 'pinnedTitleHome' : 'pinnedTitleGroup');
-    if (titleEl) titleEl.textContent = videoData.title || 'Now playing';
-
-    // Hook events
-    videoEl.ontimeupdate = () => updatePinnedProgress(scope);
-    videoEl.onloadedmetadata = () => updatePinnedProgress(scope);
-    videoEl.onplay = () => { startVideoWatchTimer(videoData.id, 'group_content'); };
-    videoEl.onpause = () => { stopVideoWatchTimer(videoData.id); };
-    videoEl.onended = () => { stopVideoWatchTimer(videoData.id); onPinnedVideoEnded(scope); };
-
-    // Dim the source card in the list
-    document.querySelectorAll('.content-card.pinned-source').forEach(c => c.classList.remove('pinned-source'));
-    const sourceCard = document.querySelector(`[data-content-key="video:${videoData.id}"]`);
-    if (sourceCard) sourceCard.classList.add('pinned-source');
-
-    // Scroll page to top so video is visible
-    const scroller = scope === 'home'
-        ? document.getElementById('appMain')
-        : document.getElementById('videos');
-    if (scroller) scroller.scrollTo({ top: 0, behavior: 'smooth' });
-    // Group feed's scroll container is the tab-scroll-area
-    if (scope === 'group') {
-        const scrollArea = document.querySelector('.tab-scroll-area');
-        if (scrollArea) scrollArea.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-}
-
-function unpinVideo(scope, keepState) {
-    const shellId = scope === 'home' ? 'pinnedVideoShellHome' : 'pinnedVideoShellGroup';
-    const shell = document.getElementById(shellId);
-    if (shell) shell.classList.remove('active');
-    const videoElId = scope === 'home' ? 'pinnedVideoElHome' : 'pinnedVideoElGroup';
-    const videoEl = document.getElementById(videoElId);
-    if (videoEl) {
-        try { videoEl.pause(); videoEl.src = ''; } catch (e) {}
-    }
-    const current = AppState.pinnedVideo[scope];
-    if (current) stopVideoWatchTimer(current.id);
-    // Clear countdown
-    if (AppState.pinnedCountdown[scope]) {
-        clearInterval(AppState.pinnedCountdown[scope]);
-        AppState.pinnedCountdown[scope] = null;
-    }
-    if (AppState.pinnedAutoplayTimer[scope]) {
-        clearTimeout(AppState.pinnedAutoplayTimer[scope]);
-        AppState.pinnedAutoplayTimer[scope] = null;
-    }
-    const cdId = scope === 'home' ? 'pinnedCountdownHome' : 'pinnedCountdownGroup';
-    const cd = document.getElementById(cdId);
-    if (cd) cd.style.display = 'none';
-    document.querySelectorAll('.content-card.pinned-source').forEach(c => c.classList.remove('pinned-source'));
-    if (!keepState) AppState.pinnedVideo[scope] = null;
-}
-
-function togglePinnedPlayHome() { const v = document.getElementById('pinnedVideoElHome'); if (!v) return; if (v.paused) v.play(); else v.pause(); }
-function togglePinnedPlayGroup() { const v = document.getElementById('pinnedVideoElGroup'); if (!v) return; if (v.paused) v.play(); else v.pause(); }
-
-function updatePinnedProgress(scope) {
-    const videoElId = scope === 'home' ? 'pinnedVideoElHome' : 'pinnedVideoElGroup';
-    const fillId = scope === 'home' ? 'pinnedProgressHome' : 'pinnedProgressGroup';
-    const timeId = scope === 'home' ? 'pinnedTimeHome' : 'pinnedTimeGroup';
-    const v = document.getElementById(videoElId);
-    const p = document.getElementById(fillId);
-    const t = document.getElementById(timeId);
-    if (!v || !p || !t || !v.duration) return;
-    p.style.width = (v.currentTime / v.duration * 100) + '%';
-    t.textContent = `${formatTime(v.currentTime)} / ${formatTime(v.duration)}`;
-}
-
-function seekPinnedHome(e) {
-    const b = e.currentTarget; const r = b.getBoundingClientRect();
-    const x = (e.clientX - r.left) / r.width;
-    const v = document.getElementById('pinnedVideoElHome');
-    if (v && v.duration) v.currentTime = Math.max(0, Math.min(x * v.duration, v.duration));
-}
-function seekPinnedGroup(e) {
-    const b = e.currentTarget; const r = b.getBoundingClientRect();
-    const x = (e.clientX - r.left) / r.width;
-    const v = document.getElementById('pinnedVideoElGroup');
-    if (v && v.duration) v.currentTime = Math.max(0, Math.min(x * v.duration, v.duration));
-}
-function togglePinnedFullscreenHome() {
-    const v = document.getElementById('pinnedVideoElHome');
-    if (!v) return;
-    if (document.fullscreenElement) document.exitFullscreen(); else v.requestFullscreen().catch(() => {});
-}
-function togglePinnedFullscreenGroup() {
-    const v = document.getElementById('pinnedVideoElGroup');
-    if (!v) return;
-    if (document.fullscreenElement) document.exitFullscreen(); else v.requestFullscreen().catch(() => {});
-}
-function downloadPinnedHome() {
-    const v = AppState.pinnedVideo.home;
-    if (v) downloadMedia(v.url, `teni_video_${v.id}.mp4`);
-}
-function downloadPinnedGroup() {
-    const v = AppState.pinnedVideo.group;
-    if (v) downloadMedia(v.url, `teni_video_${v.id}.mp4`);
-}
-
-function onPinnedVideoEnded(scope) {
-    // V5: skip paywalled — find next free video in list
-    const list = AppState.currentVideoList[scope] || [];
-    const current = AppState.pinnedVideo[scope];
-    if (!current || !list.length) return;
-    const idx = list.findIndex(x => String(x.id) === String(current.id));
-    if (idx < 0 || idx >= list.length - 1) return;   // No next
-    // Find next non-paid
-    let next = null;
-    for (let i = idx + 1; i < list.length; i++) {
-        const item = list[i];
-        if (!item.is_paid) { next = item; break; }
-    }
-    if (!next) return;
-    // Show countdown V2=C (5s cancel)
-    const cdId = scope === 'home' ? 'pinnedCountdownHome' : 'pinnedCountdownGroup';
-    const titleId = scope === 'home' ? 'pinnedCountdownTitleHome' : 'pinnedCountdownTitleGroup';
-    const timerId = scope === 'home' ? 'pinnedCountdownTimerHome' : 'pinnedCountdownTimerGroup';
-    const cd = document.getElementById(cdId);
-    const titleEl = document.getElementById(titleId);
-    const timerEl = document.getElementById(timerId);
-    if (!cd || !titleEl || !timerEl) return;
-    titleEl.textContent = next.title || 'Next video';
-    cd.style.display = 'flex';
-    let seconds = 5;
-    timerEl.textContent = String(seconds);
-    AppState.pinnedCountdown[scope] = setInterval(() => {
-        seconds--;
-        timerEl.textContent = String(seconds);
-        if (seconds <= 0) {
-            clearInterval(AppState.pinnedCountdown[scope]);
-            AppState.pinnedCountdown[scope] = null;
-            cd.style.display = 'none';
-            // Auto-play next
-            const nextUrl = next.file_url;
-            pinVideo(scope, {
-                id: next.id,
-                url: nextUrl,
-                title: next.title
-            });
-        }
-    }, 1000);
-}
-function cancelPinnedAutoplayHome() { cancelPinnedAutoplay('home'); }
-function cancelPinnedAutoplayGroup() { cancelPinnedAutoplay('group'); }
-function cancelPinnedAutoplay(scope) {
-    if (AppState.pinnedCountdown[scope]) {
-        clearInterval(AppState.pinnedCountdown[scope]);
-        AppState.pinnedCountdown[scope] = null;
-    }
-    const cdId = scope === 'home' ? 'pinnedCountdownHome' : 'pinnedCountdownGroup';
-    const cd = document.getElementById(cdId);
-    if (cd) cd.style.display = 'none';
 }
 
 /* ---- Exam engine ---- */
@@ -3644,7 +2760,6 @@ function stopExamTimer() { if (AppState.examTimer) { clearInterval(AppState.exam
 /* ---- Group tab switching ---- */
 function switchGroupTab(tabId, btn) {
     pauseAllOtherVideos(null);
-    unpinVideo('group');
     document.querySelectorAll('#groupTabs .tab-card').forEach(t => t.classList.remove('active'));
     if (btn) btn.classList.add('active');
     else {
@@ -3666,7 +2781,6 @@ function switchGroupTab(tabId, btn) {
 async function loadGlobalTrending() { await loadTrendingContent('video'); }
 async function switchTrendingTab(tab, btn) {
     pauseAllOtherVideos(null);
-    unpinVideo('home');
     document.querySelectorAll('.content-tab').forEach(t => t.classList.remove('active'));
     btn.classList.add('active');
     AppState.currentTrendingTab = tab;
@@ -3709,10 +2823,9 @@ async function loadTrendingContent(tab) {
         if (!items?.length) { c.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:30px 20px; font-weight:700;">Nothing here yet.</div>`; return; }
 
         if (tab === 'video') {
-            AppState.currentVideoList.home = items;
             let likedSet = new Set(), dislikedSet = new Set();
             if (AppState.userId && items.length) {
-                const ids = items.map(i => i.id);
+                const ids = items.map(i => String(i.id));
                 const { data: ul } = await sb.from('content_likes').select('content_id').eq('content_type', 'video').eq('user_id', AppState.userId).in('content_id', ids);
                 likedSet = new Set((ul || []).map(l => l.content_id));
                 const { data: ud } = await sb.from('content_dislikes').select('content_id').eq('content_type', 'video').eq('user_id', AppState.userId).in('content_id', ids);
@@ -3721,24 +2834,23 @@ async function loadTrendingContent(tab) {
             c.innerHTML = items.map(item => {
                 const thumb = item.thumbnail_url || item.cover_url || '';
                 const gn = gMap[item.group_id] || '';
-                const isLiked = likedSet.has(item.id), isDisliked = dislikedSet.has(item.id);
-                return `<div class="content-card" style="padding-bottom:0;" data-content-key="video:${item.id}">
+                const idStr = String(item.id);
+                const isLiked = likedSet.has(idStr), isDisliked = dislikedSet.has(idStr);
+                return `<div class="content-card" data-content-key="video:${idStr}">
                     <button class="content-card-menu-btn" onclick="openContentMenu('video','${item.id}',event)">⋮</button>
-                    <div style="margin:-16px -16px 12px -16px;">
-                        <div class="video-wrapper" id="hm-video-wrapper-${item.id}">
-                            <div class="video-thumbnail" onclick="playHomeVideo('${item.id}', '${item.file_url}', '${escapeHtml(item.title)}')" id="hm-thumbnail-${item.id}">
-                                ${thumb ? `<img src="${thumb}" alt="" loading="lazy" decoding="async">` : `<div style="position:absolute; inset:0; background:#1a1a2e; display:flex; align-items:center; justify-content:center; font-size:48px; color:var(--gold);">🎬</div>`}
-                                <div class="play-btn-overlay"><span>▶️</span></div>
-                            </div>
-                            <div id="hm-video-player-${item.id}" style="display:none; width:100%; background:#000; position:relative;">
-                                <video id="hm-video-${item.id}" src="${item.file_url}" controls playsinline preload="metadata"></video>
-                                <div class="video-controls">
-                                    <button onclick="toggleHomeVideoPlay('${item.id}')">⏸️</button>
-                                    <div class="progress-bar" onclick="seekHomeVideo(event, '${item.id}')"><div class="progress-fill" id="hm-progressFill-${item.id}"></div></div>
-                                    <span class="time-display" id="hm-timeDisplay-${item.id}">0:00 / 0:00</span>
-                                    <button class="download-btn" onclick="downloadMedia('${item.file_url}','teni_video_${item.id}.mp4')">⬇️</button>
-                                    <button onclick="closeHomeVideo('${item.id}')" style="color:var(--red-error);">✕</button>
-                                </div>
+                    <div class="video-wrapper" id="hm-video-wrapper-${item.id}">
+                        <div class="video-thumbnail" onclick="playHomeVideo('${item.id}', '${item.file_url}')" id="hm-thumbnail-${item.id}">
+                            ${thumb ? `<img src="${thumb}" alt="" loading="lazy" decoding="async">` : `<div style="position:absolute; inset:0; background:#1a1a2e; display:flex; align-items:center; justify-content:center; font-size:48px; color:var(--gold);">🎬</div>`}
+                            <div class="play-btn-overlay"><span>▶️</span></div>
+                        </div>
+                        <div id="hm-video-player-${item.id}" style="display:none; width:100%; background:#000; position:relative;">
+                            <video id="hm-video-${item.id}" src="${item.file_url}" controls playsinline preload="metadata"></video>
+                            <div class="video-controls">
+                                <button onclick="toggleHomeVideoPlay('${item.id}')">⏸️</button>
+                                <div class="progress-bar" onclick="seekHomeVideo(event, '${item.id}')"><div class="progress-fill" id="hm-progressFill-${item.id}"></div></div>
+                                <span class="time-display" id="hm-timeDisplay-${item.id}">0:00 / 0:00</span>
+                                <button class="download-btn" onclick="downloadMedia('${item.file_url}','teni_video_${item.id}.mp4')">⬇️</button>
+                                <button onclick="closeHomeVideo('${item.id}')" style="color:var(--red-error);">✕</button>
                             </div>
                         </div>
                     </div>
@@ -3754,11 +2866,11 @@ async function loadTrendingContent(tab) {
                         <button onclick="event.stopPropagation(); shareContentLink('video', '${item.id}')"><i class="fas fa-share"></i> <span>${item.share_count || 0}</span></button>
                         <button onclick="event.stopPropagation(); downloadMedia('${item.file_url}','teni_video_${item.id}.mp4')"><i class="fas fa-download"></i></button>
                     </div>
-                    <div class="content-comments" id="comments-video-${item.id}" data-ctype="video" data-cid="${item.id}">
-                        <div id="commentList-video-${item.id}"></div>
+                    <div class="content-comments" id="comments-video-${idStr}" data-ctype="video" data-cid="${idStr}">
+                        <div id="commentList-video-${idStr}"></div>
                         <div class="comment-input-wrapper">
-                            <input type="text" placeholder="Write a comment..." id="commentInput-video-${item.id}">
-                            <button onclick="addContentComment('video', '${item.id}')">Post</button>
+                            <input type="text" placeholder="Write a comment..." id="commentInput-video-${idStr}">
+                            <button onclick="addContentComment('video', '${idStr}')">Post</button>
                         </div>
                     </div>
                 </div>`;
@@ -3769,7 +2881,7 @@ async function loadTrendingContent(tab) {
         if (tab === 'ppt') {
             let likedSet = new Set(), dislikedSet = new Set();
             if (AppState.userId && items.length) {
-                const ids = items.map(i => i.id);
+                const ids = items.map(i => String(i.id));
                 const { data: ul } = await sb.from('content_likes').select('content_id').eq('content_type', 'ppt').eq('user_id', AppState.userId).in('content_id', ids);
                 likedSet = new Set((ul || []).map(l => l.content_id));
                 const { data: ud } = await sb.from('content_dislikes').select('content_id').eq('content_type', 'ppt').eq('user_id', AppState.userId).in('content_id', ids);
@@ -3777,25 +2889,24 @@ async function loadTrendingContent(tab) {
             }
             c.innerHTML = items.map(item => {
                 const gn = gMap[item.group_id] || '';
-                const paidBadge = item.is_paid ? '<span style="position:absolute; top:8px; left:8px; background:var(--gold); color:#1e293b; padding:3px 10px; border-radius:12px; font-size:11px; font-weight:900; z-index:2;">💰 PAID</span>' : '';
-                return `<div class="content-card" data-content-key="ppt:${item.id}">
+                const idStr = String(item.id);
+                return `<div class="content-card" data-content-key="ppt:${idStr}">
                     <button class="content-card-menu-btn" onclick="openContentMenu('ppt','${item.id}',event)">⋮</button>
-                    <div onclick="openContentReader('ppt', '${item.id}', '${item.file_url}', '${escapeHtml(item.title)}', ${item.is_paid ? 'true' : 'false'}, ${item.preview_pages || 5})" style="cursor:pointer; position:relative; margin:-16px -16px 12px -16px; background:#1a1a2e; padding-bottom:56.25%; border-radius:12px 12px 0 0; overflow:hidden;">
-                        ${paidBadge}
+                    <div onclick="openGroupItem('${item.group_id}', 'ppts', '${item.id}', 'ppt-item')" style="cursor:pointer; margin:-16px -16px 12px -16px; background:#1a1a2e; padding-bottom:56.25%; position:relative; border-radius:12px 12px 0 0; overflow:hidden;">
                         ${item.cover_url ? `<img src="${item.cover_url}" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover;" loading="lazy">` : `<div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:48px; color:var(--gold);">📊</div>`}
                     </div>
                     <div class="meta"><h4>${escapeHtml(item.title)}</h4><p style="font-size:12px; color:var(--text-muted); margin-top:4px;">📂 ${escapeHtml(gn)} • ${buildViewCounterHtml('group_content', item.id, item.views || 0)}</p></div>
                     <div class="actions">
-                        <button class="${likedSet.has(item.id) ? 'liked' : ''}" onclick="event.stopPropagation(); toggleContentLike('ppt', '${item.id}', this)"><i class="fas fa-heart"></i> <span>${item.likes || 0}</span></button>
-                        <button class="${dislikedSet.has(item.id) ? 'disliked' : ''}" onclick="event.stopPropagation(); toggleContentDislike('ppt', '${item.id}', this)"><i class="fas fa-heart-broken"></i> <span>${item.dislikes || 0}</span></button>
+                        <button class="${likedSet.has(idStr) ? 'liked' : ''}" onclick="event.stopPropagation(); toggleContentLike('ppt', '${item.id}', this)"><i class="fas fa-heart"></i> <span>${item.likes || 0}</span></button>
+                        <button class="${dislikedSet.has(idStr) ? 'disliked' : ''}" onclick="event.stopPropagation(); toggleContentDislike('ppt', '${item.id}', this)"><i class="fas fa-heart-broken"></i> <span>${item.dislikes || 0}</span></button>
                         <button onclick="event.stopPropagation(); toggleContentComments('ppt', '${item.id}', this)"><i class="fas fa-comment"></i> <span>${item.comment_count || 0}</span></button>
                         <button onclick="event.stopPropagation(); shareContentLink('ppt', '${item.id}')"><i class="fas fa-share"></i> <span>${item.share_count || 0}</span></button>
                     </div>
-                    <div class="content-comments" id="comments-ppt-${item.id}" data-ctype="ppt" data-cid="${item.id}">
-                        <div id="commentList-ppt-${item.id}"></div>
+                    <div class="content-comments" id="comments-ppt-${idStr}" data-ctype="ppt" data-cid="${idStr}">
+                        <div id="commentList-ppt-${idStr}"></div>
                         <div class="comment-input-wrapper">
-                            <input type="text" placeholder="Write a comment..." id="commentInput-ppt-${item.id}">
-                            <button onclick="addContentComment('ppt', '${item.id}')">Post</button>
+                            <input type="text" placeholder="Write a comment..." id="commentInput-ppt-${idStr}">
+                            <button onclick="addContentComment('ppt', '${idStr}')">Post</button>
                         </div>
                     </div>
                 </div>`;
@@ -3806,7 +2917,7 @@ async function loadTrendingContent(tab) {
         if (tab === 'mockexam') {
             let likedSet = new Set(), dislikedSet = new Set();
             if (AppState.userId && items.length) {
-                const ids = items.map(i => i.id);
+                const ids = items.map(i => String(i.id));
                 const { data: ul } = await sb.from('content_likes').select('content_id').eq('content_type', 'exam').eq('user_id', AppState.userId).in('content_id', ids);
                 likedSet = new Set((ul || []).map(l => l.content_id));
                 const { data: ud } = await sb.from('content_dislikes').select('content_id').eq('content_type', 'exam').eq('user_id', AppState.userId).in('content_id', ids);
@@ -3814,7 +2925,8 @@ async function loadTrendingContent(tab) {
             }
             c.innerHTML = items.map(item => {
                 const gn = gMap[item.group_id] || '';
-                return `<div class="content-card" data-content-key="exam:${item.id}">
+                const idStr = String(item.id);
+                return `<div class="content-card" data-content-key="exam:${idStr}">
                     <button class="content-card-menu-btn" onclick="openContentMenu('exam','${item.id}',event)">⋮</button>
                     <div class="meta">
                         <h4>📝 ${escapeHtml(item.title)}</h4>
@@ -3822,17 +2934,17 @@ async function loadTrendingContent(tab) {
                         <p style="margin-top:4px;">${buildViewCounterHtml('mock_exams', item.id, item.views || 0)}</p>
                     </div>
                     <div class="actions">
-                        <button class="${likedSet.has(item.id) ? 'liked' : ''}" onclick="event.stopPropagation(); toggleContentLike('exam', '${item.id}', this)"><i class="fas fa-heart"></i> <span>${item.likes || 0}</span></button>
-                        <button class="${dislikedSet.has(item.id) ? 'disliked' : ''}" onclick="event.stopPropagation(); toggleContentDislike('exam', '${item.id}', this)"><i class="fas fa-heart-broken"></i> <span>${item.dislikes || 0}</span></button>
+                        <button class="${likedSet.has(idStr) ? 'liked' : ''}" onclick="event.stopPropagation(); toggleContentLike('exam', '${item.id}', this)"><i class="fas fa-heart"></i> <span>${item.likes || 0}</span></button>
+                        <button class="${dislikedSet.has(idStr) ? 'disliked' : ''}" onclick="event.stopPropagation(); toggleContentDislike('exam', '${item.id}', this)"><i class="fas fa-heart-broken"></i> <span>${item.dislikes || 0}</span></button>
                         <button onclick="event.stopPropagation(); toggleContentComments('exam', '${item.id}', this)"><i class="fas fa-comment"></i> <span>${item.comment_count || 0}</span></button>
                         <button onclick="event.stopPropagation(); shareContentLink('exam', '${item.id}')"><i class="fas fa-share"></i> <span>${item.share_count || 0}</span></button>
                         <button class="btn-sm btn-teal" style="margin-left:auto;" onclick="event.stopPropagation(); startMockExam('${item.id}')">▶️ Start</button>
                     </div>
-                    <div class="content-comments" id="comments-exam-${item.id}" data-ctype="exam" data-cid="${item.id}">
-                        <div id="commentList-exam-${item.id}"></div>
+                    <div class="content-comments" id="comments-exam-${idStr}" data-ctype="exam" data-cid="${idStr}">
+                        <div id="commentList-exam-${idStr}"></div>
                         <div class="comment-input-wrapper">
-                            <input type="text" placeholder="Write a comment..." id="commentInput-exam-${item.id}">
-                            <button onclick="addContentComment('exam', '${item.id}')">Post</button>
+                            <input type="text" placeholder="Write a comment..." id="commentInput-exam-${idStr}">
+                            <button onclick="addContentComment('exam', '${idStr}')">Post</button>
                         </div>
                     </div>
                 </div>`;
@@ -3842,7 +2954,7 @@ async function loadTrendingContent(tab) {
 
         if (tab === 'book') {
             c.innerHTML = `<div class="books-grid">${items.map(b => `
-                <div class="book-card" data-content-key="book:${b.id}" style="position:relative;" onclick="openBookReaderById('${b.id}')">
+                <div class="book-card" data-content-key="book:${b.id}" style="position:relative;">
                     <button class="content-card-menu-btn" onclick="event.stopPropagation(); openContentMenu('book','${b.id}',event)">⋮</button>
                     <div class="book-cover">${b.cover_url ? `<img src="${b.cover_url}" alt="" loading="lazy">` : '📖'}</div>
                     <div class="title">${escapeHtml(b.title)}</div>
@@ -4155,7 +3267,7 @@ async function resetPassword() {
 async function logout() {
     if (AppState.isLoggingOut) return;
     AppState.isLoggingOut = true;
-    closeDrawer(); closeOpenMenu(); closeChat(); closeInbox(); closeMembers(); closeBookReader();
+    closeDrawer(); closeOpenMenu(); closeChat(); closeInbox(); closeMembers();
     if (AppState.chatRealtimeChannel) { sb.removeChannel(AppState.chatRealtimeChannel); AppState.chatRealtimeChannel = null; }
     if (AppState.inboxRealtimeChannel) { sb.removeChannel(AppState.inboxRealtimeChannel); AppState.inboxRealtimeChannel = null; }
     if (AppState.reportsChannel) { sb.removeChannel(AppState.reportsChannel); AppState.reportsChannel = null; }
@@ -4225,9 +3337,6 @@ function loadSettingsScreen() {
     document.querySelectorAll('.settings-theme-picker button[data-theme]').forEach(b => {
         b.classList.toggle('active', b.dataset.theme === AppState.theme);
     });
-    document.querySelectorAll('#chatThemePickerSettings button').forEach(b => {
-        b.classList.toggle('active', b.dataset.chattheme === AppState.defaultChatTheme);
-    });
 }
 function toggleSetting(key, el) {
     AppState.settings[key] = !AppState.settings[key];
@@ -4252,14 +3361,11 @@ function applyTheme() {
 window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
     if (AppState.theme === 'auto') applyTheme();
 });
-function setDefaultChatTheme(theme, el) {
+function setDefaultChatTheme(theme) {
     AppState.defaultChatTheme = theme;
     saveChatThemesToStorage();
     applyChatTheme();
-    document.querySelectorAll('#chatThemePickerSettings button').forEach(b => {
-        b.classList.toggle('active', b.dataset.chattheme === theme);
-    });
-    showToast(`🎨 Chat background: ${theme}`, 'success');
+    showToast(`🎨 Default chat background: ${theme}`, 'success');
 }
 function setChatThemeForThread(threadId, theme) {
     if (!threadId) return;
@@ -4279,51 +3385,25 @@ function toggleChatThemeMenu(event) {
     if (AppState.openMenuEl) { closeOpenMenu(); return; }
     const btn = event?.currentTarget;
     if (!btn) return;
-    const current = AppState.perChatThemes[AppState.currentThreadId] || AppState.defaultChatTheme || 'cloudy';
-    const themes = [
-        { id: 'cloudy',   label: 'Cloudy',   gradient: 'linear-gradient(135deg, #eef4fb 0%, #dfeaf6 100%)', text: '#0a2540', border: '#8fb6d9' },
-        { id: 'sunset',   label: 'Sunset',   gradient: 'linear-gradient(135deg, #ffe0c2 0%, #ffc9a3 100%)', text: '#7c2d12', border: '#e08a4c' },
-        { id: 'forest',   label: 'Forest',   gradient: 'linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%)', text: '#1b5e20', border: '#5cae60' },
-        { id: 'midnight', label: 'Midnight', gradient: 'linear-gradient(135deg, #1e1b4b 0%, #0a0e1a 100%)', text: '#e0e7ff', border: '#5b5fb0' }
-    ];
     const menu = document.createElement('div');
     menu.id = 'chatThemeMenuPortal';
     menu.dataset.ephemeral = 'true';
-    menu.style.cssText = `position:fixed;background:var(--bg-white);border:1px solid var(--card-border);border-radius:14px;padding:8px;min-width:220px;box-shadow:var(--shadow-lg);z-index:100005;animation:menuPop 0.15s ease-out;display:flex;flex-direction:column;gap:6px;`;
-    menu.innerHTML = `
-        <div style="padding:4px 10px 8px; font-size:11px; font-weight:900; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.8px; border-bottom:1px solid var(--card-border); margin-bottom:4px;">
-            🎨 Chat Background
-        </div>
-        ${themes.map(t => `
-            <div onclick="applyThemeFromMenu('${t.id}')"
-                 style="padding:12px 16px;cursor:pointer;font-size:14px;font-weight:800;border-radius:10px;background:${t.gradient};color:${t.text};border:2px solid ${t.id === current ? '#FFD700' : t.border};display:flex;align-items:center;justify-content:space-between;transition:transform 0.15s;box-shadow:${t.id === current ? '0 0 0 3px rgba(255,215,0,0.25)' : '0 1px 3px rgba(0,0,0,0.08)'};"
-                 onmouseover="this.style.transform='scale(1.02)'"
-                 onmouseout="this.style.transform='scale(1)'">
-                <span>${t.label}</span>
-                <span style="font-size:16px;">${t.id === current ? '✓' : ''}</span>
-            </div>`).join('')}`;
+    const current = AppState.perChatThemes[AppState.currentThreadId] || AppState.defaultChatTheme || 'cloudy';
+    const themes = [
+        { id: 'cloudy', label: '☁️ Cloudy (default)' },
+        { id: 'sunset', label: '🌅 Sunset' },
+        { id: 'forest', label: '🌲 Forest' },
+        { id: 'midnight', label: '🌙 Midnight' }
+    ];
+    menu.innerHTML = themes.map(t => `<div onclick="applyThemeFromMenu('${t.id}')" style="${t.id === current ? 'font-weight:900; color:var(--teal);' : ''}"><span class="chat-theme-swatch ${t.id}"></span>${t.label}${t.id === current ? ' ✓' : ''}</div>`).join('');
+    menu.classList.add('chat-theme-portal');
     document.body.appendChild(menu);
-    const rect = btn.getBoundingClientRect();
-    const menuRect = menu.getBoundingClientRect();
-    const vw = window.innerWidth; const vh = window.innerHeight;
-    let top = rect.bottom + 8;
-    let left = rect.right - menuRect.width;
-    if (left < 8) left = 8;
-    if (left + menuRect.width > vw - 8) left = vw - menuRect.width - 8;
-    if (top + menuRect.height > vh - 8) top = rect.top - menuRect.height - 8;
-    if (top < 8) top = 8;
-    menu.style.top = top + 'px';
-    menu.style.left = left + 'px';
-    const closeHandler = (e) => {
-        if (e.type === 'keydown' && e.key === 'Escape') { menu.remove(); document.removeEventListener('click', closeHandler, true); document.removeEventListener('keydown', closeHandler, true); return; }
-        if (e.type === 'click' && !menu.contains(e.target) && e.target !== btn && !btn.contains(e.target)) { menu.remove(); document.removeEventListener('click', closeHandler, true); document.removeEventListener('keydown', closeHandler, true); }
-    };
-    setTimeout(() => { document.addEventListener('click', closeHandler, true); document.addEventListener('keydown', closeHandler, true); }, 10);
+    openPortalMenu(menu, btn);
 }
 function applyThemeFromMenu(themeId) {
     closeOpenMenu();
     if (AppState.currentThreadId) { setChatThemeForThread(AppState.currentThreadId, themeId); showToast(`🎨 Background: ${themeId}`, 'success'); }
-    else setDefaultChatTheme(themeId, null);
+    else setDefaultChatTheme(themeId);
 }
 
 /* ---- Email / password / delete ---- */
@@ -4487,7 +3567,6 @@ function toggleFilterRow(event) {
 document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
         closeDrawer(); closeOpenMenu();
-        if (document.getElementById('bookReaderOverlay')?.classList.contains('open')) closeBookReader();
         if (document.getElementById('chatOverlay')?.classList.contains('open')) closeChat();
         if (document.getElementById('inboxOverlay')?.classList.contains('open')) closeInbox();
         if (document.getElementById('membersOverlay')?.classList.contains('open')) closeMembers();
@@ -4710,7 +3789,7 @@ function startVideoWatchTimer(videoId, table = 'group_content') {
     AppState.videoWatchTimers[videoId] = 0;
     if (AppState.videoWatchers[videoId]) clearInterval(AppState.videoWatchers[videoId]);
     AppState.videoWatchers[videoId] = setInterval(() => {
-        const vid = document.getElementById(`video-${videoId}`) || document.getElementById(`hm-video-${videoId}`) || document.getElementById(`pinnedVideoElHome`) || document.getElementById(`pinnedVideoElGroup`);
+        const vid = document.getElementById(`video-${videoId}`) || document.getElementById(`hm-video-${videoId}`);
         if (!vid) { stopVideoWatchTimer(videoId); return; }
         if (vid.paused || vid.ended) return;
         AppState.videoWatchTimers[videoId] = (AppState.videoWatchTimers[videoId] || 0) + 1;
@@ -4781,35 +3860,98 @@ function changeProfilePic() {
     i.click();
 }
 
-/* ---- Video player (inline, non-pinned) ---- */
+/* ---- Video player ---- */
 function pauseAllOtherVideos(exceptId) {
     document.querySelectorAll('video').forEach(v => {
-        const isCurrent = exceptId && (v.id === `video-${exceptId}` || v.id === `hm-video-${exceptId}` || v.id === 'pinnedVideoElHome' || v.id === 'pinnedVideoElGroup');
+        const isCurrent = exceptId && (v.id === `video-${exceptId}` || v.id === `hm-video-${exceptId}`);
         if (!isCurrent && !v.paused) { try { v.pause(); } catch (e) {} }
     });
 }
-
-// V1=A, V2=C, V3=C, V4=B, V5=A — pinned video plays via playInlineVideo / playHomeVideo
-function playInlineVideo(id, url, title) {
-    // PIN instead of inline for YouTube-style behavior
-    const item = (AppState.currentVideoList.group || []).find(x => String(x.id) === String(id));
-    pinVideo('group', { id: id, url: url, title: title || (item?.title || 'Now playing') });
-}
-function playHomeVideo(id, url, title) {
-    const item = (AppState.currentVideoList.home || []).find(x => String(x.id) === String(id));
-    pinVideo('home', { id: id, url: url, title: title || (item?.title || 'Now playing') });
+function playInlineVideo(id, url) {
+    const t = document.getElementById(`thumbnail-${id}`);
+    const p = document.getElementById(`video-player-${id}`);
+    const v = document.getElementById(`video-${id}`);
+    if (!t || !p || !v) return;
+    pauseAllOtherVideos(id);
+    t.style.display = 'none'; p.style.display = 'block';
+    v.src = url; v.load(); v.play().catch(() => {});
+    v.ontimeupdate = () => updateVideoProgress(id);
+    v.onloadedmetadata = () => updateVideoProgress(id);
+    v.onplay = () => startVideoWatchTimer(id, 'group_content');
+    v.onpause = () => stopVideoWatchTimer(id);
+    v.onended = () => stopVideoWatchTimer(id);
 }
 function toggleVideoPlay(id) { const v = document.getElementById(`video-${id}`); if (!v) return; if (v.paused) v.play(); else v.pause(); }
-function updateVideoProgress(id) { /* no longer used — inline videos now play in pinned area */ }
-function seekVideo(e, id) { /* no longer used */ }
-function setVolume(id, val) { /* no longer used */ }
-function toggleFullscreen(id) { /* no longer used */ }
-function changeSpeed(id, btn) { /* no longer used */ }
-function closeVideoPlayer(id) { unpinVideo('group'); }
-function toggleHomeVideoPlay(id) { /* no longer used */ }
-function seekHomeVideo(e, id) { /* no longer used */ }
-function closeHomeVideo(id) { unpinVideo('home'); }
-function openPPT(id, url) { /* no longer used — PPTs open in reader */ }
+function updateVideoProgress(id) {
+    const v = document.getElementById(`video-${id}`);
+    const p = document.getElementById(`progressFill-${id}`);
+    const t = document.getElementById(`timeDisplay-${id}`);
+    if (!v || !p || !t || !v.duration) return;
+    p.style.width = (v.currentTime / v.duration * 100) + '%';
+    t.textContent = `${formatTime(v.currentTime)} / ${formatTime(v.duration)}`;
+}
+function seekVideo(e, id) {
+    const b = e.currentTarget; const r = b.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width;
+    const v = document.getElementById(`video-${id}`);
+    if (v && v.duration) v.currentTime = Math.max(0, Math.min(x * v.duration, v.duration));
+}
+function setVolume(id, val) { const v = document.getElementById(`video-${id}`); if (v) v.volume = parseFloat(val); }
+function toggleFullscreen(id) {
+    const v = document.getElementById(`video-${id}`); if (!v) return;
+    if (document.fullscreenElement) document.exitFullscreen(); else v.requestFullscreen().catch(() => {});
+}
+function changeSpeed(id, btn) {
+    const v = document.getElementById(`video-${id}`); if (!v) return;
+    const s = [0.5, 0.75, 1, 1.25, 1.5, 2];
+    let c = parseFloat(btn.textContent); let i = s.indexOf(c); if (i === -1) i = 2;
+    const n = s[(i + 1) % s.length];
+    v.playbackRate = n; btn.textContent = n + 'x';
+}
+function closeVideoPlayer(id) {
+    const p = document.getElementById(`video-player-${id}`);
+    const t = document.getElementById(`thumbnail-${id}`);
+    const v = document.getElementById(`video-${id}`);
+    if (p) p.style.display = 'none';
+    if (t) t.style.display = 'block';
+    if (v) { v.pause(); v.src = ''; }
+    stopVideoWatchTimer(id);
+}
+function playHomeVideo(id, url) {
+    const t = document.getElementById(`hm-thumbnail-${id}`);
+    const p = document.getElementById(`hm-video-player-${id}`);
+    const v = document.getElementById(`hm-video-${id}`);
+    if (!t || !p || !v) return;
+    pauseAllOtherVideos(id);
+    t.style.display = 'none'; p.style.display = 'block';
+    v.src = url; v.load(); v.play().catch(() => {});
+    v.ontimeupdate = () => {
+        const pf = document.getElementById(`hm-progressFill-${id}`);
+        const td = document.getElementById(`hm-timeDisplay-${id}`);
+        if (pf && v.duration) pf.style.width = (v.currentTime / v.duration * 100) + '%';
+        if (td && v.duration) td.textContent = `${formatTime(v.currentTime)} / ${formatTime(v.duration)}`;
+    };
+    v.onplay = () => startVideoWatchTimer(id, 'group_content');
+    v.onpause = () => stopVideoWatchTimer(id);
+    v.onended = () => stopVideoWatchTimer(id);
+}
+function toggleHomeVideoPlay(id) { const v = document.getElementById(`hm-video-${id}`); if (!v) return; if (v.paused) v.play(); else v.pause(); }
+function seekHomeVideo(e, id) {
+    const b = e.currentTarget; const r = b.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width;
+    const v = document.getElementById(`hm-video-${id}`);
+    if (v && v.duration) v.currentTime = Math.max(0, Math.min(x * v.duration, v.duration));
+}
+function closeHomeVideo(id) {
+    const p = document.getElementById(`hm-video-player-${id}`);
+    const t = document.getElementById(`hm-thumbnail-${id}`);
+    const v = document.getElementById(`hm-video-${id}`);
+    if (p) p.style.display = 'none';
+    if (t) t.style.display = 'block';
+    if (v) { v.pause(); v.src = ''; }
+    stopVideoWatchTimer(id);
+}
+function openPPT(id, url) { if (!url) return; incrementViewCount('group_content', id); window.open(url, '_blank'); }
 
 /* ---- Create content ---- */
 function openCreateContentModal(defaultType = 'video') {
@@ -4830,10 +3972,6 @@ function switchCreateType(type, btn) {
     document.querySelectorAll('.create-form').forEach(f => f.classList.remove('active'));
     const form = document.getElementById(`createForm-${type}`);
     if (form) form.classList.add('active');
-}
-function onPptPaidToggle(cb) {
-    const f = document.getElementById('pptPaidFields');
-    if (f) f.style.display = cb.checked ? 'block' : 'none';
 }
 async function uploadCreateFile(kind) {
     const inputId = kind === 'video' ? 'videoFileInput' : 'pptFileInput';
@@ -4888,14 +4026,7 @@ async function submitCreateContent() {
                 const { error } = await sb.storage.from('app-assets').upload(path, tf, { cacheControl: '3600' });
                 if (!error) { const { data: u } = sb.storage.from('app-assets').getPublicUrl(path); thumbUrl = u.publicUrl; }
             }
-            const isPaid = activeType === 'ppt' && document.getElementById('pptIsPaid')?.checked;
-            const previewPages = parseInt(document.getElementById('pptPreviewPages')?.value) || 5;
-            await sb.from('group_content').insert({
-                group_id: gid, author_id: AppState.userId, content_type: activeType,
-                title: t, description: desc, file_url: url, thumbnail_url: thumbUrl,
-                likes: 0, dislikes: 0, comment_count: 0, share_count: 0, views: 0,
-                is_paid: !!isPaid, preview_pages: previewPages
-            });
+            await sb.from('group_content').insert({ group_id: gid, author_id: AppState.userId, content_type: activeType, title: t, description: desc, file_url: url, thumbnail_url: thumbUrl, likes: 0, dislikes: 0, comment_count: 0, share_count: 0, views: 0 });
             showToast('✅ Published', 'success');
             closeModal('createContentModal');
             afterCreateSuccess(activeType === 'video' ? 'videos' : 'ppts');
@@ -4929,46 +4060,6 @@ async function submitCreateContent() {
             showToast('✅ Exam created', 'success');
             closeModal('createContentModal');
             afterCreateSuccess('mockexam');
-        } catch (err) { showToast('Error: ' + err.message, 'error'); }
-        return;
-    }
-    if (activeType === 'book') {
-        // Book upload from inside the group
-        const t = document.getElementById('ctBookTitle')?.value.trim();
-        const a = document.getElementById('ctBookAuthor')?.value.trim();
-        const f = document.getElementById('ctBookFile')?.files?.[0];
-        if (!t || !a || !f) return showToast('Title, author, and file required', 'error');
-        try {
-            const ext = f.name.split('.').pop();
-            const path = `bstore_books/${AppState.userId}_${Date.now()}.${ext}`;
-            await sb.storage.from('app-assets').upload(path, f, { cacheControl: '3600' });
-            const { data: u } = sb.storage.from('app-assets').getPublicUrl(path);
-            let coverUrl = null;
-            const cf = document.getElementById('ctBookCover')?.files?.[0];
-            if (cf) {
-                const cext = cf.name.split('.').pop();
-                const cpath = `bstore_covers/${AppState.userId}_${Date.now()}.${cext}`;
-                const { error: ce } = await sb.storage.from('app-assets').upload(cpath, cf, { cacheControl: '3600' });
-                if (!ce) { const { data: cu } = sb.storage.from('app-assets').getPublicUrl(cpath); coverUrl = cu.publicUrl; }
-            }
-            await sb.from('bstore_books').insert({
-                title: t, author: a,
-                description: document.getElementById('ctBookDesc')?.value || '',
-                category: document.getElementById('ctBookCategory')?.value || 'other',
-                file_url: u.publicUrl, cover_url: coverUrl,
-                price_monthly: parseInt(document.getElementById('ctBookPriceMonthly')?.value) || 0,
-                price_3months: parseInt(document.getElementById('ctBookPrice3')?.value) || 0,
-                price_6months: parseInt(document.getElementById('ctBookPrice6')?.value) || 0,
-                price_9months: parseInt(document.getElementById('ctBookPrice9')?.value) || 0,
-                price_yearly: parseInt(document.getElementById('ctBookPriceYearly')?.value) || 0,
-                teacher_id: AppState.userId,
-                status: AppState.isAdmin ? 'approved' : 'pending',
-                views: 0
-            });
-            showToast('✅ Book submitted for approval', 'success');
-            closeModal('createContentModal');
-            // Reload books in the group
-            if (AppState.currentGroupId) loadGroupBooks(AppState.currentGroupId);
         } catch (err) { showToast('Error: ' + err.message, 'error'); }
         return;
     }
@@ -5062,7 +4153,7 @@ async function loadMyLibrary() {
     try {
         const { data } = await sb.from('bstore_subscriptions').select('*, bstore_books(*)').eq('user_id', AppState.userId).eq('is_active', true);
         if (!data?.length) { c.innerHTML = '<div class="loading">No books yet.</div>'; return; }
-        c.innerHTML = data.map(s => `<div class="content-card" style="cursor:pointer;" onclick="openBookReaderById('${s.book_id}')"><h4>${escapeHtml(s.bstore_books?.title || 'Book')}</h4><p style="font-size:13px;">By ${escapeHtml(s.bstore_books?.author || '')}</p></div>`).join('');
+        c.innerHTML = data.map(s => `<div class="content-card"><h4>${escapeHtml(s.bstore_books?.title || 'Book')}</h4><p style="font-size:13px;">By ${escapeHtml(s.bstore_books?.author || '')}</p></div>`).join('');
     } catch (e) { c.innerHTML = '<div class="loading">Empty.</div>'; }
 }
 async function submitBuyCoins() {
@@ -5837,20 +4928,14 @@ async function adminFetchUsers(userIds) {
     return out;
 }
 
-/* ---- Admin: stats ---- */
 async function renderAdminStats(pane) {
     pane.innerHTML = '<div class="loading"><div class="spinner"></div>Loading stats…</div>';
     try {
         const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString();
-        const dayAgo = new Date(Date.now() - 86400000).toISOString();
-        const monthAgo = new Date(Date.now() - 30 * 86400000).toISOString();
         const fiveMinAgo = new Date(Date.now() - 5 * 60000).toISOString();
         const queries = await Promise.all([
             sb.from('users').select('*', { count: 'exact', head: true }),
             sb.from('users').select('*', { count: 'exact', head: true }).eq('is_banned', true),
-            sb.from('users').select('*', { count: 'exact', head: true }).eq('gender', 'male'),
-            sb.from('users').select('*', { count: 'exact', head: true }).eq('gender', 'female'),
-            sb.from('users').select('*', { count: 'exact', head: true }).in('gender', ['other', 'prefer_not_say']),
             sb.from('users').select('*', { count: 'exact', head: true }).gte('created_at', weekAgo),
             sb.from('groups').select('*', { count: 'exact', head: true }),
             sb.from('groups').select('*', { count: 'exact', head: true }).gte('boosted_until', new Date().toISOString()),
@@ -5859,40 +4944,20 @@ async function renderAdminStats(pane) {
             sb.from('mock_exams').select('*', { count: 'exact', head: true }),
             sb.from('bstore_books').select('*', { count: 'exact', head: true }),
             sb.from('users').select('coin_balance.sum()'),
-            sb.from('coin_requests').select('coins_requested.sum()').eq('status', 'approved'),
-            sb.from('coin_requests').select('coins_requested.sum()').eq('status', 'approved').gte('reviewed_at', weekAgo),
-            sb.from('withdrawals').select('coins_requested.sum(), etb_amount.sum()').eq('status', 'approved'),
-            sb.from('withdrawals').select('coins_requested.sum(), etb_amount.sum()').eq('status', 'approved').gte('reviewed_at', weekAgo),
-            sb.from('group_boosts').select('coins_paid.sum()'),
-            sb.from('content_reports').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
-            sb.from('content_reports').select('*', { count: 'exact', head: true }).gte('created_at', weekAgo),
-            sb.from('users').select('*', { count: 'exact', head: true }).gte('created_at', monthAgo),
-            sb.from('group_content').select('*', { count: 'exact', head: true }).gte('created_at', weekAgo)
+            sb.from('content_reports').select('*', { count: 'exact', head: true }).eq('status', 'pending')
         ]);
         const totalUsers = queries[0].count || 0;
         const bannedUsers = queries[1].count || 0;
-        const maleUsers = queries[2].count || 0;
-        const femaleUsers = queries[3].count || 0;
-        const otherUsers = queries[4].count || 0;
-        const newUsersWeek = queries[5].count || 0;
-        const totalGroups = queries[6].count || 0;
-        const boostedGroups = queries[7].count || 0;
-        const totalVideos = queries[8].count || 0;
-        const totalPpts = queries[9].count || 0;
-        const totalExams = queries[10].count || 0;
-        const totalBooks = queries[11].count || 0;
+        const newUsersWeek = queries[2].count || 0;
+        const totalGroups = queries[3].count || 0;
+        const boostedGroups = queries[4].count || 0;
+        const totalVideos = queries[5].count || 0;
+        const totalPpts = queries[6].count || 0;
+        const totalExams = queries[7].count || 0;
+        const totalBooks = queries[8].count || 0;
         const safeNum = (v) => { const n = Number(v); return Number.isFinite(n) ? n : 0; };
-        const totalCoinsCirc = safeNum(queries[12].data?.[0]?.sum);
-        const coinsBought = safeNum(queries[13].data?.[0]?.sum);
-        const coinsBoughtWeek = safeNum(queries[14].data?.[0]?.sum);
-        const withdrawCoins = safeNum(queries[15].data?.[0]?.coins_requested);
-        const withdrawEtb = safeNum(queries[15].data?.[0]?.etb_amount);
-        const withdrawEtbWeek = safeNum(queries[16].data?.[0]?.etb_amount);
-        const boostSpend = safeNum(queries[17].data?.[0]?.sum);
-        const pendingReports = queries[18].count || 0;
-        const reportsWeek = queries[19].count || 0;
-        const newUsersMonth = queries[20].count || 0;
-        const newContentWeek = queries[21].count || 0;
+        const totalCoinsCirc = safeNum(queries[9].data?.[0]?.sum);
+        const pendingReports = queries[10].count || 0;
         let activeNow = 0;
         try { const { count } = await sb.from('users').select('*', { count: 'exact', head: true }).gte('last_seen_at', fiveMinAgo); activeNow = count || 0; } catch (e) {}
         pane.innerHTML = `
@@ -5903,9 +4968,6 @@ async function renderAdminStats(pane) {
                     <div class="stats-row"><span class="stats-label">🟢 Active now</span><span class="stats-value good">${activeNow}</span></div>
                     <div class="stats-row"><span class="stats-label">🆕 New this week</span><span class="stats-value">${newUsersWeek}</span></div>
                     <div class="stats-row"><span class="stats-label">🚫 Banned</span><span class="stats-value bad">${bannedUsers}</span></div>
-                    <div class="stats-row" style="border-top:1px solid var(--card-border); margin-top:6px; padding-top:8px;"><span class="stats-label">♂️ Male</span><span class="stats-value">${maleUsers.toLocaleString()}</span></div>
-                    <div class="stats-row"><span class="stats-label">♀️ Female</span><span class="stats-value">${femaleUsers.toLocaleString()}</span></div>
-                    <div class="stats-row"><span class="stats-label">⚧ Other / N/A</span><span class="stats-value">${otherUsers.toLocaleString()}</span></div>
                 </div>
                 <div class="stats-card">
                     <h4>📚 Groups</h4>
@@ -5918,73 +4980,40 @@ async function renderAdminStats(pane) {
                     <div class="stats-row"><span class="stats-label">PPTs</span><span class="stats-value">${totalPpts}</span></div>
                     <div class="stats-row"><span class="stats-label">Mock exams</span><span class="stats-value">${totalExams}</span></div>
                     <div class="stats-row"><span class="stats-label">Books</span><span class="stats-value">${totalBooks}</span></div>
-                    <div class="stats-row"><span class="stats-label">New (7d)</span><span class="stats-value">${newContentWeek}</span></div>
                 </div>
                 <div class="stats-card">
                     <h4>💰 Economy</h4>
                     <div class="stats-row"><span class="stats-label">Coins in circulation</span><span class="stats-value coin">${Number(totalCoinsCirc).toLocaleString()}</span></div>
-                    <div class="stats-row"><span class="stats-label">Coins bought (lifetime)</span><span class="stats-value good">${Number(coinsBought).toLocaleString()}</span></div>
-                    <div class="stats-row"><span class="stats-label">Coins bought (7d)</span><span class="stats-value">${Number(coinsBoughtWeek).toLocaleString()}</span></div>
-                    <div class="stats-row" style="border-top:1px solid var(--card-border); margin-top:6px; padding-top:8px;"><span class="stats-label">Coins withdrawn</span><span class="stats-value bad">${Number(withdrawCoins).toLocaleString()}</span></div>
-                    <div class="stats-row"><span class="stats-label">ETB paid out</span><span class="stats-value bad">${Number(withdrawEtb).toLocaleString()} ETB</span></div>
-                    <div class="stats-row"><span class="stats-label">Withdrawn (7d)</span><span class="stats-value">${Number(withdrawEtbWeek).toLocaleString()} ETB</span></div>
-                    <div class="stats-row"><span class="stats-label">🚀 Spent on boosts</span><span class="stats-value warn">${Number(boostSpend).toLocaleString()}</span></div>
                 </div>
                 <div class="stats-card">
                     <h4>🚨 Moderation</h4>
                     <div class="stats-row"><span class="stats-label">Pending reports</span><span class="stats-value bad">${pendingReports}</span></div>
-                    <div class="stats-row"><span class="stats-label">Reports this week</span><span class="stats-value">${reportsWeek}</span></div>
-                </div>
-                <div class="stats-card">
-                    <h4>📈 Growth</h4>
-                    <div class="stats-row"><span class="stats-label">New users (7d)</span><span class="stats-value">${newUsersWeek}</span></div>
-                    <div class="stats-row"><span class="stats-label">New users (30d)</span><span class="stats-value">${newUsersMonth}</span></div>
                 </div>
             </div>
         `;
     } catch (e) { pane.innerHTML = '<div class="admin-empty">Failed to load stats</div>'; }
 }
 
-/* ---- Admin: reports ---- */
 async function renderAdminReports(pane) {
     pane.innerHTML = '<div class="loading"><div class="spinner"></div>Loading reports…</div>';
     const { data } = await sb.from('content_reports').select('*').eq('status', 'pending').order('created_at', { ascending: false });
     if (!data?.length) { pane.innerHTML = '<div class="admin-empty"><span class="admin-empty-icon">🚨</span>No pending reports.</div>'; return; }
     const reporterIds = [...new Set(data.map(r => r.reporter_id))];
     const uMap = await adminFetchUsers(reporterIds);
-    const byType = { video: [], ppt: [], exam: [], book: [] };
-    data.forEach(r => { if (byType[r.content_type]) byType[r.content_type].push(r.content_id); });
-    const previewMap = await fetchContentPreviews(byType);
-    pane.innerHTML = data.map(r => {
-        const preview = previewMap[`${r.content_type}:${r.content_id}`] || {};
-        return `
+    pane.innerHTML = data.map(r => `
         <div class="admin-item">
             <div class="admin-item-thumb">🚨</div>
             <div class="admin-item-body">
-                <div class="admin-item-title"><span class="admin-tag" style="background:var(--navy); color:#fff;">${r.content_type.toUpperCase()}</span> ${escapeHtml(preview.title || r.content_id.substring(0,8))}</div>
+                <div class="admin-item-title"><span class="admin-tag" style="background:var(--navy); color:#fff;">${r.content_type.toUpperCase()}</span> ID ${String(r.content_id).substring(0,8)}</div>
                 <div class="admin-item-meta">By <strong>${escapeHtml(getDisplayName(uMap[r.reporter_id]))}</strong> • ${new Date(r.created_at).toLocaleString()}</div>
                 <div class="admin-item-meta">Reason: <strong>${escapeHtml(r.reason)}</strong>${r.details ? ' — ' + escapeHtml(r.details) : ''}</div>
                 <div class="admin-item-actions">
                     <button class="admin-btn gold" onclick="adminOpenFeedback('${r.id}')">💬 Send DM</button>
                     <button class="admin-btn approve" onclick="adminDismissReport('${r.id}')">✅ Dismiss</button>
                     <button class="admin-btn danger" onclick="adminDeleteContent('${r.id}','${r.content_type}','${r.content_id}')">🗑️ Delete</button>
-                    ${preview.author_id ? `<button class="admin-btn danger" onclick="adminBanFromReport('${r.id}','${preview.author_id}')">🚫 Ban Author</button>` : ''}
                 </div>
             </div>
-        </div>`;
-    }).join('');
-}
-async function fetchContentPreviews(byType) {
-    const out = {};
-    const tasks = [];
-    if (byType.video.length || byType.ppt.length) {
-        const ids = [...byType.video, ...byType.ppt];
-        tasks.push(sb.from('group_content').select('id, title, group_id, author_id, content_type').in('id', ids).then(({ data }) => (data || []).forEach(x => out[`${x.content_type}:${x.id}`] = { title: x.title, author_id: x.author_id, group_id: x.group_id })));
-    }
-    if (byType.exam.length) tasks.push(sb.from('mock_exams').select('id, title, group_id, author_id').in('id', byType.exam).then(({ data }) => (data || []).forEach(x => out[`exam:${x.id}`] = { title: x.title, author_id: x.author_id, group_id: x.group_id })));
-    if (byType.book.length) tasks.push(sb.from('bstore_books').select('id, title, teacher_id').in('id', byType.book).then(({ data }) => (data || []).forEach(x => out[`book:${x.id}`] = { title: x.title, author_id: x.teacher_id })));
-    await Promise.all(tasks);
-    return out;
+        </div>`).join('');
 }
 async function adminDismissReport(reportId) {
     await sb.from('content_reports').update({ status: 'dismissed', reviewed_by: AppState.userId, reviewed_at: new Date() }).eq('id', reportId);
@@ -5998,15 +5027,6 @@ async function adminDeleteContent(reportId, type, contentId) {
     await sb.from(table).delete().eq('id', contentId);
     await sb.from('content_reports').update({ status: 'actioned', reviewed_by: AppState.userId, reviewed_at: new Date() }).eq('id', reportId);
     showToast('🗑️ Deleted', 'success');
-    await refreshAdminPanel();
-}
-async function adminBanFromReport(reportId, userId) {
-    if (!confirm('Ban this user?')) return;
-    const reason = prompt('Ban reason:') || 'Violation';
-    const { error: banErr } = await sb.from('users').update({ is_banned: true, banned_at: new Date(), banned_reason: reason }).eq('user_id', userId);
-    if (banErr) { showToast('Ban failed: ' + banErr.message, 'error'); return; }
-    await sb.from('content_reports').update({ status: 'actioned', reviewed_by: AppState.userId, reviewed_at: new Date() }).eq('id', reportId);
-    showToast('🚫 Banned', 'success');
     await refreshAdminPanel();
 }
 async function adminOpenFeedback(reportId) {
@@ -6067,22 +5087,13 @@ async function adminSendFeedbackDM() {
             threadId = created.id;
         }
         await sb.from('dm_messages').insert({ thread_id: threadId, sender_id: meId, message: `[Report ${outcome.toUpperCase()}]\n\n${message}`, seen: false });
-        const { data: t } = await sb.from('dm_threads').select('unread_for_member, unread_for_owner, owner_id').eq('id', threadId).single();
-        const update = { last_message_at: new Date(), last_message_preview: message.substring(0, 60) };
-        if (t) {
-            if (t.owner_id === reporterId) update.unread_for_owner = (t.unread_for_owner || 0) + 1;
-            else update.unread_for_member = (t.unread_for_member || 0) + 1;
-        }
-        await sb.from('dm_threads').update(update).eq('id', threadId);
         await sb.from('content_reports').update({ status: outcome === 'dismissed' ? 'dismissed' : 'actioned', admin_action: outcome, admin_feedback: message, feedback_sent_at: new Date(), reviewed_by: AppState.userId, reviewed_at: new Date() }).eq('id', reportId);
-        try { await sb.from('notifications').insert({ user_id: reporterId, actor_id: AppState.userId, type: 'report_feedback', title: '💬 Admin replied', message: message.substring(0, 120), link_type: 'dm', link_id: threadId }); } catch (e) {}
         closeModal('adminFeedbackModal');
         showToast('✅ Sent', 'success');
         await refreshAdminPanel();
     } catch (err) { showToast('❌ ' + err.message, 'error'); }
 }
 
-/* ---- Admin: books ---- */
 async function renderAdminBooks(pane) {
     const { data } = await sb.from('bstore_books').select('*').eq('status', 'pending').order('created_at', { ascending: false });
     if (!data?.length) { pane.innerHTML = '<div class="admin-empty"><span class="admin-empty-icon">📖</span>No pending books.</div>'; return; }
@@ -6107,7 +5118,7 @@ async function adminApproveBook(id) {
     await refreshAdminPanel();
 }
 async function adminRejectBook(id) {
-    const reason = prompt('Rejection reason (will be sent to uploader):') || '';
+    const reason = prompt('Rejection reason:') || '';
     const { data: b } = await sb.from('bstore_books').select('teacher_id, title').eq('id', id).single();
     await sb.from('bstore_books').update({ status: 'rejected', rejection_reason: reason }).eq('id', id);
     if (b?.teacher_id) {
@@ -6117,7 +5128,6 @@ async function adminRejectBook(id) {
     await refreshAdminPanel();
 }
 
-/* ---- Admin: appeals ---- */
 async function renderAdminAppeals(pane) {
     const { data } = await sb.from('appeals').select('*').eq('status', 'pending').order('created_at', { ascending: false });
     if (!data?.length) { pane.innerHTML = '<div class="admin-empty"><span class="admin-empty-icon">👑</span>No pending appeals.</div>'; return; }
@@ -6158,13 +5168,11 @@ async function adminRejectAppeal(id) {
     const { data: u } = await sb.from('users').select('coin_balance').eq('user_id', a.user_id).single();
     await sb.from('users').update({ coin_balance: (u?.coin_balance || 0) + refund }).eq('user_id', a.user_id);
     await sb.from('appeals').update({ status: 'rejected', rejection_reason: reason, refunded: true, reviewed_by: AppState.userId, reviewed_at: new Date() }).eq('id', id);
-    try { await sb.from('transactions').insert({ user_id: a.user_id, type: 'earn', amount: refund, description: 'Refund — appeal rejected', reference_id: id, reference_type: 'appeal' }); } catch (e) {}
     try { await sb.from('notifications').insert({ user_id: a.user_id, actor_id: AppState.userId, type: 'appeal_status', title: '❌ Verification rejected', message: reason + ' — ' + refund + ' coins refunded', link_type: 'user', link_id: a.user_id }); } catch (e) {}
     showToast('Rejected & refunded', 'info');
     await refreshAdminPanel();
 }
 
-/* ---- Admin: coins ---- */
 async function renderAdminCoins(pane) {
     const { data } = await sb.from('coin_requests').select('*').eq('status', 'pending').order('created_at', { ascending: false });
     if (!data?.length) { pane.innerHTML = '<div class="admin-empty"><span class="admin-empty-icon">💰</span>No pending coin requests.</div>'; return; }
@@ -6194,7 +5202,6 @@ async function adminApproveCoin(id) {
     const newBalance = (u?.coin_balance || 0) + (cr.coins_requested || 0);
     await sb.from('users').update({ coin_balance: newBalance }).eq('user_id', cr.user_id);
     await sb.from('coin_requests').update({ status: 'approved', reviewed_by: AppState.userId, reviewed_at: new Date() }).eq('id', id);
-    try { await sb.from('transactions').insert({ user_id: cr.user_id, type: 'buy', amount: cr.coins_requested, description: `Coin purchase (${cr.amount_etb} ETB)`, reference_id: id, reference_type: 'coin_request' }); } catch (e) {}
     try { await sb.from('notifications').insert({ user_id: cr.user_id, actor_id: AppState.userId, type: 'coin_status', title: '💰 Coins added', message: `${cr.coins_requested} coins added to your wallet.`, link_type: 'wallet', link_id: null }); } catch (e) {}
     if (cr.user_id === AppState.userId) { AppState.coinBalance = newBalance; updateUIForUser(); }
     showToast('✅ Coins credited', 'success');
@@ -6211,7 +5218,6 @@ async function adminRejectCoin(id) {
     await refreshAdminPanel();
 }
 
-/* ---- Admin: withdrawals ---- */
 async function renderAdminWithdrawals(pane) {
     const { data } = await sb.from('withdrawals').select('*').eq('status', 'pending').order('created_at', { ascending: false });
     if (!data?.length) { pane.innerHTML = '<div class="admin-empty"><span class="admin-empty-icon">📤</span>No pending withdrawals.</div>'; return; }
@@ -6238,13 +5244,8 @@ async function adminApproveWithdrawal(id) {
     if (!w) return;
     const { data: u } = await sb.from('users').select('coin_balance').eq('user_id', w.user_id).single();
     if ((u?.coin_balance || 0) < (w.coins_requested || 0)) return showToast('User balance insufficient', 'error');
-    const { error: updErr, count: updCount } = await sb.from('users')
-        .update({ coin_balance: (u?.coin_balance || 0) - (w.coins_requested || 0) }, { count: 'exact' })
-        .eq('user_id', w.user_id)
-        .eq('coin_balance', u?.coin_balance || 0);
-    if (updErr || (updCount !== null && updCount === 0)) return showToast('Balance changed — retry', 'error');
+    await sb.from('users').update({ coin_balance: (u?.coin_balance || 0) - (w.coins_requested || 0) }).eq('user_id', w.user_id);
     await sb.from('withdrawals').update({ status: 'approved', reviewed_by: AppState.userId, reviewed_at: new Date() }).eq('id', id);
-    try { await sb.from('transactions').insert({ user_id: w.user_id, type: 'withdraw', amount: w.coins_requested, description: `Withdrawal paid (${w.etb_amount} ETB)`, reference_id: id, reference_type: 'withdrawal' }); } catch (e) {}
     try { await sb.from('notifications').insert({ user_id: w.user_id, actor_id: AppState.userId, type: 'withdrawal_status', title: '✅ Withdrawal approved', message: `${w.etb_amount} ETB sent via ${w.method}.`, link_type: 'wallet', link_id: null }); } catch (e) {}
     showToast('✅ Approved', 'success');
     await refreshAdminPanel();
@@ -6260,7 +5261,6 @@ async function adminRejectWithdrawal(id) {
     await refreshAdminPanel();
 }
 
-/* ---- Admin: users ---- */
 let _adminUsersFilter = '';
 async function renderAdminUsers(pane) {
     pane.innerHTML = `<input type="text" class="admin-search" placeholder="🔍 Search users..." value="${escapeHtml(_adminUsersFilter)}" oninput="_adminUsersFilter=this.value; adminRenderUsersList();"><div id="adminUsersList"><div class="loading"><div class="spinner"></div>Loading…</div></div>`;
@@ -6316,7 +5316,6 @@ async function adminToggleBan(userId, ban) {
     await adminRenderUsersList();
 }
 
-/* ---- Admin: economy ---- */
 async function renderAdminEconomy(pane) {
     const e = AppState.economy;
     pane.innerHTML = `
@@ -6331,11 +5330,6 @@ async function renderAdminEconomy(pane) {
             <div class="form-group"><label>Minimum coins per boost</label><input type="number" id="ecoMin" value="${e.boost_min_coins}" min="1"></div>
             <div class="form-group"><label>Maximum coins per boost</label><input type="number" id="ecoMax" value="${e.boost_max_coins}" min="1"></div>
             <button class="btn btn-teal" onclick="saveEconomySettings()">💾 Save</button>
-        </div>
-        <div class="stats-card">
-            <h4>📊 Quick Reference</h4>
-            <div class="stats-row"><span class="stats-label">100 coins buys</span><span class="stats-value">${e.boost_hours_per_100_coins}h boost</span></div>
-            <div class="stats-row"><span class="stats-label">500 coins buys</span><span class="stats-value">${(500 / 100) * e.boost_hours_per_100_coins}h boost</span></div>
         </div>
     `;
 }
@@ -6358,7 +5352,6 @@ async function saveEconomySettings() {
     } catch (err) { showToast('❌ ' + err.message, 'error'); }
 }
 
-/* ---- Admin: content moderation ---- */
 async function renderAdminContent(pane) {
     const f = AppState.adminContentFilter;
     pane.innerHTML = `
@@ -6432,7 +5425,7 @@ async function adminBulkDeleteContent() {
     showToast(`🗑️ Deleted ${sel.length} items`, 'success');
     renderAdminContentList();
 }
-async function adminDeleteContentItem(type, id) {
+async function deleteContentItem(type, id) {
     if (!confirm('Delete permanently?')) return;
     const table = CONTENT_TABLE_MAP[type];
     if (!table) return;
@@ -6440,8 +5433,9 @@ async function adminDeleteContentItem(type, id) {
     showToast('🗑️ Deleted', 'success');
     renderAdminContentList();
 }
+const adminDeleteContentItem = deleteContentItem;
 
-console.log('🚀 TENI v6.2 — loaded');
+console.log('🚀 TENI v6.1 — loaded');
 </script>
 </body>
 </html>
