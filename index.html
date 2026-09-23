@@ -492,8 +492,14 @@ html, body {
 .video-wrapper .video-thumbnail .play-btn-overlay:hover { background: rgba(0,0,0,0.8); transform: translate(-50%, -50%) scale(1.1); }
 .video-wrapper .video-controls {
     display: flex; align-items: center; gap: 12px;
-    padding: 8px 12px; background: rgba(0,0,0,0.8); color: white; flex-wrap: wrap;
+    padding: 8px 12px; background: rgba(0,0,0,0.8); color: white;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
 }
+.video-wrapper .video-controls::-webkit-scrollbar { display: none; }
+.video-wrapper .video-controls > * { flex-shrink: 0; }
 .video-wrapper .video-controls button { background: none; border: none; color: white; font-size: 18px; cursor: pointer; padding: 4px; }
 .video-wrapper .video-controls .progress-bar { flex: 1; height: 4px; background: rgba(255,255,255,0.3); border-radius: 2px; cursor: pointer; min-width: 60px; margin: 0; }
 .video-wrapper .video-controls .progress-bar .progress-fill { height: 100%; background: var(--teal); border-radius: 2px; }
@@ -1017,8 +1023,9 @@ html, body {
     .header-row-2 { gap: 4px; padding: 6px 8px; }
     .tab-card { font-size: 10px; padding: 5px 3px; min-width: 44px; }
     .exam-timer .timer { font-size: 16px; }
-    .video-wrapper .video-controls { gap: 6px; padding: 6px 8px; }
-    .video-wrapper .video-controls .time-display { font-size: 10px; min-width: 60px; }
+    .video-wrapper .video-controls { gap: 8px; padding: 6px 8px; }
+    .video-wrapper .video-controls .time-display { font-size: 11px; min-width: 88px; font-family: monospace; }
+    .video-wrapper .video-controls .progress-bar { min-width: 80px; }
     .drawer { width: 260px; }
     .chat-bubble { max-width: 85%; font-size: 13px; }
     .inbox-avatar { width: 42px; height: 42px; }
@@ -1240,15 +1247,6 @@ html, body {
                         <button data-theme="light" onclick="setTheme('light')">☀️ Light</button>
                         <button data-theme="dark" onclick="setTheme('dark')">🌙 Dark</button>
                         <button data-theme="auto" onclick="setTheme('auto')">🌓 Auto</button>
-                    </div>
-                </div>
-                <div class="settings-row" style="flex-direction:column; align-items:stretch; border-top:1px solid var(--card-border); margin-top:8px; padding-top:12px;">
-                    <div class="settings-label" style="margin-bottom:8px;">Default Chat Background</div>
-                    <div class="settings-theme-picker" id="chatThemePickerSettings">
-                        <button data-chattheme="cloudy" onclick="setDefaultChatTheme('cloudy', this)"><span class="chat-theme-swatch cloudy"></span>Cloudy</button>
-                        <button data-chattheme="sunset" onclick="setDefaultChatTheme('sunset', this)"><span class="chat-theme-swatch sunset"></span>Sunset</button>
-                        <button data-chattheme="forest" onclick="setDefaultChatTheme('forest', this)"><span class="chat-theme-swatch forest"></span>Forest</button>
-                        <button data-chattheme="midnight" onclick="setDefaultChatTheme('midnight', this)"><span class="chat-theme-swatch midnight"></span>Midnight</button>
                     </div>
                 </div>
             </div>
@@ -1729,9 +1727,10 @@ function escapeHtml(s) {
     return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
 function formatTime(seconds) {
-    if (seconds < 0) seconds = 0;
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
+    if (!isFinite(seconds) || seconds < 0) seconds = 0;
+    const total = Math.floor(seconds);
+    const mins = Math.floor(total / 60);
+    const secs = total % 60;
     return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
 }
 function formatInboxTime(d) {
@@ -3337,20 +3336,97 @@ function toggleChatThemeMenu(event) {
     if (AppState.openMenuEl) { closeOpenMenu(); return; }
     const btn = event?.currentTarget;
     if (!btn) return;
+    const current = AppState.perChatThemes[AppState.currentThreadId] || AppState.defaultChatTheme || 'cloudy';
+
+    // Each theme now has its own color gradient so it reads as a colored chip
+    const themes = [
+        { id: 'cloudy',   label: 'Cloudy',   gradient: 'linear-gradient(135deg, #eef4fb 0%, #dfeaf6 100%)', text: '#0a2540', border: '#8fb6d9' },
+        { id: 'sunset',   label: 'Sunset',   gradient: 'linear-gradient(135deg, #ffe0c2 0%, #ffc9a3 100%)', text: '#7c2d12', border: '#e08a4c' },
+        { id: 'forest',   label: 'Forest',   gradient: 'linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%)', text: '#1b5e20', border: '#5cae60' },
+        { id: 'midnight', label: 'Midnight', gradient: 'linear-gradient(135deg, #1e1b4b 0%, #0a0e1a 100%)', text: '#e0e7ff', border: '#5b5fb0' }
+    ];
+
     const menu = document.createElement('div');
     menu.id = 'chatThemeMenuPortal';
     menu.dataset.ephemeral = 'true';
-    const current = AppState.perChatThemes[AppState.currentThreadId] || AppState.defaultChatTheme || 'cloudy';
-    const themes = [
-        { id: 'cloudy', label: '☁️ Cloudy (default)' },
-        { id: 'sunset', label: '🌅 Sunset' },
-        { id: 'forest', label: '🌲 Forest' },
-        { id: 'midnight', label: '🌙 Midnight' }
-    ];
-    menu.innerHTML = themes.map(t => `<div onclick="applyThemeFromMenu('${t.id}')" style="${t.id === current ? 'font-weight:900; color:var(--teal);' : ''}"><span class="chat-theme-swatch ${t.id}"></span>${t.label}${t.id === current ? ' ✓' : ''}</div>`).join('');
-    menu.classList.add('chat-theme-portal');
+    menu.style.cssText = `
+        position: fixed;
+        background: var(--bg-white);
+        border: 1px solid var(--card-border);
+        border-radius: 14px;
+        padding: 8px;
+        min-width: 220px;
+        box-shadow: var(--shadow-lg);
+        z-index: 100005;
+        animation: menuPop 0.15s ease-out;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    `;
+
+    menu.innerHTML = `
+        <div style="padding:4px 10px 8px; font-size:11px; font-weight:900; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.8px; border-bottom:1px solid var(--card-border); margin-bottom:4px;">
+            🎨 Chat Background
+        </div>
+        ${themes.map(t => `
+            <div onclick="applyThemeFromMenu('${t.id}')"
+                 style="
+                    padding:12px 16px;
+                    cursor:pointer;
+                    font-size:14px;
+                    font-weight:800;
+                    border-radius:10px;
+                    background:${t.gradient};
+                    color:${t.text};
+                    border:2px solid ${t.id === current ? '#FFD700' : t.border};
+                    display:flex;
+                    align-items:center;
+                    justify-content:space-between;
+                    transition: transform 0.15s;
+                    box-shadow: ${t.id === current ? '0 0 0 3px rgba(255,215,0,0.25)' : '0 1px 3px rgba(0,0,0,0.08)'};
+                 "
+                 onmouseover="this.style.transform='scale(1.02)'"
+                 onmouseout="this.style.transform='scale(1)'">
+                <span>${t.label}</span>
+                <span style="font-size:16px;">${t.id === current ? '✓' : ''}</span>
+            </div>
+        `).join('')}
+    `;
+
     document.body.appendChild(menu);
-    openPortalMenu(menu, btn);
+
+    // Position under the button
+    const rect = btn.getBoundingClientRect();
+    const menuRect = menu.getBoundingClientRect();
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    let top = rect.bottom + 8;
+    let left = rect.right - menuRect.width;
+    if (left < 8) left = 8;
+    if (left + menuRect.width > vw - 8) left = vw - menuRect.width - 8;
+    if (top + menuRect.height > vh - 8) top = rect.top - menuRect.height - 8;
+    if (top < 8) top = 8;
+    menu.style.top = top + 'px';
+    menu.style.left = left + 'px';
+
+    // Close on outside click or Escape
+    const closeHandler = (e) => {
+        if (e.type === 'keydown' && e.key === 'Escape') {
+            menu.remove();
+            document.removeEventListener('click', closeHandler, true);
+            document.removeEventListener('keydown', closeHandler, true);
+            return;
+        }
+        if (e.type === 'click' && !menu.contains(e.target) && e.target !== btn && !btn.contains(e.target)) {
+            menu.remove();
+            document.removeEventListener('click', closeHandler, true);
+            document.removeEventListener('keydown', closeHandler, true);
+        }
+    };
+    setTimeout(() => {
+        document.addEventListener('click', closeHandler, true);
+        document.addEventListener('keydown', closeHandler, true);
+    }, 10);
 }
 function applyThemeFromMenu(themeId) {
     closeOpenMenu();
