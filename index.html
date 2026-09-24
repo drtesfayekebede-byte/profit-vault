@@ -1169,6 +1169,29 @@ html, body {
     padding-bottom: 0;
     background: #000;
 }
+/* ============================================================
+   AUTO-HIDE CONTROLS — 3s of no interaction while playing
+   ============================================================ */
+.video-controls,
+.content-card[data-content-key^="video:"].is-pinned > .actions {
+    transition: opacity 0.25s ease, max-height 0.25s ease, padding 0.25s ease;
+    overflow: hidden;
+    max-height: 200px;
+    opacity: 1;
+}
+.content-card.controls-hidden .video-controls,
+.content-card.controls-hidden.is-pinned > .actions {
+    opacity: 0;
+    max-height: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    pointer-events: none;
+}
+:fullscreen .video-controls,
+:-webkit-full-screen .video-controls {
+    opacity: 1 !important;
+    max-height: 200px !important;
+}
 </style>
 </head>
 <body>
@@ -3962,6 +3985,33 @@ function startVideoWatchTimer(videoId, table = 'group_content') {
 function stopVideoWatchTimer(videoId) {
     if (AppState.videoWatchers[videoId]) { clearInterval(AppState.videoWatchers[videoId]); delete AppState.videoWatchers[videoId]; }
 }
+
+/* ---- Auto-hide video controls (3s) ---- */
+function scheduleHideControls(id, kind) {
+    const cardId = kind === 'home' ? `hm-video-wrapper-${id}` : `video-wrapper-${id}`;
+    const wrapper = document.getElementById(cardId);
+    const card = wrapper?.closest('.content-card');
+    if (!card) return;
+    clearTimeout(card._hideTimer);
+    card._hideTimer = setTimeout(() => {
+        const vid = kind === 'home' ? document.getElementById(`hm-video-${id}`) : document.getElementById(`video-${id}`);
+        if (!vid) return;
+        if (vid.paused || vid.ended) return;
+        const comments = card.querySelector('.content-comments');
+        if (comments && comments.style.display === 'block') return;
+        card.classList.add('controls-hidden');
+    }, 3000);
+}
+function showVideoControls(id, kind) {
+    const cardId = kind === 'home' ? `hm-video-wrapper-${id}` : `video-wrapper-${id}`;
+    const wrapper = document.getElementById(cardId);
+    const card = wrapper?.closest('.content-card');
+    if (!card) return;
+    card.classList.remove('controls-hidden');
+    clearTimeout(card._hideTimer);
+    const vid = kind === 'home' ? document.getElementById(`hm-video-${id}`) : document.getElementById(`video-${id}`);
+    if (vid && !vid.paused && !vid.ended) scheduleHideControls(id, kind);
+}
 function startExamViewTimer(examId) {
     if (AppState.examViewTimers[examId]) clearTimeout(AppState.examViewTimers[examId]);
     AppState.examViewTimers[examId] = setTimeout(() => { incrementViewCount('mock_exams', examId); delete AppState.examViewTimers[examId]; }, VIEW_THRESHOLDS.exam * 1000);
@@ -4051,13 +4101,21 @@ function playInlineVideo(id, url) {
     const card = wrapper?.closest('.content-card');
     wrapper?.classList.add('is-playing');
     card?.classList.add('is-pinned');
+    card?.classList.remove('controls-hidden');
     t.style.display = 'none'; p.style.display = 'block';
     v.src = url; v.load(); v.play().catch(() => {});
     v.ontimeupdate = () => updateVideoProgress(id);
     v.onloadedmetadata = () => updateVideoProgress(id);
-    v.onplay = () => startVideoWatchTimer(id, 'group_content');
-    v.onpause = () => stopVideoWatchTimer(id);
-    v.onended = () => stopVideoWatchTimer(id);
+    v.onplay = () => { startVideoWatchTimer(id, 'group_content'); scheduleHideControls(id, 'group'); };
+    v.onpause = () => { stopVideoWatchTimer(id); showVideoControls(id, 'group'); };
+    v.onended = () => { stopVideoWatchTimer(id); showVideoControls(id, 'group'); };
+    if (!p.dataset.tapBound) {
+        p.dataset.tapBound = '1';
+        p.addEventListener('click', () => showVideoControls(id, 'group'));
+        p.querySelectorAll('button').forEach(b => {
+            b.addEventListener('click', (e) => { e.stopPropagation(); showVideoControls(id, 'group'); });
+        });
+    }
 }
 function toggleVideoPlay(id) { const v = document.getElementById(`video-${id}`); if (!v) return; if (v.paused) v.play(); else v.pause(); }
 function updateVideoProgress(id) {
@@ -4105,7 +4163,8 @@ function closeVideoPlayer(id) {
     const wrapper = document.getElementById(`video-wrapper-${id}`);
     const card = wrapper?.closest('.content-card');
     wrapper?.classList.remove('is-playing');
-    card?.classList.remove('is-pinned');
+    card?.classList.remove('is-pinned', 'controls-hidden');
+    if (card) clearTimeout(card._hideTimer);
     stopVideoWatchTimer(id);
 }
 function playHomeVideo(id, url) {
@@ -4118,6 +4177,7 @@ function playHomeVideo(id, url) {
     const card = wrapper?.closest('.content-card');
     wrapper?.classList.add('is-playing');
     card?.classList.add('is-pinned');
+    card?.classList.remove('controls-hidden');
     t.style.display = 'none'; p.style.display = 'block';
     v.src = url; v.load(); v.play().catch(() => {});
     v.ontimeupdate = () => {
@@ -4126,9 +4186,16 @@ function playHomeVideo(id, url) {
         if (pf && v.duration) pf.style.width = (v.currentTime / v.duration * 100) + '%';
         if (td && v.duration) td.textContent = `${formatTime(v.currentTime)} / ${formatTime(v.duration)}`;
     };
-    v.onplay = () => startVideoWatchTimer(id, 'group_content');
-    v.onpause = () => stopVideoWatchTimer(id);
-    v.onended = () => stopVideoWatchTimer(id);
+    v.onplay = () => { startVideoWatchTimer(id, 'group_content'); scheduleHideControls(id, 'home'); };
+    v.onpause = () => { stopVideoWatchTimer(id); showVideoControls(id, 'home'); };
+    v.onended = () => { stopVideoWatchTimer(id); showVideoControls(id, 'home'); };
+    if (!p.dataset.tapBound) {
+        p.dataset.tapBound = '1';
+        p.addEventListener('click', () => showVideoControls(id, 'home'));
+        p.querySelectorAll('button').forEach(b => {
+            b.addEventListener('click', (e) => { e.stopPropagation(); showVideoControls(id, 'home'); });
+        });
+    }
 }
 function toggleHomeVideoPlay(id) { const v = document.getElementById(`hm-video-${id}`); if (!v) return; if (v.paused) v.play(); else v.pause(); }
 function seekHomeVideo(e, id) {
@@ -4152,7 +4219,8 @@ function closeHomeVideo(id) {
     const wrapper = document.getElementById(`hm-video-wrapper-${id}`);
     const card = wrapper?.closest('.content-card');
     wrapper?.classList.remove('is-playing');
-    card?.classList.remove('is-pinned');
+    card?.classList.remove('is-pinned', 'controls-hidden');
+    if (card) clearTimeout(card._hideTimer);
     stopVideoWatchTimer(id);
 }
 function openPPT(id, url) { if (!url) return; incrementViewCount('group_content', id); window.open(url, '_blank'); }
