@@ -1090,26 +1090,43 @@ html, body {
 #globalTrendingContainer .books-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
 @media (max-width: 600px) { #globalTrendingContainer .books-grid { grid-template-columns: 1fr 1fr; } }
 
-#group-feed {
+/* Edge-to-edge wrapper (only when the player is visible) */
+.content-card[data-content-key^="video:"] > .video-wrapper {
+    transition: border-radius 0.15s;
+}
+.content-card[data-content-key^="video:"] > .video-wrapper.is-playing {
     margin-left: -16px;
     margin-right: -16px;
     margin-top: -16px;
+    border-radius: 0;
 }
-#group-feed .content-card[data-content-key^="video:"] {
+.content-card[data-content-key^="video:"] > .video-wrapper.is-playing .video-thumbnail,
+.content-card[data-content-key^="video:"] > .video-wrapper.is-playing video,
+.content-card[data-content-key^="video:"] > .video-wrapper.is-playing > div[id^="video-player-"],
+.content-card[data-content-key^="video:"] > .video-wrapper.is-playing > div[id^="hm-video-player-"] {
+    border-radius: 0 !important;
+}
+
+/* Pinned state: player sticks to top of scroll container */
+.content-card[data-content-key^="video:"].is-pinned {
+    position: sticky;
+    top: 0;
+    z-index: 60;
     border-radius: 0;
     border-left: none;
     border-right: none;
     border-top: none;
     margin-top: 0;
+    background: #000;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.35);
 }
-#group-feed .content-card[data-content-key^="video:"] > .video-wrapper {
-    border-radius: 0 !important;
-    margin: 0 !important;
+.content-card[data-content-key^="video:"].is-pinned .video-wrapper {
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+    border-radius: 0;
 }
-#group-feed .content-card[data-content-key^="video:"] .video-thumbnail,
-#group-feed .content-card[data-content-key^="video:"] video {
-    border-radius: 0 !important;
-}
+
 </style>
 </head>
 <body>
@@ -2046,7 +2063,7 @@ function toggleDrawer(event) {
     const b = document.getElementById('drawerBackdrop');
     if (!d || !b) return;
     if (d.classList.contains('open')) closeDrawer();
-    else { d.classList.add('open'); b.classList.add('open'); pushNav({ type: 'overlay', id: 'drawer' }); }
+    else { closeAllVideos(); d.classList.add('open'); b.classList.add('open'); pushNav({ type: 'overlay', id: 'drawer' }); }
 }
 function closeDrawer() {
     document.getElementById('drawer')?.classList.remove('open');
@@ -2063,7 +2080,7 @@ function headerSettingsClick(event) { event?.stopPropagation(); openTabContent('
 
 /* ---- Navigation ---- */
 function goToHome() {
-    stopExamTimer(); closeOpenMenu();
+    stopExamTimer(); closeOpenMenu(); closeAllVideos();
     const appMain = document.getElementById('appMain');
     const wrapper = document.getElementById('tabContentWrapper');
     if (appMain) appMain.style.display = 'block';
@@ -2074,7 +2091,7 @@ function goToHome() {
     updateBackButtonVisibility();
 }
 function openTabContent(tabId, specificGroupId = null) {
-    stopExamTimer(); closeOpenMenu();
+    stopExamTimer(); closeOpenMenu(); closeAllVideos();
     const appMain = document.getElementById('appMain');
     const wrapper = document.getElementById('tabContentWrapper');
     const container = document.getElementById('tabContentContainer');
@@ -2841,7 +2858,7 @@ function stopExamTimer() { if (AppState.examTimer) { clearInterval(AppState.exam
 
 /* ---- Group tab switching ---- */
 function switchGroupTab(tabId, btn) {
-    pauseAllOtherVideos(null);
+    closeAllVideos();
     document.querySelectorAll('#groupTabs .tab-card').forEach(t => t.classList.remove('active'));
     if (btn) btn.classList.add('active');
     else {
@@ -2863,7 +2880,7 @@ function switchGroupTab(tabId, btn) {
 async function loadGlobalTrending() { await loadTrendingContent('video'); }
 
 async function switchTrendingTab(tab, btn) {
-    pauseAllOtherVideos(null);
+    closeAllVideos();
     document.querySelectorAll('.content-tab').forEach(t => t.classList.remove('active'));
     btn.classList.add('active');
     AppState.currentTrendingTab = tab;
@@ -3965,15 +3982,33 @@ function changeProfilePic() {
 function pauseAllOtherVideos(exceptId) {
     document.querySelectorAll('video').forEach(v => {
         const isCurrent = exceptId && (v.id === `video-${exceptId}` || v.id === `hm-video-${exceptId}`);
-        if (!isCurrent && !v.paused) { try { v.pause(); } catch (e) {} }
+        if (isCurrent) return;
+        const id = v.id.replace(/^hm-video-/, '').replace(/^video-/, '');
+        if (!v.paused) { try { v.pause(); } catch (e) {} }
+        // Close the other video's player back to thumbnail
+        if (document.getElementById(`video-player-${id}`)) closeVideoPlayer(id);
+        else if (document.getElementById(`hm-video-player-${id}`)) closeHomeVideo(id);
     });
 }
+
+function closeAllVideos() {
+    document.querySelectorAll('video').forEach(v => {
+        const id = v.id.replace(/^hm-video-/, '').replace(/^video-/, '');
+        if (document.getElementById(`video-player-${id}`)) closeVideoPlayer(id);
+        else if (document.getElementById(`hm-video-player-${id}`)) closeHomeVideo(id);
+    });
+}
+
 function playInlineVideo(id, url) {
     const t = document.getElementById(`thumbnail-${id}`);
     const p = document.getElementById(`video-player-${id}`);
     const v = document.getElementById(`video-${id}`);
     if (!t || !p || !v) return;
     pauseAllOtherVideos(id);
+    const wrapper = document.getElementById(`video-wrapper-${id}`);
+    const card = wrapper?.closest('.content-card');
+    wrapper?.classList.add('is-playing');
+    card?.classList.add('is-pinned');
     t.style.display = 'none'; p.style.display = 'block';
     v.src = url; v.load(); v.play().catch(() => {});
     v.ontimeupdate = () => updateVideoProgress(id);
@@ -4025,6 +4060,10 @@ function closeVideoPlayer(id) {
         v.volume = 1;
         v.src = '';
     }
+    const wrapper = document.getElementById(`video-wrapper-${id}`);
+    const card = wrapper?.closest('.content-card');
+    wrapper?.classList.remove('is-playing');
+    card?.classList.remove('is-pinned');
     stopVideoWatchTimer(id);
 }
 function playHomeVideo(id, url) {
@@ -4033,6 +4072,10 @@ function playHomeVideo(id, url) {
     const v = document.getElementById(`hm-video-${id}`);
     if (!t || !p || !v) return;
     pauseAllOtherVideos(id);
+    const wrapper = document.getElementById(`hm-video-wrapper-${id}`);
+    const card = wrapper?.closest('.content-card');
+    wrapper?.classList.add('is-playing');
+    card?.classList.add('is-pinned');
     t.style.display = 'none'; p.style.display = 'block';
     v.src = url; v.load(); v.play().catch(() => {});
     v.ontimeupdate = () => {
@@ -4064,6 +4107,10 @@ function closeHomeVideo(id) {
         v.volume = 1;
         v.src = '';
     }
+    const wrapper = document.getElementById(`hm-video-wrapper-${id}`);
+    const card = wrapper?.closest('.content-card');
+    wrapper?.classList.remove('is-playing');
+    card?.classList.remove('is-pinned');
     stopVideoWatchTimer(id);
 }
 function openPPT(id, url) { if (!url) return; incrementViewCount('group_content', id); window.open(url, '_blank'); }
@@ -4468,6 +4515,7 @@ async function applyBoost() {
 
 /* ---- Chat ---- */
 async function openChatThread(groupId, partnerId) {
+    closeAllVideos();
     try {
         if (partnerId === AppState.userId) return showToast("That's you", 'info');
         const { data: partner } = await sb.from('users').select('user_id, first_name, middle_name, email, profile_pic_url').eq('user_id', partnerId).single();
@@ -4672,7 +4720,7 @@ function unblockCurrentChat() {
 
 /* ---- Inbox ---- */
 async function openInbox() {
-    closeDrawer();
+    closeDrawer(); closeAllVideos();
     document.getElementById('inboxOverlay').classList.add('open');
     pushNav({ type: 'overlay', id: 'inbox' });
     await loadInbox();
@@ -4747,6 +4795,7 @@ function searchUsersForNewChat(query) {
 /* ---- Members ---- */
 async function openMembersList() {
     if (!AppState.currentGroupId) return;
+    closeAllVideos();
     document.getElementById('membersOverlay').classList.add('open');
     pushNav({ type: 'overlay', id: 'members' });
     document.getElementById('addMemberBtn').style.display = (AppState.isGroupOwner || AppState.isAdmin) ? 'flex' : 'none';
