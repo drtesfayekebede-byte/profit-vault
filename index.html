@@ -1121,7 +1121,9 @@ html, body {
             <button class="hamburger-btn" onclick="toggleDrawer(event)" aria-label="Menu"><i class="fas fa-bars"></i></button>
             <button class="header-back-btn" id="headerBackBtn" onclick="navigateBack()" aria-label="Back"><i class="fas fa-arrow-left"></i></button>
             <div class="app-logo" onclick="goToHome()"><span class="logo-icon">📶</span><h1>TENI</h1></div>
-            <div class="search-container"><input type="text" id="globalSearch" placeholder="Search..." onkeyup="handleSearch(event)"></div>
+            <div class="search-container">
+                <input type="text" id="globalSearch" placeholder="Jump to…" onkeyup="handleSearch(event)">
+            </div>
             <div class="header-actions">
                 <div class="notification-bell-wrapper" onclick="toggleNotificationDropdown(event)">
                     <span class="bell-icon">🔔</span>
@@ -1825,11 +1827,26 @@ function truncateText(text, maxLength = 150) {
     if (full.length <= maxLength) return { display: full, truncated: false };
     return { display: full.substring(0, maxLength) + '…', truncated: true };
 }
+function buildLongTextHtml(text, maxLength = 150) {
+    const full = String(text || '');
+    const { display, truncated } = truncateText(full, maxLength);
+    // Escape ONLY for the HTML attribute (browser unescapes on read via dataset).
+    const attrSafe = full
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    return `<div class="long-text" data-full="${attrSafe}" data-maxlen="${maxLength}">
+        <span class="long-text-body">${escapeHtml(display)}</span>
+        ${truncated ? ` <span class="read-more-toggle" data-expanded="false" onclick="toggleLongText(this)">Read More</span>` : ''}
+    </div>`;
+}
+
 function toggleLongText(triggerEl) {
     const wrapper = triggerEl.closest('.long-text');
     if (!wrapper) return;
     const body = wrapper.querySelector('.long-text-body');
-    const full = wrapper.dataset.full || '';
+    const full = wrapper.dataset.full || '';   // browser auto-unescapes attribute
     const max = parseInt(wrapper.dataset.maxlen || '150', 10);
     const isExpanded = triggerEl.dataset.expanded === 'true';
     if (isExpanded) {
@@ -1837,16 +1854,10 @@ function toggleLongText(triggerEl) {
         triggerEl.textContent = 'Read More';
         triggerEl.dataset.expanded = 'false';
     } else {
-        body.textContent = full;
+        body.textContent = full;               // textContent → browser escapes
         triggerEl.textContent = 'Read Less';
         triggerEl.dataset.expanded = 'true';
     }
-}
-function buildLongTextHtml(text, maxLength = 150) {
-    const { display, truncated } = truncateText(text, maxLength);
-    const safeFull = escapeHtml(text || '');
-    const safeDisplay = escapeHtml(display);
-    return `<div class="long-text" data-full="${safeFull}" data-maxlen="${maxLength}"><span class="long-text-body">${safeDisplay}</span>${truncated ? ` <span class="read-more-toggle" data-expanded="false" onclick="toggleLongText(this)">Read More</span>` : ''}</div>`;
 }
 function buildViewCounterHtml(table, id, views) {
     const v = views || 0;
@@ -2295,6 +2306,7 @@ async function loadGroupBooks(groupId) {
 }
 
 /* ---- Content actions: like / dislike / comments / share ---- */
+
 async function toggleContentLike(type, id, btn) {
     if (!AppState.userId) return showToast('Login first.', 'error');
     if (!btn) return;
@@ -2302,33 +2314,39 @@ async function toggleContentLike(type, id, btn) {
     const span = btn.querySelector('span');
     const wasLiked = btn.classList.contains('liked');
     const oldCount = parseInt(span?.textContent) || 0;
+
+    // Optimistic UI
     if (wasLiked) { btn.classList.remove('liked'); if (span) span.textContent = Math.max(0, oldCount - 1); }
-    else { btn.classList.add('liked'); if (span) span.textContent = oldCount + 1; }
+    else          { btn.classList.add('liked');    if (span) span.textContent = oldCount + 1; }
+
     try {
-        const table = CONTENT_TABLE_MAP[type];
         if (wasLiked) {
-            await sb.from('content_likes').delete().eq('content_type', type).eq('content_id', idStr).eq('user_id', AppState.userId);
-            if (table) await sb.from(table).update({ likes: Math.max(0, oldCount - 1) }).eq('id', id);
+            await sb.from('content_likes').delete()
+                .eq('content_type', type).eq('content_id', idStr).eq('user_id', AppState.userId);
+            await sb.rpc('bump_like_count', { p_type: type, p_id: id, p_delta: -1 });
         } else {
-            const { data: d } = await sb.from('content_dislikes').select('*').eq('content_type', type).eq('content_id', idStr).eq('user_id', AppState.userId).maybeSingle();
+            // Remove a pre-existing dislike if any
+            const { data: d } = await sb.from('content_dislikes').select('content_id')
+                .eq('content_type', type).eq('content_id', idStr).eq('user_id', AppState.userId).maybeSingle();
             if (d) {
-                await sb.from('content_dislikes').delete().eq('content_type', type).eq('content_id', idStr).eq('user_id', AppState.userId);
+                await sb.from('content_dislikes').delete()
+                    .eq('content_type', type).eq('content_id', idStr).eq('user_id', AppState.userId);
+                await sb.rpc('bump_dislike_count', { p_type: type, p_id: id, p_delta: -1 });
                 const card = document.querySelector(`[data-content-key="${type}:${idStr}"]`);
-                if (card) {
-                    const dBtn = card.querySelector('.actions button.disliked');
-                    if (dBtn) {
-                        dBtn.classList.remove('disliked');
-                        const dSpan = dBtn.querySelector('span');
-                        if (dSpan) dSpan.textContent = Math.max(0, (parseInt(dSpan.textContent) || 1) - 1);
-                    }
+                const dBtn = card?.querySelector('.actions button.disliked');
+                if (dBtn) {
+                    dBtn.classList.remove('disliked');
+                    const dSpan = dBtn.querySelector('span');
+                    if (dSpan) dSpan.textContent = Math.max(0, (parseInt(dSpan.textContent) || 1) - 1);
                 }
             }
             await sb.from('content_likes').insert({ content_type: type, content_id: idStr, user_id: AppState.userId });
-            if (table) await sb.from(table).update({ likes: oldCount + 1 }).eq('id', id);
+            await sb.rpc('bump_like_count', { p_type: type, p_id: id, p_delta: 1 });
         }
     } catch (err) {
-        if (wasLiked) { btn.classList.add('liked'); if (span) span.textContent = oldCount; }
-        else { btn.classList.remove('liked'); if (span) span.textContent = oldCount; }
+        // rollback UI
+        if (wasLiked) { btn.classList.add('liked');    if (span) span.textContent = oldCount; }
+        else          { btn.classList.remove('liked'); if (span) span.textContent = oldCount; }
         showToast('Could not save', 'error');
     }
 }
@@ -2340,35 +2358,39 @@ async function toggleContentDislike(type, id, btn) {
     const span = btn.querySelector('span');
     const wasDisliked = btn.classList.contains('disliked');
     const oldCount = parseInt(span?.textContent) || 0;
+
     if (wasDisliked) { btn.classList.remove('disliked'); if (span) span.textContent = Math.max(0, oldCount - 1); }
-    else { btn.classList.add('disliked'); if (span) span.textContent = oldCount + 1; }
+    else             { btn.classList.add('disliked');    if (span) span.textContent = oldCount + 1; }
+
     try {
-        const table = CONTENT_TABLE_MAP[type];
         if (wasDisliked) {
-            await sb.from('content_dislikes').delete().eq('content_type', type).eq('content_id', idStr).eq('user_id', AppState.userId);
-            if (table) await sb.from(table).update({ dislikes: Math.max(0, oldCount - 1) }).eq('id', id);
+            await sb.from('content_dislikes').delete()
+                .eq('content_type', type).eq('content_id', idStr).eq('user_id', AppState.userId);
+            await sb.rpc('bump_dislike_count', { p_type: type, p_id: id, p_delta: -1 });
         } else {
-            const { data: l } = await sb.from('content_likes').select('*').eq('content_type', type).eq('content_id', idStr).eq('user_id', AppState.userId).maybeSingle();
+            const { data: l } = await sb.from('content_likes').select('content_id')
+                .eq('content_type', type).eq('content_id', idStr).eq('user_id', AppState.userId).maybeSingle();
             if (l) {
-                await sb.from('content_likes').delete().eq('content_type', type).eq('content_id', idStr).eq('user_id', AppState.userId);
+                await sb.from('content_likes').delete()
+                    .eq('content_type', type).eq('content_id', idStr).eq('user_id', AppState.userId);
+                await sb.rpc('bump_like_count', { p_type: type, p_id: id, p_delta: -1 });
                 const card = document.querySelector(`[data-content-key="${type}:${idStr}"]`);
-                if (card) {
-                    const lBtn = card.querySelector('.actions button.liked');
-                    if (lBtn) {
-                        lBtn.classList.remove('liked');
-                        const lSpan = lBtn.querySelector('span');
-                        if (lSpan) lSpan.textContent = Math.max(0, (parseInt(lSpan.textContent) || 1) - 1);
-                    }
+                const lBtn = card?.querySelector('.actions button.liked');
+                if (lBtn) {
+                    lBtn.classList.remove('liked');
+                    const lSpan = lBtn.querySelector('span');
+                    if (lSpan) lSpan.textContent = Math.max(0, (parseInt(lSpan.textContent) || 1) - 1);
                 }
             }
             await sb.from('content_dislikes').insert({ content_type: type, content_id: idStr, user_id: AppState.userId });
-            if (table) await sb.from(table).update({ dislikes: oldCount + 1 }).eq('id', id);
+            await sb.rpc('bump_dislike_count', { p_type: type, p_id: id, p_delta: 1 });
         }
     } catch (err) {
+        if (wasDisliked) { btn.classList.add('disliked');    if (span) span.textContent = oldCount; }
+        else             { btn.classList.remove('disliked'); if (span) span.textContent = oldCount; }
         showToast('Could not save', 'error');
     }
 }
-
 async function toggleContentComments(type, id, btn) {
     const card = btn.closest('.content-card');
     if (!card) return;
@@ -2458,23 +2480,38 @@ async function addContentComment(type, id) {
     if (!text) return;
     input.value = '';
     try {
-        await sb.from('content_comments').insert({ content_type: type, content_id: idStr, user_id: AppState.userId, comment: text });
-        const table = CONTENT_TABLE_MAP[type];
-        if (table) {
-            const { data: row } = await sb.from(table).select('comment_count').eq('id', id).single();
-            await sb.from(table).update({ comment_count: (row?.comment_count || 0) + 1 }).eq('id', id);
-            const card = document.querySelector(`[data-content-key="${type}:${idStr}"]`);
-            if (card) {
-                const btns = card.querySelectorAll('.actions button');
-                btns.forEach(b => {
-                    if (b.querySelector('i.fa-comment')) {
-                        const s = b.querySelector('span');
-                        if (s) s.textContent = (parseInt(s.textContent) || 0) + 1;
-                    }
-                });
-            }
+        await sb.from('content_comments').insert({
+            content_type: type, content_id: idStr, user_id: AppState.userId, comment: text
+        });
+        await sb.rpc('bump_comment_count', { p_type: type, p_id: id, p_delta: 1 });
+        const card = document.querySelector(`[data-content-key="${type}:${idStr}"]`);
+        if (card) {
+            card.querySelectorAll('.actions button').forEach(b => {
+                if (b.querySelector('i.fa-comment')) {
+                    const s = b.querySelector('span');
+                    if (s) s.textContent = (parseInt(s.textContent) || 0) + 1;
+                }
+            });
         }
         await loadContentComments(type, idStr);
+    } catch (err) { showToast('Error', 'error'); }
+}
+
+async function submitContentReply(parentId, type, id) {
+    if (!AppState.userId) return showToast('Login first.', 'error');
+    const idStr = String(id);
+    const input = document.getElementById(`ccomment-reply-text-${parentId}`);
+    const text = input?.value?.trim();
+    if (!text) return;
+    input.value = '';
+    try {
+        await sb.from('content_comments').insert({
+            content_type: type, content_id: idStr,
+            user_id: AppState.userId, comment: text, parent_id: parentId
+        });
+        await sb.rpc('bump_comment_count', { p_type: type, p_id: id, p_delta: 1 });
+        await loadContentComments(type, idStr);
+        showToast('✅ Reply added', 'success');
     } catch (err) { showToast('Error', 'error'); }
 }
 
@@ -2482,38 +2519,43 @@ async function deleteContentComment(commentId, type, id) {
     if (!confirm('Delete this comment?')) return;
     const idStr = String(id);
     try {
+        // Count the comment + its direct replies before deleting
+        const { data: kids } = await sb.from('content_comments').select('id').eq('parent_id', commentId);
+        const removed = 1 + (kids?.length || 0);
         await sb.from('content_comments').delete().eq('parent_id', commentId);
         await sb.from('content_comments').delete().eq('id', commentId);
+        await sb.rpc('bump_comment_count', { p_type: type, p_id: id, p_delta: -removed });
+        const card = document.querySelector(`[data-content-key="${type}:${idStr}"]`);
+        if (card) {
+            card.querySelectorAll('.actions button').forEach(b => {
+                if (b.querySelector('i.fa-comment')) {
+                    const s = b.querySelector('span');
+                    if (s) s.textContent = Math.max(0, (parseInt(s.textContent) || 0) - removed);
+                }
+            });
+        }
         await loadContentComments(type, idStr);
     } catch (err) {}
 }
 
-function shareContentLink(type, id) {
+async function shareContentLink(type, id) {
     const idStr = String(id);
     const url = `${location.origin}${location.pathname}?content=${type}:${idStr}`;
-    (async () => {
-        try {
-            const table = CONTENT_TABLE_MAP[type];
-            if (table) {
-                const { data: row } = await sb.from(table).select('share_count').eq('id', id).single();
-                await sb.from(table).update({ share_count: (row?.share_count || 0) + 1 }).eq('id', id);
-                const card = document.querySelector(`[data-content-key="${type}:${idStr}"]`);
-                if (card) {
-                    const btns = card.querySelectorAll('.actions button');
-                    btns.forEach(b => {
-                        if (b.querySelector('i.fa-share')) {
-                            const s = b.querySelector('span');
-                            if (s) s.textContent = (parseInt(s.textContent) || 0) + 1;
-                        }
-                    });
+    try {
+        await sb.rpc('bump_share_count', { p_type: type, p_id: id, p_delta: 1 });
+        const card = document.querySelector(`[data-content-key="${type}:${idStr}"]`);
+        if (card) {
+            card.querySelectorAll('.actions button').forEach(b => {
+                if (b.querySelector('i.fa-share')) {
+                    const s = b.querySelector('span');
+                    if (s) s.textContent = (parseInt(s.textContent) || 0) + 1;
                 }
-            }
-        } catch (e) {}
-    })();
+            });
+        }
+    } catch (e) {}
     if (navigator.share) navigator.share({ title: 'TENI', url }).catch(() => {});
     else navigator.clipboard.writeText(url).then(() => showToast('📋 Copied', 'success')).catch(() => {});
 }
-
 /* ---- Content menu ---- */
 function openContentMenu(contentType, contentId, event) {
     if (event && event._menuToggleHandled) { event._menuToggleHandled = false; return; }
@@ -2521,16 +2563,19 @@ function openContentMenu(contentType, contentId, event) {
     if (AppState.openMenuEl) { closeOpenMenu(); return; }
     const btn = event?.currentTarget;
     if (!btn) return;
+
     const key = `${contentType}:${contentId}`;
     const isHidden = AppState.hiddenContentKeys?.has(key);
-    const isOwner = AppState.isGroupOwner || AppState.isAdmin;
+    const isAdmin = AppState.isAdmin;
+    const isGroupOwner = AppState.isGroupOwner === true;  // only true when in a group feed you own
+
     const menu = document.createElement('div');
     menu.id = `contentMenu_${contentType}_${contentId}`;
     menu.dataset.ephemeral = 'true';
     menu.innerHTML = `
-        ${!isOwner ? `<div onclick="openReportContentModal('${contentType}', '${contentId}')">🚨 Report</div>` : ''}
-        ${!isOwner ? `<div onclick="removeContentLocal('${contentType}', '${contentId}')">👁️ ${isHidden ? 'Unhide' : 'Hide'}</div>` : ''}
-        ${isOwner ? `<div onclick="deleteContent('${contentType}', '${contentId}')" style="color:var(--red-error);">🗑️ Delete</div>` : ''}
+        ${!isGroupOwner && !isAdmin ? `<div onclick="openReportContentModal('${contentType}', '${contentId}')">🚨 Report</div>` : ''}
+        ${!isGroupOwner && !isAdmin ? `<div onclick="removeContentLocal('${contentType}', '${contentId}')">👁️ ${isHidden ? 'Unhide' : 'Hide'}</div>` : ''}
+        ${isGroupOwner || isAdmin ? `<div onclick="deleteContent('${contentType}', '${contentId}')" style="color:var(--red-error);">🗑️ Delete</div>` : ''}
         <div onclick="shareContentLink('${contentType}', '${contentId}')">🔗 Copy Link</div>
     `;
     menu.classList.add('three-dot-dropdown');
@@ -2561,6 +2606,12 @@ async function deleteContent(contentType, contentId) {
     const table = CONTENT_TABLE_MAP[contentType];
     if (!table) return showToast('Unsupported type', 'error');
     try {
+        await sb.from('content_likes').delete()
+            .eq('content_type', contentType).eq('content_id', String(contentId));
+        await sb.from('content_dislikes').delete()
+            .eq('content_type', contentType).eq('content_id', String(contentId));
+        await sb.from('content_comments').delete()
+            .eq('content_type', contentType).eq('content_id', String(contentId));
         await sb.from(table).delete().eq('id', contentId);
         const card = document.querySelector(`[data-content-key="${contentType}:${contentId}"]`);
         if (card) { card.style.transition = 'opacity .2s'; card.style.opacity = '0'; setTimeout(() => card.remove(), 200); }
@@ -2625,6 +2676,7 @@ async function startMockExam(id) {
         AppState.examSubmitted = false;
         startExamViewTimer(id);
         renderMockExamQuestion();
+        AppState.examTimeRemaining = AppState.currentExam.time_limit * 60;
         if (AppState.examMode === 'exam') startExamTimer(AppState.currentExam.time_limit);
     } catch (err) { showToast('❌ Failed to load.', 'error'); }
 }
@@ -2691,16 +2743,17 @@ function submitMockExam() {
     if (AppState.examSubmitted) return;
     stopExamTimer();
     AppState.examSubmitted = true;
-    if (AppState.examMode === 'exam' && AppState.currentExam) {
-        AppState.correctCount = 0;
-        AppState.incorrectCount = 0;
-        AppState.currentExam.questions.forEach((q, i) => {
-            if (AppState.examAnswered[i] === q.answer) AppState.correctCount++;
-            else AppState.incorrectCount++;
-        });
-    }
+
+    // Always recompute from scratch against the total question count
+    AppState.correctCount = 0;
+    AppState.incorrectCount = 0;
+    AppState.currentExam.questions.forEach((q, i) => {
+        if (AppState.examAnswered[i] === q.answer) AppState.correctCount++;
+        else AppState.incorrectCount++;
+    });
+
     const t = AppState.currentExam.questions.length;
-    const s = Math.round((AppState.correctCount / t) * 100);
+    const s = t ? Math.round((AppState.correctCount / t) * 100) : 0;
     showToast(`Score: ${s}% (${AppState.correctCount}/${t})`, 'success');
     renderMockExamResult();
 }
@@ -2726,11 +2779,12 @@ function finishMockExam() {
     AppState.correctCount = 0;
     AppState.incorrectCount = 0;
     AppState.currentQuestionIndex = 0;
+    AppState.examTimeRemaining = 0;   // ← ADD THIS LINE
     if (AppState.currentGroupId) loadGroupContent(AppState.currentGroupId, 'mockexam');
 }
 function toggleExamMode() {
     AppState.examMode = AppState.examMode === 'study' ? 'exam' : 'study';
-    const left = document.getElementById('examModeBtn');
+    const left  = document.getElementById('examModeBtn');
     const right = document.getElementById('examModeBtnRight');
     if (left && right) {
         if (AppState.examMode === 'study') {
@@ -2742,17 +2796,36 @@ function toggleExamMode() {
         }
     }
     if (AppState.currentExam && !AppState.examSubmitted) renderMockExamQuestion();
-    if (AppState.examMode === 'exam' && AppState.currentExam) startExamTimer(AppState.currentExam.time_limit || 5);
-    else stopExamTimer();
+
+    if (AppState.examMode === 'exam' && AppState.currentExam && !AppState.examSubmitted) {
+        // Resume from remaining time if a timer was already running; else start fresh
+        if (AppState.examTimeRemaining > 0 && AppState.examTimer == null) {
+            resumeExamTimer();
+        } else if (AppState.examTimeRemaining <= 0) {
+            startExamTimer(AppState.currentExam.time_limit || 5);
+        }
+    } else {
+        stopExamTimer();
+    }
 }
+
 function startExamTimer(mins) {
     stopExamTimer();
-    AppState.examTimeRemaining = mins * 60;
+    AppState.examTimeRemaining = Math.max(0, Math.floor(mins * 60));
+    resumeExamTimer();
+}
+
+function resumeExamTimer() {
+    if (AppState.examTimer) return;
     AppState.examTimer = setInterval(() => {
         AppState.examTimeRemaining--;
         const d = document.getElementById('examTimerDisplay');
-        if (d) d.textContent = formatTime(AppState.examTimeRemaining);
-        if (AppState.examTimeRemaining <= 0) { clearInterval(AppState.examTimer); AppState.examTimer = null; submitMockExam(); }
+        if (d) d.textContent = formatTime(Math.max(0, AppState.examTimeRemaining));
+        if (AppState.examTimeRemaining <= 0) {
+            clearInterval(AppState.examTimer);
+            AppState.examTimer = null;
+            submitMockExam();
+        }
     }, 1000);
 }
 function stopExamTimer() { if (AppState.examTimer) { clearInterval(AppState.examTimer); AppState.examTimer = null; } }
@@ -2972,15 +3045,25 @@ async function openGroupItem(groupId, tabId, itemId, domIdPrefix) {
     if (!groupId) return showToast('Group not found', 'error');
     const normalizedTab = GROUP_TAB_MAP[tabId] || 'videos';
     const domId = `${domIdPrefix}-${itemId}`;
-    AppState.pendingDeepLink = { tabId: normalizedTab, itemId, domId };
+
+    if (!AppState.groupCache.has(groupId)) {
+        try {
+            const { data } = await sb.from('groups').select('*').eq('id', groupId).single();
+            if (data) AppState.groupCache.set(data.id, data);
+        } catch (e) {}
+    }
+
     await openTabContent('group-feed', groupId);
-    setTimeout(async () => {
-        if (typeof switchGroupTab === 'function') switchGroupTab(normalizedTab, null);
-        const el = await waitForElement(domId, 6000);
-        if (el) highlightElement(el);
-        else showToast('Showing group', 'info');
-        AppState.pendingDeepLink = null;
-    }, 500);
+
+    await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+
+    // Switch tab — switchGroupTab will itself call loadGroupContent
+    switchGroupTab(normalizedTab, null);
+
+    // Wait for the target element to appear, then highlight
+    const el = await waitForElement(domId, 8000);
+    if (el) highlightElement(el);
+    else showToast('Showing group', 'info');
 }
 function waitForElement(id, timeoutMs = 5000) {
     return new Promise(resolve => {
@@ -3545,14 +3628,21 @@ function renderUserGroups() {
 
 /* ---- Search / filter ---- */
 function handleSearch(event) {
-    if (event.key === 'Enter') {
-        const q = document.getElementById('globalSearch').value.toLowerCase();
-        if (q.includes('class') || q.includes('group')) openTabContent('class');
-        else if (q.includes('wallet')) openTabContent('wallet');
-        else if (q.includes('settings')) openTabContent('settings');
-        else showToast('No direct match found', 'info');
-    }
+    if (event.key !== 'Enter') return;
+    const q = (document.getElementById('globalSearch')?.value || '').trim().toLowerCase();
+    if (!q) return;
+    const routes = [
+        { keys: ['class', 'group'],  fn: () => openTabContent('class') },
+        { keys: ['wallet', 'coins', 'money'], fn: () => openTabContent('wallet') },
+        { keys: ['setting', 'preferences'], fn: () => openTabContent('settings') },
+        { keys: ['profile', 'me', 'account'], fn: () => openTabContent('profile') },
+        { keys: ['home', 'feed'],    fn: () => goToHome() },
+    ];
+    const hit = routes.find(r => r.keys.some(k => q.includes(k)));
+    if (hit) return hit.fn();
+    showToast('Type: class, wallet, settings, profile, or home', 'info');
 }
+
 function toggleFilterRow(event) {
     if (event) event.stopPropagation();
     const row = document.getElementById('headerRow2');
@@ -3652,6 +3742,7 @@ async function createGroup() {
 async function toggleGroupJoin(event, btnEl) {
     if (event) event.stopPropagation();
     if (!AppState.userId) return showToast('Login first.', 'error');
+
     let btn = btnEl;
     if (!btn) btn = document.getElementById('joinClassBtn');
     let gid = btn?.dataset?.group_id || btn?.dataset?.groupId;
@@ -3662,41 +3753,39 @@ async function toggleGroupJoin(event, btnEl) {
     }
     if (!gid) return showToast('❌ Cannot identify group.', 'error');
     if (btn) btn.disabled = true;
+
     try {
         const { data: existingSub } = await sb.from('group_subscriptions')
             .select('user_id').eq('user_id', AppState.userId).eq('group_id', gid).maybeSingle();
         const isJoining = !existingSub;
-        let result = null;
-        try {
-            const { data, error } = await sb.rpc('join_group', { p_user_id: AppState.userId, p_group_id: gid, p_join: isJoining });
-            if (!error) result = data;
-        } catch (e) {}
-        if (!result) {
-            const { data: g } = await sb.from('groups').select('followers').eq('id', gid).single();
-            if (isJoining) {
-                await sb.from('group_subscriptions').upsert({ user_id: AppState.userId, group_id: gid, subscribed_at: new Date(), status: 'active' }, { onConflict: 'user_id,group_id' });
-                await sb.from('groups').update({ followers: (g?.followers || 0) + 1 }).eq('id', gid);
-                result = { joined: true, followers: (g?.followers || 0) + 1 };
-            } else {
-                await sb.from('group_subscriptions').delete().eq('user_id', AppState.userId).eq('group_id', gid);
-                await sb.from('groups').update({ followers: Math.max(0, (g?.followers || 1) - 1) }).eq('id', gid);
-                result = { joined: false, followers: Math.max(0, (g?.followers || 1) - 1) };
-            }
-        }
+
+        // RPC returns jsonb { joined, followers } — PATCH 1 guarantees this.
+        const { data: result, error } = await sb.rpc('join_group', {
+            p_user_id: AppState.userId, p_group_id: gid, p_join: isJoining
+        });
+        if (error) throw error;
+
+        const joined = !!result?.joined;
+        const followers = result?.followers ?? 0;
+
         if (btn) {
-            if (result.joined) { btn.innerText = '✅ Joined'; btn.className = 'join-btn joined'; btn.disabled = false; }
-            else { btn.innerText = '➕ Join'; btn.className = 'join-btn'; btn.disabled = false; }
+            if (joined) { btn.innerText = '✅ Joined'; btn.className = 'join-btn joined'; }
+            else        { btn.innerText = '➕ Join';   btn.className = 'join-btn'; }
+            btn.disabled = false;
         }
+
         const bannerBtn = document.getElementById('joinClassBtn');
         if (bannerBtn && bannerBtn !== btn && AppState.currentGroupId === gid) {
-            bannerBtn.innerText = result.joined ? '✅' : '➕';
-            bannerBtn.className = result.joined ? 'btn btn-teal' : 'btn';
-            bannerBtn.disabled = result.joined;
+            bannerBtn.innerText = joined ? '✅' : '➕';
+            bannerBtn.className = joined ? 'btn btn-teal' : 'btn';
+            bannerBtn.disabled = joined;
         }
+
         const bf = document.getElementById('groupFollowers');
-        if (bf && AppState.currentGroupId === gid) bf.textContent = result.followers;
+        if (bf && AppState.currentGroupId === gid) bf.textContent = followers;
+
         invalidateGroupCache();
-        showToast(result.joined ? '✅ Joined!' : '📌 Left the class.', result.joined ? 'success' : 'info');
+        showToast(joined ? '✅ Joined!' : '📌 Left the class.', joined ? 'success' : 'info');
         updateTrendingGroups();
     } catch (err) {
         if (btn) btn.disabled = false;
@@ -3898,8 +3987,12 @@ function seekVideo(e, id) {
 }
 function setVolume(id, val) { const v = document.getElementById(`video-${id}`); if (v) v.volume = parseFloat(val); }
 function toggleFullscreen(id) {
-    const v = document.getElementById(`video-${id}`); if (!v) return;
-    if (document.fullscreenElement) document.exitFullscreen(); else v.requestFullscreen().catch(() => {});
+    const v = document.getElementById(`video-${id}`) || document.getElementById(`hm-video-${id}`);
+    if (!v) return;
+    if (document.fullscreenElement) { document.exitFullscreen(); return; }
+    if (v.requestFullscreen) { v.requestFullscreen().catch(() => {}); return; }
+    if (v.webkitEnterFullscreen) { v.webkitEnterFullscreen(); return; }  // iOS Safari
+    if (v.webkitRequestFullscreen) { v.webkitRequestFullscreen(); return; }
 }
 function changeSpeed(id, btn) {
     const v = document.getElementById(`video-${id}`); if (!v) return;
@@ -3914,26 +4007,28 @@ function closeVideoPlayer(id) {
     const v = document.getElementById(`video-${id}`);
     if (p) p.style.display = 'none';
     if (t) t.style.display = 'block';
-    if (v) { v.pause(); v.src = ''; }
+    if (v) {
+        v.pause();
+        v.playbackRate = 1;   // reset speed
+        v.volume = 1;         // reset volume
+        v.src = '';
+    }
     stopVideoWatchTimer(id);
 }
-function playHomeVideo(id, url) {
-    const t = document.getElementById(`hm-thumbnail-${id}`);
+
+function closeHomeVideo(id) {
     const p = document.getElementById(`hm-video-player-${id}`);
+    const t = document.getElementById(`hm-thumbnail-${id}`);
     const v = document.getElementById(`hm-video-${id}`);
-    if (!t || !p || !v) return;
-    pauseAllOtherVideos(id);
-    t.style.display = 'none'; p.style.display = 'block';
-    v.src = url; v.load(); v.play().catch(() => {});
-    v.ontimeupdate = () => {
-        const pf = document.getElementById(`hm-progressFill-${id}`);
-        const td = document.getElementById(`hm-timeDisplay-${id}`);
-        if (pf && v.duration) pf.style.width = (v.currentTime / v.duration * 100) + '%';
-        if (td && v.duration) td.textContent = `${formatTime(v.currentTime)} / ${formatTime(v.duration)}`;
-    };
-    v.onplay = () => startVideoWatchTimer(id, 'group_content');
-    v.onpause = () => stopVideoWatchTimer(id);
-    v.onended = () => stopVideoWatchTimer(id);
+    if (p) p.style.display = 'none';
+    if (t) t.style.display = 'block';
+    if (v) {
+        v.pause();
+        v.playbackRate = 1;
+        v.volume = 1;
+        v.src = '';
+    }
+    stopVideoWatchTimer(id);
 }
 function toggleHomeVideoPlay(id) { const v = document.getElementById(`hm-video-${id}`); if (!v) return; if (v.paused) v.play(); else v.pause(); }
 function seekHomeVideo(e, id) {
@@ -4077,14 +4172,36 @@ async function subscribeToBook(id) {
     incrementViewCount('bstore_books', id);
     const m = document.createElement('div');
     m.className = 'modal active';
-    m.innerHTML = `<div class="modal-content"><span class="close" onclick="this.closest('.modal').remove()">&times;</span><h3>📖 Choose Plan</h3><button class="btn btn-teal" onclick="processSubscription('${id}','monthly');this.closest('.modal').remove();">Monthly</button><button class="btn" onclick="processSubscription('${id}','3months');this.closest('.modal').remove();">3 Months</button><button class="btn" onclick="processSubscription('${id}','6months');this.closest('.modal').remove();">6 Months</button><button class="btn" onclick="processSubscription('${id}','yearly');this.closest('.modal').remove();">1 Year</button></div>`;
+    m.dataset.bookId = id;
+    m.innerHTML = `
+        <div class="modal-content">
+            <span class="close" onclick="this.closest('.modal').remove()">&times;</span>
+            <h3>📖 Choose Plan</h3>
+            <button class="btn btn-teal" onclick="processSubscription('${id}','monthly');this.closest('.modal').remove();">Monthly</button>
+            <button class="btn" onclick="processSubscription('${id}','3months');this.closest('.modal').remove();">3 Months</button>
+            <button class="btn" onclick="processSubscription('${id}','6months');this.closest('.modal').remove();">6 Months</button>
+            <button class="btn" onclick="processSubscription('${id}','9months');this.closest('.modal').remove();">9 Months</button>
+            <button class="btn" onclick="processSubscription('${id}','yearly');this.closest('.modal').remove();">1 Year</button>
+        </div>`;
     document.body.appendChild(m);
 }
+
 async function processSubscription(bookId, tier) {
+    // Canonical: monthly | 3months | 6months | 9months | yearly
+    const colMap = {
+        monthly: 'price_monthly',
+        '3months': 'price_3months',
+        '6months': 'price_6months',
+        '9months': 'price_9months',
+        yearly: 'price_yearly'
+    };
+    const durations = { monthly: 30, '3months': 90, '6months': 180, '9months': 270, yearly: 365 };
+    const col = colMap[tier];
+    if (!col) return showToast('Invalid plan', 'error');
+
     try {
-        const { data: b } = await sb.from('bstore_books').select(`price_${tier}`).eq('id', bookId).single();
-        const price = b?.[`price_${tier}`] || 0;
-        const durations = { monthly: 30, '3months': 90, '6months': 180, '9months': 270, yearly: 365 };
+        const { data: b } = await sb.from('bstore_books').select(col).eq('id', bookId).single();
+        const price = parseInt(b?.[col] || 0, 10);
         const days = durations[tier] || 30;
         if (price > 0 && AppState.coinBalance < price) return showToast(`Need ${price} coins`, 'error');
         if (price > 0) {
@@ -4092,7 +4209,12 @@ async function processSubscription(bookId, tier) {
             AppState.coinBalance -= price;
             updateUIForUser();
         }
-        await sb.from('bstore_subscriptions').insert({ book_id: bookId, user_id: AppState.userId, tier, amount_paid: price, expires_at: new Date(Date.now() + days * 86400000).toISOString(), is_active: true });
+        await sb.from('bstore_subscriptions').insert({
+            book_id: bookId, user_id: AppState.userId, tier,
+            amount_paid: price,
+            expires_at: new Date(Date.now() + days * 86400000).toISOString(),
+            is_active: true
+        });
         showToast('✅ Subscribed', 'success');
     } catch (err) { showToast('Error: ' + err.message, 'error'); }
 }
@@ -4447,15 +4569,22 @@ async function sendChatMessage() {
             const st = row.querySelector('.chat-status');
             if (st) { st.className = 'chat-status sent'; st.textContent = '✓'; }
         }
-        const { data: thread } = await sb.from('dm_threads').select('owner_id, member_id, unread_for_owner, unread_for_member').eq('id', AppState.currentThreadId).single();
-        if (thread) {
-            const iAmOwner = thread.owner_id === AppState.userId;
-            const update = { last_message_at: new Date(), last_message_preview: text.substring(0, 60) };
-            if (iAmOwner) update.unread_for_member = (thread.unread_for_member || 0) + 1;
-            else update.unread_for_owner = (thread.unread_for_owner || 0) + 1;
-            await sb.from('dm_threads').update(update).eq('id', AppState.currentThreadId);
-        }
-        updateAllBadges();
+        const { data: thread } = await sb.from('dm_threads')
+    .update({ last_message_preview: text.substring(0, 60) })
+    .eq('id', AppState.currentThreadId);
+
+const { data: thread } = await sb.from('dm_threads')
+    .select('owner_id, member_id')
+    .eq('id', AppState.currentThreadId).single();
+
+if (thread) {
+    const iAmOwner = thread.owner_id === AppState.userId;
+    await sb.rpc('bump_thread_unread', {
+        p_thread_id: AppState.currentThreadId,
+        p_side: iAmOwner ? 'member' : 'owner'
+    });
+}
+updateAllBadges();
     } catch (err) { showToast('Failed to send', 'error'); }
 }
 async function sendChatImage(event) {
@@ -5004,7 +5133,7 @@ async function renderAdminReports(pane) {
         <div class="admin-item">
             <div class="admin-item-thumb">🚨</div>
             <div class="admin-item-body">
-                <div class="admin-item-title"><span class="admin-tag" style="background:var(--navy); color:#fff;">${r.content_type.toUpperCase()}</span> ID ${String(r.content_id).substring(0,8)}</div>
+                <div class="admin-item-title"><span class="admin-tag" style="background:var(--navy); color:#fff;">${r.content_type.toUpperCase()}</span> ID ${escapeHtml(String(r.content_id || '').substring(0, 8))}</div>
                 <div class="admin-item-meta">By <strong>${escapeHtml(getDisplayName(uMap[r.reporter_id]))}</strong> • ${new Date(r.created_at).toLocaleString()}</div>
                 <div class="admin-item-meta">Reason: <strong>${escapeHtml(r.reason)}</strong>${r.details ? ' — ' + escapeHtml(r.details) : ''}</div>
                 <div class="admin-item-actions">
@@ -5370,7 +5499,7 @@ async function renderAdminContentList() {
     const f = AppState.adminContentFilter;
     list.innerHTML = '<div class="loading"><div class="spinner"></div>Loading…</div>';
     try {
-        const types = f.type === 'all' ? ['video', 'ppt', 'exam'] : [f.type];
+        const types = f.type === 'all' ? ['video', 'ppt', 'exam', 'book'] : [f.type];
         const queries = [];
         if (types.includes('video')) queries.push(sb.from('group_content').select('id, title, author_id, group_id, created_at, views, content_type').eq('content_type', 'video').order('created_at', { ascending: false }).limit(20));
         if (types.includes('ppt')) queries.push(sb.from('group_content').select('id, title, author_id, group_id, created_at, views, content_type').eq('content_type', 'ppt').order('created_at', { ascending: false }).limit(20));
