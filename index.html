@@ -1086,8 +1086,30 @@ html, body {
     .app-main { padding: 24px; }
     .tab-scroll-area { padding: 24px; }
 }
+
 #globalTrendingContainer .books-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
 @media (max-width: 600px) { #globalTrendingContainer .books-grid { grid-template-columns: 1fr 1fr; } }
+
+#group-feed {
+    margin-left: -16px;
+    margin-right: -16px;
+    margin-top: -16px;
+}
+#group-feed .content-card[data-content-key^="video:"] {
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+    margin-top: 0;
+}
+#group-feed .content-card[data-content-key^="video:"] > .video-wrapper {
+    border-radius: 0 !important;
+    margin: 0 !important;
+}
+#group-feed .content-card[data-content-key^="video:"] .video-thumbnail,
+#group-feed .content-card[data-content-key^="video:"] video {
+    border-radius: 0 !important;
+}
 </style>
 </head>
 <body>
