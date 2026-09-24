@@ -1300,7 +1300,7 @@ html, body {
             </div>
             <div class="settings-section">
                 <h3>ℹ️ About</h3>
-                <div class="settings-row"><div class="settings-label">Version</div><div class="settings-value">6.1.0</div></div>
+                <div class="settings-row"><div class="settings-label">Version</div><div class="settings-value">6.2.0</div></div>
             </div>
             <div class="settings-section" style="border-color:rgba(239,68,68,0.3);">
                 <h3 style="color:var(--red-error);">⚠️ Danger Zone</h3>
@@ -1335,7 +1335,6 @@ html, body {
             <div class="loading" style="color:var(--text-muted);">Loading admin panel...</div>
         </div>
     </template>
-
     <div id="toast" class="toast"></div>
 
     <div class="drawer-backdrop" id="drawerBackdrop" onclick="closeDrawer()"></div>
@@ -1359,6 +1358,7 @@ html, body {
         </div>
     </div>
 
+    <!-- CHAT OVERLAY -->
     <div class="chat-overlay" id="chatOverlay">
         <div class="chat-header">
             <button class="chat-back-btn" onclick="closeChat()"><i class="fas fa-arrow-left"></i></button>
@@ -1383,6 +1383,7 @@ html, body {
         </div>
     </div>
 
+    <!-- INBOX OVERLAY -->
     <div class="chat-overlay" id="inboxOverlay">
         <div class="chat-header">
             <button class="chat-back-btn" onclick="closeInbox()"><i class="fas fa-arrow-left"></i></button>
@@ -1395,6 +1396,7 @@ html, body {
         <div class="chat-messages" id="inboxList" style="padding: 0;"></div>
     </div>
 
+    <!-- MEMBERS OVERLAY -->
     <div class="chat-overlay" id="membersOverlay">
         <div class="chat-header">
             <button class="chat-back-btn" onclick="closeMembers()"><i class="fas fa-arrow-left"></i></button>
@@ -1411,6 +1413,7 @@ html, body {
     </div>
 
     <!-- MODALS -->
+
     <div id="newChatModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('newChatModal')">&times;</span>
@@ -1687,9 +1690,7 @@ html, body {
 </div>
 <script>
 /* ============================================================
-   TENI v6.1 — Supabase client + state
-   Removed: research, m-calc, jobs, top-level b-store, social/posts
-   Added: unified comments/likes/dislikes, 16:9 video player, books in groups
+   TENI v6.2 — Supabase client + state
    ============================================================ */
 const SUPABASE_URL = 'https://ogtlaffkybpesaxastvx.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ndGxhZmZreWJwZXNheGFzdHZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTA4NTQsImV4cCI6MjA5NTM4Njg1NH0.toDw1_DsAjHjUuCg0hvRdEGyjA7mW2DJNlSWoVBT1qY';
@@ -1752,6 +1753,7 @@ const VIEW_DEBOUNCE_MS = 30000;
 const CONTENT_TABLE_MAP = { video: 'group_content', ppt: 'group_content', exam: 'mock_exams', book: 'bstore_books' };
 const GROUP_TAB_MAP = { video: 'videos', videos: 'videos', ppt: 'ppts', ppts: 'ppts', exam: 'mockexam', mockexam: 'mockexam', book: 'books', books: 'books' };
 
+/* ---- Toast / Modal ---- */
 function showToast(msg, type = 'success') {
     const toast = document.getElementById('toast');
     if (!toast) return;
@@ -1775,9 +1777,7 @@ function escapeHtml(s) {
     return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
 
-/* ============================================================
-   FIXED — clean time display, no decimals
-   ============================================================ */
+/* ---- Time formatting ---- */
 function formatTime(seconds) {
     if (!isFinite(seconds) || seconds < 0) seconds = 0;
     seconds = Math.floor(seconds);
@@ -1827,10 +1827,11 @@ function truncateText(text, maxLength = 150) {
     if (full.length <= maxLength) return { display: full, truncated: false };
     return { display: full.substring(0, maxLength) + '…', truncated: true };
 }
+
+/* ---- Long text (fixed double-escape) ---- */
 function buildLongTextHtml(text, maxLength = 150) {
     const full = String(text || '');
     const { display, truncated } = truncateText(full, maxLength);
-    // Escape ONLY for the HTML attribute (browser unescapes on read via dataset).
     const attrSafe = full
         .replace(/&/g, '&amp;')
         .replace(/"/g, '&quot;')
@@ -1841,12 +1842,11 @@ function buildLongTextHtml(text, maxLength = 150) {
         ${truncated ? ` <span class="read-more-toggle" data-expanded="false" onclick="toggleLongText(this)">Read More</span>` : ''}
     </div>`;
 }
-
 function toggleLongText(triggerEl) {
     const wrapper = triggerEl.closest('.long-text');
     if (!wrapper) return;
     const body = wrapper.querySelector('.long-text-body');
-    const full = wrapper.dataset.full || '';   // browser auto-unescapes attribute
+    const full = wrapper.dataset.full || '';
     const max = parseInt(wrapper.dataset.maxlen || '150', 10);
     const isExpanded = triggerEl.dataset.expanded === 'true';
     if (isExpanded) {
@@ -1854,7 +1854,7 @@ function toggleLongText(triggerEl) {
         triggerEl.textContent = 'Read More';
         triggerEl.dataset.expanded = 'false';
     } else {
-        body.textContent = full;               // textContent → browser escapes
+        body.textContent = full;
         triggerEl.textContent = 'Read Less';
         triggerEl.dataset.expanded = 'true';
     }
@@ -2286,7 +2286,6 @@ async function loadMockExamsIntoContainer(container, groupId) {
     } catch (err) { container.innerHTML = `<div class="loading" style="color:var(--red-error);">Failed to load exams.</div>`; }
 }
 
-/* ---- Group books (global B-Store catalog) ---- */
 async function loadGroupBooks(groupId) {
     const c = document.getElementById('groupBookStore');
     if (!c) return;
@@ -2304,7 +2303,6 @@ async function loadGroupBooks(groupId) {
             </div>`).join('');
     } catch (err) { c.innerHTML = '<div class="loading" style="color:var(--red-error);">Failed to load books.</div>'; }
 }
-
 /* ---- Content actions: like / dislike / comments / share ---- */
 
 async function toggleContentLike(type, id, btn) {
@@ -2315,7 +2313,6 @@ async function toggleContentLike(type, id, btn) {
     const wasLiked = btn.classList.contains('liked');
     const oldCount = parseInt(span?.textContent) || 0;
 
-    // Optimistic UI
     if (wasLiked) { btn.classList.remove('liked'); if (span) span.textContent = Math.max(0, oldCount - 1); }
     else          { btn.classList.add('liked');    if (span) span.textContent = oldCount + 1; }
 
@@ -2323,15 +2320,14 @@ async function toggleContentLike(type, id, btn) {
         if (wasLiked) {
             await sb.from('content_likes').delete()
                 .eq('content_type', type).eq('content_id', idStr).eq('user_id', AppState.userId);
-            await sb.rpc('bump_like_count', { p_type: type, p_id: id, p_delta: -1 });
+            await sb.rpc('bump_like_count', { p_type: type, p_id: idStr, p_delta: -1 });
         } else {
-            // Remove a pre-existing dislike if any
             const { data: d } = await sb.from('content_dislikes').select('content_id')
                 .eq('content_type', type).eq('content_id', idStr).eq('user_id', AppState.userId).maybeSingle();
             if (d) {
                 await sb.from('content_dislikes').delete()
                     .eq('content_type', type).eq('content_id', idStr).eq('user_id', AppState.userId);
-                await sb.rpc('bump_dislike_count', { p_type: type, p_id: id, p_delta: -1 });
+                await sb.rpc('bump_dislike_count', { p_type: type, p_id: idStr, p_delta: -1 });
                 const card = document.querySelector(`[data-content-key="${type}:${idStr}"]`);
                 const dBtn = card?.querySelector('.actions button.disliked');
                 if (dBtn) {
@@ -2341,10 +2337,9 @@ async function toggleContentLike(type, id, btn) {
                 }
             }
             await sb.from('content_likes').insert({ content_type: type, content_id: idStr, user_id: AppState.userId });
-            await sb.rpc('bump_like_count', { p_type: type, p_id: id, p_delta: 1 });
+            await sb.rpc('bump_like_count', { p_type: type, p_id: idStr, p_delta: 1 });
         }
     } catch (err) {
-        // rollback UI
         if (wasLiked) { btn.classList.add('liked');    if (span) span.textContent = oldCount; }
         else          { btn.classList.remove('liked'); if (span) span.textContent = oldCount; }
         showToast('Could not save', 'error');
@@ -2366,14 +2361,14 @@ async function toggleContentDislike(type, id, btn) {
         if (wasDisliked) {
             await sb.from('content_dislikes').delete()
                 .eq('content_type', type).eq('content_id', idStr).eq('user_id', AppState.userId);
-            await sb.rpc('bump_dislike_count', { p_type: type, p_id: id, p_delta: -1 });
+            await sb.rpc('bump_dislike_count', { p_type: type, p_id: idStr, p_delta: -1 });
         } else {
             const { data: l } = await sb.from('content_likes').select('content_id')
                 .eq('content_type', type).eq('content_id', idStr).eq('user_id', AppState.userId).maybeSingle();
             if (l) {
                 await sb.from('content_likes').delete()
                     .eq('content_type', type).eq('content_id', idStr).eq('user_id', AppState.userId);
-                await sb.rpc('bump_like_count', { p_type: type, p_id: id, p_delta: -1 });
+                await sb.rpc('bump_like_count', { p_type: type, p_id: idStr, p_delta: -1 });
                 const card = document.querySelector(`[data-content-key="${type}:${idStr}"]`);
                 const lBtn = card?.querySelector('.actions button.liked');
                 if (lBtn) {
@@ -2383,7 +2378,7 @@ async function toggleContentDislike(type, id, btn) {
                 }
             }
             await sb.from('content_dislikes').insert({ content_type: type, content_id: idStr, user_id: AppState.userId });
-            await sb.rpc('bump_dislike_count', { p_type: type, p_id: id, p_delta: 1 });
+            await sb.rpc('bump_dislike_count', { p_type: type, p_id: idStr, p_delta: 1 });
         }
     } catch (err) {
         if (wasDisliked) { btn.classList.add('disliked');    if (span) span.textContent = oldCount; }
@@ -2391,6 +2386,7 @@ async function toggleContentDislike(type, id, btn) {
         showToast('Could not save', 'error');
     }
 }
+
 async function toggleContentComments(type, id, btn) {
     const card = btn.closest('.content-card');
     if (!card) return;
@@ -2453,25 +2449,6 @@ function showReplyInput(commentId) {
     if (el) el.style.display = el.style.display === 'flex' ? 'none' : 'flex';
 }
 
-async function submitContentReply(parentId, type, id) {
-    if (!AppState.userId) return showToast('Login first.', 'error');
-    const idStr = String(id);
-    const input = document.getElementById(`ccomment-reply-text-${parentId}`);
-    const text = input?.value?.trim();
-    if (!text) return;
-    input.value = '';
-    try {
-        await sb.from('content_comments').insert({ content_type: type, content_id: idStr, user_id: AppState.userId, comment: text, parent_id: parentId });
-        const table = CONTENT_TABLE_MAP[type];
-        if (table) {
-            const { data: row } = await sb.from(table).select('comment_count').eq('id', id).single();
-            await sb.from(table).update({ comment_count: (row?.comment_count || 0) + 1 }).eq('id', id);
-        }
-        await loadContentComments(type, idStr);
-        showToast('✅ Reply added', 'success');
-    } catch (err) { showToast('Error', 'error'); }
-}
-
 async function addContentComment(type, id) {
     if (!AppState.userId) return showToast('Login first.', 'error');
     const idStr = String(id);
@@ -2483,7 +2460,7 @@ async function addContentComment(type, id) {
         await sb.from('content_comments').insert({
             content_type: type, content_id: idStr, user_id: AppState.userId, comment: text
         });
-        await sb.rpc('bump_comment_count', { p_type: type, p_id: id, p_delta: 1 });
+        await sb.rpc('bump_comment_count', { p_type: type, p_id: idStr, p_delta: 1 });
         const card = document.querySelector(`[data-content-key="${type}:${idStr}"]`);
         if (card) {
             card.querySelectorAll('.actions button').forEach(b => {
@@ -2509,7 +2486,7 @@ async function submitContentReply(parentId, type, id) {
             content_type: type, content_id: idStr,
             user_id: AppState.userId, comment: text, parent_id: parentId
         });
-        await sb.rpc('bump_comment_count', { p_type: type, p_id: id, p_delta: 1 });
+        await sb.rpc('bump_comment_count', { p_type: type, p_id: idStr, p_delta: 1 });
         await loadContentComments(type, idStr);
         showToast('✅ Reply added', 'success');
     } catch (err) { showToast('Error', 'error'); }
@@ -2519,12 +2496,11 @@ async function deleteContentComment(commentId, type, id) {
     if (!confirm('Delete this comment?')) return;
     const idStr = String(id);
     try {
-        // Count the comment + its direct replies before deleting
         const { data: kids } = await sb.from('content_comments').select('id').eq('parent_id', commentId);
         const removed = 1 + (kids?.length || 0);
         await sb.from('content_comments').delete().eq('parent_id', commentId);
         await sb.from('content_comments').delete().eq('id', commentId);
-        await sb.rpc('bump_comment_count', { p_type: type, p_id: id, p_delta: -removed });
+        await sb.rpc('bump_comment_count', { p_type: type, p_id: idStr, p_delta: -removed });
         const card = document.querySelector(`[data-content-key="${type}:${idStr}"]`);
         if (card) {
             card.querySelectorAll('.actions button').forEach(b => {
@@ -2542,7 +2518,7 @@ async function shareContentLink(type, id) {
     const idStr = String(id);
     const url = `${location.origin}${location.pathname}?content=${type}:${idStr}`;
     try {
-        await sb.rpc('bump_share_count', { p_type: type, p_id: id, p_delta: 1 });
+        await sb.rpc('bump_share_count', { p_type: type, p_id: idStr, p_delta: 1 });
         const card = document.querySelector(`[data-content-key="${type}:${idStr}"]`);
         if (card) {
             card.querySelectorAll('.actions button').forEach(b => {
@@ -2556,6 +2532,7 @@ async function shareContentLink(type, id) {
     if (navigator.share) navigator.share({ title: 'TENI', url }).catch(() => {});
     else navigator.clipboard.writeText(url).then(() => showToast('📋 Copied', 'success')).catch(() => {});
 }
+
 /* ---- Content menu ---- */
 function openContentMenu(contentType, contentId, event) {
     if (event && event._menuToggleHandled) { event._menuToggleHandled = false; return; }
@@ -2567,7 +2544,7 @@ function openContentMenu(contentType, contentId, event) {
     const key = `${contentType}:${contentId}`;
     const isHidden = AppState.hiddenContentKeys?.has(key);
     const isAdmin = AppState.isAdmin;
-    const isGroupOwner = AppState.isGroupOwner === true;  // only true when in a group feed you own
+    const isGroupOwner = AppState.isGroupOwner === true;
 
     const menu = document.createElement('div');
     menu.id = `contentMenu_${contentType}_${contentId}`;
@@ -2582,6 +2559,7 @@ function openContentMenu(contentType, contentId, event) {
     document.body.appendChild(menu);
     openPortalMenu(menu, btn);
 }
+
 async function removeContentLocal(contentType, contentId) {
     closeOpenMenu();
     const key = `${contentType}:${contentId}`;
@@ -2600,6 +2578,7 @@ async function removeContentLocal(contentType, contentId) {
         if (card && !already) { card.style.transition = 'opacity .2s'; card.style.opacity = '0'; setTimeout(() => card.remove(), 200); }
     } catch (e) { showToast('❌ ' + e.message, 'error'); }
 }
+
 async function deleteContent(contentType, contentId) {
     closeOpenMenu();
     if (!confirm('Delete this content permanently?')) return;
@@ -2618,6 +2597,7 @@ async function deleteContent(contentType, contentId) {
         showToast('🗑️ Deleted', 'success');
     } catch (e) { showToast('❌ ' + e.message, 'error'); }
 }
+
 function openReportContentModal(contentType, contentId) {
     closeOpenMenu();
     const allowed = ['video', 'ppt', 'exam', 'book'];
@@ -2629,6 +2609,7 @@ function openReportContentModal(contentType, contentId) {
     document.getElementById('reportContentDetails').value = '';
     showModal('reportContentModal');
 }
+
 async function submitContentReport() {
     const contentType = document.getElementById('reportContentType')?.value?.toLowerCase();
     const contentId = document.getElementById('reportContentId')?.value;
@@ -2652,6 +2633,7 @@ async function submitContentReport() {
         showToast('✅ Reported — admin will review', 'success');
     } catch (err) { showToast('❌ ' + err.message, 'error'); }
 }
+
 async function notifyAdmins({ type, title, message, linkType, linkId }) {
     try {
         const { data: admins } = await sb.from('users').select('user_id').eq('is_admin', true);
@@ -2674,12 +2656,13 @@ async function startMockExam(id) {
         AppState.incorrectCount = 0;
         AppState.examAnswered = new Array(AppState.currentExam.questions.length).fill(null);
         AppState.examSubmitted = false;
+        AppState.examTimeRemaining = AppState.currentExam.time_limit * 60;
         startExamViewTimer(id);
         renderMockExamQuestion();
-        AppState.examTimeRemaining = AppState.currentExam.time_limit * 60;
         if (AppState.examMode === 'exam') startExamTimer(AppState.currentExam.time_limit);
     } catch (err) { showToast('❌ Failed to load.', 'error'); }
 }
+
 function renderMockExamQuestion() {
     const c = document.getElementById('mockExamListContainer');
     if (!c || !AppState.currentExam) return;
@@ -2714,6 +2697,7 @@ function renderMockExamQuestion() {
         </div>
         ${!AppState.examSubmitted ? `<button class="btn" onclick="submitMockExam()" style="margin-top:12px;">📤 Submit Exam</button>` : `<button class="btn" onclick="finishMockExam()" style="margin-top:12px;">📊 See Result</button>`}`;
 }
+
 function answerMockExamQuestion(selected, labelEl) {
     if (AppState.examSubmitted) return;
     if (AppState.examAnswered[AppState.currentQuestionIndex] !== null) return;
@@ -2739,12 +2723,12 @@ function answerMockExamQuestion(selected, labelEl) {
 }
 function nextMockExamQuestion() { if (AppState.currentQuestionIndex < AppState.currentExam.questions.length - 1) { AppState.currentQuestionIndex++; renderMockExamQuestion(); } }
 function prevMockExamQuestion() { if (AppState.currentQuestionIndex > 0) { AppState.currentQuestionIndex--; renderMockExamQuestion(); } }
+
 function submitMockExam() {
     if (AppState.examSubmitted) return;
     stopExamTimer();
     AppState.examSubmitted = true;
 
-    // Always recompute from scratch against the total question count
     AppState.correctCount = 0;
     AppState.incorrectCount = 0;
     AppState.currentExam.questions.forEach((q, i) => {
@@ -2757,6 +2741,7 @@ function submitMockExam() {
     showToast(`Score: ${s}% (${AppState.correctCount}/${t})`, 'success');
     renderMockExamResult();
 }
+
 function renderMockExamResult() {
     const c = document.getElementById('mockExamListContainer');
     if (!c) return;
@@ -2771,6 +2756,7 @@ function renderMockExamResult() {
     h += `<button class="btn btn-teal" onclick="finishMockExam()">🔙 Back</button>`;
     c.innerHTML = h;
 }
+
 function finishMockExam() {
     stopExamTimer();
     AppState.currentExam = null;
@@ -2779,9 +2765,10 @@ function finishMockExam() {
     AppState.correctCount = 0;
     AppState.incorrectCount = 0;
     AppState.currentQuestionIndex = 0;
-    AppState.examTimeRemaining = 0;   // ← ADD THIS LINE
+    AppState.examTimeRemaining = 0;
     if (AppState.currentGroupId) loadGroupContent(AppState.currentGroupId, 'mockexam');
 }
+
 function toggleExamMode() {
     AppState.examMode = AppState.examMode === 'study' ? 'exam' : 'study';
     const left  = document.getElementById('examModeBtn');
@@ -2798,7 +2785,6 @@ function toggleExamMode() {
     if (AppState.currentExam && !AppState.examSubmitted) renderMockExamQuestion();
 
     if (AppState.examMode === 'exam' && AppState.currentExam && !AppState.examSubmitted) {
-        // Resume from remaining time if a timer was already running; else start fresh
         if (AppState.examTimeRemaining > 0 && AppState.examTimer == null) {
             resumeExamTimer();
         } else if (AppState.examTimeRemaining <= 0) {
@@ -2828,6 +2814,7 @@ function resumeExamTimer() {
         }
     }, 1000);
 }
+
 function stopExamTimer() { if (AppState.examTimer) { clearInterval(AppState.examTimer); AppState.examTimer = null; } }
 
 /* ---- Group tab switching ---- */
@@ -2852,6 +2839,7 @@ function switchGroupTab(tabId, btn) {
 
 /* ---- Home trending feed ---- */
 async function loadGlobalTrending() { await loadTrendingContent('video'); }
+
 async function switchTrendingTab(tab, btn) {
     pauseAllOtherVideos(null);
     document.querySelectorAll('.content-tab').forEach(t => t.classList.remove('active'));
@@ -2859,6 +2847,7 @@ async function switchTrendingTab(tab, btn) {
     AppState.currentTrendingTab = tab;
     await loadTrendingContent(tab);
 }
+
 async function loadTrendingContent(tab) {
     const c = document.getElementById('globalTrendingContainer'); if (!c) return;
     setLoading(c, true, 'Loading...');
@@ -3054,17 +3043,13 @@ async function openGroupItem(groupId, tabId, itemId, domIdPrefix) {
     }
 
     await openTabContent('group-feed', groupId);
-
     await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
-
-    // Switch tab — switchGroupTab will itself call loadGroupContent
     switchGroupTab(normalizedTab, null);
-
-    // Wait for the target element to appear, then highlight
     const el = await waitForElement(domId, 8000);
     if (el) highlightElement(el);
     else showToast('Showing group', 'info');
 }
+
 function waitForElement(id, timeoutMs = 5000) {
     return new Promise(resolve => {
         const start = Date.now();
@@ -3077,6 +3062,7 @@ function waitForElement(id, timeoutMs = 5000) {
         check();
     });
 }
+
 function highlightElement(el, autoExpand = true) {
     if (!el) return;
     el.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -3190,7 +3176,7 @@ function updateUIForUser() {
     const profileName = document.getElementById('profileName');
     if (profileName) {
         const badge = isVerified ? ' <span class="verification-badge"><span class="star">★</span></span>' : '';
-        profileName.innerHTML = `${fullName}${badge}`;
+        profileName.innerHTML = `${escapeHtml(fullName)}${badge}`;
     }
     const profileEmail = document.getElementById('profileEmail');
     if (profileEmail && AppState.currentUser) profileEmail.innerText = AppState.currentUser.email;
@@ -3205,7 +3191,7 @@ function updateUIForUser() {
     const hun = document.getElementById('headerUserName');
     if (hun) {
         const badge = isVerified ? ' <span class="verification-badge"><span class="star">★</span></span>' : '';
-        hun.innerHTML = `${fullName}${badge}`;
+        hun.innerHTML = `${escapeHtml(fullName)}${badge}`;
     }
     const sd = document.getElementById('settingsDisplayName'); if (sd) sd.textContent = fullName;
     const se = document.getElementById('settingsEmail'); if (se) se.textContent = AppState.currentUser?.email || '';
@@ -3387,7 +3373,13 @@ function stopHeartbeat() {
     if (AppState.heartbeatInterval) { clearInterval(AppState.heartbeatInterval); AppState.heartbeatInterval = null; }
     if (AppState.onlineUpdateInterval) { clearInterval(AppState.onlineUpdateInterval); AppState.onlineUpdateInterval = null; }
 }
-function startTrendingUpdates() { stopTrendingUpdates(); AppState.trendingUpdateInterval = setInterval(() => { updateTrendingGroups(); if (document.getElementById('appMain')?.style.display !== 'none') loadTrendingContent(AppState.currentTrendingTab); }, 600000); }
+function startTrendingUpdates() {
+    stopTrendingUpdates();
+    AppState.trendingUpdateInterval = setInterval(() => {
+        updateTrendingGroups();
+        if (document.getElementById('appMain')?.style.display !== 'none') loadTrendingContent(AppState.currentTrendingTab);
+    }, 600000);
+}
 function stopTrendingUpdates() { if (AppState.trendingUpdateInterval) { clearInterval(AppState.trendingUpdateInterval); AppState.trendingUpdateInterval = null; } }
 
 /* ---- Settings ---- */
@@ -3642,7 +3634,6 @@ function handleSearch(event) {
     if (hit) return hit.fn();
     showToast('Type: class, wallet, settings, profile, or home', 'info');
 }
-
 function toggleFilterRow(event) {
     if (event) event.stopPropagation();
     const row = document.getElementById('headerRow2');
@@ -3759,7 +3750,6 @@ async function toggleGroupJoin(event, btnEl) {
             .select('user_id').eq('user_id', AppState.userId).eq('group_id', gid).maybeSingle();
         const isJoining = !existingSub;
 
-        // RPC returns jsonb { joined, followers } — PATCH 1 guarantees this.
         const { data: result, error } = await sb.rpc('join_group', {
             p_user_id: AppState.userId, p_group_id: gid, p_join: isJoining
         });
@@ -3865,7 +3855,7 @@ async function flushViewQueue() {
     const batch = [...q.values()];
     q.clear();
     await Promise.all(batch.map(async ({ table, id }) => {
-        try { await sb.rpc('increment_views', { p_table: table, p_id: id }); }
+        try { await sb.rpc('increment_views', { p_table: table, p_id: String(id) }); }
         catch (e) {
             try {
                 const { data } = await sb.from(table).select('views').eq('id', id).single();
@@ -3909,7 +3899,7 @@ async function downloadMedia(url, filename) {
         document.body.appendChild(a);
         a.click();
         a.remove();
-        setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+        setTimeout(() => URL.revokeObjectURL(objectUrl), 2000);
         showToast('✅ Download started', 'success');
     } catch (err) {
         window.open(url, '_blank');
@@ -3991,7 +3981,7 @@ function toggleFullscreen(id) {
     if (!v) return;
     if (document.fullscreenElement) { document.exitFullscreen(); return; }
     if (v.requestFullscreen) { v.requestFullscreen().catch(() => {}); return; }
-    if (v.webkitEnterFullscreen) { v.webkitEnterFullscreen(); return; }  // iOS Safari
+    if (v.webkitEnterFullscreen) { v.webkitEnterFullscreen(); return; }
     if (v.webkitRequestFullscreen) { v.webkitRequestFullscreen(); return; }
 }
 function changeSpeed(id, btn) {
@@ -4009,26 +3999,29 @@ function closeVideoPlayer(id) {
     if (t) t.style.display = 'block';
     if (v) {
         v.pause();
-        v.playbackRate = 1;   // reset speed
-        v.volume = 1;         // reset volume
-        v.src = '';
-    }
-    stopVideoWatchTimer(id);
-}
-
-function closeHomeVideo(id) {
-    const p = document.getElementById(`hm-video-player-${id}`);
-    const t = document.getElementById(`hm-thumbnail-${id}`);
-    const v = document.getElementById(`hm-video-${id}`);
-    if (p) p.style.display = 'none';
-    if (t) t.style.display = 'block';
-    if (v) {
-        v.pause();
         v.playbackRate = 1;
         v.volume = 1;
         v.src = '';
     }
     stopVideoWatchTimer(id);
+}
+function playHomeVideo(id, url) {
+    const t = document.getElementById(`hm-thumbnail-${id}`);
+    const p = document.getElementById(`hm-video-player-${id}`);
+    const v = document.getElementById(`hm-video-${id}`);
+    if (!t || !p || !v) return;
+    pauseAllOtherVideos(id);
+    t.style.display = 'none'; p.style.display = 'block';
+    v.src = url; v.load(); v.play().catch(() => {});
+    v.ontimeupdate = () => {
+        const pf = document.getElementById(`hm-progressFill-${id}`);
+        const td = document.getElementById(`hm-timeDisplay-${id}`);
+        if (pf && v.duration) pf.style.width = (v.currentTime / v.duration * 100) + '%';
+        if (td && v.duration) td.textContent = `${formatTime(v.currentTime)} / ${formatTime(v.duration)}`;
+    };
+    v.onplay = () => startVideoWatchTimer(id, 'group_content');
+    v.onpause = () => stopVideoWatchTimer(id);
+    v.onended = () => stopVideoWatchTimer(id);
 }
 function toggleHomeVideoPlay(id) { const v = document.getElementById(`hm-video-${id}`); if (!v) return; if (v.paused) v.play(); else v.pause(); }
 function seekHomeVideo(e, id) {
@@ -4043,7 +4036,12 @@ function closeHomeVideo(id) {
     const v = document.getElementById(`hm-video-${id}`);
     if (p) p.style.display = 'none';
     if (t) t.style.display = 'block';
-    if (v) { v.pause(); v.src = ''; }
+    if (v) {
+        v.pause();
+        v.playbackRate = 1;
+        v.volume = 1;
+        v.src = '';
+    }
     stopVideoWatchTimer(id);
 }
 function openPPT(id, url) { if (!url) return; incrementViewCount('group_content', id); window.open(url, '_blank'); }
@@ -4185,9 +4183,7 @@ async function subscribeToBook(id) {
         </div>`;
     document.body.appendChild(m);
 }
-
 async function processSubscription(bookId, tier) {
-    // Canonical: monthly | 3months | 6months | 9months | yearly
     const colMap = {
         monthly: 'price_monthly',
         '3months': 'price_3months',
@@ -4198,7 +4194,6 @@ async function processSubscription(bookId, tier) {
     const durations = { monthly: 30, '3months': 90, '6months': 180, '9months': 270, yearly: 365 };
     const col = colMap[tier];
     if (!col) return showToast('Invalid plan', 'error');
-
     try {
         const { data: b } = await sb.from('bstore_books').select(col).eq('id', bookId).single();
         const price = parseInt(b?.[col] || 0, 10);
@@ -4246,7 +4241,7 @@ async function submitBStoreBook() {
             price_3months: parseInt(document.getElementById('bstorePrice3')?.value) || 0,
             price_6months: parseInt(document.getElementById('bstorePrice6')?.value) || 0,
             price_9months: parseInt(document.getElementById('bstorePrice9')?.value) || 0,
-            price_yearly: parseInt(document.getElementById('bstorePriceYearly')?.value) || 0,
+            price_yearly:  parseInt(document.getElementById('bstorePriceYearly')?.value) || 0,
             teacher_id: AppState.userId,
             status: AppState.isAdmin ? 'approved' : 'pending',
             views: 0
@@ -4569,22 +4564,22 @@ async function sendChatMessage() {
             const st = row.querySelector('.chat-status');
             if (st) { st.className = 'chat-status sent'; st.textContent = '✓'; }
         }
+        await sb.from('dm_threads')
+            .update({ last_message_preview: text.substring(0, 60) })
+            .eq('id', AppState.currentThreadId);
+
         const { data: thread } = await sb.from('dm_threads')
-    .update({ last_message_preview: text.substring(0, 60) })
-    .eq('id', AppState.currentThreadId);
+            .select('owner_id, member_id')
+            .eq('id', AppState.currentThreadId).single();
 
-const { data: thread } = await sb.from('dm_threads')
-    .select('owner_id, member_id')
-    .eq('id', AppState.currentThreadId).single();
-
-if (thread) {
-    const iAmOwner = thread.owner_id === AppState.userId;
-    await sb.rpc('bump_thread_unread', {
-        p_thread_id: AppState.currentThreadId,
-        p_side: iAmOwner ? 'member' : 'owner'
-    });
-}
-updateAllBadges();
+        if (thread) {
+            const iAmOwner = thread.owner_id === AppState.userId;
+            await sb.rpc('bump_thread_unread', {
+                p_thread_id: AppState.currentThreadId,
+                p_side: iAmOwner ? 'member' : 'owner'
+            });
+        }
+        updateAllBadges();
     } catch (err) { showToast('Failed to send', 'error'); }
 }
 async function sendChatImage(event) {
@@ -4598,6 +4593,18 @@ async function sendChatImage(event) {
         await sb.storage.from('app-assets').upload(path, file, { cacheControl: '3600' });
         const { data: u } = sb.storage.from('app-assets').getPublicUrl(path);
         await sb.from('dm_messages').insert({ thread_id: AppState.currentThreadId, sender_id: AppState.userId, message: '', image_url: u.publicUrl, seen: false });
+        await sb.from('dm_threads')
+            .update({ last_message_preview: '📷 Image' })
+            .eq('id', AppState.currentThreadId);
+        const { data: thread } = await sb.from('dm_threads')
+            .select('owner_id, member_id').eq('id', AppState.currentThreadId).single();
+        if (thread) {
+            const iAmOwner = thread.owner_id === AppState.userId;
+            await sb.rpc('bump_thread_unread', {
+                p_thread_id: AppState.currentThreadId,
+                p_side: iAmOwner ? 'member' : 'owner'
+            });
+        }
         await loadChatMessages();
     } catch (err) { showToast('Image failed', 'error'); }
 }
@@ -4909,7 +4916,6 @@ function subscribeToReports() {
         })
         .subscribe();
 }
-
 /* ---- Admin panel ---- */
 const ADMIN_TABS = [
     { key: 'stats', icon: '📊', label: 'Stats' },
@@ -4966,11 +4972,13 @@ async function loadAdminPanel() {
     `;
     await refreshAdminCounts();
 }
+
 async function refreshAdminPanel() {
     _adminUserCache = {};
     await Promise.all([refreshAdminCounts(), renderAdminTab(_adminActiveTab)]);
     showToast('🔄 Refreshed', 'success');
 }
+
 function openAdminSingleView(key) {
     const grid = document.getElementById('admin-grid-view');
     const full = document.getElementById('admin-pane-wrap-full');
@@ -4993,6 +5001,7 @@ function openAdminSingleView(key) {
     if (pane) pane.classList.add('active');
     renderAdminTab(key);
 }
+
 function closeAdminSingleView() {
     const grid = document.getElementById('admin-grid-view');
     const full = document.getElementById('admin-pane-wrap-full');
@@ -5000,12 +5009,14 @@ function closeAdminSingleView() {
     if (full) full.classList.remove('active');
     refreshAdminCounts();
 }
+
 function refreshAdminSingleView() {
     _adminUserCache = {};
     refreshAdminCounts();
     renderAdminTab(_adminActiveTab);
     showToast('🔄 Refreshed', 'success');
 }
+
 async function refreshAdminCounts() {
     const counts = { reports: 0, books: 0, appeals: 0, coins: 0, withdrawals: 0 };
     try {
@@ -5030,6 +5041,7 @@ async function refreshAdminCounts() {
         else badge.style.display = 'none';
     });
 }
+
 async function renderAdminTab(key) {
     const pane = document.getElementById('adminPane-' + key); if (!pane) return;
     try {
@@ -5044,6 +5056,7 @@ async function renderAdminTab(key) {
         if (key === 'content') return renderAdminContent(pane);
     } catch (e) { pane.innerHTML = '<div class="admin-empty">Failed to load</div>'; }
 }
+
 async function adminFetchUsers(userIds) {
     if (!userIds || !userIds.length) return {};
     const unique = [...new Set(userIds.filter(Boolean))];
@@ -5139,25 +5152,33 @@ async function renderAdminReports(pane) {
                 <div class="admin-item-actions">
                     <button class="admin-btn gold" onclick="adminOpenFeedback('${r.id}')">💬 Send DM</button>
                     <button class="admin-btn approve" onclick="adminDismissReport('${r.id}')">✅ Dismiss</button>
-                    <button class="admin-btn danger" onclick="adminDeleteContent('${r.id}','${r.content_type}','${r.content_id}')">🗑️ Delete</button>
+                    <button class="admin-btn danger" onclick="adminDeleteReportedContent('${r.id}','${r.content_type}','${r.content_id}')">🗑️ Delete</button>
                 </div>
             </div>
         </div>`).join('');
 }
+
 async function adminDismissReport(reportId) {
     await sb.from('content_reports').update({ status: 'dismissed', reviewed_by: AppState.userId, reviewed_at: new Date() }).eq('id', reportId);
     showToast('✅ Dismissed', 'info');
     await refreshAdminPanel();
 }
-async function adminDeleteContent(reportId, type, contentId) {
-    if (!confirm('Delete permanently?')) return;
+
+async function adminDeleteReportedContent(reportId, type, contentId) {
+    if (!confirm('Delete permanently? This will also remove its comments and reactions.')) return;
     const table = CONTENT_TABLE_MAP[type];
     if (!table) return;
-    await sb.from(table).delete().eq('id', contentId);
-    await sb.from('content_reports').update({ status: 'actioned', reviewed_by: AppState.userId, reviewed_at: new Date() }).eq('id', reportId);
-    showToast('🗑️ Deleted', 'success');
-    await refreshAdminPanel();
+    try {
+        await sb.from('content_likes').delete().eq('content_type', type).eq('content_id', String(contentId));
+        await sb.from('content_dislikes').delete().eq('content_type', type).eq('content_id', String(contentId));
+        await sb.from('content_comments').delete().eq('content_type', type).eq('content_id', String(contentId));
+        await sb.from(table).delete().eq('id', contentId);
+        await sb.from('content_reports').update({ status: 'actioned', reviewed_by: AppState.userId, reviewed_at: new Date() }).eq('id', reportId);
+        showToast('🗑️ Deleted', 'success');
+        await refreshAdminPanel();
+    } catch (err) { showToast('❌ ' + err.message, 'error'); }
 }
+
 async function adminOpenFeedback(reportId) {
     const { data: rep } = await sb.from('content_reports').select('*').eq('id', reportId).single();
     if (!rep) return;
@@ -5196,6 +5217,7 @@ async function adminOpenFeedback(reportId) {
     document.getElementById('adminFeedbackOutcome').value = 'resolved';
     showModal('adminFeedbackModal');
 }
+
 async function adminSendFeedbackDM() {
     const modal = document.getElementById('adminFeedbackModal');
     const reportId = modal.dataset.reportId;
@@ -5544,27 +5566,38 @@ function toggleContentSelection(type, id, checked) {
 async function adminBulkDeleteContent() {
     const sel = [...AppState.adminContentSelection];
     if (!sel.length) return;
-    if (!confirm(`Delete ${sel.length} items permanently?`)) return;
+    if (!confirm(`Delete ${sel.length} items permanently? This will also remove their comments and reactions.`)) return;
     for (const key of sel) {
         const [type, id] = key.split(':');
         const table = CONTENT_TABLE_MAP[type];
-        if (table) { try { await sb.from(table).delete().eq('id', id); } catch (e) {} }
+        if (!table) continue;
+        try {
+            await sb.from('content_likes').delete().eq('content_type', type).eq('content_id', String(id));
+            await sb.from('content_dislikes').delete().eq('content_type', type).eq('content_id', String(id));
+            await sb.from('content_comments').delete().eq('content_type', type).eq('content_id', String(id));
+            await sb.from(table).delete().eq('id', id);
+        } catch (e) {}
     }
     AppState.adminContentSelection.clear();
     showToast(`🗑️ Deleted ${sel.length} items`, 'success');
     renderAdminContentList();
 }
-async function deleteContentItem(type, id) {
-    if (!confirm('Delete permanently?')) return;
+async function adminDeleteContentItem(type, id) {
+    if (!confirm('Delete permanently? This will also remove its comments and reactions.')) return;
     const table = CONTENT_TABLE_MAP[type];
     if (!table) return;
-    await sb.from(table).delete().eq('id', id);
-    showToast('🗑️ Deleted', 'success');
-    renderAdminContentList();
+    try {
+        await sb.from('content_likes').delete().eq('content_type', type).eq('content_id', String(id));
+        await sb.from('content_dislikes').delete().eq('content_type', type).eq('content_id', String(id));
+        await sb.from('content_comments').delete().eq('content_type', type).eq('content_id', String(id));
+        await sb.from(table).delete().eq('id', id);
+        showToast('🗑️ Deleted', 'success');
+        renderAdminContentList();
+    } catch (err) { showToast('❌ ' + err.message, 'error'); }
 }
-const adminDeleteContentItem = deleteContentItem;
 
-console.log('🚀 TENI v6.1 — loaded');
+/* ---- Bootstrap ---- */
+console.log('🚀 TENI v6.2 — loaded');
 </script>
 </body>
 </html>
