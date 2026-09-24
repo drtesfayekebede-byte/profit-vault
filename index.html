@@ -1127,6 +1127,48 @@ html, body {
     border-radius: 0;
 }
 
+.content-card[data-content-key^="video:"].is-pinned > .meta {
+    display: none !important;
+}
+
+/* Actions row: black strip, white icons, very narrow */
+.content-card[data-content-key^="video:"].is-pinned > .actions {
+    background: #000;
+    border-top: none;
+    margin-top: 0;
+    padding: 6px 12px;
+    min-height: 36px;
+    align-items: center;
+    gap: 8px;
+}
+.content-card[data-content-key^="video:"].is-pinned > .actions button {
+    color: #ffffff;
+    font-size: 13px;
+    padding: 2px 8px;
+    gap: 4px;
+}
+.content-card[data-content-key^="video:"].is-pinned > .actions button:hover {
+    background: rgba(255,255,255,0.12);
+    color: #ffffff;
+}
+.content-card[data-content-key^="video:"].is-pinned > .actions button.liked {
+    color: #ef4444;
+}
+.content-card[data-content-key^="video:"].is-pinned > .actions button.disliked {
+    color: #ffffff;
+}
+
+/* Comments section stays on normal (light) background */
+.content-card[data-content-key^="video:"].is-pinned > .content-comments {
+    background: var(--bg-white);
+    color: var(--text-dark);
+}
+
+/* Extra-tight card bottom while playing (no leftover padding) */
+.content-card[data-content-key^="video:"].is-pinned {
+    padding-bottom: 0;
+    background: #000;
+}
 </style>
 </head>
 <body>
