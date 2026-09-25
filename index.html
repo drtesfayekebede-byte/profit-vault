@@ -1108,10 +1108,10 @@ html, body {
 }
 
 /* Pinned state: player sticks to top of scroll container */
+/* Playing state: styled like a player, but NOT sticky */
 .content-card[data-content-key^="video:"].is-pinned {
-    position: sticky;
-    top: 0;
-    z-index: 60;
+    position: relative;
+    z-index: 1;
     border-radius: 0;
     border-left: none;
     border-right: none;
