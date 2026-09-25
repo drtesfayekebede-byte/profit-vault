@@ -1170,28 +1170,99 @@ html, body {
     background: #000;
 }
 /* ============================================================
-   AUTO-HIDE CONTROLS — 3s of no interaction while playing
+   AUTO-HIDE CONTROLS — overlay 32px on video, social row stays
    ============================================================ */
-.video-controls,
+
+/* When playing, social row stays always visible (own band) */
 .content-card[data-content-key^="video:"].is-pinned > .actions {
-    transition: opacity 0.25s ease, max-height 0.25s ease, padding 0.25s ease;
-    overflow: hidden;
-    max-height: 200px;
-    opacity: 1;
+    background: #141414;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    margin-top: 0;
+    padding: 4px 12px;
+    min-height: 32px;
+    height: 32px;
+    align-items: center;
+    gap: 8px;
+    color: #ffffff;
 }
-.content-card.controls-hidden .video-controls,
-.content-card.controls-hidden.is-pinned > .actions {
+.content-card[data-content-key^="video:"].is-pinned > .actions button {
+    color: #ffffff;
+    font-size: 13px;
+    padding: 2px 8px;
+    gap: 4px;
+}
+.content-card[data-content-key^="video:"].is-pinned > .actions button:hover {
+    background: rgba(255,255,255,0.12);
+    color: #ffffff;
+}
+.content-card[data-content-key^="video:"].is-pinned > .actions button.liked { color: #ef4444; }
+.content-card[data-content-key^="video:"].is-pinned > .actions button.disliked { color: #ffffff; }
+
+/* Views pill on the right of the actions row (while playing) */
+.content-card[data-content-key^="video:"].is-pinned > .actions .playing-views {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+/* Comments stay on light card background */
+.content-card[data-content-key^="video:"].is-pinned > .content-comments {
+    background: var(--bg-white);
+    color: var(--text-dark);
+}
+
+/* Control bar floats on the bottom of the video */
+.video-wrapper .video-controls {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 32px;
+    padding: 0 12px;
+    background: linear-gradient(to top, rgba(0,0,0,0.75), rgba(0,0,0,0));
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: opacity 0.25s ease;
+    opacity: 1;
+    z-index: 5;
+    border-radius: 0;
+}
+.video-wrapper .video-controls button { font-size: 16px; padding: 2px; }
+.video-wrapper .video-controls .progress-bar { height: 3px; }
+.video-wrapper .video-controls .time-display { font-size: 11px; min-width: 66px; }
+.video-wrapper .video-controls .volume-slider { width: 48px; }
+.video-wrapper .video-controls .speed-control,
+.video-wrapper .video-controls .download-btn { font-size: 10px; padding: 2px 6px; }
+
+/* Hidden state — only the control bar fades, social row stays */
+.content-card.controls-hidden .video-controls {
     opacity: 0;
-    max-height: 0 !important;
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
     pointer-events: none;
 }
 :fullscreen .video-controls,
 :-webkit-full-screen .video-controls {
     opacity: 1 !important;
-    max-height: 200px !important;
+    pointer-events: auto !important;
 }
+
+/* --- Light theme override for the social row when playing --- */
+[data-theme="light"] .content-card[data-content-key^="video:"].is-pinned > .actions {
+    background: #f3f4f6;
+    border-top: 1px solid #e5e7eb;
+    color: #1e293b;
+}
+[data-theme="light"] .content-card[data-content-key^="video:"].is-pinned > .actions button {
+    color: #1e293b;
+}
+[data-theme="light"] .content-card[data-content-key^="video:"].is-pinned > .actions button:hover {
+    background: rgba(0,0,0,0.06);
+    color: #0a2540;
+}
+[data-theme="light"] .content-card[data-content-key^="video:"].is-pinned > .actions button.liked { color: #ef4444; }
+[data-theme="light"] .content-card[data-content-key^="video:"].is-pinned > .actions .playing-views { color: #1e293b; }
 </style>
 </head>
 <body>
@@ -2339,6 +2410,7 @@ function renderVideoOrPptCard(item, filterType, isLiked, isDisliked) {
             <button onclick="event.stopPropagation(); toggleContentComments('${filterType}', '${item.id}', this)"><i class="fas fa-comment"></i> <span>${item.comment_count || 0}</span></button>
             <button onclick="event.stopPropagation(); shareContentLink('${filterType}', '${item.id}')"><i class="fas fa-share"></i> <span>${item.share_count || 0}</span></button>
             ${isVideo ? `<button onclick="event.stopPropagation(); downloadMedia('${item.file_url}','teni_video_${item.id}.mp4')"><i class="fas fa-download"></i></button>` : ''}
+            ${isVideo ? `<span class="playing-views" data-view-id="group_content-${item.id}" data-views="${item.views || 0}">👁️ ${item.views || 0}</span>` : ''}
         </div>
         <div class="content-comments" id="comments-${filterType}-${item.id}" data-ctype="${filterType}" data-cid="${item.id}">
             <div id="commentList-${filterType}-${item.id}"></div>
@@ -3031,6 +3103,7 @@ async function loadTrendingContent(tab) {
                         <button onclick="event.stopPropagation(); toggleContentComments('video', '${item.id}', this)"><i class="fas fa-comment"></i> <span>${item.comment_count || 0}</span></button>
                         <button onclick="event.stopPropagation(); shareContentLink('video', '${item.id}')"><i class="fas fa-share"></i> <span>${item.share_count || 0}</span></button>
                         <button onclick="event.stopPropagation(); downloadMedia('${item.file_url}','teni_video_${item.id}.mp4')"><i class="fas fa-download"></i></button>
+                        <span class="playing-views" data-view-id="group_content-${item.id}" data-views="${item.views || 0}">👁️ ${item.views || 0}</span>
                     </div>
                     <div class="content-comments" id="comments-video-${idStr}" data-ctype="video" data-cid="${idStr}">
                         <div id="commentList-video-${idStr}"></div>
