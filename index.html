@@ -1238,9 +1238,22 @@ html, body {
 .video-wrapper .video-controls .download-btn { font-size: 10px; padding: 2px 6px; }
 
 /* Hidden state — only the control bar fades, social row stays */
+/* Hidden state — only the control bar fades, social row stays */
 .content-card.controls-hidden .video-controls {
     opacity: 0;
     pointer-events: none;
+}
+
+/* While controls are visible, they respond to touch/mouse */
+.video-wrapper .video-controls:hover {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Make sure the video area itself is the hover/click target */
+.video-wrapper video,
+.video-wrapper .video-thumbnail {
+    cursor: pointer;
 }
 :fullscreen .video-controls,
 :-webkit-full-screen .video-controls {
@@ -4075,19 +4088,16 @@ function scheduleHideControls(id, kind) {
         card.classList.add('controls-hidden');
     }, 3000);
 }
-function showVideoControls(id, kind) {
+function showVideoControls(id, kind, sticky) {
     const cardId = kind === 'home' ? `hm-video-wrapper-${id}` : `video-wrapper-${id}`;
     const wrapper = document.getElementById(cardId);
     const card = wrapper?.closest('.content-card');
     if (!card) return;
     card.classList.remove('controls-hidden');
     clearTimeout(card._hideTimer);
+    if (sticky) return; // stay visible, don't reschedule hide
     const vid = kind === 'home' ? document.getElementById(`hm-video-${id}`) : document.getElementById(`video-${id}`);
     if (vid && !vid.paused && !vid.ended) scheduleHideControls(id, kind);
-}
-function startExamViewTimer(examId) {
-    if (AppState.examViewTimers[examId]) clearTimeout(AppState.examViewTimers[examId]);
-    AppState.examViewTimers[examId] = setTimeout(() => { incrementViewCount('mock_exams', examId); delete AppState.examViewTimers[examId]; }, VIEW_THRESHOLDS.exam * 1000);
 }
 
 /* ---- Download / profile pic ---- */
@@ -4179,12 +4189,36 @@ function playInlineVideo(id, url) {
     v.src = url; v.load(); v.play().catch(() => {});
     v.ontimeupdate = () => updateVideoProgress(id);
     v.onloadedmetadata = () => updateVideoProgress(id);
-    v.onplay = () => { startVideoWatchTimer(id, 'group_content'); scheduleHideControls(id, 'group'); };
-    v.onpause = () => { stopVideoWatchTimer(id); showVideoControls(id, 'group'); };
-    v.onended = () => { stopVideoWatchTimer(id); showVideoControls(id, 'group'); };
-    if (!p.dataset.tapBound) {
-        p.dataset.tapBound = '1';
-        p.addEventListener('click', () => showVideoControls(id, 'group'));
+    v.onplay  = () => { startVideoWatchTimer(id, 'group_content'); showVideoControls(id, 'group'); };
+    v.onpause = () => { stopVideoWatchTimer(id); showVideoControls(id, 'group', true); };
+    v.onended = () => { stopVideoWatchTimer(id); showVideoControls(id, 'group', true); };
+
+    if (!p.dataset.nativeBound) {
+        p.dataset.nativeBound = '1';
+
+        p.addEventListener('click', (e) => {
+            if (e.target.closest('button, input, .video-controls, .progress-bar, .volume-slider')) return;
+            const cardEl = document.getElementById(`video-wrapper-${id}`)?.closest('.content-card');
+            if (!cardEl) return;
+            if (cardEl.classList.contains('controls-hidden')) showVideoControls(id, 'group');
+            else {
+                clearTimeout(cardEl._hideTimer);
+                cardEl.classList.add('controls-hidden');
+            }
+        });
+
+        p.addEventListener('mouseenter', () => showVideoControls(id, 'group'));
+        p.addEventListener('touchstart', () => showVideoControls(id, 'group'), { passive: true });
+
+        p.addEventListener('mouseleave', () => {
+            const cardEl = document.getElementById(`video-wrapper-${id}`)?.closest('.content-card');
+            if (!cardEl) return;
+            const vid = document.getElementById(`video-${id}`);
+            if (!vid || vid.paused || vid.ended) return;
+            clearTimeout(cardEl._hideTimer);
+            cardEl._hideTimer = setTimeout(() => cardEl.classList.add('controls-hidden'), 1500);
+        });
+
         p.querySelectorAll('button').forEach(b => {
             b.addEventListener('click', (e) => { e.stopPropagation(); showVideoControls(id, 'group'); });
         });
@@ -4259,12 +4293,36 @@ function playHomeVideo(id, url) {
         if (pf && v.duration) pf.style.width = (v.currentTime / v.duration * 100) + '%';
         if (td && v.duration) td.textContent = `${formatTime(v.currentTime)} / ${formatTime(v.duration)}`;
     };
-    v.onplay = () => { startVideoWatchTimer(id, 'group_content'); scheduleHideControls(id, 'home'); };
-    v.onpause = () => { stopVideoWatchTimer(id); showVideoControls(id, 'home'); };
-    v.onended = () => { stopVideoWatchTimer(id); showVideoControls(id, 'home'); };
-    if (!p.dataset.tapBound) {
-        p.dataset.tapBound = '1';
-        p.addEventListener('click', () => showVideoControls(id, 'home'));
+    v.onplay  = () => { startVideoWatchTimer(id, 'group_content'); showVideoControls(id, 'home'); };
+    v.onpause = () => { stopVideoWatchTimer(id); showVideoControls(id, 'home', true); };
+    v.onended = () => { stopVideoWatchTimer(id); showVideoControls(id, 'home', true); };
+
+    if (!p.dataset.nativeBound) {
+        p.dataset.nativeBound = '1';
+
+        p.addEventListener('click', (e) => {
+            if (e.target.closest('button, input, .video-controls, .progress-bar, .volume-slider')) return;
+            const cardEl = document.getElementById(`hm-video-wrapper-${id}`)?.closest('.content-card');
+            if (!cardEl) return;
+            if (cardEl.classList.contains('controls-hidden')) showVideoControls(id, 'home');
+            else {
+                clearTimeout(cardEl._hideTimer);
+                cardEl.classList.add('controls-hidden');
+            }
+        });
+
+        p.addEventListener('mouseenter', () => showVideoControls(id, 'home'));
+        p.addEventListener('touchstart', () => showVideoControls(id, 'home'), { passive: true });
+
+        p.addEventListener('mouseleave', () => {
+            const cardEl = document.getElementById(`hm-video-wrapper-${id}`)?.closest('.content-card');
+            if (!cardEl) return;
+            const vid = document.getElementById(`hm-video-${id}`);
+            if (!vid || vid.paused || vid.ended) return;
+            clearTimeout(cardEl._hideTimer);
+            cardEl._hideTimer = setTimeout(() => cardEl.classList.add('controls-hidden'), 1500);
+        });
+
         p.querySelectorAll('button').forEach(b => {
             b.addEventListener('click', (e) => { e.stopPropagation(); showVideoControls(id, 'home'); });
         });
