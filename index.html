@@ -2397,7 +2397,7 @@ function renderVideoOrPptCard(item, filterType, isLiked, isDisliked) {
                 <div class="play-btn-overlay"><span>▶️</span></div>
             </div>
             <div id="video-player-${item.id}" style="display:none; width:100%; background:#000; position:relative;">
-                <video id="video-${item.id}" src="${item.file_url}" controls playsinline preload="metadata"></video>
+                <video id="video-${item.id}" src="${item.file_url}" playsinline preload="metadata"></video>
                 <div class="video-controls">
                     <button onclick="toggleVideoPlay('${item.id}')">⏸️</button>
                     <div class="progress-bar" onclick="seekVideo(event, '${item.id}')"><div class="progress-fill" id="progressFill-${item.id}"></div></div>
@@ -3095,7 +3095,7 @@ async function loadTrendingContent(tab) {
                             <div class="play-btn-overlay"><span>▶️</span></div>
                         </div>
                         <div id="hm-video-player-${item.id}" style="display:none; width:100%; background:#000; position:relative;">
-                            <video id="hm-video-${item.id}" src="${item.file_url}" controls playsinline preload="metadata"></video>
+                            <video id="hm-video-${item.id}" src="${item.file_url}" playsinline preload="metadata"></video>
                             <div class="video-controls">
                                 <button onclick="toggleHomeVideoPlay('${item.id}')">⏸️</button>
                                 <div class="progress-bar" onclick="seekHomeVideo(event, '${item.id}')"><div class="progress-fill" id="hm-progressFill-${item.id}"></div></div>
