@@ -521,7 +521,7 @@ html, body {
     border-radius: 12px 12px 0 0;
     overflow: hidden;
 }
-.content-card[data-content-key^="video:"] > .meta {
+.content-card[data-content-key^="video:"] > .meta-block {
     padding: 12px 16px 4px 16px;
 }
 .content-card[data-content-key^="video:"] > .actions {
@@ -538,8 +538,99 @@ html, body {
 /* ============================================================
    CONTENT ACTIONS
    ============================================================ */
-.content-card .meta h4 { font-size: 16px; font-weight: 800; color: var(--text-dark); margin-bottom: 4px; }
-.content-card .meta p { font-size: 13px; color: var(--text-muted); font-weight: 700; }
+/* ============================================================
+   META BLOCK — FB/YouTube style title + description + group meta
+   ============================================================ */
+.meta-block {
+    padding: 10px 14px 12px 14px;
+    background: var(--bg-white);
+}
+.meta-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--text-dark);
+    line-height: 1.3;
+    letter-spacing: -0.2px;
+    margin: 0 0 6px 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    word-break: break-word;
+}
+.meta-description {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin: 0 0 8px 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    word-break: break-word;
+    white-space: pre-wrap;
+}
+.meta-description.expanded {
+    -webkit-line-clamp: unset;
+    display: block;
+    overflow: visible;
+}
+.meta-readmore {
+    color: var(--teal);
+    font-weight: 700;
+    font-size: 12px;
+    cursor: pointer;
+    margin-left: 4px;
+    white-space: nowrap;
+    user-select: none;
+}
+.meta-readmore:hover { text-decoration: underline; }
+.meta-info {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #94a3b8;
+    flex-wrap: nowrap;
+    overflow: hidden;
+}
+.meta-info .meta-avatar {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--teal);
+    overflow: hidden;
+    flex-shrink: 0;
+}
+.meta-info .meta-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.meta-info .meta-group {
+    color: #64748b;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 40%;
+}
+.meta-info .meta-dot {
+    color: #cbd5e1;
+    flex-shrink: 0;
+}
+.meta-info .meta-time {
+    color: #94a3b8;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+[data-theme="dark"] .meta-block { background: transparent; }
+[data-theme="dark"] .meta-title { color: var(--text-dark); }
+[data-theme="dark"] .meta-description { color: var(--text-muted); }
+[data-theme="dark"] .meta-info { color: #94a3b8; }
+[data-theme="dark"] .meta-info .meta-group { color: #cbd5e1; }
 .content-card .actions { display: flex; gap: 16px; margin-top: 12px; border-top: 1px solid var(--card-border); padding-top: 12px; flex-wrap: wrap; }
 .content-card .actions button { background: none; border: none; font-size: 14px; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 4px; transition: 0.2s; font-weight: 700; padding: 4px 8px; border-radius: 20px; }
 .content-card .actions button:hover { color: var(--navy); background: var(--card-hover); }
@@ -1127,7 +1218,7 @@ html, body {
     border-radius: 0;
 }
 
-.content-card[data-content-key^="video:"].is-pinned > .meta {
+.content-card[data-content-key^="video:"].is-pinned > .meta-block {
     display: none !important;
 }
 
@@ -2047,6 +2138,44 @@ function toggleLongText(triggerEl) {
         triggerEl.dataset.expanded = 'true';
     }
 }
+/* ---- FB/YouTube style relative time ---- */
+function formatRelativeTime(dateString) {
+    if (!dateString) return '';
+    const then = new Date(dateString);
+    if (isNaN(then.getTime())) return '';
+    const now = new Date();
+    const diffMs = now - then;
+    const sec = Math.floor(diffMs / 1000);
+    const min = Math.floor(sec / 60);
+    const hr  = Math.floor(min / 60);
+    const day = Math.floor(hr / 24);
+    const wk  = Math.floor(day / 7);
+    const mo  = Math.floor(day / 30);
+    const yr  = Math.floor(day / 365);
+
+    if (sec < 45) return 'Just now';
+    if (min < 1)  return 'Just now';
+    if (min < 60) return min === 1 ? '1 minute ago' : `${min} minutes ago`;
+    if (hr  < 24) return hr  === 1 ? '1 hour ago'   : `${hr} hours ago`;
+    if (day === 1) return 'Yesterday';
+    if (day < 7)   return `${day} days ago`;
+    if (wk  < 5)   return wk  === 1 ? '1 week ago'  : `${wk} weeks ago`;
+    if (mo  < 12)  return mo  === 1 ? '1 month ago' : `${mo} months ago`;
+    return yr === 1 ? '1 year ago' : `${yr} years ago`;
+}
+
+/* ---- Read More / Read Less toggle for description ---- */
+function toggleMetaDescription(el) {
+    const desc = el.previousElementSibling;
+    if (!desc) return;
+    if (desc.classList.contains('expanded')) {
+        desc.classList.remove('expanded');
+        el.textContent = 'Read More';
+    } else {
+        desc.classList.add('expanded');
+        el.textContent = 'Read Less';
+    }
+}
 function buildViewCounterHtml(table, id, views) {
     const v = views || 0;
     return `<span class="view-counter">👁️ <span data-view-id="${table}-${id}" data-views="${v}">${v.toLocaleString()}</span> views</span>`;
@@ -2416,7 +2545,7 @@ function renderVideoOrPptCard(item, filterType, isLiked, isDisliked) {
     return `<div class="content-card" id="${domId}" data-content-key="${key}">
         <button class="content-card-menu-btn" onclick="openContentMenu('${filterType}', '${item.id}', event)">⋮</button>
         <div style="padding-bottom:0;">${contentHtml}</div>
-        <div class="meta"><h4>${escapeHtml(item.title)}</h4>${item.description ? buildLongTextHtml(item.description, 120) : ''}<p style="margin-top:4px;">${viewBadge} • ${new Date(item.created_at).toLocaleDateString()}</p></div>
+        ${buildMetaBlockHtml(item, AppState.groupCache.get(item.group_id) || { name: AppState.currentGroupName })}
         <div class="actions">
             <button class="${isLiked ? 'liked' : ''}" onclick="event.stopPropagation(); toggleContentLike('${filterType}', '${item.id}', this)"><i class="fas fa-heart"></i> <span>${item.likes || 0}</span></button>
             <button class="${isDisliked ? 'disliked' : ''}" onclick="event.stopPropagation(); toggleContentDislike('${filterType}', '${item.id}', this)"><i class="fas fa-heart-broken"></i> <span>${item.dislikes || 0}</span></button>
