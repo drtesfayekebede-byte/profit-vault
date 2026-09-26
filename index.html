@@ -4192,9 +4192,9 @@ function playInlineVideo(id, url) {
     v.src = url; v.load(); v.play().catch(() => {});
     v.ontimeupdate = () => updateVideoProgress(id);
     v.onloadedmetadata = () => updateVideoProgress(id);
-    v.onplay  = () => { startVideoWatchTimer(id, 'group_content'); showVideoControls(id, 'group'); };
-    v.onpause = () => { stopVideoWatchTimer(id); showVideoControls(id, 'group', true); };
-    v.onended = () => { stopVideoWatchTimer(id); showVideoControls(id, 'group', true); };
+    v.onplay  = () => { startVideoWatchTimer(id, 'group_content'); showVideoControls(id, 'group'); updatePlayPauseIcon(id, 'group'); };
+    v.onpause = () => { stopVideoWatchTimer(id); showVideoControls(id, 'group', true); updatePlayPauseIcon(id, 'group'); };
+    v.onended = () => { stopVideoWatchTimer(id); showVideoControls(id, 'group', true); updatePlayPauseIcon(id, 'group'); };
 
     if (!p.dataset.nativeBound) {
         p.dataset.nativeBound = '1';
@@ -4295,9 +4295,9 @@ function playHomeVideo(id, url) {
         if (pf && v.duration) pf.style.width = (v.currentTime / v.duration * 100) + '%';
         if (td && v.duration) td.textContent = `${formatTime(v.currentTime)} / ${formatTime(v.duration)}`;
     };
-    v.onplay  = () => { startVideoWatchTimer(id, 'group_content'); showVideoControls(id, 'home'); };
-    v.onpause = () => { stopVideoWatchTimer(id); showVideoControls(id, 'home', true); };
-    v.onended = () => { stopVideoWatchTimer(id); showVideoControls(id, 'home', true); };
+    v.onplay  = () => { startVideoWatchTimer(id, 'group_content'); showVideoControls(id, 'home'); updatePlayPauseIcon(id, 'home'); };
+    v.onpause = () => { stopVideoWatchTimer(id); showVideoControls(id, 'home', true); updatePlayPauseIcon(id, 'home'); };
+    v.onended = () => { stopVideoWatchTimer(id); showVideoControls(id, 'home', true); updatePlayPauseIcon(id, 'home'); };
 
     if (!p.dataset.nativeBound) {
         p.dataset.nativeBound = '1';
@@ -4361,6 +4361,19 @@ function changeHomeSpeed(id, btn) {
     let c = parseFloat(btn.textContent); let i = s.indexOf(c); if (i === -1) i = 2;
     const n = s[(i + 1) % s.length];
     v.playbackRate = n; btn.textContent = n + 'x';
+}
+function updatePlayPauseIcon(id, kind) {
+    const cardId = kind === 'home' ? `hm-video-wrapper-${id}` : `video-wrapper-${id}`;
+    const wrapper = document.getElementById(cardId);
+    if (!wrapper) return;
+    const card = wrapper.closest('.content-card');
+    if (!card) return;
+    // First button inside .video-controls is the toggle button
+    const btn = card.querySelector('.video-controls button');
+    if (!btn) return;
+    const v = kind === 'home' ? document.getElementById(`hm-video-${id}`) : document.getElementById(`video-${id}`);
+    if (!v) return;
+    btn.textContent = v.paused ? '▶️' : '⏸️';
 }
 function closeHomeVideo(id) {
     const p = document.getElementById(`hm-video-player-${id}`);
