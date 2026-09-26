@@ -3096,13 +3096,16 @@ async function loadTrendingContent(tab) {
                         </div>
                         <div id="hm-video-player-${item.id}" style="display:none; width:100%; background:#000; position:relative;">
                             <video id="hm-video-${item.id}" src="${item.file_url}" playsinline preload="metadata"></video>
-                            <div class="video-controls">
-                                <button onclick="toggleHomeVideoPlay('${item.id}')">⏸️</button>
-                                <div class="progress-bar" onclick="seekHomeVideo(event, '${item.id}')"><div class="progress-fill" id="hm-progressFill-${item.id}"></div></div>
-                                <span class="time-display" id="hm-timeDisplay-${item.id}">0:00 / 0:00</span>
-                                <button class="download-btn" onclick="downloadMedia('${item.file_url}','teni_video_${item.id}.mp4')">⬇️</button>
-                                <button onclick="closeHomeVideo('${item.id}')" style="color:var(--red-error);">✕</button>
-                            </div>
+<div class="video-controls">
+    <button onclick="toggleHomeVideoPlay('${item.id}')">⏸️</button>
+    <div class="progress-bar" onclick="seekHomeVideo(event, '${item.id}')"><div class="progress-fill" id="hm-progressFill-${item.id}"></div></div>
+    <span class="time-display" id="hm-timeDisplay-${item.id}">0:00 / 0:00</span>
+    <input type="range" class="volume-slider" min="0" max="1" step="0.1" value="1" onchange="setHomeVolume('${item.id}', this.value)">
+    <button onclick="toggleHomeFullscreen('${item.id}')">⛶</button>
+    <button class="speed-control" onclick="changeHomeSpeed('${item.id}', this)">1x</button>
+    <button class="download-btn" onclick="downloadMedia('${item.file_url}','teni_video_${item.id}.mp4')">⬇️</button>
+    <button onclick="closeHomeVideo('${item.id}')" style="color:var(--red-error);">✕</button>
+</div>
                         </div>
                     </div>
                     <div class="meta" style="cursor:pointer;" onclick="openGroupItem('${item.group_id}', 'videos', '${item.id}', 'video-item')">
@@ -4198,13 +4201,12 @@ function playInlineVideo(id, url) {
 
         p.addEventListener('click', (e) => {
             if (e.target.closest('button, input, .video-controls, .progress-bar, .volume-slider')) return;
-            const cardEl = document.getElementById(`video-wrapper-${id}`)?.closest('.content-card');
-            if (!cardEl) return;
-            if (cardEl.classList.contains('controls-hidden')) showVideoControls(id, 'group');
-            else {
-                clearTimeout(cardEl._hideTimer);
-                cardEl.classList.add('controls-hidden');
-            }
+            const v = document.getElementById(`video-${id}`);
+            if (!v) return;
+            if (v.paused) v.play().catch(() => {});
+            else v.pause();
+            // Always show controls on tap; auto-hide will reschedule via onplay
+            showVideoControls(id, 'group');
         });
 
         p.addEventListener('mouseenter', () => showVideoControls(id, 'group'));
@@ -4302,13 +4304,11 @@ function playHomeVideo(id, url) {
 
         p.addEventListener('click', (e) => {
             if (e.target.closest('button, input, .video-controls, .progress-bar, .volume-slider')) return;
-            const cardEl = document.getElementById(`hm-video-wrapper-${id}`)?.closest('.content-card');
-            if (!cardEl) return;
-            if (cardEl.classList.contains('controls-hidden')) showVideoControls(id, 'home');
-            else {
-                clearTimeout(cardEl._hideTimer);
-                cardEl.classList.add('controls-hidden');
-            }
+            const v = document.getElementById(`hm-video-${id}`);
+            if (!v) return;
+            if (v.paused) v.play().catch(() => {});
+            else v.pause();
+            showVideoControls(id, 'home');
         });
 
         p.addEventListener('mouseenter', () => showVideoControls(id, 'home'));
@@ -4334,6 +4334,33 @@ function seekHomeVideo(e, id) {
     const x = (e.clientX - r.left) / r.width;
     const v = document.getElementById(`hm-video-${id}`);
     if (v && v.duration) v.currentTime = Math.max(0, Math.min(x * v.duration, v.duration));
+}
+
+function seekHomeVideo(e, id) {
+    const b = e.currentTarget; const r = b.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width;
+    const v = document.getElementById(`hm-video-${id}`);
+    if (v && v.duration) v.currentTime = Math.max(0, Math.min(x * v.duration, v.duration));
+}
+
+function setHomeVolume(id, val) {
+    const v = document.getElementById(`hm-video-${id}`);
+    if (v) v.volume = parseFloat(val);
+}
+function toggleHomeFullscreen(id) {
+    const v = document.getElementById(`hm-video-${id}`);
+    if (!v) return;
+    if (document.fullscreenElement) { document.exitFullscreen(); return; }
+    if (v.requestFullscreen) { v.requestFullscreen().catch(() => {}); return; }
+    if (v.webkitEnterFullscreen) { v.webkitEnterFullscreen(); return; }
+    if (v.webkitRequestFullscreen) { v.webkitRequestFullscreen(); return; }
+}
+function changeHomeSpeed(id, btn) {
+    const v = document.getElementById(`hm-video-${id}`); if (!v) return;
+    const s = [0.5, 0.75, 1, 1.25, 1.5, 2];
+    let c = parseFloat(btn.textContent); let i = s.indexOf(c); if (i === -1) i = 2;
+    const n = s[(i + 1) % s.length];
+    v.playbackRate = n; btn.textContent = n + 'x';
 }
 function closeHomeVideo(id) {
     const p = document.getElementById(`hm-video-player-${id}`);
