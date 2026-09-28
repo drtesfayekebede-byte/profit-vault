@@ -33,7 +33,7 @@
     --font-scale: 1;
 }
 [data-theme="dark"] {
-    --navy: #0f1419; --navy-light: #1a2028; --navy-lighter: #232c38;
+    --navy: #0a2540; --navy-light: #153e60; --navy-lighter: #1c4a72;
     --bg-white: #0a0e13; --text-dark: #e2e8f0; --text-muted: #94a3b8; --text-light: #ffffff;
     --card-bg: rgba(255,255,255,0.04); --card-border: rgba(255,255,255,0.08);
     --card-hover: rgba(255,255,255,0.08);
@@ -117,10 +117,6 @@ html, body {
 @keyframes confettiFall {
     0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
     100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
-}
-@keyframes shimmer {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
 }
 .spinner {
     display: inline-block; width: 24px; height: 24px;
@@ -503,35 +499,48 @@ html, body {
 .class-content { display: none; }
 .class-content.active { display: block; }
 
+.media-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+}
+@media (min-width: 700px) { .media-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; } }
+
 .yt-layout {
+    display: block;
+    width: 100%;
+}
+.yt-layout.split {
     display: grid;
     grid-template-columns: 1fr;
     gap: 16px;
-    width: 100%;
 }
 @media (min-width: 900px) {
     .yt-layout.split {
-        grid-template-columns: 30% 1fr;
+        grid-template-columns: 1fr 30%;
     }
 }
 .yt-list-col {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    order: 2;
     min-width: 0;
 }
 .yt-player-col {
-    order: 1;
     min-width: 0;
-}
-@media (min-width: 900px) {
-    .yt-list-col { order: 1; }
-    .yt-player-col { order: 2; }
-}
-
-.yt-big-player {
     display: none;
+}
+.yt-layout.split .yt-player-col { display: block; }
+@media (min-width: 900px) {
+    .yt-layout.split .yt-player-col { order: 0; }
+    .yt-layout.split .yt-list-col { order: 1; }
+}
+.yt-layout.split .yt-list-col { display: block; }
+.yt-layout.split .yt-grid-wrapper { display: none; }
+
+.yt-player-col {
+    position: sticky;
+    top: 0;
+}
+.yt-big-player {
+    display: block;
     background: #000;
     border-radius: 12px;
     overflow: hidden;
@@ -540,7 +549,6 @@ html, body {
     aspect-ratio: 16 / 9;
     margin-bottom: 12px;
 }
-.yt-big-player.active { display: block; }
 .yt-big-player .player-close {
     position: absolute;
     top: 10px;
@@ -606,14 +614,12 @@ html, body {
     font-weight: 800; cursor: pointer;
 }
 .yt-big-info {
-    display: none;
     background: var(--bg-white);
     border: 1px solid var(--card-border);
     border-radius: 12px;
     padding: 14px 16px;
     margin-bottom: 12px;
 }
-.yt-big-info.active { display: block; }
 .yt-big-title {
     font-size: 20px;
     font-weight: 900;
@@ -656,19 +662,6 @@ html, body {
     color: var(--teal); font-weight: 800; cursor: pointer;
     font-size: 13px; margin-bottom: 12px; display: inline-block;
 }
-.yt-big-actions {
-    display: flex;
-    flex-wrap: nowrap;
-    align-items: center;
-    gap: 6px;
-    padding-top: 12px;
-    border-top: 1px solid var(--card-border);
-    overflow-x: auto;
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
-}
-.yt-big-actions::-webkit-scrollbar { display: none; }
-.yt-big-actions > * { flex-shrink: 0; }
 
 .video-list {
     display: flex;
@@ -696,7 +689,7 @@ html, body {
     box-shadow: 0 0 0 2px rgba(239,68,68,0.25);
 }
 .video-list-thumb {
-    width: 120px;
+    width: 130px;
     aspect-ratio: 16 / 9;
     border-radius: 8px;
     background: #1a1a2e;
@@ -753,13 +746,6 @@ html, body {
     .video-list-thumb { width: 140px; }
     .video-list-title { font-size: 14px; }
 }
-
-.media-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 14px;
-}
-@media (min-width: 600px) { .media-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; } }
 
 .media-card {
     background: var(--bg-white);
@@ -860,163 +846,6 @@ html, body {
     font-weight: 900;
     margin-top: 4px;
 }
-.media-card-actions {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin-top: 10px;
-    padding-top: 10px;
-    border-top: 1px solid var(--card-border);
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
-}
-.media-card-actions::-webkit-scrollbar { display: none; }
-.media-card-actions > * { flex-shrink: 0; }
-.media-card-actions .btn-sm { flex: 1; padding: 8px 10px; min-width: 60px; }
-
-.action-btn {
-    background: none;
-    border: none;
-    color: var(--text-muted);
-    font-size: 14px;
-    font-weight: 700;
-    padding: 6px 8px;
-    border-radius: 20px;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-    transition: 0.15s;
-    flex-shrink: 0;
-    min-width: 32px;
-    min-height: 32px;
-}
-.action-btn:hover { background: var(--card-hover); color: var(--navy); }
-[data-theme="dark"] .action-btn:hover { color: var(--gold); }
-.action-btn.liked { color: var(--red-error); }
-.action-btn.disliked { color: var(--text-dark); }
-.action-btn .action-count { font-size: 12px; }
-.action-btn.gift-btn {
-    background: linear-gradient(135deg, #FFD700, #ccac00);
-    color: #1e293b;
-    padding: 6px 12px;
-    font-weight: 900;
-    min-width: 40px;
-}
-.action-btn.gift-btn:hover { transform: scale(1.05); background: linear-gradient(135deg, #ffdf2b, #d4b400); }
-.action-btn.join-btn {
-    background: linear-gradient(135deg, #20b2aa, #008080);
-    color: white;
-    padding: 6px 12px;
-    font-weight: 900;
-    min-width: 40px;
-}
-.action-btn.join-btn:hover { transform: scale(1.05); }
-.action-btn.join-btn.joined {
-    background: var(--green-success);
-    cursor: default;
-}
-.action-btn.open-group-btn {
-    background: var(--navy);
-    color: white;
-    padding: 6px 12px;
-    font-weight: 900;
-    min-width: 40px;
-}
-.action-btn.open-group-btn:hover { background: var(--navy-light); transform: scale(1.05); }
-[data-theme="dark"] .action-btn.open-group-btn {
-    background: var(--navy-lighter);
-}
-@media (max-width: 500px) {
-    .action-btn { padding: 6px 4px; font-size: 16px; min-width: 28px; }
-    .action-btn .action-count { display: none; }
-    .action-btn.gift-btn,
-    .action-btn.join-btn,
-    .action-btn.open-group-btn {
-        padding: 6px 8px;
-        min-width: 32px;
-    }
-    .action-btn.gift-btn .label,
-    .action-btn.join-btn .label,
-    .action-btn.open-group-btn .label { display: none; }
-}
-
-.gift-btn-mini {
-    background: linear-gradient(135deg, #FFD700, #ccac00);
-    color: #1e293b;
-    border: none;
-    border-radius: 20px;
-    min-width: 36px;
-    height: 36px;
-    padding: 0 12px;
-    font-size: 14px;
-    font-weight: 900;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-    cursor: pointer;
-    transition: transform 0.15s;
-    flex-shrink: 0;
-}
-.gift-btn-mini:hover { transform: scale(1.05); }
-.gift-btn-mini:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-@media (max-width: 500px) {
-    .gift-btn-mini { padding: 0; min-width: 32px; height: 32px; font-size: 16px; }
-}
-
-.gifts-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    padding: 6px 0;
-}
-.gift-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 3px;
-    background: rgba(255,215,0,0.15);
-    border: 1px solid rgba(255,215,0,0.4);
-    color: var(--text-dark);
-    border-radius: 12px;
-    padding: 2px 8px;
-    font-size: 11px;
-    font-weight: 800;
-}
-.gift-chip.legendary {
-    background: linear-gradient(135deg, #8b5cf6, #ec4899);
-    color: white;
-    border: none;
-}
-.gift-chip.ultimate {
-    background: linear-gradient(135deg, #FFD700, #ff8c00);
-    color: #1e293b;
-    border: 2px solid #ccac00;
-    animation: pulse 2s infinite;
-}
-.gift-chip.teni {
-    background: linear-gradient(135deg, #FFD700, #8b5cf6, #06b6d4);
-    color: white;
-    border: 2px solid #FFD700;
-    animation: pulse 1.5s infinite;
-    font-weight: 900;
-    box-shadow: 0 0 12px rgba(255,215,0,0.6);
-}
-.top-gifter-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    background: linear-gradient(135deg, #FFD700, #ccac00);
-    color: #1e293b;
-    border-radius: 12px;
-    padding: 3px 10px;
-    font-size: 11px;
-    font-weight: 900;
-    margin-top: 6px;
-}
 
 .content-card {
     background: var(--card-bg);
@@ -1027,6 +856,7 @@ html, body {
     transition: all 0.3s ease;
     position: relative;
 }
+.content-card:hover { background: var(--card-hover); box-shadow: var(--shadow-sm); }
 .content-card-menu-btn {
     position: absolute; top: 8px; right: 8px;
     background: rgba(0,0,0,0.55); color: white; border: none;
@@ -1194,6 +1024,94 @@ html, body {
 [data-theme="dark"] .meta-info { color: #94a3b8; }
 [data-theme="dark"] .meta-info .meta-group { color: #cbd5e1; }
 
+.action-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 10px 0 0 0;
+    margin-top: 10px;
+    border-top: 1px solid var(--card-border);
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+}
+.action-row::-webkit-scrollbar { display: none; }
+.action-row > * { flex-shrink: 0; }
+
+.action-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 14px;
+    font-weight: 700;
+    padding: 5px 7px;
+    border-radius: 20px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    transition: 0.15s;
+    min-height: 30px;
+}
+.action-btn:hover { background: var(--card-hover); color: var(--navy); }
+[data-theme="dark"] .action-btn:hover { color: var(--gold); }
+.action-btn.liked { color: var(--red-error); }
+.action-btn.disliked { color: var(--text-dark); }
+.action-btn .action-count { font-size: 12px; font-weight: 800; }
+.action-btn.join-btn.joined { color: var(--green-success); cursor: default; }
+
+.gifts-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 6px 0;
+}
+.gift-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    background: rgba(255,215,0,0.15);
+    border: 1px solid rgba(255,215,0,0.4);
+    color: var(--text-dark);
+    border-radius: 12px;
+    padding: 2px 8px;
+    font-size: 11px;
+    font-weight: 800;
+}
+.gift-chip.legendary {
+    background: linear-gradient(135deg, #8b5cf6, #ec4899);
+    color: white;
+    border: none;
+}
+.gift-chip.ultimate {
+    background: linear-gradient(135deg, #FFD700, #ff8c00);
+    color: #1e293b;
+    border: 2px solid #ccac00;
+    animation: pulse 2s infinite;
+}
+.gift-chip.teni {
+    background: linear-gradient(135deg, #FFD700, #8b5cf6, #06b6d4);
+    color: white;
+    border: 2px solid #FFD700;
+    animation: pulse 1.5s infinite;
+    font-weight: 900;
+    box-shadow: 0 0 12px rgba(255,215,0,0.6);
+}
+.top-gifter-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: linear-gradient(135deg, #FFD700, #ccac00);
+    color: #1e293b;
+    border-radius: 12px;
+    padding: 3px 10px;
+    font-size: 11px;
+    font-weight: 900;
+    margin-top: 6px;
+}
+
 .content-comments { margin-top: 12px; display: none; padding: 8px 0; }
 .comment-item { padding: 10px 0; border-bottom: 1px solid var(--card-border); position: relative; }
 .comment-item:last-child { border-bottom: none; }
@@ -1219,7 +1137,6 @@ html, body {
 .comment-input-wrapper { display: flex; gap: 8px; margin-top: 8px; }
 .comment-input-wrapper input { flex: 1; padding: 10px 14px; border: 1px solid var(--card-border); border-radius: 20px; font-weight: 700; font-size: 14px; color: var(--text-dark); background: var(--bg-white); }
 .comment-input-wrapper button { background: var(--teal); color: white; border: none; padding: 10px 18px; border-radius: 20px; font-weight: 800; cursor: pointer; }
-.long-text-body { white-space: pre-wrap; word-wrap: break-word; }
 .read-more-toggle { color: var(--teal); cursor: pointer; font-weight: 800; margin-left: 4px; }
 
 .exam-toggle { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
@@ -1768,24 +1685,12 @@ html, body {
 .deep-link-highlight { box-shadow: 0 0 0 3px var(--gold), 0 8px 24px rgba(255,215,0,0.3) !important; transition: box-shadow 0.3s; border-radius: 12px; }
 
 .gift-picker-modal .modal-content { max-width: 640px; margin: 0 auto; }
-.gift-picker-title {
-    text-align: center; margin-bottom: 8px;
-    color: var(--text-dark); font-size: 22px; font-weight: 900;
-}
-.gift-picker-balance {
-    text-align: center; font-size: 14px; font-weight: 800;
-    color: var(--gold-dark); margin-bottom: 20px;
-}
-.gift-tier-title {
-    font-size: 13px; font-weight: 900; color: var(--text-muted);
-    text-transform: uppercase; letter-spacing: 1px;
-    margin: 16px 0 10px;
-}
+.gift-picker-title { text-align: center; margin-bottom: 8px; color: var(--text-dark); font-size: 22px; font-weight: 900; }
+.gift-picker-balance { text-align: center; font-size: 14px; font-weight: 800; color: var(--gold-dark); margin-bottom: 20px; }
+.gift-tier-title { font-size: 13px; font-weight: 900; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin: 16px 0 10px; }
 .gift-tier-title.t-ultimate { color: #b45309; }
 .gift-tier-title.t-legendary { color: #7c3aed; }
-.gift-grid {
-    display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
-}
+.gift-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
 @media (min-width: 500px) { .gift-grid { grid-template-columns: repeat(5, 1fr); } }
 @media (min-width: 700px) { .gift-grid { grid-template-columns: repeat(6, 1fr); } }
 .gift-tile {
@@ -1798,67 +1703,25 @@ html, body {
     position: relative;
 }
 .gift-tile:hover { transform: translateY(-3px); border-color: var(--teal); }
-.gift-tile.legendary {
-    border-color: #a78bfa;
-    background: linear-gradient(135deg, rgba(139,92,246,0.08), rgba(236,72,153,0.08));
-}
-.gift-tile.ultimate {
-    border-color: #ccac00;
-    background: linear-gradient(135deg, rgba(255,215,0,0.12), rgba(255,140,0,0.08));
-    box-shadow: 0 0 12px rgba(255,215,0,0.3);
-}
-.gift-tile.teni {
-    border-color: #FFD700;
-    background: linear-gradient(135deg, rgba(255,215,0,0.2), rgba(139,92,246,0.15), rgba(6,182,212,0.15));
-    animation: pulse 2s infinite;
-    box-shadow: 0 0 18px rgba(255,215,0,0.5);
-}
+.gift-tile.legendary { border-color: #a78bfa; background: linear-gradient(135deg, rgba(139,92,246,0.08), rgba(236,72,153,0.08)); }
+.gift-tile.ultimate { border-color: #ccac00; background: linear-gradient(135deg, rgba(255,215,0,0.12), rgba(255,140,0,0.08)); box-shadow: 0 0 12px rgba(255,215,0,0.3); }
+.gift-tile.teni { border-color: #FFD700; background: linear-gradient(135deg, rgba(255,215,0,0.2), rgba(139,92,246,0.15), rgba(6,182,212,0.15)); animation: pulse 2s infinite; box-shadow: 0 0 18px rgba(255,215,0,0.5); }
 .gift-tile-emoji { font-size: 30px; line-height: 1; margin-bottom: 4px; }
-.gift-tile-name {
-    font-size: 10px; font-weight: 800; color: var(--text-dark);
-    line-height: 1.1; margin-bottom: 2px;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    max-width: 100%;
-}
-.gift-tile-cost {
-    font-size: 10px; font-weight: 900; color: var(--gold-dark);
-    display: flex; align-items: center; gap: 2px;
-}
+.gift-tile-name { font-size: 10px; font-weight: 800; color: var(--text-dark); line-height: 1.1; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.gift-tile-cost { font-size: 10px; font-weight: 900; color: var(--gold-dark); display: flex; align-items: center; gap: 2px; }
 .gift-tile.disabled { opacity: 0.4; cursor: not-allowed; }
 .gift-tile.disabled:hover { transform: none; }
 .gift-confirm-emoji { font-size: 72px; text-align: center; margin: 20px 0; line-height: 1; }
 .gift-confirm-name { text-align: center; font-size: 22px; font-weight: 900; color: var(--text-dark); margin-bottom: 6px; }
 .gift-confirm-cost { text-align: center; font-size: 18px; font-weight: 900; color: var(--gold-dark); margin-bottom: 20px; }
-.gift-confirm-warn {
-    text-align: center; font-size: 13px; font-weight: 700;
-    color: var(--red-error); margin-bottom: 20px;
-    background: rgba(239,68,68,0.08); padding: 10px; border-radius: 10px;
-}
-.gift-confirm-input-label {
-    font-size: 13px; font-weight: 800; text-align: center;
-    margin-bottom: 8px; color: var(--text-dark);
-}
+.gift-confirm-warn { text-align: center; font-size: 13px; font-weight: 700; color: var(--red-error); margin-bottom: 20px; background: rgba(239,68,68,0.08); padding: 10px; border-radius: 10px; }
+.gift-confirm-input-label { font-size: 13px; font-weight: 800; text-align: center; margin-bottom: 8px; color: var(--text-dark); }
 .gift-confirm-input { text-align: center; font-weight: 900 !important; letter-spacing: 4px; }
 
-.gift-fly {
-    position: fixed; pointer-events: none; z-index: 999999;
-    font-size: 40px; animation: giftFlyUp 1s ease-out forwards;
-}
-.teni-burst {
-    position: fixed; inset: 0; pointer-events: none; z-index: 999999;
-    display: flex; align-items: center; justify-content: center;
-}
-.teni-burst-emoji {
-    font-size: 120px; line-height: 1;
-    animation: teniBurst 1.5s ease-out;
-    filter: drop-shadow(0 0 40px rgba(255,215,0,0.9));
-}
-.confetti-piece {
-    position: fixed; top: 0; left: 0;
-    width: 10px; height: 10px;
-    z-index: 999998; pointer-events: none;
-    animation: confettiFall 2s linear forwards;
-}
+.gift-fly { position: fixed; pointer-events: none; z-index: 999999; font-size: 40px; animation: giftFlyUp 1s ease-out forwards; }
+.teni-burst { position: fixed; inset: 0; pointer-events: none; z-index: 999999; display: flex; align-items: center; justify-content: center; }
+.teni-burst-emoji { font-size: 120px; line-height: 1; animation: teniBurst 1.5s ease-out; filter: drop-shadow(0 0 40px rgba(255,215,0,0.9)); }
+.confetti-piece { position: fixed; top: 0; left: 0; width: 10px; height: 10px; z-index: 999998; pointer-events: none; animation: confettiFall 2s linear forwards; }
 
 #banScreen {
     position: fixed; inset: 0;
@@ -1936,6 +1799,10 @@ html, body {
     .admin-tab-btn .admin-tab-label { font-size: 10px; }
     .gift-grid { grid-template-columns: repeat(4, 1fr); gap: 8px; }
     .gift-tile-emoji { font-size: 26px; }
+}
+@media (max-width: 500px) {
+    .action-btn { padding: 4px 4px; font-size: 13px; min-height: 28px; gap: 2px; }
+    .action-btn .action-count { font-size: 11px; }
 }
 @media (min-width: 601px) {
     .app-main { padding: 24px; }
@@ -2073,8 +1940,10 @@ html, body {
                 <button class="tab-card ppt" onclick="switchGroupTab('ppts', this)">PPT</button>
                 <button class="tab-card exam" onclick="switchGroupTab('mockexam', this)">Exam</button>
             </div>
+
             <div id="videos" class="class-content active">
                 <div class="yt-layout" id="groupVideosLayout">
+                    <div class="yt-grid-wrapper" id="groupVideosGrid"></div>
                     <div class="yt-list-col" id="groupVideosList"><div class="video-list"></div></div>
                     <div class="yt-player-col" id="groupVideosPlayer">
                         <div class="yt-big-player" id="groupBigPlayer"></div>
@@ -2197,7 +2066,7 @@ html, body {
             </div>
             <div class="settings-section">
                 <h3>ℹ️ About</h3>
-                <div class="settings-row"><div class="settings-label">Version</div><div class="settings-value">7.1.0</div></div>
+                <div class="settings-row"><div class="settings-label">Version</div><div class="settings-value">7.2.0</div></div>
             </div>
             <div class="settings-section" style="border-color:rgba(239,68,68,0.3);">
                 <h3 style="color:var(--red-error);">⚠️ Danger Zone</h3>
@@ -2692,6 +2561,7 @@ const AppState = {
     coinBalance: 0, groups: [],
     currentGroupId: null, currentGroupName: null,
     currentGroupOwnerId: null, isGroupOwner: false,
+    currentGroupFollowers: 0,
     profilePicUrl: 'https://ogtlaffkybpesaxastvx.supabase.co/storage/v1/object/public/app-assets/1780156694418.png',
     currentTrendingTab: 'video',
     firstName: '', middleName: '', lastName: '',
@@ -2731,19 +2601,14 @@ const AppState = {
     adminContentSelection: new Set(),
     navStack: [],
     _suppressPopstate: false,
-    videoSplitActive: false,
-    videoSplitKind: null,
-    videoSplitSelected: null,
-    videoSplitItems: [],
-    videoSplitGroupId: null,
-    videoSplitRendered: false
+    videoSplit: { group: { items: [], selected: null, active: false }, home: { items: [], selected: null, active: false } }
 };
 
 const VIEW_THRESHOLDS = { video: 10, exam: 3 };
 const VIEW_DEBOUNCE_MS = 30000;
 const CONTENT_TABLE_MAP = { video: 'group_content', ppt: 'group_content', exam: 'mock_exams', book: 'bstore_books' };
 const GROUP_TAB_MAP = { video: 'videos', videos: 'videos', ppt: 'ppts', ppts: 'ppts', exam: 'mockexam', mockexam: 'mockexam', book: 'books', books: 'books' };
-const GROUP_JOINED_CACHE = new Map();
+const JOINED_CACHE = new Map();
 
 function showToast(msg, type = 'success') {
     const toast = document.getElementById('toast');
@@ -2777,6 +2642,12 @@ function formatTime(seconds) {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins}:${String(secs).padStart(2, '0')}`;
+}
+function formatCount(n) {
+    n = Number(n) || 0;
+    if (n < 1000) return String(n);
+    if (n < 1000000) return (n / 1000).toFixed(n < 10000 ? 1 : 0).replace(/\.0$/, '') + 'k';
+    return (n / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
 }
 function formatInboxTime(d) {
     const now = new Date();
@@ -2835,11 +2706,6 @@ function getDisplayName(user) {
 }
 function buildVerificationBadge() {
     return ' <span class="verification-badge"><span class="star">★</span></span>';
-}
-function truncateText(text, maxLength = 150) {
-    const full = String(text || '');
-    if (full.length <= maxLength) return { display: full, truncated: false };
-    return { display: full.substring(0, maxLength) + '…', truncated: true };
 }
 function toggleMetaDescription(el) {
     const desc = el.previousElementSibling;
@@ -2924,26 +2790,26 @@ async function getGroupsCached(force = false) {
         return data || [];
     } catch (e) { return [...AppState.groupCache.values()]; }
 }
-function invalidateGroupCache() { AppState.groupCache.clear(); AppState.groupCacheAt = 0; GROUP_JOINED_CACHE.clear(); }
+function invalidateGroupCache() { AppState.groupCache.clear(); AppState.groupCacheAt = 0; JOINED_CACHE.clear(); }
 
 async function fetchJoinedGroups(userId, groupIds) {
     const out = new Set();
     if (!userId || !groupIds?.length) return out;
-    const uncached = groupIds.filter(id => !GROUP_JOINED_CACHE.has(`${userId}:${id}`));
+    const uncached = groupIds.filter(id => !JOINED_CACHE.has(`${userId}:${id}`));
     if (uncached.length) {
         try {
             const { data } = await sb.from('group_subscriptions').select('group_id').eq('user_id', userId).in('group_id', uncached);
             const joined = new Set((data || []).map(d => d.group_id));
-            uncached.forEach(id => GROUP_JOINED_CACHE.set(`${userId}:${id}`, joined.has(id)));
+            uncached.forEach(id => JOINED_CACHE.set(`${userId}:${id}`, joined.has(id)));
         } catch (e) {}
     }
     groupIds.forEach(id => {
-        if (GROUP_JOINED_CACHE.get(`${userId}:${id}`) === true) out.add(id);
+        if (JOINED_CACHE.get(`${userId}:${id}`) === true) out.add(id);
     });
     return out;
 }
 function markGroupJoined(userId, groupId, joined) {
-    GROUP_JOINED_CACHE.set(`${userId}:${groupId}`, joined);
+    JOINED_CACHE.set(`${userId}:${groupId}`, joined);
 }
 
 function closeOpenMenu() {
@@ -3027,7 +2893,8 @@ function performBack() {
     if (AppState.openMenuEl) { closeOpenMenu(); return true; }
     const activeModal = document.querySelector('.modal.active');
     if (activeModal) { activeModal.classList.remove('active'); return true; }
-    if (AppState.videoSplitActive) { closeVideoSplit(); return true; }
+    if (AppState.videoSplit.group.active) { closeVideoSplit('group'); return true; }
+    if (AppState.videoSplit.home.active) { closeVideoSplit('home'); return true; }
     if (document.getElementById('chatOverlay')?.classList.contains('open')) { closeChat(); return true; }
     if (document.getElementById('inboxOverlay')?.classList.contains('open')) { closeInbox(); return true; }
     if (document.getElementById('membersOverlay')?.classList.contains('open')) { closeMembers(); return true; }
@@ -3066,7 +2933,8 @@ function headerMessagesClick(event) { event?.stopPropagation(); openInbox(); }
 function goToHome() {
     stopExamTimer(); closeOpenMenu(); closeAllVideos();
     stopHeartbeat();
-    closeVideoSplit();
+    closeVideoSplit('group');
+    closeVideoSplit('home');
     const appMain = document.getElementById('appMain');
     const wrapper = document.getElementById('tabContentWrapper');
     if (appMain) appMain.style.display = 'block';
@@ -3077,7 +2945,8 @@ function goToHome() {
 }
 function openTabContent(tabId, specificGroupId = null) {
     stopExamTimer(); closeOpenMenu(); closeAllVideos();
-    closeVideoSplit();
+    closeVideoSplit('group');
+    closeVideoSplit('home');
     const appMain = document.getElementById('appMain');
     const wrapper = document.getElementById('tabContentWrapper');
     const container = document.getElementById('tabContentContainer');
@@ -3125,6 +2994,7 @@ function updateGroupUI(group) {
     AppState.currentGroupName = group.name;
     AppState.currentGroupOwnerId = group.owner_id;
     AppState.isGroupOwner = group.owner_id === AppState.userId;
+    AppState.currentGroupFollowers = group.followers || 0;
 
     loadGroupContent(group.id, 'videos');
     loadGroupBooks(group.id);
@@ -3222,7 +3092,7 @@ function joinLiveBanner() {
 
 async function loadGroupContent(groupId, contentType) {
     if (!groupId) return;
-    if (contentType === 'videos') { await loadGroupVideosYouTube(groupId); return; }
+    if (contentType === 'videos') { await loadGroupVideos(groupId); return; }
     let gridEl;
     if (contentType === 'mockexam') gridEl = document.getElementById('examsGrid');
     else if (contentType === 'ppts') gridEl = document.getElementById('pptsGrid');
@@ -3240,12 +3110,12 @@ async function loadGroupContent(groupId, contentType) {
         const { likedSet, dislikedSet } = await fetchLikeState(filterType, visible.map(v => String(v.id)));
         const giftTotals = await fetchGiftTotals(filterType, visible.map(v => String(v.id)));
         const joinedSet = AppState.userId ? await fetchJoinedGroups(AppState.userId, [groupId]) : new Set();
+        const group = AppState.groupCache.get(groupId) || { id: groupId, name: AppState.currentGroupName };
         const isJoined = joinedSet.has(groupId);
         gridEl.innerHTML = visible.map(item => renderPptCard({
-            item, variant: 'group',
+            item, group,
             isLiked: likedSet.has(String(item.id)),
             isDisliked: dislikedSet.has(String(item.id)),
-            group: AppState.groupCache.get(item.group_id) || { name: AppState.currentGroupName, id: groupId },
             giftTotals: giftTotals[item.id] || null,
             isJoined,
             isOwner: AppState.isGroupOwner
@@ -3296,49 +3166,49 @@ function buildGiftChipsHtml(giftTotals) {
     return chips ? `<div class="gifts-row">${chips}</div>` : '';
 }
 
-function buildActionRow({ contentType, contentId, likes, dislikes, comments, shares, views, isLiked, isDisliked, groupId, isOwner, isJoined, table = 'group_content' }) {
+function buildActionRow({ contentType, contentId, likes, dislikes, comments, views, isLiked, isDisliked, groupId, isOwner, isJoined, followerCount }) {
     const joined = !!isJoined;
     const owner = !!isOwner;
-    return `<div class="media-card-actions" data-actions-for="${contentType}:${contentId}">
-        <button class="action-btn ${isLiked ? 'liked' : ''}" data-action="like"><i class="fas fa-heart"></i> <span class="action-count">${likes || 0}</span></button>
-        <button class="action-btn ${isDisliked ? 'disliked' : ''}" data-action="dislike"><i class="fas fa-heart-broken"></i> <span class="action-count">${dislikes || 0}</span></button>
-        <button class="action-btn" data-action="toggle-comments"><i class="fas fa-comment"></i> <span class="action-count">${comments || 0}</span></button>
-        <button class="action-btn" data-action="share"><i class="fas fa-share"></i> <span class="action-count">${shares || 0}</span></button>
-        <button class="action-btn" data-action="download"><i class="fas fa-download"></i></button>
-        <button class="action-btn" data-action="noop"><i class="fas fa-eye"></i> <span class="action-count" data-view-id="${table}-${contentId}" data-views="${views || 0}">${views || 0}</span></button>
-        <button class="action-btn gift-btn" data-action="open-gift"><span class="gift-emoji">🎁</span> <span class="label">Gift</span></button>
+    const followers = followerCount || 0;
+    return `<div class="action-row" data-actions-for="${contentType}:${contentId}">
+        <button class="action-btn ${isLiked ? 'liked' : ''}" data-action="like"><i class="fas fa-heart"></i> <span class="action-count">${formatCount(likes || 0)}</span></button>
+        <button class="action-btn ${isDisliked ? 'disliked' : ''}" data-action="dislike"><i class="fas fa-heart-broken"></i> <span class="action-count">${formatCount(dislikes || 0)}</span></button>
+        <button class="action-btn" data-action="toggle-comments"><i class="fas fa-comment"></i> <span class="action-count">${formatCount(comments || 0)}</span></button>
+        <button class="action-btn" data-action="noop"><i class="fas fa-eye"></i> <span class="action-count" data-view-id="${contentType === 'exam' ? 'mock_exams' : (contentType === 'book' ? 'bstore_books' : 'group_content')}-${contentId}" data-views="${views || 0}">${formatCount(views || 0)}</span></button>
         ${!owner ? (joined
-            ? `<button class="action-btn join-btn joined" data-action="noop" disabled>✅ <span class="label">Joined</span></button>`
-            : `<button class="action-btn join-btn" data-action="join-group" data-group-id="${groupId}">➕ <span class="label">Join</span></button>`
+            ? `<button class="action-btn join-btn joined" data-action="noop" disabled><i class="fas fa-check"></i> <span class="action-count">${formatCount(followers)}</span></button>`
+            : `<button class="action-btn join-btn" data-action="join-group" data-group-id="${groupId}"><i class="fas fa-plus"></i> <span class="action-count">${formatCount(followers)}</span></button>`
         ) : ''}
-        <button class="action-btn open-group-btn" data-action="open-group" data-group-id="${groupId}">➡️ <span class="label">Open</span></button>
+        <button class="action-btn" data-action="open-gift"><i class="fas fa-gift"></i></button>
+        <button class="action-btn" data-action="open-group" data-group-id="${groupId}"><i class="fas fa-arrow-right"></i></button>
     </div>`;
 }
 
-function renderVideoCard({ item, variant, group, giftTotals, isJoined, isOwner }) {
+function renderVideoCard({ item, group, isJoined, isOwner, followerCount }) {
     const idStr = String(item.id);
     const key = `video:${idStr}`;
     const thumbUrl = item.thumbnail_url || item.cover_url || '';
     const fileUrl = item.file_url || '';
-    const groupName = group?.name || AppState.currentGroupName || '';
-    const groupId = group?.id || AppState.currentGroupId;
-    const timeAgo = formatRelativeTime(item.created_at);
+    const giftTotals = item._giftTotals || null;
+    const isLiked = item._isLiked || false;
+    const isDisliked = item._isDisliked || false;
     const giftChips = buildGiftChipsHtml(giftTotals);
     const topGifterId = giftTotals?.top ? Object.entries(giftTotals.top).sort((a, b) => b[1] - a[1])[0]?.[0] : null;
     const showTopGifter = giftTotals && giftTotals.total >= 1000 && topGifterId;
-    return `<div class="content-card" id="${variant}-video-item-${idStr}" data-content-key="${key}" data-content-type="video" data-content-id="${idStr}" data-file-url="${escapeAttr(fileUrl)}" style="padding:0;">
+    const groupId = group?.id || AppState.currentGroupId;
+    return `<div class="content-card" id="group-video-item-${idStr}" data-content-key="${key}" data-content-type="video" data-content-id="${idStr}" data-file-url="${escapeAttr(fileUrl)}" style="padding:0;">
         <button class="content-card-menu-btn" data-action="menu">⋮</button>
-        <div class="video-wrapper" id="${variant}-video-wrapper-${idStr}" data-kind="${variant}">
-            <div class="video-thumbnail" id="${variant}-thumbnail-${idStr}" data-action="play-video">
+        <div class="video-wrapper" id="group-video-wrapper-${idStr}" data-kind="group">
+            <div class="video-thumbnail" id="group-thumbnail-${idStr}" data-action="play-video">
                 ${thumbUrl ? `<img src="${escapeAttr(thumbUrl)}" alt="" loading="lazy" decoding="async">` : `<div style="position:absolute; inset:0; background:#1a1a2e; display:flex; align-items:center; justify-content:center; font-size:48px; color:var(--gold);">🎬</div>`}
                 <div class="play-btn-overlay"><span>▶️</span></div>
             </div>
-            <div id="${variant}-video-player-${idStr}" style="display:none; position:absolute; inset:0; background:#000; z-index:2;">
-                <video id="${variant}-video-${idStr}" playsinline preload="metadata"></video>
+            <div id="group-video-player-${idStr}" style="display:none; position:absolute; inset:0; background:#000; z-index:2;">
+                <video id="group-video-${idStr}" playsinline preload="metadata"></video>
                 <div class="video-controls">
                     <button data-action="toggle-play">⏸️</button>
-                    <div class="progress-bar" data-action="seek"><div class="progress-fill" id="${variant}-progressFill-${idStr}"></div></div>
-                    <span class="time-display" id="${variant}-timeDisplay-${idStr}">0:00 / 0:00</span>
+                    <div class="progress-bar" data-action="seek"><div class="progress-fill" id="group-progressFill-${idStr}"></div></div>
+                    <span class="time-display" id="group-timeDisplay-${idStr}">0:00 / 0:00</span>
                     <input type="range" class="volume-slider" min="0" max="1" step="0.1" value="1" data-action="volume">
                     <button data-action="fullscreen">⛶</button>
                     <button class="speed-control" data-action="speed">1x</button>
@@ -3351,9 +3221,9 @@ function renderVideoCard({ item, variant, group, giftTotals, isJoined, isOwner }
         ${buildActionRow({
             contentType: 'video', contentId: idStr,
             likes: item.likes, dislikes: item.dislikes,
-            comments: item.comment_count, shares: item.share_count,
-            views: item.views, isLiked: false, isDisliked: false,
-            groupId, isOwner, isJoined, table: 'group_content'
+            comments: item.comment_count,
+            views: item.views, isLiked, isDisliked,
+            groupId, isOwner, isJoined, followerCount
         })}
         ${giftChips}
         ${showTopGifter ? `<div class="gifts-row"><span class="top-gifter-badge">🏆 Top Gifter</span></div>` : ''}
@@ -3367,18 +3237,18 @@ function renderVideoCard({ item, variant, group, giftTotals, isJoined, isOwner }
     </div>`;
 }
 
-function renderPptCard({ item, variant, group, isLiked, isDisliked, giftTotals, isJoined, isOwner }) {
+function renderPptCard({ item, group, isLiked, isDisliked, giftTotals, isJoined, isOwner }) {
     const idStr = String(item.id);
     const key = `ppt:${idStr}`;
     const fileUrl = item.file_url || '';
     const thumbUrl = item.thumbnail_url || item.cover_url || '';
     const groupName = group?.name || AppState.currentGroupName || '';
     const groupId = group?.id || AppState.currentGroupId;
-    const timeAgo = formatRelativeTime(item.created_at);
     const giftChips = buildGiftChipsHtml(giftTotals);
     const topGifterId = giftTotals?.top ? Object.entries(giftTotals.top).sort((a, b) => b[1] - a[1])[0]?.[0] : null;
     const showTopGifter = giftTotals && giftTotals.total >= 1000 && topGifterId;
-    return `<div class="media-card cover-landscape" id="${variant}-ppt-item-${idStr}" data-content-key="${key}" data-content-type="ppt" data-content-id="${idStr}" data-file-url="${escapeAttr(fileUrl)}">
+    const followerCount = group?.followers || AppState.currentGroupFollowers || 0;
+    return `<div class="media-card cover-landscape" id="group-ppt-item-${idStr}" data-content-key="${key}" data-content-type="ppt" data-content-id="${idStr}" data-file-url="${escapeAttr(fileUrl)}">
         <button class="media-card-menu-btn" data-action="menu">⋮</button>
         <div class="media-card-cover" data-action="open-ppt">
             ${thumbUrl ? `<img src="${escapeAttr(thumbUrl)}" alt="" loading="lazy">` : `<div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:56px;">📊</div>`}
@@ -3387,18 +3257,16 @@ function renderPptCard({ item, variant, group, isLiked, isDisliked, giftTotals, 
             <h3 class="media-card-title">${escapeHtml(item.title || '')}</h3>
             <div class="media-card-author">${escapeHtml(groupName)}</div>
             <div class="media-card-meta">
-                <span>👁️ ${item.views || 0}</span>
-                <span class="meta-dot">•</span>
-                <span>${timeAgo}</span>
+                <span>${formatRelativeTime(item.created_at)}</span>
             </div>
             ${giftChips}
             ${showTopGifter ? `<span class="top-gifter-badge">🏆 Top Gifter</span>` : ''}
             ${buildActionRow({
                 contentType: 'ppt', contentId: idStr,
                 likes: item.likes, dislikes: item.dislikes,
-                comments: item.comment_count, shares: item.share_count,
+                comments: item.comment_count,
                 views: item.views, isLiked, isDisliked,
-                groupId, isOwner, isJoined, table: 'group_content'
+                groupId, isOwner, isJoined, followerCount
             })}
             <div class="content-comments" id="comments-ppt-${idStr}" data-ctype="ppt" data-cid="${idStr}">
                 <div id="commentList-ppt-${idStr}"></div>
@@ -3411,17 +3279,17 @@ function renderPptCard({ item, variant, group, isLiked, isDisliked, giftTotals, 
     </div>`;
 }
 
-function renderExamCard({ item, variant, group, isLiked, isDisliked, giftTotals, isJoined, isOwner }) {
+function renderExamCard({ item, group, isLiked, isDisliked, giftTotals, isJoined, isOwner }) {
     const idStr = String(item.id);
     const key = `exam:${idStr}`;
     const groupName = group?.name || AppState.currentGroupName || '';
     const groupId = group?.id || AppState.currentGroupId;
-    const timeAgo = formatRelativeTime(item.created_at);
     const catEmoji = getExamCategoryEmoji(item.title);
     const giftChips = buildGiftChipsHtml(giftTotals);
     const topGifterId = giftTotals?.top ? Object.entries(giftTotals.top).sort((a, b) => b[1] - a[1])[0]?.[0] : null;
     const showTopGifter = giftTotals && giftTotals.total >= 1000 && topGifterId;
-    return `<div class="media-card cover-landscape" id="${variant}-exam-item-${idStr}" data-content-key="${key}" data-content-type="exam" data-content-id="${idStr}">
+    const followerCount = group?.followers || AppState.currentGroupFollowers || 0;
+    return `<div class="media-card cover-landscape" id="group-exam-item-${idStr}" data-content-key="${key}" data-content-type="exam" data-content-id="${idStr}">
         <button class="media-card-menu-btn" data-action="menu">⋮</button>
         <div class="media-card-cover cover-banner exam-cat" data-action="start-exam">
             <div class="banner-title">${catEmoji} ${escapeHtml(item.title || '')}</div>
@@ -3433,20 +3301,20 @@ function renderExamCard({ item, variant, group, isLiked, isDisliked, giftTotals,
                 <span>📝 ${(item.questions?.length) || 0} Q</span>
                 <span class="meta-dot">•</span>
                 <span>⏱️ ${item.time_limit || 5} min</span>
-                <span class="meta-dot">•</span>
-                <span>👁️ ${item.views || 0}</span>
             </div>
             ${giftChips}
             ${showTopGifter ? `<span class="top-gifter-badge">🏆 Top Gifter</span>` : ''}
             ${buildActionRow({
                 contentType: 'exam', contentId: idStr,
                 likes: item.likes, dislikes: item.dislikes,
-                comments: item.comment_count, shares: item.share_count,
+                comments: item.comment_count,
                 views: item.views, isLiked, isDisliked,
-                groupId, isOwner, isJoined, table: 'mock_exams'
+                groupId, isOwner, isJoined, followerCount
             })}
-            <button class="btn-sm btn-teal" data-action="start-exam" style="margin-top:6px;">▶️ Start Exam</button>
-            <button class="btn-sm" data-action="leaderboard" style="margin-top:6px; background:var(--card-bg); color:var(--text-dark); border:1px solid var(--card-border);">🏆 Leaderboard</button>
+            <div style="display:flex; gap:6px; margin-top:8px;">
+                <button class="btn-sm btn-teal" data-action="start-exam" style="flex:1;">▶️ Start Exam</button>
+                <button class="btn-sm" data-action="leaderboard" style="background:var(--card-bg); color:var(--text-dark); border:1px solid var(--card-border);">🏆</button>
+            </div>
             <div class="content-comments" id="comments-exam-${idStr}" data-ctype="exam" data-cid="${idStr}">
                 <div id="commentList-exam-${idStr}"></div>
                 <div class="comment-input-wrapper">
@@ -3458,13 +3326,14 @@ function renderExamCard({ item, variant, group, isLiked, isDisliked, giftTotals,
     </div>`;
 }
 
-function renderBookCard({ item, variant, group, giftTotals, isJoined, isOwner }) {
+function renderBookCard({ item, group, giftTotals, isJoined, isOwner }) {
     const idStr = String(item.id);
     const key = `book:${idStr}`;
     const coverUrl = item.cover_url || '';
     const giftChips = buildGiftChipsHtml(giftTotals);
     const groupId = group?.id || AppState.currentGroupId;
-    return `<div class="media-card cover-portrait" id="${variant}-book-item-${idStr}" data-content-key="${key}" data-content-type="book" data-content-id="${idStr}" data-book-author="${escapeAttr(item.teacher_id || '')}">
+    const followerCount = group?.followers || AppState.currentGroupFollowers || 0;
+    return `<div class="media-card cover-portrait" id="group-book-item-${idStr}" data-content-key="${key}" data-content-type="book" data-content-id="${idStr}" data-book-author="${escapeAttr(item.teacher_id || '')}">
         <button class="media-card-menu-btn" data-action="menu">⋮</button>
         <div class="media-card-cover">
             ${coverUrl ? `<img src="${escapeAttr(coverUrl)}" alt="" loading="lazy">` : '<div>📖</div>'}
@@ -3477,11 +3346,11 @@ function renderBookCard({ item, variant, group, giftTotals, isJoined, isOwner })
             ${buildActionRow({
                 contentType: 'book', contentId: idStr,
                 likes: item.likes, dislikes: item.dislikes,
-                comments: item.comment_count, shares: item.share_count,
+                comments: item.comment_count,
                 views: item.views, isLiked: false, isDisliked: false,
-                groupId, isOwner, isJoined, table: 'bstore_books'
+                groupId, isOwner, isJoined, followerCount
             })}
-            <button class="btn-sm btn-teal" data-action="subscribe-book" style="margin-top:6px; width:100%;">📖 Subscribe</button>
+            <button class="btn-sm btn-teal" data-action="subscribe-book" style="margin-top:8px; width:100%;">📖 Subscribe</button>
         </div>
     </div>`;
 }
@@ -3496,11 +3365,11 @@ async function loadMockExamsIntoGrid(gridEl, groupId) {
         const { likedSet, dislikedSet } = await fetchLikeState('exam', visible.map(v => String(v.id)));
         const giftTotals = await fetchGiftTotals('exam', visible.map(v => String(v.id)));
         const joinedSet = AppState.userId ? await fetchJoinedGroups(AppState.userId, [groupId]) : new Set();
+        const group = AppState.groupCache.get(groupId) || { id: groupId, name: AppState.currentGroupName };
         gridEl.innerHTML = visible.map(item => renderExamCard({
-            item, variant: 'group',
+            item, group,
             isLiked: likedSet.has(String(item.id)),
             isDisliked: dislikedSet.has(String(item.id)),
-            group: AppState.groupCache.get(item.group_id) || { name: AppState.currentGroupName, id: groupId },
             giftTotals: giftTotals[item.id] || null,
             isJoined: joinedSet.has(groupId),
             isOwner: AppState.isGroupOwner
@@ -3516,62 +3385,77 @@ async function loadGroupBooks(groupId) {
         if (!data?.length) { grid.innerHTML = '<div class="empty-state"><span class="empty-emoji">📖</span>No books yet</div>'; return; }
         const giftTotals = await fetchGiftTotals('book', data.map(v => String(v.id)));
         const joinedSet = AppState.userId ? await fetchJoinedGroups(AppState.userId, [groupId]) : new Set();
+        const group = AppState.groupCache.get(groupId) || { id: groupId, name: AppState.currentGroupName };
         grid.innerHTML = data.map(item => renderBookCard({
-            item, variant: 'group',
+            item, group,
             giftTotals: giftTotals[item.id] || null,
-            group: { id: groupId, name: AppState.currentGroupName },
             isJoined: joinedSet.has(groupId),
             isOwner: AppState.isGroupOwner
         })).join('');
     } catch (err) { grid.innerHTML = '<div class="loading" style="color:var(--red-error); grid-column:1/-1;">Failed to load books.</div>'; }
 }
 
-async function loadGroupVideosYouTube(groupId) {
-    const listCol = document.getElementById('groupVideosList');
-    const playerCol = document.getElementById('groupVideosPlayer');
-    if (!listCol || !playerCol) return;
-    const listWrapper = listCol.querySelector('.video-list');
-    if (!listWrapper) return;
-    listWrapper.innerHTML = '<div class="loading"><div class="spinner"></div>Loading…</div>';
+async function loadGroupVideos(groupId) {
+    const grid = document.getElementById('groupVideosGrid');
+    const listWrapper = document.querySelector('#groupVideosList .video-list');
+    if (!grid || !listWrapper) return;
+    grid.innerHTML = '<div class="loading" style="grid-column: 1 / -1;"><div class="spinner"></div>Loading…</div>';
     try {
         const { data, error } = await sb.from('group_content').select('*').eq('group_id', groupId).eq('content_type', 'video').order('created_at', { ascending: false });
         if (error) throw error;
         const hidden = AppState.hiddenContentKeys || new Set();
         const visible = (data || []).filter(item => !hidden.has(`video:${item.id}`));
-        if (!visible.length) { listWrapper.innerHTML = `<div class="empty-state"><span class="empty-emoji">🎬</span>No videos yet</div>`; return; }
-        AppState.videoSplitItems = visible;
-        AppState.videoSplitKind = 'group';
-        AppState.videoSplitGroupId = groupId;
-        renderVideoList('group');
-        if (!AppState.videoSplitSelected) {
+        if (!visible.length) {
+            grid.innerHTML = `<div class="empty-state"><span class="empty-emoji">🎬</span>No videos yet</div>`;
+            listWrapper.innerHTML = '';
+            return;
+        }
+        const { likedSet, dislikedSet } = await fetchLikeState('video', visible.map(v => String(v.id)));
+        const giftTotals = await fetchGiftTotals('video', visible.map(v => String(v.id)));
+        const joinedSet = AppState.userId ? await fetchJoinedGroups(AppState.userId, [groupId]) : new Set();
+        const group = AppState.groupCache.get(groupId) || { id: groupId, name: AppState.currentGroupName };
+        const isJoined = joinedSet.has(groupId);
+        grid.innerHTML = `<div class="media-grid">${visible.map(item => {
+            item._isLiked = likedSet.has(String(item.id));
+            item._isDisliked = dislikedSet.has(String(item.id));
+            item._giftTotals = giftTotals[item.id] || null;
+            return renderVideoCard({
+                item, group,
+                isJoined,
+                isOwner: AppState.isGroupOwner,
+                followerCount: AppState.currentGroupFollowers
+            });
+        }).join('')}</div>`;
+        AppState.videoSplit.group.items = visible;
+        renderVideoSplitList('group');
+        if (!AppState.videoSplit.group.active) {
             const layout = document.getElementById('groupVideosLayout');
             if (layout) layout.classList.remove('split');
-            const bigPlayer = document.getElementById('groupBigPlayer');
-            const bigInfo = document.getElementById('groupBigInfo');
-            if (bigPlayer) bigPlayer.classList.remove('active');
-            if (bigInfo) bigInfo.classList.remove('active');
         }
-    } catch (err) { listWrapper.innerHTML = `<div class="loading" style="color:var(--red-error);">Failed to load.</div>`; }
+    } catch (err) { grid.innerHTML = `<div class="loading" style="color:var(--red-error); grid-column: 1 / -1;">Failed to load.</div>`; }
 }
 
-function renderVideoList(kind) {
-    const listCol = kind === 'group' ? document.getElementById('groupVideosList') : document.getElementById('homeVideosList');
-    if (!listCol) return;
-    const listWrapper = listCol.querySelector('.video-list');
+function renderVideoSplitList(kind) {
+    const listWrapper = kind === 'group'
+        ? document.querySelector('#groupVideosList .video-list')
+        : document.querySelector('#homeVideosList .video-list');
     if (!listWrapper) return;
-    const items = AppState.videoSplitItems;
-    if (!items.length) { listWrapper.innerHTML = `<div class="empty-state"><span class="empty-emoji">🎬</span>No videos</div>`; return; }
-    const selectedId = AppState.videoSplitSelected;
+    const state = AppState.videoSplit[kind];
+    const items = state.items;
+    if (!items.length) { listWrapper.innerHTML = ''; return; }
+    const selectedId = state.selected;
     const displayItems = selectedId ? items.filter(i => String(i.id) !== String(selectedId)) : items;
     if (!displayItems.length && selectedId) {
         listWrapper.innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-muted); font-weight:700; font-size:13px;">All videos are shown in the player</div>`;
         return;
     }
+    const gMap = {};
+    AppState.groupCache.forEach(g => { gMap[g.id] = g; });
     listWrapper.innerHTML = displayItems.map(item => {
         const idStr = String(item.id);
         const thumbUrl = item.thumbnail_url || item.cover_url || '';
         const isActive = String(selectedId) === idStr;
-        const group = AppState.groupCache.get(item.group_id) || { name: AppState.currentGroupName };
+        const group = gMap[item.group_id] || { name: AppState.currentGroupName };
         const gn = group?.name || '';
         return `<div class="video-list-item ${isActive ? 'active' : ''}" data-video-list-id="${idStr}" data-video-list-kind="${kind}">
             <div class="video-list-thumb">
@@ -3582,7 +3466,7 @@ function renderVideoList(kind) {
                 <div class="video-list-title">${escapeHtml(item.title || '')}</div>
                 <div class="video-list-group">${escapeHtml(gn)}</div>
                 <div class="video-list-meta">
-                    <span>👁️ ${item.views || 0}</span>
+                    <span>👁️ ${formatCount(item.views || 0)}</span>
                     <span>•</span>
                     <span>${formatRelativeTime(item.created_at)}</span>
                 </div>
@@ -3591,22 +3475,12 @@ function renderVideoList(kind) {
     }).join('');
 }
 
-document.addEventListener('click', function(e) {
-    const listItem = e.target.closest('[data-video-list-id]');
-    if (listItem) {
-        const id = listItem.dataset.videoListId;
-        const kind = listItem.dataset.videoListKind;
-        openVideoInSplit(kind, id);
-        return;
-    }
-}, false);
-
 async function openVideoInSplit(kind, id) {
-    const item = AppState.videoSplitItems.find(i => String(i.id) === String(id));
+    const state = AppState.videoSplit[kind];
+    const item = state.items.find(i => String(i.id) === String(id));
     if (!item) return;
-    AppState.videoSplitSelected = String(id);
-    AppState.videoSplitActive = true;
-    AppState.videoSplitRendered = true;
+    state.selected = String(id);
+    state.active = true;
 
     const layoutId = kind === 'group' ? 'groupVideosLayout' : 'homeVideosLayout';
     const layout = document.getElementById(layoutId);
@@ -3618,16 +3492,12 @@ async function openVideoInSplit(kind, id) {
     const infoEl = document.getElementById(infoId);
     if (!playerEl || !infoEl) return;
 
-    playerEl.classList.add('active');
-    infoEl.classList.add('active');
-
     const fileUrl = item.file_url || '';
-    const thumbUrl = item.thumbnail_url || item.cover_url || '';
-    const group = AppState.groupCache.get(item.group_id) || { name: AppState.currentGroupName };
+    const group = AppState.groupCache.get(item.group_id) || { name: AppState.currentGroupName, id: item.group_id };
     const gn = group?.name || '';
 
     playerEl.innerHTML = `
-        <button class="player-close" onclick="closeVideoSplit()">✕</button>
+        <button class="player-close" onclick="closeVideoSplit('${kind}')">✕</button>
         <video id="${kind}-big-video" playsinline preload="metadata" src="${escapeAttr(fileUrl)}"></video>
         <div class="video-controls">
             <button data-big-action="toggle-play" id="${kind}-big-toggle">⏸️</button>
@@ -3640,6 +3510,11 @@ async function openVideoInSplit(kind, id) {
         </div>
     `;
 
+    const { likedSet, dislikedSet } = AppState.userId ? await fetchLikeState('video', [String(item.id)]) : { likedSet: new Set(), dislikedSet: new Set() };
+    const liked = likedSet.has(String(item.id));
+    const disliked = dislikedSet.has(String(item.id));
+    const followerCount = group?.followers || AppState.currentGroupFollowers || 0;
+
     infoEl.innerHTML = `
         <div class="yt-big-title">${escapeHtml(item.title || '')}</div>
         <div class="yt-big-meta">
@@ -3647,16 +3522,15 @@ async function openVideoInSplit(kind, id) {
             <span class="meta-group-name">${escapeHtml(gn)}</span>
             <span>•</span>
             <span>${formatRelativeTime(item.created_at)}</span>
-            <span>•</span>
-            <span>👁️ ${item.views || 0}</span>
         </div>
         ${item.description ? `<div class="yt-big-description clamped" id="${kind}-big-desc">${escapeHtml(item.description)}</div>${item.description.length > 150 ? `<span class="yt-big-readmore" onclick="toggleBigDescription('${kind}-big-desc', this)">Read More</span>` : ''}` : ''}
         ${buildActionRow({
             contentType: 'video', contentId: String(item.id),
             likes: item.likes, dislikes: item.dislikes,
-            comments: item.comment_count, shares: item.share_count,
-            views: item.views, isLiked: false, isDisliked: false,
-            groupId: item.group_id, isOwner: AppState.isGroupOwner, isJoined: false, table: 'group_content'
+            comments: item.comment_count,
+            views: item.views, isLiked: liked, isDisliked: disliked,
+            groupId: item.group_id, isOwner: AppState.isGroupOwner,
+            isJoined: false, followerCount
         })}
         <div class="content-comments" id="comments-video-${item.id}" data-ctype="video" data-cid="${item.id}" style="margin-top:12px;">
             <div id="commentList-video-${item.id}"></div>
@@ -3667,7 +3541,7 @@ async function openVideoInSplit(kind, id) {
         </div>
     `;
 
-    renderVideoList(kind);
+    renderVideoSplitList(kind);
     bindBigPlayer(kind);
 
     const video = document.getElementById(`${kind}-big-video`);
@@ -3680,29 +3554,15 @@ async function openVideoInSplit(kind, id) {
         video.onloadedmetadata = () => updateBigPlayerProgress(kind);
         video.onended = () => updateBigPlayerIcon(kind);
     }
-
-    if (AppState.userId) {
-        const { likedSet, dislikedSet } = await fetchLikeState('video', [String(item.id)]);
-        const liked = likedSet.has(String(item.id));
-        const disliked = dislikedSet.has(String(item.id));
-        const card = infoEl.querySelector(`[data-actions-for="video:${item.id}"]`);
-        if (card) {
-            const likeBtn = card.querySelector('[data-action="like"]');
-            const dislikeBtn = card.querySelector('[data-action="dislike"]');
-            if (liked && likeBtn) likeBtn.classList.add('liked');
-            if (disliked && dislikeBtn) dislikeBtn.classList.add('disliked');
-        }
-    }
     startVideoWatchTimer(String(item.id), 'group_content');
 }
 
 function bindBigPlayer(kind) {
     const playerEl = kind === 'group' ? document.getElementById('groupBigPlayer') : document.getElementById('homeBigPlayer');
-    if (!playerEl || playerEl.dataset.bound === '1') return;
-    playerEl.dataset.bound = '1';
+    if (!playerEl) return;
     const video = () => document.getElementById(`${kind}-big-video`);
     playerEl.addEventListener('click', (e) => {
-        if (e.target.closest('button, input, .video-controls, .progress-bar, .volume-slider')) return;
+        if (e.target.closest('button, input, .video-controls, .progress-bar, .volume-slider, .player-close')) return;
         const v = video();
         if (!v) return;
         if (v.paused) v.play().catch(() => {});
@@ -3725,7 +3585,7 @@ function bindBigPlayer(kind) {
                 const n = s[(i + 1) % s.length];
                 v.playbackRate = n; btn.textContent = n + 'x';
             } else if (action === 'download') {
-                downloadMedia(v.src, `teni_video_${AppState.videoSplitSelected}`);
+                downloadMedia(v.src, `teni_video_${AppState.videoSplit[kind].selected}`);
             }
         });
     });
@@ -3760,31 +3620,21 @@ function updateBigPlayerProgress(kind) {
     pf.style.width = (v.currentTime / v.duration * 100) + '%';
     td.textContent = `${formatTime(v.currentTime)} / ${formatTime(v.duration)}`;
 }
-function closeVideoSplit() {
-    if (!AppState.videoSplitActive) return;
-    AppState.videoSplitActive = false;
-    AppState.videoSplitSelected = null;
-    AppState.videoSplitRendered = false;
-
-    const layoutIds = ['groupVideosLayout', 'homeVideosLayout'];
-    layoutIds.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.classList.remove('split');
-    });
-    const playerIds = ['groupBigPlayer', 'homeBigPlayer'];
-    playerIds.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) { el.classList.remove('active'); el.innerHTML = ''; el.dataset.bound = ''; }
-    });
-    const infoIds = ['groupBigInfo', 'homeBigInfo'];
-    infoIds.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) { el.classList.remove('active'); el.innerHTML = ''; }
-    });
-    const vids = document.querySelectorAll('#groupBigPlayer video, #homeBigPlayer video');
-    vids.forEach(v => { try { v.pause(); } catch (e) {} });
-    renderVideoList('group');
-    if (document.getElementById('homeVideosList')) renderVideoList('home');
+function closeVideoSplit(kind) {
+    const state = AppState.videoSplit[kind];
+    if (!state || !state.active) return;
+    state.active = false;
+    state.selected = null;
+    const layoutId = kind === 'group' ? 'groupVideosLayout' : 'homeVideosLayout';
+    const layout = document.getElementById(layoutId);
+    if (layout) layout.classList.remove('split');
+    const playerId = kind === 'group' ? 'groupBigPlayer' : 'homeBigPlayer';
+    const infoId = kind === 'group' ? 'groupBigInfo' : 'homeBigInfo';
+    const playerEl = document.getElementById(playerId);
+    const infoEl = document.getElementById(infoId);
+    if (playerEl) playerEl.innerHTML = '';
+    if (infoEl) infoEl.innerHTML = '';
+    renderVideoSplitList(kind);
 }
 function toggleBigDescription(id, el) {
     const desc = document.getElementById(id);
@@ -3797,6 +3647,16 @@ function toggleBigDescription(id, el) {
         el.textContent = 'Read More';
     }
 }
+
+document.addEventListener('click', function(e) {
+    const listItem = e.target.closest('[data-video-list-id]');
+    if (listItem) {
+        const id = listItem.dataset.videoListId;
+        const kind = listItem.dataset.videoListKind;
+        openVideoInSplit(kind, id);
+        return;
+    }
+}, false);
 
 function playVideo(kind, id, url) {
     const t = document.getElementById(`${kind}-thumbnail-${id}`);
@@ -3820,7 +3680,6 @@ function playVideo(kind, id, url) {
         volumeSlider.dataset.bound = '1';
         volumeSlider.addEventListener('input', (e) => { v.volume = parseFloat(e.target.value); });
     }
-
     if (!p.dataset.nativeBound) {
         p.dataset.nativeBound = '1';
         p.addEventListener('click', (e) => {
@@ -3831,23 +3690,13 @@ function playVideo(kind, id, url) {
             else vid.pause();
             showVideoControls(kind, id);
         });
-        p.addEventListener('mouseenter', () => showVideoControls(kind, id));
-        p.addEventListener('touchstart', () => showVideoControls(kind, id), { passive: true });
-        p.addEventListener('mouseleave', () => {
-            const cardEl = p.closest('.content-card');
-            if (!cardEl) return;
-            const vid = document.getElementById(`${kind}-video-${id}`);
-            if (!vid || vid.paused || vid.ended) return;
-            clearTimeout(cardEl._hideTimer);
-            cardEl._hideTimer = setTimeout(() => cardEl.classList.add('controls-hidden'), 1500);
-        });
     }
 }
 function pauseAllOtherVideos(exceptId, exceptKind) {
     document.querySelectorAll('video').forEach(v => {
+        if (v.id.includes('-big-video')) return;
         const isCurrent = exceptId && (v.id === `${exceptKind}-video-${exceptId}`);
         if (isCurrent) return;
-        if (v.id.endsWith('-big-video')) return;
         const m = v.id.match(/^(group|home)-video-(.+)$/);
         if (!m) return;
         const [, kind, id] = m;
@@ -3857,6 +3706,7 @@ function pauseAllOtherVideos(exceptId, exceptKind) {
 }
 function closeAllVideos() {
     document.querySelectorAll('video').forEach(v => {
+        if (v.id.includes('-big-video')) { try { v.pause(); } catch(e) {} return; }
         const m = v.id.match(/^(group|home)-video-(.+)$/);
         if (!m) return;
         const [, kind, id] = m;
@@ -3971,7 +3821,7 @@ async function incrementViewCount(table, id, currentViews = null, bypassDebounce
     document.querySelectorAll(`[data-view-id="${table}-${id}"]`).forEach(el => {
         const v = parseInt(el.dataset.views || '0') + 1;
         el.dataset.views = v;
-        el.textContent = v.toLocaleString();
+        el.textContent = formatCount(v);
     });
     AppState.viewFlushQueue.set(`${table}:${id}`, { table, id });
     if (!AppState._viewFlusher) AppState._viewFlusher = setInterval(flushViewQueue, 5000);
@@ -4047,6 +3897,7 @@ function renderMockExamQuestion() {
     const isEM = AppState.examMode === 'exam';
     const answered = sel !== null && sel !== undefined;
     const flagCount = AppState.examFlagged.filter(Boolean).length;
+    const isLast = AppState.currentQuestionIndex === total - 1;
     c.style.gridTemplateColumns = '1fr';
     c.innerHTML = `
         <div style="grid-column: 1 / -1;">
@@ -4074,9 +3925,12 @@ function renderMockExamQuestion() {
         </div>
         <div style="display:flex; gap:10px; margin-top:16px;">
             <button class="btn-sm" onclick="prevMockExamQuestion()" style="flex:1; padding:10px; border:1px solid var(--card-border); border-radius:8px; background:var(--card-bg); font-weight:800; color:var(--text-dark);">◀ Prev</button>
-            <button class="btn-sm btn-teal" onclick="nextMockExamQuestion()" style="flex:1; padding:10px;">Next ▶</button>
+            ${!AppState.examSubmitted
+                ? (isLast
+                    ? `<button class="btn-sm btn-teal" onclick="submitMockExam()" style="flex:1; padding:10px;">📤 Submit Exam</button>`
+                    : `<button class="btn-sm btn-teal" onclick="nextMockExamQuestion()" style="flex:1; padding:10px;">Next ▶</button>`)
+                : `<button class="btn-sm" onclick="finishMockExam()" style="flex:1; padding:10px; background:var(--gold); color:#1e293b;">📊 See Result</button>`}
         </div>
-        ${!AppState.examSubmitted ? `<button class="btn" onclick="submitMockExam()" style="margin-top:12px;">📤 Submit Exam</button>` : `<button class="btn" onclick="finishMockExam()" style="margin-top:12px;">📊 See Result</button>`}
         </div>
     `;
 }
@@ -4246,7 +4100,7 @@ function stopExamTimer() { if (AppState.examTimer) { clearInterval(AppState.exam
 
 function switchGroupTab(tabId, btn) {
     closeAllVideos();
-    closeVideoSplit();
+    closeVideoSplit('group');
     document.querySelectorAll('#groupTabs .tab-card').forEach(t => t.classList.remove('active'));
     if (btn) btn.classList.add('active');
     else {
@@ -4268,7 +4122,7 @@ async function loadGlobalTrending() { await loadTrendingContent('video'); }
 
 async function switchTrendingTab(tab, btn) {
     closeAllVideos();
-    closeVideoSplit();
+    closeVideoSplit('home');
     document.querySelectorAll('.content-tab').forEach(t => t.classList.remove('active'));
     btn.classList.add('active');
     AppState.currentTrendingTab = tab;
@@ -4287,18 +4141,32 @@ async function loadTrendingContent(tab) {
         const notHidden = (type, id) => !hidden.has(`${type}:${id}`);
 
         if (tab === 'video') {
-            const mapQueries = {
-                video: async () => (!gIds.length ? [] : ((await sb.from('group_content').select('*').eq('content_type', 'video').in('group_id', gIds).order('views', { ascending: false }).limit(30)).data || []))
-            };
-            items = await mapQueries.video();
-            items = items.filter(i => notHidden('video', i.id));
-            items = items.slice(0, 30);
-            if (!items?.length) { c.innerHTML = `<div class="empty-state"><span class="empty-emoji">🎬</span>No videos yet</div>`; return; }
-            AppState.videoSplitItems = items;
-            AppState.videoSplitKind = 'home';
-            AppState.videoSplitGroupId = null;
+            const data = (!gIds.length ? [] : ((await sb.from('group_content').select('*').eq('content_type', 'video').in('group_id', gIds).order('views', { ascending: false }).limit(30)).data || []));
+            items = data.filter(i => notHidden('video', i.id));
+            if (!items?.length) {
+                c.innerHTML = `<div class="empty-state"><span class="empty-emoji">🎬</span>No videos yet</div>`;
+                return;
+            }
+            const { likedSet, dislikedSet } = await fetchLikeState('video', items.map(i => String(i.id)));
+            const giftTotals = await fetchGiftTotals('video', items.map(i => String(i.id)));
+            const joinedSet = AppState.userId ? await fetchJoinedGroups(AppState.userId, [...new Set(items.map(i => i.group_id).filter(Boolean))]) : new Set();
+            const ownedGroupIds = new Set((AppState.groups || []).map(g => g.id));
+            items.forEach(item => {
+                item._isLiked = likedSet.has(String(item.id));
+                item._isDisliked = dislikedSet.has(String(item.id));
+                item._giftTotals = giftTotals[item.id] || null;
+            });
+            AppState.videoSplit.home.items = items;
+            const gridHtml = `<div class="media-grid">${items.map(item => renderVideoCard({
+                item,
+                group: gMap[item.group_id],
+                isJoined: joinedSet.has(item.group_id),
+                isOwner: ownedGroupIds.has(item.group_id),
+                followerCount: gMap[item.group_id]?.followers || 0
+            })).join('')}</div>`;
             c.innerHTML = `
                 <div class="yt-layout" id="homeVideosLayout">
+                    <div class="yt-grid-wrapper" id="homeVideosGrid">${gridHtml}</div>
                     <div class="yt-list-col" id="homeVideosList"><div class="video-list"></div></div>
                     <div class="yt-player-col" id="homeVideosPlayer">
                         <div class="yt-big-player" id="homeBigPlayer"></div>
@@ -4306,7 +4174,7 @@ async function loadTrendingContent(tab) {
                     </div>
                 </div>
             `;
-            renderVideoList('home');
+            renderVideoSplitList('home');
             return;
         }
 
@@ -4337,9 +4205,9 @@ async function loadTrendingContent(tab) {
 
         if (tab === 'book') {
             c.innerHTML = `<div class="media-grid">${items.map(item => renderBookCard({
-                item, variant: 'home',
-                giftTotals: giftTotals[item.id] || null,
+                item,
                 group: { id: null, name: '' },
+                giftTotals: giftTotals[item.id] || null,
                 isJoined: false,
                 isOwner: false
             })).join('')}</div>`;
@@ -4347,7 +4215,7 @@ async function loadTrendingContent(tab) {
         }
         if (tab === 'mockexam') {
             c.innerHTML = `<div class="media-grid">${items.map(item => renderExamCard({
-                item, variant: 'home',
+                item,
                 isLiked: likedSet.has(String(item.id)),
                 isDisliked: dislikedSet.has(String(item.id)),
                 group: gMap[item.group_id],
@@ -4359,7 +4227,7 @@ async function loadTrendingContent(tab) {
         }
         if (tab === 'ppt') {
             c.innerHTML = `<div class="media-grid">${items.map(item => renderPptCard({
-                item, variant: 'home',
+                item,
                 isLiked: likedSet.has(String(item.id)),
                 isDisliked: dislikedSet.has(String(item.id)),
                 group: gMap[item.group_id],
@@ -4424,8 +4292,7 @@ async function toggleContentLike(type, id, btn) {
     if (!btn) return;
     const idStr = String(id);
     const span = btn.querySelector('span.action-count') || btn.querySelector('span');
-    const wasLiked = btn.classList.contains('liked');
-    const oldCount = parseInt(span?.textContent) || 0;
+    const oldCount = span ? (parseInt(span.dataset.raw || span.textContent) || 0) : 0;
 
     try {
         const { data: existing } = await sb.from('content_likes').select('content_id').eq('content_type', type).eq('content_id', idStr).eq('user_id', AppState.userId).maybeSingle();
@@ -4433,21 +4300,12 @@ async function toggleContentLike(type, id, btn) {
         if (existing) {
             await sb.from('content_likes').delete().eq('content_type', type).eq('content_id', idStr).eq('user_id', AppState.userId);
             await sb.rpc('bump_like_count', { p_type: type, p_id: idStr, p_delta: -1 });
-            document.querySelectorAll(`[data-actions-for="${type}:${idStr}"] [data-action="like"]`).forEach(b => {
-                b.classList.remove('liked');
-                const s = b.querySelector('span.action-count') || b.querySelector('span');
-                if (s) s.textContent = Math.max(0, oldCount - 1);
-            });
+            updateAllLikeButtons(type, idStr, oldCount - 1, false);
         } else {
             const { data: d } = await sb.from('content_dislikes').select('content_id').eq('content_type', type).eq('content_id', idStr).eq('user_id', AppState.userId).maybeSingle();
             if (d) {
                 await sb.from('content_dislikes').delete().eq('content_type', type).eq('content_id', idStr).eq('user_id', AppState.userId);
                 await sb.rpc('bump_dislike_count', { p_type: type, p_id: idStr, p_delta: -1 });
-                document.querySelectorAll(`[data-actions-for="${type}:${idStr}"] [data-action="dislike"]`).forEach(dBtn => {
-                    dBtn.classList.remove('disliked');
-                    const dSpan = dBtn.querySelector('span.action-count') || dBtn.querySelector('span');
-                    if (dSpan) dSpan.textContent = Math.max(0, (parseInt(dSpan.textContent) || 1) - 1);
-                });
             }
             try {
                 await sb.from('content_likes').insert({ content_type: type, content_id: idStr, user_id: AppState.userId });
@@ -4455,15 +4313,24 @@ async function toggleContentLike(type, id, btn) {
                 if (e.code !== '23505') throw e;
             }
             await sb.rpc('bump_like_count', { p_type: type, p_id: idStr, p_delta: 1 });
-            document.querySelectorAll(`[data-actions-for="${type}:${idStr}"] [data-action="like"]`).forEach(b => {
-                b.classList.add('liked');
-                const s = b.querySelector('span.action-count') || b.querySelector('span');
-                if (s) s.textContent = oldCount + 1;
-            });
+            updateAllLikeButtons(type, idStr, oldCount + 1, true);
         }
     } catch (err) {
         const msg = String(err.message || '').toLowerCase();
         if (!msg.includes('duplicate') && !msg.includes('unique')) showToast('Could not save', 'error');
+    }
+}
+function updateAllLikeButtons(type, idStr, newCount, liked) {
+    document.querySelectorAll(`[data-actions-for="${type}:${idStr}"] [data-action="like"]`).forEach(b => {
+        b.classList.toggle('liked', liked);
+        const s = b.querySelector('span.action-count');
+        if (s) s.textContent = formatCount(Math.max(0, newCount));
+    });
+    const dis = document.querySelectorAll(`[data-actions-for="${type}:${idStr}"] [data-action="dislike"]`);
+    if (liked && dis.length) {
+        dis.forEach(d => {
+            d.classList.remove('disliked');
+        });
     }
 }
 async function toggleContentDislike(type, id, btn) {
@@ -4471,8 +4338,7 @@ async function toggleContentDislike(type, id, btn) {
     if (!btn) return;
     const idStr = String(id);
     const span = btn.querySelector('span.action-count') || btn.querySelector('span');
-    const wasDisliked = btn.classList.contains('disliked');
-    const oldCount = parseInt(span?.textContent) || 0;
+    const oldCount = span ? (parseInt(span.dataset.raw || span.textContent) || 0) : 0;
 
     try {
         const { data: existing } = await sb.from('content_dislikes').select('content_id').eq('content_type', type).eq('content_id', idStr).eq('user_id', AppState.userId).maybeSingle();
@@ -4482,8 +4348,8 @@ async function toggleContentDislike(type, id, btn) {
             await sb.rpc('bump_dislike_count', { p_type: type, p_id: idStr, p_delta: -1 });
             document.querySelectorAll(`[data-actions-for="${type}:${idStr}"] [data-action="dislike"]`).forEach(b => {
                 b.classList.remove('disliked');
-                const s = b.querySelector('span.action-count') || b.querySelector('span');
-                if (s) s.textContent = Math.max(0, oldCount - 1);
+                const s = b.querySelector('span.action-count');
+                if (s) s.textContent = formatCount(Math.max(0, oldCount - 1));
             });
         } else {
             const { data: l } = await sb.from('content_likes').select('content_id').eq('content_type', type).eq('content_id', idStr).eq('user_id', AppState.userId).maybeSingle();
@@ -4492,8 +4358,6 @@ async function toggleContentDislike(type, id, btn) {
                 await sb.rpc('bump_like_count', { p_type: type, p_id: idStr, p_delta: -1 });
                 document.querySelectorAll(`[data-actions-for="${type}:${idStr}"] [data-action="like"]`).forEach(lBtn => {
                     lBtn.classList.remove('liked');
-                    const lSpan = lBtn.querySelector('span.action-count') || lBtn.querySelector('span');
-                    if (lSpan) lSpan.textContent = Math.max(0, (parseInt(lSpan.textContent) || 1) - 1);
                 });
             }
             try {
@@ -4504,8 +4368,8 @@ async function toggleContentDislike(type, id, btn) {
             await sb.rpc('bump_dislike_count', { p_type: type, p_id: idStr, p_delta: 1 });
             document.querySelectorAll(`[data-actions-for="${type}:${idStr}"] [data-action="dislike"]`).forEach(b => {
                 b.classList.add('disliked');
-                const s = b.querySelector('span.action-count') || b.querySelector('span');
-                if (s) s.textContent = oldCount + 1;
+                const s = b.querySelector('span.action-count');
+                if (s) s.textContent = formatCount(oldCount + 1);
             });
         }
     } catch (err) {
@@ -4583,7 +4447,7 @@ async function addContentComment(type, id) {
         await sb.from('content_comments').insert({ content_type: type, content_id: idStr, user_id: AppState.userId, comment: text });
         await sb.rpc('bump_comment_count', { p_type: type, p_id: idStr, p_delta: 1 });
         document.querySelectorAll(`[data-actions-for="${type}:${idStr}"] [data-action="toggle-comments"] span.action-count`).forEach(s => {
-            s.textContent = (parseInt(s.textContent) || 0) + 1;
+            s.textContent = formatCount((parseInt(s.dataset.raw || s.textContent) || 0) + 1);
         });
         await loadContentComments(type, idStr);
     } catch (err) { showToast('Error', 'error'); }
@@ -4611,65 +4475,42 @@ async function deleteContentComment(commentId, type, id) {
         await sb.from('content_comments').delete().eq('parent_id', commentId);
         await sb.from('content_comments').delete().eq('id', commentId);
         await sb.rpc('bump_comment_count', { p_type: type, p_id: idStr, p_delta: -removed });
-        document.querySelectorAll(`[data-actions-for="${type}:${idStr}"] [data-action="toggle-comments"] span.action-count`).forEach(s => {
-            s.textContent = Math.max(0, (parseInt(s.textContent) || 0) - removed);
-        });
         await loadContentComments(type, idStr);
     } catch (err) {}
-}
-async function shareContentLink(type, id) {
-    const idStr = String(id);
-    const url = `${location.origin}${location.pathname}?content=${type}:${idStr}`;
-    try {
-        await sb.rpc('bump_share_count', { p_type: type, p_id: idStr, p_delta: 1 });
-        document.querySelectorAll(`[data-actions-for="${type}:${idStr}"] [data-action="share"] span.action-count`).forEach(s => {
-            s.textContent = (parseInt(s.textContent) || 0) + 1;
-        });
-    } catch (e) {}
-    if (navigator.share) navigator.share({ title: 'TENI', url }).catch(() => {});
-    else navigator.clipboard.writeText(url).then(() => showToast('📋 Copied', 'success')).catch(() => {});
 }
 
 document.addEventListener('click', function(e) {
     const card = e.target.closest('[data-content-key]');
+    const bigInfo = e.target.closest('.yt-big-info');
+    let ctx = null;
     if (card) {
         const actionEl = e.target.closest('[data-action]');
-        if (actionEl) {
-            if (!e.target.closest('.comment-input-wrapper, .comment-reply-input, .chat-bubble-wrap')) {
-                const action = actionEl.dataset.action;
-                const contentType = card.dataset.contentType;
-                const contentId = card.dataset.contentId;
-                const fileUrl = card.dataset.fileUrl || '';
-                const kind = card.querySelector('.video-wrapper')?.dataset.kind || 'group';
-                handleCardAction(action, contentType, contentId, fileUrl, kind, actionEl, card, e);
-                return;
-            }
+        if (actionEl && !e.target.closest('.comment-input-wrapper, .comment-reply-input, .chat-bubble-wrap')) {
+            ctx = { action: actionEl.dataset.action, contentType: card.dataset.contentType, contentId: card.dataset.contentId, fileUrl: card.dataset.fileUrl || '', kind: card.querySelector('.video-wrapper')?.dataset.kind || 'group', actionEl, card, el: card };
         }
     }
-    const bigActions = e.target.closest('.yt-big-info');
-    if (bigActions) {
+    if (!ctx && bigInfo) {
         const actionEl = e.target.closest('[data-action]');
-        if (actionEl) {
-            const action = actionEl.dataset.action;
-            if (action === 'like' || action === 'dislike' || action === 'toggle-comments' || action === 'share' || action === 'download' || action === 'open-gift' || action === 'join-group' || action === 'open-group' || action === 'post-comment') {
-                const contentId = AppState.videoSplitSelected;
-                const contentType = 'video';
-                const item = AppState.videoSplitItems.find(i => String(i.id) === String(contentId));
-                const fileUrl = item?.file_url || '';
-                handleCardAction(action, contentType, contentId, fileUrl, AppState.videoSplitKind, actionEl, bigActions, e);
-            }
+        if (actionEl && !e.target.closest('.comment-input-wrapper, .comment-reply-input')) {
+            ctx = { action: actionEl.dataset.action, contentType: 'video', contentId: AppState.videoSplit[AppState.videoSplit.group.selected ? 'group' : 'home'].selected, fileUrl: '', kind: AppState.videoSplit.group.active ? 'group' : 'home', actionEl, card: bigInfo, el: bigInfo };
         }
     }
+    if (!ctx) return;
+    handleCardAction(ctx, e);
 }, false);
 
-async function handleCardAction(action, contentType, contentId, fileUrl, kind, actionEl, card, e) {
+async function handleCardAction(ctx, e) {
+    const { action, contentType, contentId, fileUrl, kind, actionEl, card } = ctx;
     switch (action) {
         case 'play-video':
             e.preventDefault(); e.stopPropagation();
-            if (AppState.videoSplitItems.length && AppState.videoSplitItems.find(i => String(i.id) === String(contentId))) {
-                openVideoInSplit(kind, contentId);
-            } else {
-                playVideo(kind, contentId, fileUrl);
+            {
+                const state = AppState.videoSplit[kind];
+                if (state.items.find(i => String(i.id) === String(contentId))) {
+                    openVideoInSplit(kind, contentId);
+                } else {
+                    playVideo(kind, contentId, fileUrl);
+                }
             }
             break;
         case 'toggle-play':
@@ -4724,10 +4565,6 @@ async function handleCardAction(action, contentType, contentId, fileUrl, kind, a
             e.stopPropagation();
             toggleContentComments(contentType, contentId, actionEl);
             break;
-        case 'share':
-            e.stopPropagation();
-            shareContentLink(contentType, contentId);
-            break;
         case 'post-comment':
             e.stopPropagation();
             addContentComment(contentType, contentId);
@@ -4746,11 +4583,52 @@ async function handleCardAction(action, contentType, contentId, fileUrl, kind, a
             break;
         case 'open-group':
             e.preventDefault(); e.stopPropagation();
-            openTabContent('group-feed', actionEl.dataset.groupId);
+            if (actionEl.dataset.groupId) openTabContent('group-feed', actionEl.dataset.groupId);
             break;
         case 'noop':
             e.stopPropagation();
             break;
+    }
+}
+
+async function quickJoinGroup(groupId, btn) {
+    if (!AppState.userId) return showToast('Login first.', 'error');
+    if (!groupId) return showToast('Cannot identify group', 'error');
+    try {
+        const { data: result, error } = await sb.rpc('join_group', { p_user_id: AppState.userId, p_group_id: groupId, p_join: true });
+        if (error) throw error;
+        const joined = !!result?.joined;
+        const followers = result?.followers ?? 0;
+        markGroupJoined(AppState.userId, groupId, joined);
+        document.querySelectorAll(`[data-action="join-group"][data-group-id="${groupId}"]`).forEach(b => {
+            b.classList.add('joined');
+            b.classList.remove('join-btn');
+            b.classList.add('join-btn');
+            b.setAttribute('disabled', 'true');
+            b.dataset.action = 'noop';
+            b.innerHTML = `<i class="fas fa-check"></i> <span class="action-count">${formatCount(followers)}</span>`;
+        });
+        document.querySelectorAll(`[data-action="join-group"][data-group-id="${groupId}"]`).forEach(b => {
+            if (!b.classList.contains('joined')) {
+                b.classList.add('join-btn', 'joined');
+                b.dataset.action = 'noop';
+                b.innerHTML = `<i class="fas fa-check"></i> <span class="action-count">${formatCount(followers)}</span>`;
+            }
+        });
+        const bannerBtn = document.getElementById('joinClassBtn');
+        if (bannerBtn && AppState.currentGroupId === groupId) {
+            bannerBtn.innerText = joined ? '✅' : '➕';
+            bannerBtn.className = joined ? 'btn btn-teal' : 'btn';
+            bannerBtn.disabled = joined;
+        }
+        const bf = document.getElementById('groupFollowers');
+        if (bf && AppState.currentGroupId === groupId) bf.textContent = followers;
+        AppState.currentGroupFollowers = followers;
+        invalidateGroupCache();
+        showToast('✅ Joined!', 'success');
+        updateTrendingGroups();
+    } catch (err) {
+        showToast('❌ ' + err.message, 'error');
     }
 }
 
@@ -4773,38 +4651,6 @@ async function handleOpenGiftForContent(contentType, contentId, cardEl) {
     if (recipientId === AppState.userId) return showToast("You can't gift your own content", 'info');
     AppState.currentGiftTarget = { mode: 'content', contentType, contentId, recipientId };
     openGiftPicker();
-}
-
-async function quickJoinGroup(groupId, btn) {
-    if (!AppState.userId) return showToast('Login first.', 'error');
-    if (!groupId) return showToast('Cannot identify group', 'error');
-    if (btn) btn.disabled = true;
-    try {
-        const { data: result, error } = await sb.rpc('join_group', { p_user_id: AppState.userId, p_group_id: groupId, p_join: true });
-        if (error) throw error;
-        const joined = !!result?.joined;
-        const followers = result?.followers ?? 0;
-        markGroupJoined(AppState.userId, groupId, joined);
-        document.querySelectorAll(`[data-action="join-group"][data-group-id="${groupId}"]`).forEach(b => {
-            if (joined) {
-                b.outerHTML = `<button class="action-btn join-btn joined" data-action="noop" disabled>✅ <span class="label">Joined</span></button>`;
-            }
-        });
-        const bannerBtn = document.getElementById('joinClassBtn');
-        if (bannerBtn && AppState.currentGroupId === groupId) {
-            bannerBtn.innerText = joined ? '✅' : '➕';
-            bannerBtn.className = joined ? 'btn btn-teal' : 'btn';
-            bannerBtn.disabled = joined;
-        }
-        const bf = document.getElementById('groupFollowers');
-        if (bf && AppState.currentGroupId === groupId) bf.textContent = followers;
-        invalidateGroupCache();
-        showToast('✅ Joined!', 'success');
-        updateTrendingGroups();
-    } catch (err) {
-        if (btn) btn.disabled = false;
-        showToast('❌ ' + err.message, 'error');
-    }
 }
 
 function openContentMenu(contentType, contentId, event) {
@@ -4854,11 +4700,8 @@ async function removeContentLocal(contentType, contentId) {
             AppState.hiddenContentKeys.add(key);
             showToast('👁️ Hidden from your feed', 'info');
         }
-        document.querySelectorAll(`[data-content-key="${key}"]`).forEach(card => {
-            if (!already) { card.style.transition = 'opacity .2s'; card.style.opacity = '0'; setTimeout(() => card.remove(), 200); }
-        });
-        document.querySelectorAll(`[data-video-list-id="${contentId}"]`).forEach(item => {
-            if (!already) { item.style.transition = 'opacity .2s'; item.style.opacity = '0'; setTimeout(() => item.remove(), 200); }
+        document.querySelectorAll(`[data-content-key="${key}"]`).forEach(el => {
+            if (!already) { el.style.transition = 'opacity .2s'; el.style.opacity = '0'; setTimeout(() => el.remove(), 200); }
         });
     } catch (e) { showToast('❌ ' + e.message, 'error'); }
 }
@@ -4872,11 +4715,8 @@ async function deleteContent(contentType, contentId) {
         await sb.from('content_dislikes').delete().eq('content_type', contentType).eq('content_id', String(contentId));
         await sb.from('content_comments').delete().eq('content_type', contentType).eq('content_id', String(contentId));
         await sb.from(table).delete().eq('id', contentId);
-        document.querySelectorAll(`[data-content-key="${contentType}:${contentId}"]`).forEach(card => {
-            card.style.transition = 'opacity .2s'; card.style.opacity = '0'; setTimeout(() => card.remove(), 200);
-        });
-        document.querySelectorAll(`[data-video-list-id="${contentId}"]`).forEach(item => {
-            item.style.transition = 'opacity .2s'; item.style.opacity = '0'; setTimeout(() => item.remove(), 200);
+        document.querySelectorAll(`[data-content-key="${contentType}:${contentId}"]`).forEach(el => {
+            el.style.transition = 'opacity .2s'; el.style.opacity = '0'; setTimeout(() => el.remove(), 200);
         });
         showToast('🗑️ Deleted', 'success');
     } catch (e) { showToast('❌ ' + e.message, 'error'); }
@@ -4909,8 +4749,8 @@ async function submitContentReport() {
         } catch (e) {}
         notifyAdmins({ type: 'new_report', title: '🚨 New content report', message: `${contentType.toUpperCase()} • ${reason}`, linkType: contentType, linkId: contentId }).catch(() => {});
         const key = `${contentType}:${contentId}`;
-        document.querySelectorAll(`[data-content-key="${key}"]`).forEach(card => {
-            card.style.transition = 'opacity .2s'; card.style.opacity = '0'; setTimeout(() => card.remove(), 200);
+        document.querySelectorAll(`[data-content-key="${key}"]`).forEach(el => {
+            el.style.transition = 'opacity .2s'; el.style.opacity = '0'; setTimeout(() => el.remove(), 200);
         });
         closeModal('reportContentModal');
         showToast('✅ Reported — admin will review', 'success');
@@ -5009,7 +4849,7 @@ async function submitBStoreBook() {
         closeModal('bstoreUploadModal');
     } catch (err) { showToast('Error: ' + err.message, 'error'); }
 }
-async function openGiftPicker(contextOverride) {
+async function openGiftPicker() {
     if (!AppState.userId) return showToast('Login first.', 'error');
     if (!AppState.currentGiftTarget) return showToast('No target', 'error');
     document.getElementById('giftPickerBalance').textContent = AppState.coinBalance.toLocaleString();
@@ -5140,12 +4980,12 @@ async function confirmGiftSend() {
                 gift_key: giftKey,
                 coins: gift.cost
             });
-            const { data: msg } = await sb.from('dm_messages').insert({
+            await sb.from('dm_messages').insert({
                 thread_id: target.threadId,
                 sender_id: AppState.userId,
                 message: `[GIFT:${giftKey}]`,
                 seen: false
-            }).select().single();
+            });
             await sb.from('dm_threads').update({
                 last_message_preview: `${gift.emoji} ${gift.name}`,
                 last_message_at: new Date()
@@ -5381,7 +5221,7 @@ async function loadChatMessages() {
     c.querySelectorAll('[data-msg-wrap]').forEach(el => {
         let longPressTimer = null;
         const msgId = el.dataset.msgWrap;
-        el.addEventListener('touchstart', (e) => {
+        el.addEventListener('touchstart', () => {
             longPressTimer = setTimeout(() => showMessageOptions(msgId), 500);
         }, { passive: true });
         el.addEventListener('touchend', () => { if (longPressTimer) clearTimeout(longPressTimer); });
@@ -5782,15 +5622,16 @@ function searchInviteUsers(query) {
         c.innerHTML = data.map(u => {
             const already = existingIds.has(u.user_id);
             return `<label style="display:flex; align-items:center; gap:10px; padding:10px; border-bottom:1px solid var(--card-border); cursor:pointer; ${already ? 'opacity:0.5;' : ''}">
-                <input type="checkbox" ${already ? 'disabled' : ''} onchange="_inviteSelection[this.checked ? 'add' : 'delete']('${u.user_id}')">
+                <input type="checkbox" ${already ? 'disabled' : ''} onchange="window._inviteSelection[this.checked ? 'add' : 'delete']('${u.user_id}')">
                 <div class="comment-avatar"><img src="${escapeAttr(u.profile_pic_url || AppState.profilePicUrl)}" loading="lazy"></div>
                 <div style="flex:1;"><div style="font-weight:800; font-size:14px;">${escapeHtml(getDisplayName(u))} ${already ? '(member)' : ''}</div><div style="font-size:12px; color:var(--text-muted);">${escapeHtml(u.email || '')}</div></div>
             </label>`;
         }).join('');
     }, 300);
 }
+window._inviteSelection = _inviteSelection;
 async function confirmInviteUsers() {
-    const ids = [..._inviteSelection];
+    const ids = [...window._inviteSelection];
     if (!ids.length) return showToast('Select users', 'error');
     try {
         const rows = ids.map(uid => ({
@@ -5805,7 +5646,7 @@ async function confirmInviteUsers() {
         await sb.from('notifications').insert(rows);
         showToast(`✅ Invited ${ids.length}`, 'success');
         closeModal('inviteUsersModal');
-        _inviteSelection = new Set();
+        window._inviteSelection = new Set();
     } catch (e) { showToast('Failed: ' + e.message, 'error'); }
 }
 
@@ -8040,7 +7881,7 @@ document.addEventListener('DOMContentLoaded', function() {
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.js').then(() => console.log('SW registered')).catch(() => {});
 }
-console.log('🚀 TENI v7.1 — loaded');
+console.log('🚀 TENI v7.2 — loaded');
 </script>
 </body>
 </html>
