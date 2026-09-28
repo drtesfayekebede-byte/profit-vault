@@ -20,7 +20,7 @@
     --green-success: #10b981; --red-error: #ef4444; --orange-warning: #f59e0b;
     --purple: #8b5cf6; --pink: #ec4899; --blue: #3b82f6;
     --header-row1-height: 56px; --header-row2-height: 52px; --header-height: 108px;
-    --border-radius-card: 20px; --border-radius-sm: 12px;
+    --border-radius-card: 16px; --border-radius-sm: 12px;
     --font-main: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
     --font-serif: 'Playfair Display', 'Times New Roman', Times, serif;
     --card-bg: rgba(10, 37, 64, 0.04); --card-border: rgba(10, 37, 64, 0.08);
@@ -137,7 +137,7 @@ html, body {
 .header-row-1 {
     height: var(--header-row1-height); padding: 0 12px;
     display: flex; align-items: center; gap: 8px;
-    max-width: 900px; width: 100%; margin: 0 auto;
+    max-width: 1400px; width: 100%; margin: 0 auto;
 }
 .hamburger-btn {
     background: none; border: none; color: var(--text-light); font-size: 22px;
@@ -157,7 +157,7 @@ html, body {
 .app-logo:hover { background: rgba(255,255,255,0.05); }
 .app-logo h1 { font-size: 20px; font-weight: 900; font-family: var(--font-serif); color: var(--text-light); letter-spacing: 0.5px; }
 .logo-icon { font-size: 22px; color: var(--gold); flex-shrink: 0; }
-.search-container { flex: 1; margin: 0 6px; max-width: 260px; display: flex; }
+.search-container { flex: 1; margin: 0 6px; max-width: 360px; display: flex; }
 .search-container input {
     width: 100%; padding: 8px 14px; border-radius: 30px; border: none;
     background: rgba(255,255,255,0.9); font-size: 13px; outline: none;
@@ -182,7 +182,7 @@ html, body {
     height: var(--header-row2-height); background: var(--navy);
     display: flex; align-items: center; gap: 8px; padding: 8px 12px;
     scrollbar-width: none; -webkit-overflow-scrolling: touch;
-    max-width: 900px; width: 100%; margin: 0 auto;
+    max-width: 1400px; width: 100%; margin: 0 auto;
 }
 .header-row-2.filter-open { overflow-x: auto; }
 .header-row-2::-webkit-scrollbar { display: none; }
@@ -307,7 +307,7 @@ html, body {
 
 .app-main {
     flex: 1; overflow-y: auto; padding: 16px; background: var(--bg-white);
-    width: 100%; max-width: 900px; margin: 0 auto; padding-bottom: 20px;
+    width: 100%; max-width: 1400px; margin: 0 auto; padding-bottom: 20px;
     -webkit-overflow-scrolling: touch;
 }
 .app-grid-wrapper { display: flex; flex-direction: column; gap: 16px; }
@@ -315,21 +315,18 @@ html, body {
 .tab-content-wrapper.active { display: flex; }
 .tab-scroll-area {
     flex: 1; overflow-y: auto; padding: 16px; padding-bottom: 20px;
-    width: 100%; max-width: 1100px; margin: 0 auto;
+    width: 100%; max-width: 1400px; margin: 0 auto;
     -webkit-overflow-scrolling: touch;
 }
 .loading { text-align: center; padding: 20px; color: var(--text-muted); font-weight: 700; }
 .loading .spinner { margin-bottom: 8px; }
-
-.skeleton {
-    background: linear-gradient(90deg, var(--card-bg) 0%, var(--card-hover) 50%, var(--card-bg) 100%);
-    background-size: 200% 100%;
-    animation: shimmer 1.5s infinite linear;
-    border-radius: 12px;
+.empty-state {
+    grid-column: 1 / -1;
+    text-align: center; padding: 40px 20px;
+    color: var(--text-muted); font-weight: 700;
+    font-size: 14px;
 }
-.skeleton-cover { width: 100%; aspect-ratio: 2/3; margin-bottom: 8px; }
-.skeleton-title { height: 16px; margin-bottom: 6px; }
-.skeleton-meta { height: 12px; width: 60%; margin-bottom: 6px; }
+.empty-state .empty-emoji { font-size: 48px; display: block; margin-bottom: 12px; }
 
 .toast {
     position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
@@ -506,19 +503,271 @@ html, body {
 .class-content { display: none; }
 .class-content.active { display: block; }
 
+.yt-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    width: 100%;
+}
+@media (min-width: 900px) {
+    .yt-layout.split {
+        grid-template-columns: 30% 1fr;
+    }
+}
+.yt-list-col {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    order: 2;
+    min-width: 0;
+}
+.yt-player-col {
+    order: 1;
+    min-width: 0;
+}
+@media (min-width: 900px) {
+    .yt-list-col { order: 1; }
+    .yt-player-col { order: 2; }
+}
+
+.yt-big-player {
+    display: none;
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    margin-bottom: 12px;
+}
+.yt-big-player.active { display: block; }
+.yt-big-player .player-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 20;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s;
+}
+.yt-big-player .player-close:hover { background: rgba(0,0,0,0.9); transform: scale(1.05); }
+.yt-big-player video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background: #000;
+}
+.yt-big-player .video-controls {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 40px;
+    padding: 0 14px;
+    background: linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0));
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    opacity: 1;
+    z-index: 5;
+}
+.yt-big-player .video-controls > * { flex-shrink: 0; }
+.yt-big-player .video-controls button {
+    background: none; border: none; color: white; font-size: 18px; cursor: pointer; padding: 4px;
+}
+.yt-big-player .video-controls .progress-bar {
+    flex: 1; height: 4px; background: rgba(255,255,255,0.3);
+    border-radius: 2px; cursor: pointer; min-width: 80px; margin: 0;
+}
+.yt-big-player .video-controls .progress-bar .progress-fill {
+    height: 100%; background: var(--teal); border-radius: 2px;
+}
+.yt-big-player .video-controls .time-display {
+    font-size: 12px; color: rgba(255,255,255,0.85);
+    font-weight: 700; min-width: 80px; font-family: monospace;
+}
+.yt-big-player .video-controls .volume-slider {
+    width: 60px; height: 4px; background: rgba(255,255,255,0.3);
+    border-radius: 2px; outline: none;
+}
+.yt-big-player .video-controls .speed-control,
+.yt-big-player .video-controls .download-btn {
+    background: rgba(255,255,255,0.1); border: none; color: white;
+    padding: 3px 8px; border-radius: 4px; font-size: 11px;
+    font-weight: 800; cursor: pointer;
+}
+.yt-big-info {
+    display: none;
+    background: var(--bg-white);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+}
+.yt-big-info.active { display: block; }
+.yt-big-title {
+    font-size: 20px;
+    font-weight: 900;
+    color: var(--text-dark);
+    line-height: 1.3;
+    margin-bottom: 8px;
+    letter-spacing: -0.2px;
+}
+.yt-big-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 700;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+.yt-big-meta .meta-avatar {
+    width: 32px; height: 32px; border-radius: 50%; overflow: hidden;
+    background: var(--teal); flex-shrink: 0;
+}
+.yt-big-meta .meta-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.yt-big-meta .meta-group-name { font-weight: 900; color: var(--text-dark); font-size: 14px; }
+.yt-big-description {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 600;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    margin-bottom: 12px;
+}
+.yt-big-description.clamped {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.yt-big-readmore {
+    color: var(--teal); font-weight: 800; cursor: pointer;
+    font-size: 13px; margin-bottom: 12px; display: inline-block;
+}
+.yt-big-actions {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 6px;
+    padding-top: 12px;
+    border-top: 1px solid var(--card-border);
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+}
+.yt-big-actions::-webkit-scrollbar { display: none; }
+.yt-big-actions > * { flex-shrink: 0; }
+
+.video-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.video-list-item {
+    display: flex;
+    gap: 10px;
+    background: var(--bg-white);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 8px;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
+    position: relative;
+}
+.video-list-item:hover {
+    background: var(--card-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+}
+.video-list-item.active {
+    border-color: var(--red-error);
+    box-shadow: 0 0 0 2px rgba(239,68,68,0.25);
+}
+.video-list-thumb {
+    width: 120px;
+    aspect-ratio: 16 / 9;
+    border-radius: 8px;
+    background: #1a1a2e;
+    overflow: hidden;
+    flex-shrink: 0;
+    position: relative;
+}
+.video-list-thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.video-list-thumb .thumb-emoji {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; color: var(--gold);
+}
+.video-list-thumb .thumb-play {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(0,0,0,0.15);
+    color: white; font-size: 20px;
+    opacity: 0; transition: opacity 0.15s;
+}
+.video-list-item:hover .thumb-play { opacity: 1; }
+.video-list-info {
+    flex: 1; min-width: 0;
+    display: flex; flex-direction: column; gap: 4px;
+    padding: 2px 0;
+}
+.video-list-title {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--text-dark);
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    word-break: break-word;
+}
+.video-list-group {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.video-list-meta {
+    font-size: 10px;
+    color: var(--text-muted);
+    font-weight: 700;
+    display: flex; align-items: center; gap: 4px;
+    margin-top: auto;
+}
+@media (max-width: 899px) {
+    .video-list-thumb { width: 140px; }
+    .video-list-title { font-size: 14px; }
+}
+
 .media-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
+    grid-template-columns: 1fr;
+    gap: 14px;
 }
-@media (min-width: 600px) { .media-grid { grid-template-columns: repeat(3, 1fr); gap: 14px; } }
-@media (min-width: 900px) { .media-grid { grid-template-columns: repeat(4, 1fr); gap: 16px; } }
-@media (min-width: 1200px) { .media-grid { grid-template-columns: repeat(5, 1fr); gap: 16px; } }
+@media (min-width: 600px) { .media-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; } }
 
 .media-card {
-    background: var(--bg-white); border: 1px solid var(--card-border);
-    border-radius: 16px; overflow: hidden;
-    display: flex; flex-direction: column;
+    background: var(--bg-white);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
     cursor: pointer;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     position: relative;
@@ -529,27 +778,38 @@ html, body {
     box-shadow: 0 12px 28px rgba(0,0,0,0.14);
 }
 .media-card-cover {
-    width: 100%; background: var(--navy);
-    display: flex; align-items: center; justify-content: center;
-    color: var(--gold); font-size: 48px;
-    position: relative; overflow: hidden;
+    width: 100%;
+    background: var(--navy);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gold);
+    font-size: 56px;
+    position: relative;
+    overflow: hidden;
 }
 .media-card-cover img {
-    position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+    position: absolute; inset: 0;
+    width: 100%; height: 100%; object-fit: cover;
 }
-.media-card.cover-portrait .media-card-cover { aspect-ratio: 2/3; }
-.media-card.cover-landscape .media-card-cover { aspect-ratio: 16/9; }
+.media-card.cover-portrait .media-card-cover { aspect-ratio: 2 / 3; }
+.media-card.cover-landscape .media-card-cover { aspect-ratio: 16 / 9; }
 .media-card-cover.cover-banner {
     background: linear-gradient(135deg, var(--navy), var(--navy-light));
-    aspect-ratio: 16/9;
+    aspect-ratio: 16 / 9;
 }
 .media-card-cover.cover-banner.exam-cat {
     background: linear-gradient(135deg, #10b981, #059669);
 }
 .media-card-cover .banner-title {
-    position: absolute; inset: 0; padding: 14px;
-    display: flex; flex-direction: column; justify-content: flex-end;
-    color: white; font-weight: 900; font-size: 15px;
+    position: absolute; inset: 0;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    color: white;
+    font-weight: 900;
+    font-size: 18px;
     text-shadow: 0 2px 6px rgba(0,0,0,0.4);
     line-height: 1.25;
     word-break: break-word;
@@ -559,12 +819,16 @@ html, body {
     -webkit-box-orient: vertical;
 }
 .media-card-body {
-    padding: 10px 12px 12px 12px;
-    display: flex; flex-direction: column; gap: 4px;
+    padding: 12px 14px 14px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
     flex: 1;
 }
 .media-card-title {
-    font-size: 14px; font-weight: 800; color: var(--text-dark);
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--text-dark);
     line-height: 1.3;
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -574,52 +838,153 @@ html, body {
     margin: 0;
 }
 .media-card-author {
-    font-size: 12px; color: var(--text-muted); font-weight: 700;
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 700;
     display: -webkit-box;
     -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
 .media-card-meta {
-    font-size: 11px; color: var(--text-muted); font-weight: 700;
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 700;
     display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
     margin-top: 2px;
 }
 .media-card-meta .meta-dot { color: var(--card-border); }
 .media-card-price {
-    font-size: 14px; color: var(--gold-dark); font-weight: 900;
+    font-size: 15px;
+    color: var(--gold-dark);
+    font-weight: 900;
     margin-top: 4px;
 }
 .media-card-actions {
-    display: flex; align-items: center; gap: 6px;
-    margin-top: 8px;
-    padding-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+    padding-top: 10px;
     border-top: 1px solid var(--card-border);
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
 }
-.media-card-actions .btn-sm { flex: 1; padding: 8px 10px; }
+.media-card-actions::-webkit-scrollbar { display: none; }
+.media-card-actions > * { flex-shrink: 0; }
+.media-card-actions .btn-sm { flex: 1; padding: 8px 10px; min-width: 60px; }
+
+.action-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 14px;
+    font-weight: 700;
+    padding: 6px 8px;
+    border-radius: 20px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    transition: 0.15s;
+    flex-shrink: 0;
+    min-width: 32px;
+    min-height: 32px;
+}
+.action-btn:hover { background: var(--card-hover); color: var(--navy); }
+[data-theme="dark"] .action-btn:hover { color: var(--gold); }
+.action-btn.liked { color: var(--red-error); }
+.action-btn.disliked { color: var(--text-dark); }
+.action-btn .action-count { font-size: 12px; }
+.action-btn.gift-btn {
+    background: linear-gradient(135deg, #FFD700, #ccac00);
+    color: #1e293b;
+    padding: 6px 12px;
+    font-weight: 900;
+    min-width: 40px;
+}
+.action-btn.gift-btn:hover { transform: scale(1.05); background: linear-gradient(135deg, #ffdf2b, #d4b400); }
+.action-btn.join-btn {
+    background: linear-gradient(135deg, #20b2aa, #008080);
+    color: white;
+    padding: 6px 12px;
+    font-weight: 900;
+    min-width: 40px;
+}
+.action-btn.join-btn:hover { transform: scale(1.05); }
+.action-btn.join-btn.joined {
+    background: var(--green-success);
+    cursor: default;
+}
+.action-btn.open-group-btn {
+    background: var(--navy);
+    color: white;
+    padding: 6px 12px;
+    font-weight: 900;
+    min-width: 40px;
+}
+.action-btn.open-group-btn:hover { background: var(--navy-light); transform: scale(1.05); }
+[data-theme="dark"] .action-btn.open-group-btn {
+    background: var(--navy-lighter);
+}
+@media (max-width: 500px) {
+    .action-btn { padding: 6px 4px; font-size: 16px; min-width: 28px; }
+    .action-btn .action-count { display: none; }
+    .action-btn.gift-btn,
+    .action-btn.join-btn,
+    .action-btn.open-group-btn {
+        padding: 6px 8px;
+        min-width: 32px;
+    }
+    .action-btn.gift-btn .label,
+    .action-btn.join-btn .label,
+    .action-btn.open-group-btn .label { display: none; }
+}
+
 .gift-btn-mini {
     background: linear-gradient(135deg, #FFD700, #ccac00);
-    color: #1e293b; border: none; border-radius: 20px;
-    min-width: 36px; height: 36px; padding: 0 10px;
-    font-size: 14px; font-weight: 900;
-    display: inline-flex; align-items: center; justify-content: center; gap: 4px;
-    cursor: pointer; transition: transform 0.15s;
+    color: #1e293b;
+    border: none;
+    border-radius: 20px;
+    min-width: 36px;
+    height: 36px;
+    padding: 0 12px;
+    font-size: 14px;
+    font-weight: 900;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    cursor: pointer;
+    transition: transform 0.15s;
     flex-shrink: 0;
 }
 .gift-btn-mini:hover { transform: scale(1.05); }
 .gift-btn-mini:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-.media-card-gifts {
-    display: flex; flex-wrap: wrap; gap: 4px;
-    margin-top: 6px;
+@media (max-width: 500px) {
+    .gift-btn-mini { padding: 0; min-width: 32px; height: 32px; font-size: 16px; }
+}
+
+.gifts-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 6px 0;
 }
 .gift-chip {
-    display: inline-flex; align-items: center; gap: 3px;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
     background: rgba(255,215,0,0.15);
     border: 1px solid rgba(255,215,0,0.4);
     color: var(--text-dark);
     border-radius: 12px;
     padding: 2px 8px;
-    font-size: 11px; font-weight: 800;
+    font-size: 11px;
+    font-weight: 800;
 }
 .gift-chip.legendary {
     background: linear-gradient(135deg, #8b5cf6, #ec4899);
@@ -641,14 +1006,35 @@ html, body {
     box-shadow: 0 0 12px rgba(255,215,0,0.6);
 }
 .top-gifter-badge {
-    display: inline-flex; align-items: center; gap: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
     background: linear-gradient(135deg, #FFD700, #ccac00);
     color: #1e293b;
     border-radius: 12px;
     padding: 3px 10px;
-    font-size: 11px; font-weight: 900;
+    font-size: 11px;
+    font-weight: 900;
     margin-top: 6px;
 }
+
+.content-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 16px;
+    transition: all 0.3s ease;
+    position: relative;
+}
+.content-card-menu-btn {
+    position: absolute; top: 8px; right: 8px;
+    background: rgba(0,0,0,0.55); color: white; border: none;
+    width: 32px; height: 32px; border-radius: 50%; font-size: 18px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    z-index: 5; transition: 0.2s;
+}
+.content-card-menu-btn:hover { background: rgba(0,0,0,0.8); transform: scale(1.05); }
 .media-card-menu-btn {
     position: absolute; top: 8px; right: 8px;
     background: rgba(0,0,0,0.55); color: white; border: none;
@@ -658,35 +1044,28 @@ html, body {
 }
 .media-card-menu-btn:hover { background: rgba(0,0,0,0.8); transform: scale(1.05); }
 
-.content-card {
-    background: var(--card-bg); border: 1px solid var(--card-border);
-    border-radius: 16px; padding: 16px; margin-bottom: 16px;
-    transition: all 0.3s ease; position: relative;
-}
-.content-card:hover { background: var(--card-hover); box-shadow: var(--shadow-sm); }
-.content-card-menu-btn {
-    position: absolute; top: 8px; right: 8px;
-    background: rgba(0,0,0,0.55); color: white; border: none;
-    width: 32px; height: 32px; border-radius: 50%; font-size: 18px;
-    cursor: pointer; display: flex; align-items: center; justify-content: center;
-    z-index: 5; transition: 0.2s;
-}
-.content-card-menu-btn:hover { background: rgba(0,0,0,0.8); transform: scale(1.05); }
-
 .video-wrapper {
-    position: relative; width: 100%; background: #000;
-    border-radius: 12px; overflow: hidden; margin-bottom: 10px;
+    position: relative;
+    width: 100%;
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 10px;
     aspect-ratio: 16 / 9;
 }
 .video-wrapper .video-thumbnail {
     position: absolute; inset: 0;
-    background: #1a1a2e; display: flex; align-items: center; justify-content: center; cursor: pointer;
+    background: #1a1a2e;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
 }
-.video-wrapper .video-thumbnail img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.video-wrapper .video-thumbnail img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%; object-fit: cover;
+}
 .video-wrapper video {
     position: absolute; inset: 0;
-    width: 100%;
-    height: 100%;
+    width: 100%; height: 100%;
     display: block;
     object-fit: contain;
     background: #000;
@@ -698,7 +1077,10 @@ html, body {
     font-size: 30px; color: white; transition: 0.3s;
     border: 2px solid rgba(255,255,255,0.3);
 }
-.video-wrapper .video-thumbnail .play-btn-overlay:hover { background: rgba(0,0,0,0.8); transform: translate(-50%, -50%) scale(1.1); }
+.video-wrapper .video-thumbnail .play-btn-overlay:hover {
+    background: rgba(0,0,0,0.8);
+    transform: translate(-50%, -50%) scale(1.1);
+}
 .video-wrapper .video-controls {
     position: absolute;
     left: 0; right: 0; bottom: 0;
@@ -711,47 +1093,36 @@ html, body {
     transition: opacity 0.25s ease;
     opacity: 1;
     z-index: 5;
-    border-radius: 0;
-    overflow-x: auto; scrollbar-width: none;
+    overflow-x: auto;
+    scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
 }
 .video-wrapper .video-controls::-webkit-scrollbar { display: none; }
 .video-wrapper .video-controls > * { flex-shrink: 0; }
-.video-wrapper .video-controls button { background: none; border: none; color: white; font-size: 16px; cursor: pointer; padding: 2px; }
-.video-wrapper .video-controls .progress-bar { flex: 1; height: 3px; background: rgba(255,255,255,0.3); border-radius: 2px; cursor: pointer; min-width: 60px; margin: 0; }
-.video-wrapper .video-controls .progress-bar .progress-fill { height: 100%; background: var(--teal); border-radius: 2px; }
-.video-wrapper .video-controls .time-display { font-size: 11px; color: rgba(255,255,255,0.8); font-weight: 700; min-width: 66px; font-family: monospace; }
-.video-wrapper .video-controls .volume-slider { width: 48px; height: 4px; -webkit-appearance: none; appearance: none; background: rgba(255,255,255,0.3); border-radius: 2px; outline: none; }
+.video-wrapper .video-controls button {
+    background: none; border: none; color: white;
+    font-size: 16px; cursor: pointer; padding: 2px;
+}
+.video-wrapper .video-controls .progress-bar {
+    flex: 1; height: 3px; background: rgba(255,255,255,0.3);
+    border-radius: 2px; cursor: pointer; min-width: 60px; margin: 0;
+}
+.video-wrapper .video-controls .progress-bar .progress-fill {
+    height: 100%; background: var(--teal); border-radius: 2px;
+}
+.video-wrapper .video-controls .time-display {
+    font-size: 11px; color: rgba(255,255,255,0.8);
+    font-weight: 700; min-width: 66px; font-family: monospace;
+}
+.video-wrapper .video-controls .volume-slider {
+    width: 48px; height: 4px; background: rgba(255,255,255,0.3);
+    border-radius: 2px; outline: none;
+}
 .video-wrapper .video-controls .speed-control,
-.video-wrapper .video-controls .download-btn { background: rgba(255,255,255,0.1); border: none; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 800; cursor: pointer; }
-
-.content-card[data-content-type="video"] {
-    padding: 0 !important;
-}
-.content-card[data-content-type="video"] > .video-wrapper {
-    margin: 0 !important;
-    border-radius: 16px 16px 0 0;
-    overflow: hidden;
-    transition: border-radius 0.15s;
-}
-.content-card[data-content-type="video"] > .video-wrapper.is-playing {
-    border-radius: 16px 16px 0 0;
-}
-.content-card[data-content-type="video"] > .meta-block {
-    padding: 12px 16px 4px 16px;
-}
-.content-card[data-content-type="video"] > .actions {
-    padding: 0 16px 12px 16px;
-}
-.content-card[data-content-type="video"] > .content-comments {
-    padding: 0 16px 12px 16px;
-}
-.content-card[data-content-type="video"] > .content-card-menu-btn {
-    top: 12px;
-    right: 12px;
-}
-.content-card[data-content-type="video"] > .gifts-row {
-    padding: 0 16px 8px 16px;
+.video-wrapper .video-controls .download-btn {
+    background: rgba(255,255,255,0.1); border: none; color: white;
+    padding: 2px 6px; border-radius: 4px; font-size: 10px;
+    font-weight: 800; cursor: pointer;
 }
 
 .content-card.controls-hidden .video-controls {
@@ -796,40 +1167,23 @@ html, body {
 }
 .meta-description.expanded { -webkit-line-clamp: unset; display: block; overflow: visible; }
 .meta-readmore {
-    color: var(--teal);
-    font-weight: 700;
-    font-size: 12px;
-    cursor: pointer;
-    margin-left: 4px;
-    white-space: nowrap;
-    user-select: none;
+    color: var(--teal); font-weight: 700; font-size: 12px;
+    cursor: pointer; margin-left: 4px; white-space: nowrap; user-select: none;
 }
 .meta-readmore:hover { text-decoration: underline; }
 .meta-info {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 11px;
-    font-weight: 600;
-    color: #94a3b8;
-    flex-wrap: nowrap;
-    overflow: hidden;
+    display: flex; align-items: center; gap: 6px;
+    font-size: 11px; font-weight: 600; color: #94a3b8;
+    flex-wrap: nowrap; overflow: hidden;
 }
 .meta-info .meta-avatar {
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background: var(--teal);
-    overflow: hidden;
-    flex-shrink: 0;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: var(--teal); overflow: hidden; flex-shrink: 0;
 }
 .meta-info .meta-avatar img { width: 100%; height: 100%; object-fit: cover; }
 .meta-info .meta-group {
-    color: #64748b;
-    font-weight: 700;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    color: #64748b; font-weight: 700;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     max-width: 40%;
 }
 .meta-info .meta-dot { color: #cbd5e1; flex-shrink: 0; }
@@ -839,19 +1193,6 @@ html, body {
 [data-theme="dark"] .meta-description { color: var(--text-muted); }
 [data-theme="dark"] .meta-info { color: #94a3b8; }
 [data-theme="dark"] .meta-info .meta-group { color: #cbd5e1; }
-
-.content-card .actions { display: flex; gap: 16px; margin-top: 12px; border-top: 1px solid var(--card-border); padding-top: 12px; flex-wrap: wrap; align-items: center; }
-.content-card .actions button { background: none; border: none; font-size: 14px; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 4px; transition: 0.2s; font-weight: 700; padding: 4px 8px; border-radius: 20px; }
-.content-card .actions button:hover { color: var(--navy); background: var(--card-hover); }
-[data-theme="dark"] .content-card .actions button:hover { color: var(--gold); }
-.content-card .actions button.liked { color: var(--red-error); }
-.content-card .actions button.disliked { color: var(--text-dark); }
-.view-counter { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: var(--text-muted); font-weight: 700; }
-
-.gifts-row {
-    display: flex; flex-wrap: wrap; gap: 6px;
-    padding: 6px 0;
-}
 
 .content-comments { margin-top: 12px; display: none; padding: 8px 0; }
 .comment-item { padding: 10px 0; border-bottom: 1px solid var(--card-border); position: relative; }
@@ -897,7 +1238,6 @@ html, body {
 .question-box label.correct { border-color: var(--green-success); background: rgba(16,185,129,0.1); }
 .question-box label.incorrect { border-color: var(--red-error); background: rgba(239,68,68,0.1); }
 .question-box label.selected { border-color: var(--gold); background: rgba(255,215,0,0.1); }
-.question-box label.flagged { box-shadow: 0 0 0 2px var(--orange-warning); }
 .exam-timer { display: flex; align-items: center; gap: 10px; padding: 8px 16px; background: var(--navy); border-radius: 30px; color: white; font-weight: 800; }
 .exam-timer .timer { font-size: 20px; color: var(--gold); font-family: monospace; font-weight: 900; }
 .exam-question-block { background: var(--card-bg); border-radius: 12px; padding: 12px; margin-bottom: 12px; }
@@ -915,8 +1255,11 @@ html, body {
 .leaderboard-list { display: flex; flex-direction: column; gap: 8px; }
 .leaderboard-row {
     display: flex; align-items: center; gap: 12px;
-    padding: 10px 14px; background: var(--card-bg); border: 1px solid var(--card-border);
-    border-radius: 12px; transition: 0.2s;
+    padding: 10px 14px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    transition: 0.2s;
 }
 .leaderboard-row.me { border-color: var(--gold); background: rgba(255,215,0,0.08); }
 .leaderboard-rank {
@@ -934,34 +1277,40 @@ html, body {
 .leaderboard-score { font-weight: 900; color: var(--green-success); font-size: 16px; }
 
 .join-header h2 { color: var(--text-dark); font-size: 20px; font-weight: 900; margin-bottom: 16px; }
-.teacher-card { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; margin-bottom: 12px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; }
+.teacher-card {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 16px; margin-bottom: 12px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+}
 .teacher-card .info .name { font-weight: 800; color: var(--text-dark); font-size: 16px; }
 .teacher-card .info .spec { color: var(--text-muted); font-size: 13px; font-weight: 700; }
-.teacher-card .join-btn { background: var(--teal); color: white; border: none; padding: 8px 18px; border-radius: 30px; font-weight: 800; cursor: pointer; font-size: 14px; min-height: 40px; transition: 0.2s; }
+.teacher-card .join-btn {
+    background: var(--teal); color: white; border: none;
+    padding: 8px 18px; border-radius: 30px;
+    font-weight: 800; cursor: pointer; font-size: 14px;
+    min-height: 40px; transition: 0.2s;
+}
 .teacher-card .join-btn:hover { transform: scale(1.02); }
 .teacher-card .join-btn.joined { background: var(--green-success); }
 .teacher-card .join-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 .books-header h2 { color: var(--text-dark); font-size: 20px; font-weight: 900; margin-bottom: 12px; }
-.book-card { text-align: center; }
-.book-card .book-cover {
-    width: 100%; height: 150px; background: var(--navy); border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    color: var(--gold); font-size: 48px; margin-bottom: 8px; overflow: hidden;
-}
-.book-card .book-cover img { width: 100%; height: 100%; object-fit: cover; }
-.book-card .title { font-weight: 800; color: var(--text-dark); font-size: 15px; }
-.book-card .author { color: var(--text-muted); font-size: 13px; margin: 4px 0; font-weight: 700; }
 
 .profile-card {
-    background: var(--card-bg); border: 1px solid var(--card-border);
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
     border-radius: 16px; padding: 16px; margin-bottom: 16px;
     text-align: center;
 }
 .profile-card .avatar-lg {
-    width: 80px; height: 80px; border-radius: 50%; background: var(--navy);
-    color: white; display: flex; align-items: center; justify-content: center;
-    font-size: 40px; margin: 0 auto 12px; overflow: hidden; cursor: pointer;
-    border: 3px solid var(--gold); transition: 0.2s; position: relative;
+    width: 80px; height: 80px; border-radius: 50%;
+    background: var(--navy); color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 40px; margin: 0 auto 12px;
+    overflow: hidden; cursor: pointer;
+    border: 3px solid var(--gold);
+    transition: 0.2s; position: relative;
 }
 .profile-card .avatar-lg:hover { transform: scale(1.05); }
 .profile-card .avatar-lg img { width: 100%; height: 100%; object-fit: cover; }
@@ -970,7 +1319,8 @@ html, body {
     width: 26px; height: 26px; border-radius: 50%;
     background: var(--gold); color: #1e293b;
     display: flex; align-items: center; justify-content: center;
-    font-size: 13px; border: 2px solid var(--bg-white); pointer-events: none;
+    font-size: 13px; border: 2px solid var(--bg-white);
+    pointer-events: none;
 }
 .avatar-uploading { position: absolute; inset: 0; background: rgba(0,0,0,0.5); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
 .profile-card h3 { color: var(--text-dark); font-size: 20px; font-weight: 900; display: flex; align-items: center; justify-content: center; gap: 6px; }
@@ -987,34 +1337,35 @@ html, body {
 .settings-toggle.on { background: var(--green-success); }
 .settings-toggle::after {
     content: ''; position: absolute; top: 3px; left: 3px;
-    width: 20px; height: 20px; border-radius: 50%; background: white;
-    transition: 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    width: 20px; height: 20px; border-radius: 50%;
+    background: white; transition: 0.2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
 .settings-toggle.on::after { left: 23px; }
-.settings-btn { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 8px 16px; font-weight: 800; font-size: 13px; cursor: pointer; color: var(--text-dark); transition: 0.2s; }
+.settings-btn {
+    background: var(--card-bg); border: 1px solid var(--card-border);
+    border-radius: 20px; padding: 8px 16px;
+    font-weight: 800; font-size: 13px; cursor: pointer;
+    color: var(--text-dark); transition: 0.2s;
+}
 .settings-btn:hover { background: var(--card-hover); }
 .settings-btn.danger { color: var(--red-error); border-color: rgba(239,68,68,0.3); }
 .settings-btn.primary { background: var(--teal); color: white; border-color: var(--teal); }
 .settings-theme-picker { display: flex; gap: 8px; flex-wrap: wrap; }
 .settings-theme-picker button {
     flex: 1; min-width: 80px; padding: 10px;
-    border: 2px solid var(--card-border); border-radius: 12px;
+    border: 2px solid var(--card-border);
+    border-radius: 12px;
     background: var(--bg-white); color: var(--text-dark);
-    font-weight: 800; font-size: 13px; cursor: pointer; transition: 0.2s;
+    font-weight: 800; font-size: 13px; cursor: pointer;
+    transition: 0.2s;
     display: flex; align-items: center; justify-content: center; gap: 4px;
 }
 .settings-theme-picker button.active { border-color: var(--teal); background: rgba(0,128,128,0.1); color: var(--teal); }
 .activity-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.activity-cell {
-    background: var(--bg-white); border: 1px solid var(--card-border);
-    border-radius: 12px; padding: 12px; text-align: center;
-}
-.activity-cell .activity-value {
-    font-size: 22px; font-weight: 900; color: var(--teal);
-}
-.activity-cell .activity-label {
-    font-size: 11px; color: var(--text-muted); font-weight: 700; margin-top: 4px;
-}
+.activity-cell { background: var(--bg-white); border: 1px solid var(--card-border); border-radius: 12px; padding: 12px; text-align: center; }
+.activity-cell .activity-value { font-size: 22px; font-weight: 900; color: var(--teal); }
+.activity-cell .activity-label { font-size: 11px; color: var(--text-muted); font-weight: 700; margin-top: 4px; }
 
 #admin-tab { padding-bottom: 40px; }
 .admin-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; padding: 0 4px; gap: 8px; flex-wrap: wrap; }
@@ -1067,8 +1418,9 @@ html, body {
 }
 .admin-item:hover { box-shadow: var(--shadow-md); }
 .admin-item-thumb {
-    width: 60px; height: 60px; border-radius: 10px; background: var(--navy);
-    color: var(--gold); display: flex; align-items: center; justify-content: center;
+    width: 60px; height: 60px; border-radius: 10px;
+    background: var(--navy); color: var(--gold);
+    display: flex; align-items: center; justify-content: center;
     font-size: 26px; flex-shrink: 0; overflow: hidden;
 }
 .admin-item-thumb img { width: 100%; height: 100%; object-fit: cover; }
@@ -1090,7 +1442,14 @@ html, body {
 .admin-btn.neutral:hover { background: var(--card-hover); }
 .admin-btn.gold { background: var(--gold); color: #1e293b; }
 .admin-btn.warn { background: var(--orange-warning); color: white; }
-.admin-user-row { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: var(--bg-white); border: 1px solid var(--card-border); border-radius: 12px; margin-bottom: 8px; }
+.admin-user-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 14px;
+    background: var(--bg-white);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    margin-bottom: 8px;
+}
 .admin-user-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--teal); overflow: hidden; flex-shrink: 0; }
 .admin-user-avatar img { width: 100%; height: 100%; object-fit: cover; }
 .admin-user-info { flex: 1; min-width: 0; }
@@ -1103,10 +1462,13 @@ html, body {
 .admin-tag.admin { background: rgba(255,215,0,0.2); color: #b45309; }
 .admin-tag.warned { background: rgba(245,158,11,0.2); color: #b45309; }
 .admin-search {
-    width: 100%; padding: 10px 16px; border: 1px solid var(--card-border);
-    border-radius: 24px; font-family: var(--font-main); font-size: 14px;
-    font-weight: 700; margin-bottom: 12px; background: var(--bg-white);
-    color: var(--text-dark); outline: none;
+    width: 100%; padding: 10px 16px;
+    border: 1px solid var(--card-border);
+    border-radius: 24px;
+    font-family: var(--font-main); font-size: 14px; font-weight: 700;
+    margin-bottom: 12px;
+    background: var(--bg-white); color: var(--text-dark);
+    outline: none;
 }
 .admin-search:focus { border-color: var(--navy); }
 
@@ -1144,7 +1506,8 @@ html, body {
     background: var(--card-bg); border: 2px solid var(--card-border);
     width: 44px; height: 44px; border-radius: 50%;
     font-size: 22px; font-weight: 900; cursor: pointer;
-    color: var(--text-dark); display: flex; align-items: center; justify-content: center;
+    color: var(--text-dark);
+    display: flex; align-items: center; justify-content: center;
     flex-shrink: 0; transition: 0.2s; padding: 0; line-height: 1;
 }
 .admin-back-btn:hover { background: var(--card-hover); border-color: var(--gold); transform: translateX(-3px); }
@@ -1164,8 +1527,9 @@ html, body {
 .wallet-transaction .positive { color: var(--green-success); }
 .wallet-transaction .negative { color: var(--red-error); }
 
-.bstore-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.bstore-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--border-radius-card); padding: 16px; text-align: center; transition: all 0.3s ease; position: relative; }
+.bstore-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
+@media (min-width: 600px) { .bstore-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; } }
+.bstore-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 16px; text-align: center; transition: all 0.3s ease; position: relative; }
 .bstore-card .book-cover { width: 100%; height: 180px; background: var(--navy); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--gold); font-size: 48px; margin-bottom: 8px; overflow: hidden; }
 .bstore-card .book-cover img { width: 100%; height: 100%; object-fit: cover; }
 .bstore-card .title { font-weight: 800; color: var(--text-dark); font-size: 15px; }
@@ -1253,8 +1617,7 @@ html, body {
     font-size: 14px; font-weight: 700;
     word-wrap: break-word; overflow-wrap: anywhere;
     white-space: pre-wrap; line-height: 1.3;
-    width: fit-content;
-    max-width: 100%;
+    width: fit-content; max-width: 100%;
 }
 .chat-bubble-row.mine .chat-bubble {
     background: var(--bubble-mine-bg); color: var(--bubble-mine-color);
@@ -1277,19 +1640,16 @@ html, body {
 }
 .chat-bubble.gift-bubble.legendary {
     background: linear-gradient(135deg, #8b5cf6, #ec4899);
-    color: white;
-    border-color: #a78bfa;
+    color: white; border-color: #a78bfa;
 }
 .chat-bubble.gift-bubble.ultimate {
     background: linear-gradient(135deg, #FFD700, #ff8c00);
-    color: #1e293b;
-    border-color: #ccac00;
+    color: #1e293b; border-color: #ccac00;
     animation: pulse 2s infinite;
 }
 .chat-bubble.gift-bubble.teni {
     background: linear-gradient(135deg, #FFD700, #8b5cf6, #06b6d4);
-    color: white;
-    border-color: #FFD700;
+    color: white; border-color: #FFD700;
     animation: pulse 1.5s infinite;
     box-shadow: 0 0 20px rgba(255,215,0,0.8);
 }
@@ -1312,14 +1672,7 @@ html, body {
     color: var(--text-dark);
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
-.chat-reaction-chip.mine {
-    border-color: var(--teal);
-    background: rgba(0,128,128,0.08);
-}
-.chat-deleted {
-    font-style: italic; opacity: 0.6;
-    font-size: 13px;
-}
+.chat-reaction-chip.mine { border-color: var(--teal); background: rgba(0,128,128,0.08); }
 .chat-input-bar {
     flex-shrink: 0; padding: 10px 12px; background: var(--bg-white);
     border-top: 1px solid var(--card-border);
@@ -1329,9 +1682,13 @@ html, body {
 .chat-attach-btn, .chat-gift-btn { background: none; border: none; font-size: 22px; cursor: pointer; padding: 6px; color: var(--text-muted); border-radius: 50%; }
 .chat-gift-btn { color: #ccac00; }
 .chat-input {
-    flex: 1; padding: 10px 14px; border: 1px solid var(--card-border);
-    border-radius: 24px; font-size: 14px; font-weight: 700; outline: none;
-    font-family: var(--font-main); background: var(--card-bg); color: var(--text-dark);
+    flex: 1; padding: 10px 14px;
+    border: 1px solid var(--card-border);
+    border-radius: 24px;
+    font-size: 14px; font-weight: 700;
+    outline: none;
+    font-family: var(--font-main);
+    background: var(--card-bg); color: var(--text-dark);
     min-width: 0;
 }
 .chat-send-btn {
@@ -1432,7 +1789,8 @@ html, body {
 @media (min-width: 500px) { .gift-grid { grid-template-columns: repeat(5, 1fr); } }
 @media (min-width: 700px) { .gift-grid { grid-template-columns: repeat(6, 1fr); } }
 .gift-tile {
-    background: var(--card-bg); border: 2px solid var(--card-border);
+    background: var(--card-bg);
+    border: 2px solid var(--card-border);
     border-radius: 14px; padding: 10px 4px;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     cursor: pointer; transition: all 0.2s;
@@ -1466,7 +1824,6 @@ html, body {
     font-size: 10px; font-weight: 900; color: var(--gold-dark);
     display: flex; align-items: center; gap: 2px;
 }
-.gift-tile-cost::before { content: "💰"; font-size: 9px; }
 .gift-tile.disabled { opacity: 0.4; cursor: not-allowed; }
 .gift-tile.disabled:hover { transform: none; }
 .gift-confirm-emoji { font-size: 72px; text-align: center; margin: 20px 0; line-height: 1; }
@@ -1502,9 +1859,6 @@ html, body {
     z-index: 999998; pointer-events: none;
     animation: confettiFall 2s linear forwards;
 }
-.confetti-piece:nth-child(odd) { background: #FFD700; border-radius: 2px; }
-.confetti-piece:nth-child(even) { background: #8b5cf6; border-radius: 50%; }
-.confetti-piece:nth-child(3n) { background: #06b6d4; }
 
 #banScreen {
     position: fixed; inset: 0;
@@ -1546,28 +1900,12 @@ html, body {
 .group-status-actions { display: flex; gap: 6px; flex-shrink: 0; }
 
 .teaching-profile-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
-.teaching-profile-tile {
-    background: var(--bg-white); border: 1px solid var(--card-border);
-    border-radius: 12px; padding: 12px; text-align: center;
-}
-.teaching-profile-tile .tp-value {
-    font-size: 22px; font-weight: 900; color: var(--teal);
-}
-.teaching-profile-tile .tp-label {
-    font-size: 11px; color: var(--text-muted); font-weight: 700; margin-top: 4px;
-}
-.session-card {
-    background: var(--bg-white); border: 1px solid var(--card-border);
-    border-radius: 12px; padding: 14px; margin-bottom: 10px;
-}
-.session-card .sc-label {
-    font-size: 11px; color: var(--text-muted); font-weight: 800;
-    text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 4px;
-}
-.session-card .sc-value {
-    font-size: 14px; color: var(--text-dark); font-weight: 800;
-    word-break: break-word;
-}
+.teaching-profile-tile { background: var(--bg-white); border: 1px solid var(--card-border); border-radius: 12px; padding: 12px; text-align: center; }
+.teaching-profile-tile .tp-value { font-size: 22px; font-weight: 900; color: var(--teal); }
+.teaching-profile-tile .tp-label { font-size: 11px; color: var(--text-muted); font-weight: 700; margin-top: 4px; }
+.session-card { background: var(--bg-white); border: 1px solid var(--card-border); border-radius: 12px; padding: 14px; margin-bottom: 10px; }
+.session-card .sc-label { font-size: 11px; color: var(--text-muted); font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 4px; }
+.session-card .sc-value { font-size: 14px; color: var(--text-dark); font-weight: 800; word-break: break-word; }
 
 #loadingOverlay {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -1581,7 +1919,6 @@ html, body {
     .header-row-1 { padding: 0 8px; gap: 6px; }
     .search-container { max-width: 140px; margin: 0 4px; }
     .search-container input { font-size: 11px; padding: 6px 10px; }
-    .books-grid, .bstore-grid { grid-template-columns: 1fr; }
     .content-tab { font-size: 10px; padding: 5px 3px; min-width: 44px; }
     .header-row-2 { gap: 4px; padding: 6px 8px; }
     .tab-card { font-size: 10px; padding: 5px 3px; min-width: 44px; }
@@ -1599,12 +1936,11 @@ html, body {
     .admin-tab-btn .admin-tab-label { font-size: 10px; }
     .gift-grid { grid-template-columns: repeat(4, 1fr); gap: 8px; }
     .gift-tile-emoji { font-size: 26px; }
-    .activity-grid { grid-template-columns: 1fr 1fr; }
-    .teaching-profile-grid { grid-template-columns: 1fr 1fr; }
 }
 @media (min-width: 601px) {
     .app-main { padding: 24px; }
     .tab-scroll-area { padding: 24px; }
+    .media-grid { gap: 18px; }
 }
 </style>
 </head>
@@ -1737,7 +2073,15 @@ html, body {
                 <button class="tab-card ppt" onclick="switchGroupTab('ppts', this)">PPT</button>
                 <button class="tab-card exam" onclick="switchGroupTab('mockexam', this)">Exam</button>
             </div>
-            <div id="videos" class="class-content active"><div class="media-grid" id="videosGrid"></div></div>
+            <div id="videos" class="class-content active">
+                <div class="yt-layout" id="groupVideosLayout">
+                    <div class="yt-list-col" id="groupVideosList"><div class="video-list"></div></div>
+                    <div class="yt-player-col" id="groupVideosPlayer">
+                        <div class="yt-big-player" id="groupBigPlayer"></div>
+                        <div class="yt-big-info" id="groupBigInfo"></div>
+                    </div>
+                </div>
+            </div>
             <div id="books" class="class-content"><div class="media-grid" id="groupBookStore"></div></div>
             <div id="ppts" class="class-content"><div class="media-grid" id="pptsGrid"></div></div>
             <div id="mockexam" class="class-content">
@@ -1853,7 +2197,7 @@ html, body {
             </div>
             <div class="settings-section">
                 <h3>ℹ️ About</h3>
-                <div class="settings-row"><div class="settings-label">Version</div><div class="settings-value">7.0.0</div></div>
+                <div class="settings-row"><div class="settings-label">Version</div><div class="settings-value">7.1.0</div></div>
             </div>
             <div class="settings-section" style="border-color:rgba(239,68,68,0.3);">
                 <h3 style="color:var(--red-error);">⚠️ Danger Zone</h3>
@@ -2341,7 +2685,6 @@ const GIFT_CATALOG = [
 ];
 const GIFT_MAP = GIFT_CATALOG.reduce((a, g) => { a[g.key] = g; return a; }, {});
 const ULTIMATE_GIFTS = ['stethoscope', 'sparkheart', 'home', 'teni'];
-const ULTIMATE_DAILY_LIMITS = { stethoscope: 10, sparkheart: 5, home: 3, teni: 3 };
 
 const AppState = {
     userId: null, isAdmin: false, isTeacher: false, isBanned: false,
@@ -2377,8 +2720,6 @@ const AppState = {
     _viewFlusher: null,
     _lastHiddenRefresh: 0,
     liveBannerInterval: null,
-    giftsCache: {},
-    userGiftTotals: {},
     currentGiftTarget: null,
     _pendingGiftKey: null,
     economy: {
@@ -2389,13 +2730,20 @@ const AppState = {
     adminContentFilter: { type: 'all', search: '' },
     adminContentSelection: new Set(),
     navStack: [],
-    _suppressPopstate: false
+    _suppressPopstate: false,
+    videoSplitActive: false,
+    videoSplitKind: null,
+    videoSplitSelected: null,
+    videoSplitItems: [],
+    videoSplitGroupId: null,
+    videoSplitRendered: false
 };
 
 const VIEW_THRESHOLDS = { video: 10, exam: 3 };
 const VIEW_DEBOUNCE_MS = 30000;
 const CONTENT_TABLE_MAP = { video: 'group_content', ppt: 'group_content', exam: 'mock_exams', book: 'bstore_books' };
 const GROUP_TAB_MAP = { video: 'videos', videos: 'videos', ppt: 'ppts', ppts: 'ppts', exam: 'mockexam', mockexam: 'mockexam', book: 'books', books: 'books' };
+const GROUP_JOINED_CACHE = new Map();
 
 function showToast(msg, type = 'success') {
     const toast = document.getElementById('toast');
@@ -2493,31 +2841,6 @@ function truncateText(text, maxLength = 150) {
     if (full.length <= maxLength) return { display: full, truncated: false };
     return { display: full.substring(0, maxLength) + '…', truncated: true };
 }
-function buildLongTextHtml(text, maxLength = 150) {
-    const full = String(text || '');
-    const { display, truncated } = truncateText(full, maxLength);
-    return `<div class="long-text" data-full="${escapeAttr(full)}" data-maxlen="${maxLength}">
-        <span class="long-text-body">${escapeHtml(display)}</span>
-        ${truncated ? ` <span class="read-more-toggle" data-expanded="false" onclick="toggleLongText(this)">Read More</span>` : ''}
-    </div>`;
-}
-function toggleLongText(triggerEl) {
-    const wrapper = triggerEl.closest('.long-text');
-    if (!wrapper) return;
-    const body = wrapper.querySelector('.long-text-body');
-    const full = wrapper.dataset.full || '';
-    const max = parseInt(wrapper.dataset.maxlen || '150', 10);
-    const isExpanded = triggerEl.dataset.expanded === 'true';
-    if (isExpanded) {
-        body.textContent = full.substring(0, max) + '…';
-        triggerEl.textContent = 'Read More';
-        triggerEl.dataset.expanded = 'false';
-    } else {
-        body.textContent = full;
-        triggerEl.textContent = 'Read Less';
-        triggerEl.dataset.expanded = 'true';
-    }
-}
 function toggleMetaDescription(el) {
     const desc = el.previousElementSibling;
     if (!desc) return;
@@ -2531,7 +2854,7 @@ function toggleMetaDescription(el) {
 }
 function buildViewCounterHtml(table, id, views) {
     const v = views || 0;
-    return `<span class="view-counter">👁️ <span data-view-id="${table}-${id}" data-views="${v}">${v.toLocaleString()}</span> views</span>`;
+    return `<span class="view-counter">👁️ <span data-view-id="${table}-${id}" data-views="${v}">${v.toLocaleString()}</span></span>`;
 }
 function buildMetaBlockHtml(item, group) {
     const groupName = (group && group.name) || AppState.currentGroupName || 'Group';
@@ -2601,7 +2924,27 @@ async function getGroupsCached(force = false) {
         return data || [];
     } catch (e) { return [...AppState.groupCache.values()]; }
 }
-function invalidateGroupCache() { AppState.groupCache.clear(); AppState.groupCacheAt = 0; }
+function invalidateGroupCache() { AppState.groupCache.clear(); AppState.groupCacheAt = 0; GROUP_JOINED_CACHE.clear(); }
+
+async function fetchJoinedGroups(userId, groupIds) {
+    const out = new Set();
+    if (!userId || !groupIds?.length) return out;
+    const uncached = groupIds.filter(id => !GROUP_JOINED_CACHE.has(`${userId}:${id}`));
+    if (uncached.length) {
+        try {
+            const { data } = await sb.from('group_subscriptions').select('group_id').eq('user_id', userId).in('group_id', uncached);
+            const joined = new Set((data || []).map(d => d.group_id));
+            uncached.forEach(id => GROUP_JOINED_CACHE.set(`${userId}:${id}`, joined.has(id)));
+        } catch (e) {}
+    }
+    groupIds.forEach(id => {
+        if (GROUP_JOINED_CACHE.get(`${userId}:${id}`) === true) out.add(id);
+    });
+    return out;
+}
+function markGroupJoined(userId, groupId, joined) {
+    GROUP_JOINED_CACHE.set(`${userId}:${groupId}`, joined);
+}
 
 function closeOpenMenu() {
     if (!AppState.openMenuEl) return;
@@ -2684,6 +3027,7 @@ function performBack() {
     if (AppState.openMenuEl) { closeOpenMenu(); return true; }
     const activeModal = document.querySelector('.modal.active');
     if (activeModal) { activeModal.classList.remove('active'); return true; }
+    if (AppState.videoSplitActive) { closeVideoSplit(); return true; }
     if (document.getElementById('chatOverlay')?.classList.contains('open')) { closeChat(); return true; }
     if (document.getElementById('inboxOverlay')?.classList.contains('open')) { closeInbox(); return true; }
     if (document.getElementById('membersOverlay')?.classList.contains('open')) { closeMembers(); return true; }
@@ -2722,6 +3066,7 @@ function headerMessagesClick(event) { event?.stopPropagation(); openInbox(); }
 function goToHome() {
     stopExamTimer(); closeOpenMenu(); closeAllVideos();
     stopHeartbeat();
+    closeVideoSplit();
     const appMain = document.getElementById('appMain');
     const wrapper = document.getElementById('tabContentWrapper');
     if (appMain) appMain.style.display = 'block';
@@ -2732,6 +3077,7 @@ function goToHome() {
 }
 function openTabContent(tabId, specificGroupId = null) {
     stopExamTimer(); closeOpenMenu(); closeAllVideos();
+    closeVideoSplit();
     const appMain = document.getElementById('appMain');
     const wrapper = document.getElementById('tabContentWrapper');
     const container = document.getElementById('tabContentContainer');
@@ -2876,40 +3222,34 @@ function joinLiveBanner() {
 
 async function loadGroupContent(groupId, contentType) {
     if (!groupId) return;
+    if (contentType === 'videos') { await loadGroupVideosYouTube(groupId); return; }
     let gridEl;
     if (contentType === 'mockexam') gridEl = document.getElementById('examsGrid');
-    else if (contentType === 'videos') gridEl = document.getElementById('videosGrid');
     else if (contentType === 'ppts') gridEl = document.getElementById('pptsGrid');
     else gridEl = document.getElementById(contentType);
     if (!gridEl) return;
     gridEl.innerHTML = '<div class="loading" style="grid-column: 1 / -1;"><div class="spinner"></div>Loading…</div>';
     try {
         if (contentType === 'mockexam') { await loadMockExamsIntoGrid(gridEl, groupId); return; }
-        const filterType = contentType === 'videos' ? 'video' : 'ppt';
+        const filterType = 'ppt';
         const { data, error } = await sb.from('group_content').select('*').eq('group_id', groupId).eq('content_type', filterType).order('created_at', { ascending: false });
         if (error) throw error;
         const hidden = AppState.hiddenContentKeys || new Set();
         const visible = (data || []).filter(item => !hidden.has(`${filterType}:${item.id}`));
-        if (!visible.length) { gridEl.innerHTML = `<div class="loading" style="color:var(--text-muted); grid-column: 1 / -1;">No ${contentType} yet.</div>`; return; }
+        if (!visible.length) { gridEl.innerHTML = `<div class="empty-state"><span class="empty-emoji">📊</span>No PPTs yet</div>`; return; }
         const { likedSet, dislikedSet } = await fetchLikeState(filterType, visible.map(v => String(v.id)));
         const giftTotals = await fetchGiftTotals(filterType, visible.map(v => String(v.id)));
-        if (filterType === 'video') {
-            gridEl.innerHTML = visible.map(item => renderVideoCard({
-                item, variant: 'group',
-                isLiked: likedSet.has(String(item.id)),
-                isDisliked: dislikedSet.has(String(item.id)),
-                group: AppState.groupCache.get(item.group_id) || { name: AppState.currentGroupName },
-                giftTotals: giftTotals[item.id] || null
-            })).join('');
-        } else {
-            gridEl.innerHTML = visible.map(item => renderPptCard({
-                item, variant: 'group',
-                isLiked: likedSet.has(String(item.id)),
-                isDisliked: dislikedSet.has(String(item.id)),
-                group: AppState.groupCache.get(item.group_id) || { name: AppState.currentGroupName },
-                giftTotals: giftTotals[item.id] || null
-            })).join('');
-        }
+        const joinedSet = AppState.userId ? await fetchJoinedGroups(AppState.userId, [groupId]) : new Set();
+        const isJoined = joinedSet.has(groupId);
+        gridEl.innerHTML = visible.map(item => renderPptCard({
+            item, variant: 'group',
+            isLiked: likedSet.has(String(item.id)),
+            isDisliked: dislikedSet.has(String(item.id)),
+            group: AppState.groupCache.get(item.group_id) || { name: AppState.currentGroupName, id: groupId },
+            giftTotals: giftTotals[item.id] || null,
+            isJoined,
+            isOwner: AppState.isGroupOwner
+        })).join('');
     } catch (err) { gridEl.innerHTML = `<div class="loading" style="color:var(--red-error); grid-column: 1 / -1;">Failed to load.</div>`; }
 }
 
@@ -2953,15 +3293,35 @@ function buildGiftChipsHtml(giftTotals) {
         else if (gift.tier === 'legendary') cls += ' legendary';
         return `<span class="${cls}">${gift.emoji} ${count}</span>`;
     }).filter(Boolean).join('');
-    return chips ? `<div class="media-card-gifts">${chips}</div>` : '';
+    return chips ? `<div class="gifts-row">${chips}</div>` : '';
 }
 
-function renderVideoCard({ item, variant, isLiked, isDisliked, group, giftTotals }) {
+function buildActionRow({ contentType, contentId, likes, dislikes, comments, shares, views, isLiked, isDisliked, groupId, isOwner, isJoined, table = 'group_content' }) {
+    const joined = !!isJoined;
+    const owner = !!isOwner;
+    return `<div class="media-card-actions" data-actions-for="${contentType}:${contentId}">
+        <button class="action-btn ${isLiked ? 'liked' : ''}" data-action="like"><i class="fas fa-heart"></i> <span class="action-count">${likes || 0}</span></button>
+        <button class="action-btn ${isDisliked ? 'disliked' : ''}" data-action="dislike"><i class="fas fa-heart-broken"></i> <span class="action-count">${dislikes || 0}</span></button>
+        <button class="action-btn" data-action="toggle-comments"><i class="fas fa-comment"></i> <span class="action-count">${comments || 0}</span></button>
+        <button class="action-btn" data-action="share"><i class="fas fa-share"></i> <span class="action-count">${shares || 0}</span></button>
+        <button class="action-btn" data-action="download"><i class="fas fa-download"></i></button>
+        <button class="action-btn" data-action="noop"><i class="fas fa-eye"></i> <span class="action-count" data-view-id="${table}-${contentId}" data-views="${views || 0}">${views || 0}</span></button>
+        <button class="action-btn gift-btn" data-action="open-gift"><span class="gift-emoji">🎁</span> <span class="label">Gift</span></button>
+        ${!owner ? (joined
+            ? `<button class="action-btn join-btn joined" data-action="noop" disabled>✅ <span class="label">Joined</span></button>`
+            : `<button class="action-btn join-btn" data-action="join-group" data-group-id="${groupId}">➕ <span class="label">Join</span></button>`
+        ) : ''}
+        <button class="action-btn open-group-btn" data-action="open-group" data-group-id="${groupId}">➡️ <span class="label">Open</span></button>
+    </div>`;
+}
+
+function renderVideoCard({ item, variant, group, giftTotals, isJoined, isOwner }) {
     const idStr = String(item.id);
     const key = `video:${idStr}`;
     const thumbUrl = item.thumbnail_url || item.cover_url || '';
     const fileUrl = item.file_url || '';
     const groupName = group?.name || AppState.currentGroupName || '';
+    const groupId = group?.id || AppState.currentGroupId;
     const timeAgo = formatRelativeTime(item.created_at);
     const giftChips = buildGiftChipsHtml(giftTotals);
     const topGifterId = giftTotals?.top ? Object.entries(giftTotals.top).sort((a, b) => b[1] - a[1])[0]?.[0] : null;
@@ -2988,16 +3348,15 @@ function renderVideoCard({ item, variant, isLiked, isDisliked, group, giftTotals
             </div>
         </div>
         ${buildMetaBlockHtml(item, group)}
-        <div class="actions" data-actions-for="${key}" style="border-top:1px solid var(--card-border); margin-top:0; padding-top:12px;">
-            <button class="${isLiked ? 'liked' : ''}" data-action="like"><i class="fas fa-heart"></i> <span>${item.likes || 0}</span></button>
-            <button class="${isDisliked ? 'disliked' : ''}" data-action="dislike"><i class="fas fa-heart-broken"></i> <span>${item.dislikes || 0}</span></button>
-            <button data-action="toggle-comments"><i class="fas fa-comment"></i> <span>${item.comment_count || 0}</span></button>
-            <button data-action="share"><i class="fas fa-share"></i> <span>${item.share_count || 0}</span></button>
-            <button data-action="download"><i class="fas fa-download"></i></button>
-            <span class="playing-views" data-view-id="group_content-${item.id}" data-views="${item.views || 0}">👁️ ${item.views || 0}</span>
-            <button class="gift-btn-mini" data-action="open-gift" title="Send gift">🎁 Gift</button>
-        </div>
-        ${giftChips || (showTopGifter ? `<div class="gifts-row">${giftChips}${showTopGifter ? `<span class="top-gifter-badge">🏆 Top Gifter</span>` : ''}</div>` : '')}
+        ${buildActionRow({
+            contentType: 'video', contentId: idStr,
+            likes: item.likes, dislikes: item.dislikes,
+            comments: item.comment_count, shares: item.share_count,
+            views: item.views, isLiked: false, isDisliked: false,
+            groupId, isOwner, isJoined, table: 'group_content'
+        })}
+        ${giftChips}
+        ${showTopGifter ? `<div class="gifts-row"><span class="top-gifter-badge">🏆 Top Gifter</span></div>` : ''}
         <div class="content-comments" id="comments-video-${idStr}" data-ctype="video" data-cid="${idStr}">
             <div id="commentList-video-${idStr}"></div>
             <div class="comment-input-wrapper">
@@ -3008,12 +3367,13 @@ function renderVideoCard({ item, variant, isLiked, isDisliked, group, giftTotals
     </div>`;
 }
 
-function renderPptCard({ item, variant, isLiked, isDisliked, group, giftTotals }) {
+function renderPptCard({ item, variant, group, isLiked, isDisliked, giftTotals, isJoined, isOwner }) {
     const idStr = String(item.id);
     const key = `ppt:${idStr}`;
     const fileUrl = item.file_url || '';
     const thumbUrl = item.thumbnail_url || item.cover_url || '';
     const groupName = group?.name || AppState.currentGroupName || '';
+    const groupId = group?.id || AppState.currentGroupId;
     const timeAgo = formatRelativeTime(item.created_at);
     const giftChips = buildGiftChipsHtml(giftTotals);
     const topGifterId = giftTotals?.top ? Object.entries(giftTotals.top).sort((a, b) => b[1] - a[1])[0]?.[0] : null;
@@ -3021,7 +3381,7 @@ function renderPptCard({ item, variant, isLiked, isDisliked, group, giftTotals }
     return `<div class="media-card cover-landscape" id="${variant}-ppt-item-${idStr}" data-content-key="${key}" data-content-type="ppt" data-content-id="${idStr}" data-file-url="${escapeAttr(fileUrl)}">
         <button class="media-card-menu-btn" data-action="menu">⋮</button>
         <div class="media-card-cover" data-action="open-ppt">
-            ${thumbUrl ? `<img src="${escapeAttr(thumbUrl)}" alt="" loading="lazy">` : `<div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:48px;">📊</div>`}
+            ${thumbUrl ? `<img src="${escapeAttr(thumbUrl)}" alt="" loading="lazy">` : `<div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:56px;">📊</div>`}
         </div>
         <div class="media-card-body">
             <h3 class="media-card-title">${escapeHtml(item.title || '')}</h3>
@@ -3033,18 +3393,29 @@ function renderPptCard({ item, variant, isLiked, isDisliked, group, giftTotals }
             </div>
             ${giftChips}
             ${showTopGifter ? `<span class="top-gifter-badge">🏆 Top Gifter</span>` : ''}
-            <div class="media-card-actions">
-                <button class="btn-sm btn-teal" data-action="open-ppt" style="flex:1;">📂 Open</button>
-                <button class="gift-btn-mini" data-action="open-gift" title="Send gift">🎁</button>
+            ${buildActionRow({
+                contentType: 'ppt', contentId: idStr,
+                likes: item.likes, dislikes: item.dislikes,
+                comments: item.comment_count, shares: item.share_count,
+                views: item.views, isLiked, isDisliked,
+                groupId, isOwner, isJoined, table: 'group_content'
+            })}
+            <div class="content-comments" id="comments-ppt-${idStr}" data-ctype="ppt" data-cid="${idStr}">
+                <div id="commentList-ppt-${idStr}"></div>
+                <div class="comment-input-wrapper">
+                    <input type="text" placeholder="Write a comment..." id="commentInput-ppt-${idStr}">
+                    <button data-action="post-comment">Post</button>
+                </div>
             </div>
         </div>
     </div>`;
 }
 
-function renderExamCard({ item, variant, group, isLiked, isDisliked, giftTotals }) {
+function renderExamCard({ item, variant, group, isLiked, isDisliked, giftTotals, isJoined, isOwner }) {
     const idStr = String(item.id);
     const key = `exam:${idStr}`;
     const groupName = group?.name || AppState.currentGroupName || '';
+    const groupId = group?.id || AppState.currentGroupId;
     const timeAgo = formatRelativeTime(item.created_at);
     const catEmoji = getExamCategoryEmoji(item.title);
     const giftChips = buildGiftChipsHtml(giftTotals);
@@ -3067,20 +3438,32 @@ function renderExamCard({ item, variant, group, isLiked, isDisliked, giftTotals 
             </div>
             ${giftChips}
             ${showTopGifter ? `<span class="top-gifter-badge">🏆 Top Gifter</span>` : ''}
-            <div class="media-card-actions">
-                <button class="btn-sm btn-teal" data-action="start-exam" style="flex:1;">▶️ Start</button>
-                <button class="btn-sm" data-action="leaderboard" style="background:var(--card-bg); color:var(--text-dark); border:1px solid var(--card-border);">🏆</button>
-                <button class="gift-btn-mini" data-action="open-gift" title="Send gift">🎁</button>
+            ${buildActionRow({
+                contentType: 'exam', contentId: idStr,
+                likes: item.likes, dislikes: item.dislikes,
+                comments: item.comment_count, shares: item.share_count,
+                views: item.views, isLiked, isDisliked,
+                groupId, isOwner, isJoined, table: 'mock_exams'
+            })}
+            <button class="btn-sm btn-teal" data-action="start-exam" style="margin-top:6px;">▶️ Start Exam</button>
+            <button class="btn-sm" data-action="leaderboard" style="margin-top:6px; background:var(--card-bg); color:var(--text-dark); border:1px solid var(--card-border);">🏆 Leaderboard</button>
+            <div class="content-comments" id="comments-exam-${idStr}" data-ctype="exam" data-cid="${idStr}">
+                <div id="commentList-exam-${idStr}"></div>
+                <div class="comment-input-wrapper">
+                    <input type="text" placeholder="Write a comment..." id="commentInput-exam-${idStr}">
+                    <button data-action="post-comment">Post</button>
+                </div>
             </div>
         </div>
     </div>`;
 }
 
-function renderBookCard({ item, variant, group, giftTotals }) {
+function renderBookCard({ item, variant, group, giftTotals, isJoined, isOwner }) {
     const idStr = String(item.id);
     const key = `book:${idStr}`;
     const coverUrl = item.cover_url || '';
     const giftChips = buildGiftChipsHtml(giftTotals);
+    const groupId = group?.id || AppState.currentGroupId;
     return `<div class="media-card cover-portrait" id="${variant}-book-item-${idStr}" data-content-key="${key}" data-content-type="book" data-content-id="${idStr}" data-book-author="${escapeAttr(item.teacher_id || '')}">
         <button class="media-card-menu-btn" data-action="menu">⋮</button>
         <div class="media-card-cover">
@@ -3091,10 +3474,14 @@ function renderBookCard({ item, variant, group, giftTotals }) {
             <div class="media-card-author">By ${escapeHtml(item.author || '')}</div>
             <div class="media-card-price">💰 ${item.price_monthly || 0} Coins</div>
             ${giftChips}
-            <div class="media-card-actions">
-                <button class="btn-sm btn-teal" data-action="subscribe-book" style="flex:1;">📖 Subscribe</button>
-                <button class="gift-btn-mini" data-action="open-gift" title="Send gift">🎁</button>
-            </div>
+            ${buildActionRow({
+                contentType: 'book', contentId: idStr,
+                likes: item.likes, dislikes: item.dislikes,
+                comments: item.comment_count, shares: item.share_count,
+                views: item.views, isLiked: false, isDisliked: false,
+                groupId, isOwner, isJoined, table: 'bstore_books'
+            })}
+            <button class="btn-sm btn-teal" data-action="subscribe-book" style="margin-top:6px; width:100%;">📖 Subscribe</button>
         </div>
     </div>`;
 }
@@ -3105,15 +3492,18 @@ async function loadMockExamsIntoGrid(gridEl, groupId) {
         if (error) throw error;
         const hidden = AppState.hiddenContentKeys || new Set();
         const visible = (data || []).filter(e => !hidden.has(`exam:${e.id}`));
-        if (!visible.length) { gridEl.innerHTML = `<div class="loading" style="color:var(--text-muted); grid-column: 1 / -1;">📝 No mock exams yet.</div>`; return; }
+        if (!visible.length) { gridEl.innerHTML = `<div class="empty-state"><span class="empty-emoji">📝</span>No mock exams yet</div>`; return; }
         const { likedSet, dislikedSet } = await fetchLikeState('exam', visible.map(v => String(v.id)));
         const giftTotals = await fetchGiftTotals('exam', visible.map(v => String(v.id)));
+        const joinedSet = AppState.userId ? await fetchJoinedGroups(AppState.userId, [groupId]) : new Set();
         gridEl.innerHTML = visible.map(item => renderExamCard({
             item, variant: 'group',
             isLiked: likedSet.has(String(item.id)),
             isDisliked: dislikedSet.has(String(item.id)),
-            group: AppState.groupCache.get(item.group_id) || { name: AppState.currentGroupName },
-            giftTotals: giftTotals[item.id] || null
+            group: AppState.groupCache.get(item.group_id) || { name: AppState.currentGroupName, id: groupId },
+            giftTotals: giftTotals[item.id] || null,
+            isJoined: joinedSet.has(groupId),
+            isOwner: AppState.isGroupOwner
         })).join('');
     } catch (err) { gridEl.innerHTML = `<div class="loading" style="color:var(--red-error); grid-column: 1 / -1;">Failed to load exams.</div>`; }
 }
@@ -3123,123 +3513,289 @@ async function loadGroupBooks(groupId) {
     if (!grid) return;
     try {
         const { data } = await sb.from('bstore_books').select('*').eq('status', 'approved').order('created_at', { ascending: false });
-        if (!data?.length) { grid.innerHTML = '<div class="loading" style="color:var(--text-muted); grid-column:1/-1;">No books yet.</div>'; return; }
+        if (!data?.length) { grid.innerHTML = '<div class="empty-state"><span class="empty-emoji">📖</span>No books yet</div>'; return; }
         const giftTotals = await fetchGiftTotals('book', data.map(v => String(v.id)));
+        const joinedSet = AppState.userId ? await fetchJoinedGroups(AppState.userId, [groupId]) : new Set();
         grid.innerHTML = data.map(item => renderBookCard({
             item, variant: 'group',
-            giftTotals: giftTotals[item.id] || null
+            giftTotals: giftTotals[item.id] || null,
+            group: { id: groupId, name: AppState.currentGroupName },
+            isJoined: joinedSet.has(groupId),
+            isOwner: AppState.isGroupOwner
         })).join('');
     } catch (err) { grid.innerHTML = '<div class="loading" style="color:var(--red-error); grid-column:1/-1;">Failed to load books.</div>'; }
 }
 
-document.addEventListener('click', function(e) {
-    const card = e.target.closest('[data-content-key]');
-    if (!card) return;
-    const actionEl = e.target.closest('[data-action]');
-    if (!actionEl) return;
-    if (e.target.closest('.comment-input-wrapper, .comment-reply-input, .chat-bubble-wrap')) return;
-    const action = actionEl.dataset.action;
-    const contentType = card.dataset.contentType;
-    const contentId = card.dataset.contentId;
-    const fileUrl = card.dataset.fileUrl || '';
-    const bookAuthor = card.dataset.bookAuthor || '';
-    const kind = card.querySelector('.video-wrapper')?.dataset.kind || 'group';
+async function loadGroupVideosYouTube(groupId) {
+    const listCol = document.getElementById('groupVideosList');
+    const playerCol = document.getElementById('groupVideosPlayer');
+    if (!listCol || !playerCol) return;
+    const listWrapper = listCol.querySelector('.video-list');
+    if (!listWrapper) return;
+    listWrapper.innerHTML = '<div class="loading"><div class="spinner"></div>Loading…</div>';
+    try {
+        const { data, error } = await sb.from('group_content').select('*').eq('group_id', groupId).eq('content_type', 'video').order('created_at', { ascending: false });
+        if (error) throw error;
+        const hidden = AppState.hiddenContentKeys || new Set();
+        const visible = (data || []).filter(item => !hidden.has(`video:${item.id}`));
+        if (!visible.length) { listWrapper.innerHTML = `<div class="empty-state"><span class="empty-emoji">🎬</span>No videos yet</div>`; return; }
+        AppState.videoSplitItems = visible;
+        AppState.videoSplitKind = 'group';
+        AppState.videoSplitGroupId = groupId;
+        renderVideoList('group');
+        if (!AppState.videoSplitSelected) {
+            const layout = document.getElementById('groupVideosLayout');
+            if (layout) layout.classList.remove('split');
+            const bigPlayer = document.getElementById('groupBigPlayer');
+            const bigInfo = document.getElementById('groupBigInfo');
+            if (bigPlayer) bigPlayer.classList.remove('active');
+            if (bigInfo) bigInfo.classList.remove('active');
+        }
+    } catch (err) { listWrapper.innerHTML = `<div class="loading" style="color:var(--red-error);">Failed to load.</div>`; }
+}
 
-    switch (action) {
-        case 'play-video':
-            e.preventDefault(); e.stopPropagation();
-            playVideo(kind, contentId, fileUrl);
-            break;
-        case 'toggle-play':
-            e.stopPropagation();
-            toggleVideoPlay(kind, contentId);
-            break;
-        case 'seek':
-            e.stopPropagation();
-            seekVideo(e, kind, contentId);
-            break;
-        case 'fullscreen':
-            e.stopPropagation();
-            toggleFullscreen(kind, contentId);
-            break;
-        case 'speed':
-            e.stopPropagation();
-            changeSpeed(kind, contentId, actionEl);
-            break;
-        case 'download':
-            e.stopPropagation();
-            if (fileUrl) downloadMedia(fileUrl, `teni_${contentType}_${contentId}`);
-            break;
-        case 'close-video':
-            e.stopPropagation();
-            closeVideoPlayer(kind, contentId);
-            break;
-        case 'open-ppt':
-            e.stopPropagation();
-            if (fileUrl) { incrementViewCount('group_content', contentId); window.open(fileUrl, '_blank'); }
-            break;
-        case 'start-exam':
-            e.stopPropagation();
-            startMockExam(contentId);
-            break;
-        case 'leaderboard':
-            e.stopPropagation();
-            showExamLeaderboard(contentId);
-            break;
-        case 'subscribe-book':
-            e.stopPropagation();
-            subscribeToBook(contentId);
-            break;
-        case 'like':
-            e.stopPropagation();
-            toggleContentLike(contentType, contentId, actionEl);
-            break;
-        case 'dislike':
-            e.stopPropagation();
-            toggleContentDislike(contentType, contentId, actionEl);
-            break;
-        case 'toggle-comments':
-            e.stopPropagation();
-            toggleContentComments(contentType, contentId, actionEl);
-            break;
-        case 'share':
-            e.stopPropagation();
-            shareContentLink(contentType, contentId);
-            break;
-        case 'post-comment':
-            e.stopPropagation();
-            addContentComment(contentType, contentId);
-            break;
-        case 'menu':
-            e.preventDefault(); e.stopPropagation();
-            openContentMenu(contentType, contentId, e);
-            break;
-        case 'open-gift':
-            e.preventDefault(); e.stopPropagation();
-            handleOpenGiftForContent(contentType, contentId, card);
-            break;
+function renderVideoList(kind) {
+    const listCol = kind === 'group' ? document.getElementById('groupVideosList') : document.getElementById('homeVideosList');
+    if (!listCol) return;
+    const listWrapper = listCol.querySelector('.video-list');
+    if (!listWrapper) return;
+    const items = AppState.videoSplitItems;
+    if (!items.length) { listWrapper.innerHTML = `<div class="empty-state"><span class="empty-emoji">🎬</span>No videos</div>`; return; }
+    const selectedId = AppState.videoSplitSelected;
+    const displayItems = selectedId ? items.filter(i => String(i.id) !== String(selectedId)) : items;
+    if (!displayItems.length && selectedId) {
+        listWrapper.innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-muted); font-weight:700; font-size:13px;">All videos are shown in the player</div>`;
+        return;
+    }
+    listWrapper.innerHTML = displayItems.map(item => {
+        const idStr = String(item.id);
+        const thumbUrl = item.thumbnail_url || item.cover_url || '';
+        const isActive = String(selectedId) === idStr;
+        const group = AppState.groupCache.get(item.group_id) || { name: AppState.currentGroupName };
+        const gn = group?.name || '';
+        return `<div class="video-list-item ${isActive ? 'active' : ''}" data-video-list-id="${idStr}" data-video-list-kind="${kind}">
+            <div class="video-list-thumb">
+                ${thumbUrl ? `<img src="${escapeAttr(thumbUrl)}" alt="" loading="lazy">` : `<span class="thumb-emoji">🎬</span>`}
+                <div class="thumb-play">▶️</div>
+            </div>
+            <div class="video-list-info">
+                <div class="video-list-title">${escapeHtml(item.title || '')}</div>
+                <div class="video-list-group">${escapeHtml(gn)}</div>
+                <div class="video-list-meta">
+                    <span>👁️ ${item.views || 0}</span>
+                    <span>•</span>
+                    <span>${formatRelativeTime(item.created_at)}</span>
+                </div>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+document.addEventListener('click', function(e) {
+    const listItem = e.target.closest('[data-video-list-id]');
+    if (listItem) {
+        const id = listItem.dataset.videoListId;
+        const kind = listItem.dataset.videoListKind;
+        openVideoInSplit(kind, id);
+        return;
     }
 }, false);
 
-async function handleOpenGiftForContent(contentType, contentId, cardEl) {
-    if (!AppState.userId) return showToast('Login first.', 'error');
-    let recipientId = null;
-    try {
-        if (contentType === 'book') {
-            const { data } = await sb.from('bstore_books').select('teacher_id').eq('id', contentId).single();
-            recipientId = data?.teacher_id;
-        } else if (contentType === 'exam') {
-            const { data } = await sb.from('mock_exams').select('author_id').eq('id', contentId).single();
-            recipientId = data?.author_id;
-        } else {
-            const { data } = await sb.from('group_content').select('author_id').eq('id', contentId).single();
-            recipientId = data?.author_id;
+async function openVideoInSplit(kind, id) {
+    const item = AppState.videoSplitItems.find(i => String(i.id) === String(id));
+    if (!item) return;
+    AppState.videoSplitSelected = String(id);
+    AppState.videoSplitActive = true;
+    AppState.videoSplitRendered = true;
+
+    const layoutId = kind === 'group' ? 'groupVideosLayout' : 'homeVideosLayout';
+    const layout = document.getElementById(layoutId);
+    if (layout) layout.classList.add('split');
+
+    const playerId = kind === 'group' ? 'groupBigPlayer' : 'homeBigPlayer';
+    const infoId = kind === 'group' ? 'groupBigInfo' : 'homeBigInfo';
+    const playerEl = document.getElementById(playerId);
+    const infoEl = document.getElementById(infoId);
+    if (!playerEl || !infoEl) return;
+
+    playerEl.classList.add('active');
+    infoEl.classList.add('active');
+
+    const fileUrl = item.file_url || '';
+    const thumbUrl = item.thumbnail_url || item.cover_url || '';
+    const group = AppState.groupCache.get(item.group_id) || { name: AppState.currentGroupName };
+    const gn = group?.name || '';
+
+    playerEl.innerHTML = `
+        <button class="player-close" onclick="closeVideoSplit()">✕</button>
+        <video id="${kind}-big-video" playsinline preload="metadata" src="${escapeAttr(fileUrl)}"></video>
+        <div class="video-controls">
+            <button data-big-action="toggle-play" id="${kind}-big-toggle">⏸️</button>
+            <div class="progress-bar" data-big-action="seek"><div class="progress-fill" id="${kind}-big-progressFill"></div></div>
+            <span class="time-display" id="${kind}-big-timeDisplay">0:00 / 0:00</span>
+            <input type="range" class="volume-slider" min="0" max="1" step="0.1" value="1" data-big-action="volume">
+            <button data-big-action="fullscreen">⛶</button>
+            <button class="speed-control" data-big-action="speed">1x</button>
+            <button class="download-btn" data-big-action="download">⬇️</button>
+        </div>
+    `;
+
+    infoEl.innerHTML = `
+        <div class="yt-big-title">${escapeHtml(item.title || '')}</div>
+        <div class="yt-big-meta">
+            <div class="meta-avatar"><img src="${escapeAttr(group.profile_pic_url || AppState.profilePicUrl)}" alt=""></div>
+            <span class="meta-group-name">${escapeHtml(gn)}</span>
+            <span>•</span>
+            <span>${formatRelativeTime(item.created_at)}</span>
+            <span>•</span>
+            <span>👁️ ${item.views || 0}</span>
+        </div>
+        ${item.description ? `<div class="yt-big-description clamped" id="${kind}-big-desc">${escapeHtml(item.description)}</div>${item.description.length > 150 ? `<span class="yt-big-readmore" onclick="toggleBigDescription('${kind}-big-desc', this)">Read More</span>` : ''}` : ''}
+        ${buildActionRow({
+            contentType: 'video', contentId: String(item.id),
+            likes: item.likes, dislikes: item.dislikes,
+            comments: item.comment_count, shares: item.share_count,
+            views: item.views, isLiked: false, isDisliked: false,
+            groupId: item.group_id, isOwner: AppState.isGroupOwner, isJoined: false, table: 'group_content'
+        })}
+        <div class="content-comments" id="comments-video-${item.id}" data-ctype="video" data-cid="${item.id}" style="margin-top:12px;">
+            <div id="commentList-video-${item.id}"></div>
+            <div class="comment-input-wrapper">
+                <input type="text" placeholder="Write a comment..." id="commentInput-video-${item.id}">
+                <button data-action="post-comment">Post</button>
+            </div>
+        </div>
+    `;
+
+    renderVideoList(kind);
+    bindBigPlayer(kind);
+
+    const video = document.getElementById(`${kind}-big-video`);
+    if (video) {
+        video.load();
+        video.play().catch(() => {});
+        video.onplay = () => updateBigPlayerIcon(kind);
+        video.onpause = () => updateBigPlayerIcon(kind);
+        video.ontimeupdate = () => updateBigPlayerProgress(kind);
+        video.onloadedmetadata = () => updateBigPlayerProgress(kind);
+        video.onended = () => updateBigPlayerIcon(kind);
+    }
+
+    if (AppState.userId) {
+        const { likedSet, dislikedSet } = await fetchLikeState('video', [String(item.id)]);
+        const liked = likedSet.has(String(item.id));
+        const disliked = dislikedSet.has(String(item.id));
+        const card = infoEl.querySelector(`[data-actions-for="video:${item.id}"]`);
+        if (card) {
+            const likeBtn = card.querySelector('[data-action="like"]');
+            const dislikeBtn = card.querySelector('[data-action="dislike"]');
+            if (liked && likeBtn) likeBtn.classList.add('liked');
+            if (disliked && dislikeBtn) dislikeBtn.classList.add('disliked');
         }
-    } catch (e) {}
-    if (!recipientId) return showToast('Author not found', 'error');
-    if (recipientId === AppState.userId) return showToast("You can't gift your own content", 'info');
-    AppState.currentGiftTarget = { mode: 'content', contentType, contentId, recipientId };
-    openGiftPicker();
+    }
+    startVideoWatchTimer(String(item.id), 'group_content');
+}
+
+function bindBigPlayer(kind) {
+    const playerEl = kind === 'group' ? document.getElementById('groupBigPlayer') : document.getElementById('homeBigPlayer');
+    if (!playerEl || playerEl.dataset.bound === '1') return;
+    playerEl.dataset.bound = '1';
+    const video = () => document.getElementById(`${kind}-big-video`);
+    playerEl.addEventListener('click', (e) => {
+        if (e.target.closest('button, input, .video-controls, .progress-bar, .volume-slider')) return;
+        const v = video();
+        if (!v) return;
+        if (v.paused) v.play().catch(() => {});
+        else v.pause();
+    });
+    playerEl.querySelectorAll('[data-big-action]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const action = btn.dataset.bigAction;
+            const v = video();
+            if (!v) return;
+            if (action === 'toggle-play') { if (v.paused) v.play(); else v.pause(); }
+            else if (action === 'fullscreen') {
+                if (document.fullscreenElement) document.exitFullscreen();
+                else if (v.requestFullscreen) v.requestFullscreen().catch(() => {});
+                else if (v.webkitEnterFullscreen) v.webkitEnterFullscreen();
+            } else if (action === 'speed') {
+                const s = [0.5, 0.75, 1, 1.25, 1.5, 2];
+                let c = parseFloat(btn.textContent); let i = s.indexOf(c); if (i === -1) i = 2;
+                const n = s[(i + 1) % s.length];
+                v.playbackRate = n; btn.textContent = n + 'x';
+            } else if (action === 'download') {
+                downloadMedia(v.src, `teni_video_${AppState.videoSplitSelected}`);
+            }
+        });
+    });
+    const seekBar = playerEl.querySelector('[data-big-action="seek"]');
+    if (seekBar) {
+        seekBar.addEventListener('click', (e) => {
+            const r = seekBar.getBoundingClientRect();
+            const x = (e.clientX - r.left) / r.width;
+            const v = video();
+            if (v && v.duration) v.currentTime = Math.max(0, Math.min(x * v.duration, v.duration));
+        });
+    }
+    const volumeSlider = playerEl.querySelector('[data-big-action="volume"]');
+    if (volumeSlider) {
+        volumeSlider.addEventListener('input', (e) => {
+            const v = video();
+            if (v) v.volume = parseFloat(e.target.value);
+        });
+    }
+}
+function updateBigPlayerIcon(kind) {
+    const v = document.getElementById(`${kind}-big-video`);
+    const btn = document.getElementById(`${kind}-big-toggle`);
+    if (!v || !btn) return;
+    btn.textContent = v.paused ? '▶️' : '⏸️';
+}
+function updateBigPlayerProgress(kind) {
+    const v = document.getElementById(`${kind}-big-video`);
+    const pf = document.getElementById(`${kind}-big-progressFill`);
+    const td = document.getElementById(`${kind}-big-timeDisplay`);
+    if (!v || !pf || !td || !v.duration) return;
+    pf.style.width = (v.currentTime / v.duration * 100) + '%';
+    td.textContent = `${formatTime(v.currentTime)} / ${formatTime(v.duration)}`;
+}
+function closeVideoSplit() {
+    if (!AppState.videoSplitActive) return;
+    AppState.videoSplitActive = false;
+    AppState.videoSplitSelected = null;
+    AppState.videoSplitRendered = false;
+
+    const layoutIds = ['groupVideosLayout', 'homeVideosLayout'];
+    layoutIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.remove('split');
+    });
+    const playerIds = ['groupBigPlayer', 'homeBigPlayer'];
+    playerIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { el.classList.remove('active'); el.innerHTML = ''; el.dataset.bound = ''; }
+    });
+    const infoIds = ['groupBigInfo', 'homeBigInfo'];
+    infoIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { el.classList.remove('active'); el.innerHTML = ''; }
+    });
+    const vids = document.querySelectorAll('#groupBigPlayer video, #homeBigPlayer video');
+    vids.forEach(v => { try { v.pause(); } catch (e) {} });
+    renderVideoList('group');
+    if (document.getElementById('homeVideosList')) renderVideoList('home');
+}
+function toggleBigDescription(id, el) {
+    const desc = document.getElementById(id);
+    if (!desc) return;
+    if (desc.classList.contains('clamped')) {
+        desc.classList.remove('clamped');
+        el.textContent = 'Read Less';
+    } else {
+        desc.classList.add('clamped');
+        el.textContent = 'Read More';
+    }
 }
 
 function playVideo(kind, id, url) {
@@ -3291,6 +3847,7 @@ function pauseAllOtherVideos(exceptId, exceptKind) {
     document.querySelectorAll('video').forEach(v => {
         const isCurrent = exceptId && (v.id === `${exceptKind}-video-${exceptId}`);
         if (isCurrent) return;
+        if (v.id.endsWith('-big-video')) return;
         const m = v.id.match(/^(group|home)-video-(.+)$/);
         if (!m) return;
         const [, kind, id] = m;
@@ -3444,7 +4001,9 @@ function startVideoWatchTimer(videoId, table = 'group_content') {
     AppState.videoWatchers[videoId] = setInterval(() => {
         const vg = document.getElementById(`group-video-${videoId}`);
         const vh = document.getElementById(`home-video-${videoId}`);
-        const vid = vg || vh;
+        const vb1 = document.getElementById('group-big-video');
+        const vb2 = document.getElementById('home-big-video');
+        const vid = vg || vh || vb1 || vb2;
         if (!vid) { stopVideoWatchTimer(videoId); return; }
         if (vid.paused || vid.ended) return;
         AppState.videoWatchTimers[videoId] = (AppState.videoWatchTimers[videoId] || 0) + 1;
@@ -3687,6 +4246,7 @@ function stopExamTimer() { if (AppState.examTimer) { clearInterval(AppState.exam
 
 function switchGroupTab(tabId, btn) {
     closeAllVideos();
+    closeVideoSplit();
     document.querySelectorAll('#groupTabs .tab-card').forEach(t => t.classList.remove('active'));
     if (btn) btn.classList.add('active');
     else {
@@ -3708,6 +4268,7 @@ async function loadGlobalTrending() { await loadTrendingContent('video'); }
 
 async function switchTrendingTab(tab, btn) {
     closeAllVideos();
+    closeVideoSplit();
     document.querySelectorAll('.content-tab').forEach(t => t.classList.remove('active'));
     btn.classList.add('active');
     AppState.currentTrendingTab = tab;
@@ -3725,30 +4286,62 @@ async function loadTrendingContent(tab) {
         const hidden = AppState.hiddenContentKeys || new Set();
         const notHidden = (type, id) => !hidden.has(`${type}:${id}`);
 
+        if (tab === 'video') {
+            const mapQueries = {
+                video: async () => (!gIds.length ? [] : ((await sb.from('group_content').select('*').eq('content_type', 'video').in('group_id', gIds).order('views', { ascending: false }).limit(30)).data || []))
+            };
+            items = await mapQueries.video();
+            items = items.filter(i => notHidden('video', i.id));
+            items = items.slice(0, 30);
+            if (!items?.length) { c.innerHTML = `<div class="empty-state"><span class="empty-emoji">🎬</span>No videos yet</div>`; return; }
+            AppState.videoSplitItems = items;
+            AppState.videoSplitKind = 'home';
+            AppState.videoSplitGroupId = null;
+            c.innerHTML = `
+                <div class="yt-layout" id="homeVideosLayout">
+                    <div class="yt-list-col" id="homeVideosList"><div class="video-list"></div></div>
+                    <div class="yt-player-col" id="homeVideosPlayer">
+                        <div class="yt-big-player" id="homeBigPlayer"></div>
+                        <div class="yt-big-info" id="homeBigInfo"></div>
+                    </div>
+                </div>
+            `;
+            renderVideoList('home');
+            return;
+        }
+
         const mapQueries = {
-            video: async () => (!gIds.length ? [] : ((await sb.from('group_content').select('*').eq('content_type', 'video').in('group_id', gIds).order('views', { ascending: false }).limit(30)).data || [])),
             ppt: async () => (!gIds.length ? [] : ((await sb.from('group_content').select('*').eq('content_type', 'ppt').in('group_id', gIds).order('views', { ascending: false }).limit(30)).data || [])),
             mockexam: async () => (!gIds.length ? [] : ((await sb.from('mock_exams').select('*').in('group_id', gIds).order('views', { ascending: false }).limit(30)).data || [])),
             book: async () => ((await sb.from('bstore_books').select('*').eq('status', 'approved').order('views', { ascending: false }).limit(30)).data || [])
         };
         items = await mapQueries[tab]();
 
-        if (tab === 'video') items = items.filter(i => notHidden('video', i.id));
         if (tab === 'ppt') items = items.filter(i => notHidden('ppt', i.id));
         if (tab === 'mockexam') items = items.filter(i => notHidden('exam', i.id));
         if (tab === 'book') items = items.filter(i => notHidden('book', i.id));
         items = items.slice(0, 20);
 
-        if (!items?.length) { c.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:30px 20px; font-weight:700;">Nothing here yet.</div>`; return; }
+        if (!items?.length) {
+            const emoji = tab === 'ppt' ? '📊' : tab === 'mockexam' ? '📝' : '📖';
+            c.innerHTML = `<div class="empty-state"><span class="empty-emoji">${emoji}</span>Nothing here yet</div>`;
+            return;
+        }
 
         const keyType = tab === 'mockexam' ? 'exam' : tab;
         const { likedSet, dislikedSet } = await fetchLikeState(keyType, items.map(i => String(i.id)));
         const giftTotals = await fetchGiftTotals(keyType, items.map(i => String(i.id)));
+        const groupIdsOfItems = [...new Set(items.map(i => i.group_id).filter(Boolean))];
+        const joinedSet = AppState.userId ? await fetchJoinedGroups(AppState.userId, groupIdsOfItems) : new Set();
+        const ownedGroupIds = new Set((AppState.groups || []).map(g => g.id));
 
         if (tab === 'book') {
             c.innerHTML = `<div class="media-grid">${items.map(item => renderBookCard({
                 item, variant: 'home',
-                giftTotals: giftTotals[item.id] || null
+                giftTotals: giftTotals[item.id] || null,
+                group: { id: null, name: '' },
+                isJoined: false,
+                isOwner: false
             })).join('')}</div>`;
             return;
         }
@@ -3758,7 +4351,9 @@ async function loadTrendingContent(tab) {
                 isLiked: likedSet.has(String(item.id)),
                 isDisliked: dislikedSet.has(String(item.id)),
                 group: gMap[item.group_id],
-                giftTotals: giftTotals[item.id] || null
+                giftTotals: giftTotals[item.id] || null,
+                isJoined: joinedSet.has(item.group_id),
+                isOwner: ownedGroupIds.has(item.group_id)
             })).join('')}</div>`;
             return;
         }
@@ -3768,17 +4363,12 @@ async function loadTrendingContent(tab) {
                 isLiked: likedSet.has(String(item.id)),
                 isDisliked: dislikedSet.has(String(item.id)),
                 group: gMap[item.group_id],
-                giftTotals: giftTotals[item.id] || null
+                giftTotals: giftTotals[item.id] || null,
+                isJoined: joinedSet.has(item.group_id),
+                isOwner: ownedGroupIds.has(item.group_id)
             })).join('')}</div>`;
             return;
         }
-        c.innerHTML = items.map(item => renderVideoCard({
-            item, variant: 'home',
-            isLiked: likedSet.has(String(item.id)),
-            isDisliked: dislikedSet.has(String(item.id)),
-            group: gMap[item.group_id],
-            giftTotals: giftTotals[item.id] || null
-        })).join('');
     } catch (err) { c.innerHTML = '<div class="loading" style="color:var(--red-error);">Failed.</div>'; }
 }
 
@@ -3795,6 +4385,13 @@ async function openGroupItem(groupId, tabId, itemId, domIdPrefix) {
     await openTabContent('group-feed', groupId);
     await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
     switchGroupTab(normalizedTab, null);
+    if (normalizedTab === 'videos') {
+        await new Promise(r => setTimeout(r, 600));
+        await openVideoInSplit('group', itemId);
+        const el = await waitForElement(domId, 4000);
+        if (el) highlightElement(el);
+        return;
+    }
     const el = await waitForElement(domId, 8000);
     if (el) highlightElement(el);
     else showToast('Showing group', 'info');
@@ -3826,7 +4423,7 @@ async function toggleContentLike(type, id, btn) {
     if (!AppState.userId) return showToast('Login first.', 'error');
     if (!btn) return;
     const idStr = String(id);
-    const span = btn.querySelector('span');
+    const span = btn.querySelector('span.action-count') || btn.querySelector('span');
     const wasLiked = btn.classList.contains('liked');
     const oldCount = parseInt(span?.textContent) || 0;
 
@@ -3836,16 +4433,19 @@ async function toggleContentLike(type, id, btn) {
         if (existing) {
             await sb.from('content_likes').delete().eq('content_type', type).eq('content_id', idStr).eq('user_id', AppState.userId);
             await sb.rpc('bump_like_count', { p_type: type, p_id: idStr, p_delta: -1 });
-            btn.classList.remove('liked');
-            if (span) span.textContent = Math.max(0, oldCount - 1);
+            document.querySelectorAll(`[data-actions-for="${type}:${idStr}"] [data-action="like"]`).forEach(b => {
+                b.classList.remove('liked');
+                const s = b.querySelector('span.action-count') || b.querySelector('span');
+                if (s) s.textContent = Math.max(0, oldCount - 1);
+            });
         } else {
             const { data: d } = await sb.from('content_dislikes').select('content_id').eq('content_type', type).eq('content_id', idStr).eq('user_id', AppState.userId).maybeSingle();
             if (d) {
                 await sb.from('content_dislikes').delete().eq('content_type', type).eq('content_id', idStr).eq('user_id', AppState.userId);
                 await sb.rpc('bump_dislike_count', { p_type: type, p_id: idStr, p_delta: -1 });
-                document.querySelectorAll(`[data-content-key="${type}:${idStr}"] [data-action="dislike"]`).forEach(dBtn => {
+                document.querySelectorAll(`[data-actions-for="${type}:${idStr}"] [data-action="dislike"]`).forEach(dBtn => {
                     dBtn.classList.remove('disliked');
-                    const dSpan = dBtn.querySelector('span');
+                    const dSpan = dBtn.querySelector('span.action-count') || dBtn.querySelector('span');
                     if (dSpan) dSpan.textContent = Math.max(0, (parseInt(dSpan.textContent) || 1) - 1);
                 });
             }
@@ -3855,21 +4455,22 @@ async function toggleContentLike(type, id, btn) {
                 if (e.code !== '23505') throw e;
             }
             await sb.rpc('bump_like_count', { p_type: type, p_id: idStr, p_delta: 1 });
-            btn.classList.add('liked');
-            if (span) span.textContent = oldCount + 1;
+            document.querySelectorAll(`[data-actions-for="${type}:${idStr}"] [data-action="like"]`).forEach(b => {
+                b.classList.add('liked');
+                const s = b.querySelector('span.action-count') || b.querySelector('span');
+                if (s) s.textContent = oldCount + 1;
+            });
         }
     } catch (err) {
         const msg = String(err.message || '').toLowerCase();
-        if (!msg.includes('duplicate') && !msg.includes('unique')) {
-            showToast('Could not save', 'error');
-        }
+        if (!msg.includes('duplicate') && !msg.includes('unique')) showToast('Could not save', 'error');
     }
 }
 async function toggleContentDislike(type, id, btn) {
     if (!AppState.userId) return showToast('Login first.', 'error');
     if (!btn) return;
     const idStr = String(id);
-    const span = btn.querySelector('span');
+    const span = btn.querySelector('span.action-count') || btn.querySelector('span');
     const wasDisliked = btn.classList.contains('disliked');
     const oldCount = parseInt(span?.textContent) || 0;
 
@@ -3879,16 +4480,19 @@ async function toggleContentDislike(type, id, btn) {
         if (existing) {
             await sb.from('content_dislikes').delete().eq('content_type', type).eq('content_id', idStr).eq('user_id', AppState.userId);
             await sb.rpc('bump_dislike_count', { p_type: type, p_id: idStr, p_delta: -1 });
-            btn.classList.remove('disliked');
-            if (span) span.textContent = Math.max(0, oldCount - 1);
+            document.querySelectorAll(`[data-actions-for="${type}:${idStr}"] [data-action="dislike"]`).forEach(b => {
+                b.classList.remove('disliked');
+                const s = b.querySelector('span.action-count') || b.querySelector('span');
+                if (s) s.textContent = Math.max(0, oldCount - 1);
+            });
         } else {
             const { data: l } = await sb.from('content_likes').select('content_id').eq('content_type', type).eq('content_id', idStr).eq('user_id', AppState.userId).maybeSingle();
             if (l) {
                 await sb.from('content_likes').delete().eq('content_type', type).eq('content_id', idStr).eq('user_id', AppState.userId);
                 await sb.rpc('bump_like_count', { p_type: type, p_id: idStr, p_delta: -1 });
-                document.querySelectorAll(`[data-content-key="${type}:${idStr}"] [data-action="like"]`).forEach(lBtn => {
+                document.querySelectorAll(`[data-actions-for="${type}:${idStr}"] [data-action="like"]`).forEach(lBtn => {
                     lBtn.classList.remove('liked');
-                    const lSpan = lBtn.querySelector('span');
+                    const lSpan = lBtn.querySelector('span.action-count') || lBtn.querySelector('span');
                     if (lSpan) lSpan.textContent = Math.max(0, (parseInt(lSpan.textContent) || 1) - 1);
                 });
             }
@@ -3898,18 +4502,19 @@ async function toggleContentDislike(type, id, btn) {
                 if (e.code !== '23505') throw e;
             }
             await sb.rpc('bump_dislike_count', { p_type: type, p_id: idStr, p_delta: 1 });
-            btn.classList.add('disliked');
-            if (span) span.textContent = oldCount + 1;
+            document.querySelectorAll(`[data-actions-for="${type}:${idStr}"] [data-action="dislike"]`).forEach(b => {
+                b.classList.add('disliked');
+                const s = b.querySelector('span.action-count') || b.querySelector('span');
+                if (s) s.textContent = oldCount + 1;
+            });
         }
     } catch (err) {
         const msg = String(err.message || '').toLowerCase();
-        if (!msg.includes('duplicate') && !msg.includes('unique')) {
-            showToast('Could not save', 'error');
-        }
+        if (!msg.includes('duplicate') && !msg.includes('unique')) showToast('Could not save', 'error');
     }
 }
 async function toggleContentComments(type, id, btn) {
-    const card = btn.closest('.content-card') || btn.closest('.media-card');
+    const card = btn.closest('.content-card') || btn.closest('.media-card') || btn.closest('.yt-big-info');
     if (!card) return;
     const s = card.querySelector('.content-comments');
     if (!s) return;
@@ -3977,7 +4582,7 @@ async function addContentComment(type, id) {
     try {
         await sb.from('content_comments').insert({ content_type: type, content_id: idStr, user_id: AppState.userId, comment: text });
         await sb.rpc('bump_comment_count', { p_type: type, p_id: idStr, p_delta: 1 });
-        document.querySelectorAll(`[data-content-key="${type}:${idStr}"] [data-action="toggle-comments"] span`).forEach(s => {
+        document.querySelectorAll(`[data-actions-for="${type}:${idStr}"] [data-action="toggle-comments"] span.action-count`).forEach(s => {
             s.textContent = (parseInt(s.textContent) || 0) + 1;
         });
         await loadContentComments(type, idStr);
@@ -4006,7 +4611,7 @@ async function deleteContentComment(commentId, type, id) {
         await sb.from('content_comments').delete().eq('parent_id', commentId);
         await sb.from('content_comments').delete().eq('id', commentId);
         await sb.rpc('bump_comment_count', { p_type: type, p_id: idStr, p_delta: -removed });
-        document.querySelectorAll(`[data-content-key="${type}:${idStr}"] [data-action="toggle-comments"] span`).forEach(s => {
+        document.querySelectorAll(`[data-actions-for="${type}:${idStr}"] [data-action="toggle-comments"] span.action-count`).forEach(s => {
             s.textContent = Math.max(0, (parseInt(s.textContent) || 0) - removed);
         });
         await loadContentComments(type, idStr);
@@ -4017,12 +4622,189 @@ async function shareContentLink(type, id) {
     const url = `${location.origin}${location.pathname}?content=${type}:${idStr}`;
     try {
         await sb.rpc('bump_share_count', { p_type: type, p_id: idStr, p_delta: 1 });
-        document.querySelectorAll(`[data-content-key="${type}:${idStr}"] [data-action="share"] span`).forEach(s => {
+        document.querySelectorAll(`[data-actions-for="${type}:${idStr}"] [data-action="share"] span.action-count`).forEach(s => {
             s.textContent = (parseInt(s.textContent) || 0) + 1;
         });
     } catch (e) {}
     if (navigator.share) navigator.share({ title: 'TENI', url }).catch(() => {});
     else navigator.clipboard.writeText(url).then(() => showToast('📋 Copied', 'success')).catch(() => {});
+}
+
+document.addEventListener('click', function(e) {
+    const card = e.target.closest('[data-content-key]');
+    if (card) {
+        const actionEl = e.target.closest('[data-action]');
+        if (actionEl) {
+            if (!e.target.closest('.comment-input-wrapper, .comment-reply-input, .chat-bubble-wrap')) {
+                const action = actionEl.dataset.action;
+                const contentType = card.dataset.contentType;
+                const contentId = card.dataset.contentId;
+                const fileUrl = card.dataset.fileUrl || '';
+                const kind = card.querySelector('.video-wrapper')?.dataset.kind || 'group';
+                handleCardAction(action, contentType, contentId, fileUrl, kind, actionEl, card, e);
+                return;
+            }
+        }
+    }
+    const bigActions = e.target.closest('.yt-big-info');
+    if (bigActions) {
+        const actionEl = e.target.closest('[data-action]');
+        if (actionEl) {
+            const action = actionEl.dataset.action;
+            if (action === 'like' || action === 'dislike' || action === 'toggle-comments' || action === 'share' || action === 'download' || action === 'open-gift' || action === 'join-group' || action === 'open-group' || action === 'post-comment') {
+                const contentId = AppState.videoSplitSelected;
+                const contentType = 'video';
+                const item = AppState.videoSplitItems.find(i => String(i.id) === String(contentId));
+                const fileUrl = item?.file_url || '';
+                handleCardAction(action, contentType, contentId, fileUrl, AppState.videoSplitKind, actionEl, bigActions, e);
+            }
+        }
+    }
+}, false);
+
+async function handleCardAction(action, contentType, contentId, fileUrl, kind, actionEl, card, e) {
+    switch (action) {
+        case 'play-video':
+            e.preventDefault(); e.stopPropagation();
+            if (AppState.videoSplitItems.length && AppState.videoSplitItems.find(i => String(i.id) === String(contentId))) {
+                openVideoInSplit(kind, contentId);
+            } else {
+                playVideo(kind, contentId, fileUrl);
+            }
+            break;
+        case 'toggle-play':
+            e.stopPropagation();
+            toggleVideoPlay(kind, contentId);
+            break;
+        case 'seek':
+            e.stopPropagation();
+            seekVideo(e, kind, contentId);
+            break;
+        case 'fullscreen':
+            e.stopPropagation();
+            toggleFullscreen(kind, contentId);
+            break;
+        case 'speed':
+            e.stopPropagation();
+            changeSpeed(kind, contentId, actionEl);
+            break;
+        case 'download':
+            e.stopPropagation();
+            if (fileUrl) downloadMedia(fileUrl, `teni_${contentType}_${contentId}`);
+            break;
+        case 'close-video':
+            e.stopPropagation();
+            closeVideoPlayer(kind, contentId);
+            break;
+        case 'open-ppt':
+            e.stopPropagation();
+            if (fileUrl) { incrementViewCount('group_content', contentId); window.open(fileUrl, '_blank'); }
+            break;
+        case 'start-exam':
+            e.stopPropagation();
+            startMockExam(contentId);
+            break;
+        case 'leaderboard':
+            e.stopPropagation();
+            showExamLeaderboard(contentId);
+            break;
+        case 'subscribe-book':
+            e.stopPropagation();
+            subscribeToBook(contentId);
+            break;
+        case 'like':
+            e.stopPropagation();
+            toggleContentLike(contentType, contentId, actionEl);
+            break;
+        case 'dislike':
+            e.stopPropagation();
+            toggleContentDislike(contentType, contentId, actionEl);
+            break;
+        case 'toggle-comments':
+            e.stopPropagation();
+            toggleContentComments(contentType, contentId, actionEl);
+            break;
+        case 'share':
+            e.stopPropagation();
+            shareContentLink(contentType, contentId);
+            break;
+        case 'post-comment':
+            e.stopPropagation();
+            addContentComment(contentType, contentId);
+            break;
+        case 'menu':
+            e.preventDefault(); e.stopPropagation();
+            openContentMenu(contentType, contentId, e);
+            break;
+        case 'open-gift':
+            e.preventDefault(); e.stopPropagation();
+            handleOpenGiftForContent(contentType, contentId, card);
+            break;
+        case 'join-group':
+            e.preventDefault(); e.stopPropagation();
+            await quickJoinGroup(actionEl.dataset.groupId, actionEl);
+            break;
+        case 'open-group':
+            e.preventDefault(); e.stopPropagation();
+            openTabContent('group-feed', actionEl.dataset.groupId);
+            break;
+        case 'noop':
+            e.stopPropagation();
+            break;
+    }
+}
+
+async function handleOpenGiftForContent(contentType, contentId, cardEl) {
+    if (!AppState.userId) return showToast('Login first.', 'error');
+    let recipientId = null;
+    try {
+        if (contentType === 'book') {
+            const { data } = await sb.from('bstore_books').select('teacher_id').eq('id', contentId).single();
+            recipientId = data?.teacher_id;
+        } else if (contentType === 'exam') {
+            const { data } = await sb.from('mock_exams').select('author_id').eq('id', contentId).single();
+            recipientId = data?.author_id;
+        } else {
+            const { data } = await sb.from('group_content').select('author_id').eq('id', contentId).single();
+            recipientId = data?.author_id;
+        }
+    } catch (e) {}
+    if (!recipientId) return showToast('Author not found', 'error');
+    if (recipientId === AppState.userId) return showToast("You can't gift your own content", 'info');
+    AppState.currentGiftTarget = { mode: 'content', contentType, contentId, recipientId };
+    openGiftPicker();
+}
+
+async function quickJoinGroup(groupId, btn) {
+    if (!AppState.userId) return showToast('Login first.', 'error');
+    if (!groupId) return showToast('Cannot identify group', 'error');
+    if (btn) btn.disabled = true;
+    try {
+        const { data: result, error } = await sb.rpc('join_group', { p_user_id: AppState.userId, p_group_id: groupId, p_join: true });
+        if (error) throw error;
+        const joined = !!result?.joined;
+        const followers = result?.followers ?? 0;
+        markGroupJoined(AppState.userId, groupId, joined);
+        document.querySelectorAll(`[data-action="join-group"][data-group-id="${groupId}"]`).forEach(b => {
+            if (joined) {
+                b.outerHTML = `<button class="action-btn join-btn joined" data-action="noop" disabled>✅ <span class="label">Joined</span></button>`;
+            }
+        });
+        const bannerBtn = document.getElementById('joinClassBtn');
+        if (bannerBtn && AppState.currentGroupId === groupId) {
+            bannerBtn.innerText = joined ? '✅' : '➕';
+            bannerBtn.className = joined ? 'btn btn-teal' : 'btn';
+            bannerBtn.disabled = joined;
+        }
+        const bf = document.getElementById('groupFollowers');
+        if (bf && AppState.currentGroupId === groupId) bf.textContent = followers;
+        invalidateGroupCache();
+        showToast('✅ Joined!', 'success');
+        updateTrendingGroups();
+    } catch (err) {
+        if (btn) btn.disabled = false;
+        showToast('❌ ' + err.message, 'error');
+    }
 }
 
 function openContentMenu(contentType, contentId, event) {
@@ -4075,6 +4857,9 @@ async function removeContentLocal(contentType, contentId) {
         document.querySelectorAll(`[data-content-key="${key}"]`).forEach(card => {
             if (!already) { card.style.transition = 'opacity .2s'; card.style.opacity = '0'; setTimeout(() => card.remove(), 200); }
         });
+        document.querySelectorAll(`[data-video-list-id="${contentId}"]`).forEach(item => {
+            if (!already) { item.style.transition = 'opacity .2s'; item.style.opacity = '0'; setTimeout(() => item.remove(), 200); }
+        });
     } catch (e) { showToast('❌ ' + e.message, 'error'); }
 }
 async function deleteContent(contentType, contentId) {
@@ -4089,6 +4874,9 @@ async function deleteContent(contentType, contentId) {
         await sb.from(table).delete().eq('id', contentId);
         document.querySelectorAll(`[data-content-key="${contentType}:${contentId}"]`).forEach(card => {
             card.style.transition = 'opacity .2s'; card.style.opacity = '0'; setTimeout(() => card.remove(), 200);
+        });
+        document.querySelectorAll(`[data-video-list-id="${contentId}"]`).forEach(item => {
+            item.style.transition = 'opacity .2s'; item.style.opacity = '0'; setTimeout(() => item.remove(), 200);
         });
         showToast('🗑️ Deleted', 'success');
     } catch (e) { showToast('❌ ' + e.message, 'error'); }
@@ -4284,7 +5072,7 @@ function openGiftConfirm(giftKey) {
     const confirmInput = document.getElementById('giftConfirmInput');
     confirmInput.value = '';
     if (ULTIMATE_GIFTS.includes(giftKey)) {
-        warnEl.textContent = `⚠️ This is an Ultimate gift — ${gift.cost.toLocaleString()} coins. ${gift.key === 'teni' ? 'Max 3 per day.' : 'Daily limits apply.'}`;
+        warnEl.textContent = `⚠️ Ultimate gift — ${gift.cost.toLocaleString()} coins. ${gift.key === 'teni' ? 'Max 3 per day.' : 'Daily limits apply.'}`;
         warnEl.style.display = 'block';
         teniBlock.style.display = 'block';
         confirmBtn.disabled = true;
@@ -4352,17 +5140,12 @@ async function confirmGiftSend() {
                 gift_key: giftKey,
                 coins: gift.cost
             });
-            await sb.from('dm_messages').insert({
+            const { data: msg } = await sb.from('dm_messages').insert({
                 thread_id: target.threadId,
                 sender_id: AppState.userId,
-                message: '',
-                image_url: null,
+                message: `[GIFT:${giftKey}]`,
                 seen: false
-            });
-            const { data: msg } = await sb.from('dm_messages').select('id').eq('thread_id', target.threadId).order('created_at', { ascending: false }).limit(1).maybeSingle();
-            if (msg) {
-                await sb.from('dm_messages').update({ message: `[GIFT:${giftKey}]` }).eq('id', msg.id);
-            }
+            }).select().single();
             await sb.from('dm_threads').update({
                 last_message_preview: `${gift.emoji} ${gift.name}`,
                 last_message_at: new Date()
@@ -4395,38 +5178,22 @@ async function confirmGiftSend() {
         closeModal('giftPickerModal');
         showToast(`✅ Sent ${gift.emoji} ${gift.name}`, 'success');
 
-        if (gift.key === 'teni') {
-            playTeniBurst();
-            playConfetti();
-        } else if (gift.tier === 'ultimate' || gift.tier === 'legendary') {
-            playConfetti();
-        }
+        if (gift.key === 'teni') { playTeniBurst(); playConfetti(); }
+        else if (gift.tier === 'ultimate' || gift.tier === 'legendary') playConfetti();
 
         if (target.mode === 'chat' && AppState.currentThreadId === target.threadId) {
             await loadChatMessages();
         } else if (target.mode === 'content') {
-            const card = document.querySelector(`[data-content-key="${target.contentType}:${target.contentId}"]`);
-            if (card) {
+            const el = document.querySelector(`[data-content-key="${target.contentType}:${target.contentId}"]`);
+            if (el) {
                 const flyer = document.createElement('div');
                 flyer.className = 'gift-fly';
                 flyer.textContent = gift.emoji;
-                const rect = card.getBoundingClientRect();
+                const rect = el.getBoundingClientRect();
                 flyer.style.left = (rect.left + rect.width / 2) + 'px';
                 flyer.style.top = (rect.top + rect.height / 3) + 'px';
                 document.body.appendChild(flyer);
                 setTimeout(() => flyer.remove(), 1100);
-                const totals = await fetchGiftTotals(target.contentType, [target.contentId]);
-                const cardKey = String(target.contentId);
-                const giftTotals = totals[cardKey];
-                const giftsRow = card.querySelector('.media-card-gifts') || card.querySelector('.gifts-row');
-                const chipsHtml = buildGiftChipsHtml(giftTotals);
-                if (giftsRow) {
-                    const wrapper = giftsRow.tagName === 'DIV' && giftsRow.classList.contains('gifts-row') ? giftsRow : card.querySelector('.gifts-row');
-                    if (wrapper) wrapper.innerHTML = chipsHtml;
-                } else if (chipsHtml) {
-                    const actions = card.querySelector('.actions');
-                    if (actions) actions.insertAdjacentHTML('afterend', `<div class="gifts-row">${chipsHtml}</div>`);
-                }
             }
         }
         AppState._pendingGiftKey = null;
@@ -4653,10 +5420,7 @@ function showMessageOptions(msgId) {
         setTimeout(() => {
             const delMenu = document.createElement('div');
             delMenu.dataset.ephemeral = 'true';
-            delMenu.innerHTML = `<div data-del-action="me">🗑️ Delete for me</div>`;
-            if (Date.now() - new Date(row.querySelector('.chat-time')?.textContent ? Date.now() : Date.now()).getTime() < 3600000) {
-                delMenu.innerHTML += `<div data-del-action="everyone" style="color:var(--red-error);">🗑️ Delete for everyone</div>`;
-            }
+            delMenu.innerHTML = `<div data-del-action="me">🗑️ Delete for me</div><div data-del-action="everyone" style="color:var(--red-error);">🗑️ Delete for everyone</div>`;
             delMenu.classList.add('three-dot-dropdown');
             document.body.appendChild(delMenu);
             delMenu.addEventListener('click', async (e) => {
@@ -4724,9 +5488,7 @@ async function sendChatMessage() {
             const st = row.querySelector('.chat-status');
             if (st) { st.className = 'chat-status sent'; st.textContent = '✓'; }
         }
-        await sb.from('dm_threads')
-            .update({ last_message_preview: text.substring(0, 60), last_message_at: new Date() })
-            .eq('id', AppState.currentThreadId);
+        await sb.from('dm_threads').update({ last_message_preview: text.substring(0, 60), last_message_at: new Date() }).eq('id', AppState.currentThreadId);
         const { data: thread } = await sb.from('dm_threads').select('owner_id, member_id').eq('id', AppState.currentThreadId).single();
         if (thread) {
             const iAmOwner = thread.owner_id === AppState.userId;
@@ -5133,6 +5895,7 @@ async function handleNotificationClick(notifId, linkType, linkId) {
         if (!confirm('Join this group?')) return;
         try {
             await sb.rpc('join_group', { p_user_id: AppState.userId, p_group_id: parseInt(linkId), p_join: true });
+            markGroupJoined(AppState.userId, parseInt(linkId), true);
             showToast('✅ Joined!', 'success');
             invalidateGroupCache();
             openTabContent('group-feed', parseInt(linkId));
@@ -5428,7 +6191,6 @@ async function adminDeleteReportedContent(reportId, type, contentId) {
 async function adminWarnReportedAuthor(reportId, type, contentId) {
     let authorId = null;
     try {
-        const table = CONTENT_TABLE_MAP[type];
         if (type === 'book') {
             const { data } = await sb.from('bstore_books').select('teacher_id').eq('id', contentId).single();
             authorId = data?.teacher_id;
@@ -5787,7 +6549,6 @@ async function adminMessageUser(userId) {
     document.getElementById('adminMsgTargetId').value = userId;
     document.getElementById('adminMsgTargetName').value = getDisplayName(u);
     document.getElementById('adminMsgSubmitBtn').textContent = '📤 Send to User';
-    document.getElementById('adminMsgSubmitBtn').onclick = submitAdminMessage;
     showModal('adminMessageModal');
 }
 async function adminToggleBan(userId, ban) {
@@ -6461,7 +7222,7 @@ async function loadMyActivity() {
     c.innerHTML = '<div class="loading"><div class="spinner"></div>Loading…</div>';
     try {
         const uid = AppState.userId;
-        const [groupsRes, videosRes, examsRes, booksRes, commentsRes, txRes, userRes] = await Promise.all([
+        const [groupsRes, examsRes, booksRes, commentsRes, txRes, userRes] = await Promise.all([
             sb.from('group_subscriptions').select('*', { count: 'exact', head: true }).eq('user_id', uid),
             sb.from('mock_exam_attempts').select('percent').eq('user_id', uid),
             sb.from('bstore_subscriptions').select('*', { count: 'exact', head: true }).eq('user_id', uid).eq('is_active', true),
@@ -6798,6 +7559,7 @@ async function toggleGroupJoin(event, btnEl) {
         if (error) throw error;
         const joined = !!result?.joined;
         const followers = result?.followers ?? 0;
+        markGroupJoined(AppState.userId, gid, joined);
         if (btn) {
             if (joined) { btn.innerText = '✅ Joined'; btn.className = 'join-btn joined'; }
             else        { btn.innerText = '➕ Join';   btn.className = 'join-btn'; }
@@ -7278,7 +8040,7 @@ document.addEventListener('DOMContentLoaded', function() {
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.js').then(() => console.log('SW registered')).catch(() => {});
 }
-console.log('🚀 TENI v7.0 — loaded');
+console.log('🚀 TENI v7.1 — loaded');
 </script>
 </body>
 </html>
