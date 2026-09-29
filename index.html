@@ -3190,6 +3190,7 @@ html, body {
                 <button class="ct-tab active" data-type="video" onclick="switchCreateType('video', this)"><i class="fas fa-video"></i> Video</button>
                 <button class="ct-tab" data-type="ppt" onclick="switchCreateType('ppt', this)"><i class="fas fa-file-powerpoint"></i> PPT</button>
                 <button class="ct-tab" data-type="mockexam" onclick="switchCreateType('mockexam', this)"><i class="fas fa-file-alt"></i> Exam</button>
+                <button class="ct-tab" data-type="book" onclick="switchCreateType('book', this)"><i class="fas fa-book"></i> Book</button>
             </div>
             <div id="createForm-video" class="create-form active">
                 <div class="form-group"><label>Title</label><input type="text" id="videoTitle" maxlength="100"></div>
@@ -3219,10 +3220,19 @@ html, body {
                 <div class="form-group"><label>Thumbnail (optional)</label><input type="file" id="pptThumb" accept="image/*"></div>
                 <input type="hidden" id="pptFileUrl">
             </div>
-            <div id="createForm-mockexam" class="create-form">
-                <div class="form-group"><label>Exam Title</label><input type="text" id="examTitle" maxlength="100"></div>
-                <div class="form-group"><label>Time Limit (minutes)</label><input type="number" id="examTimeLimit" value="5" min="1" max="120"></div>
-                <div id="examQuestionsContainer">
+<div id="createForm-mockexam" class="create-form">
+    <div class="form-group"><label>Exam Title</label><input type="text" id="examTitle" maxlength="100"></div>
+    <div class="form-group"><label>Time Limit (minutes)</label><input type="number" id="examTimeLimit" value="5" min="1" max="120"></div>
+    <div class="form-group">
+        <label>Cover Image (optional)</label>
+        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+            <input type="file" id="examThumb" accept="image/*" style="flex:1;">
+            <button class="btn-sm btn-teal" onclick="uploadCreateFile('examThumb')" style="margin:0; width:auto;"><i class="fas fa-upload"></i> Upload</button>
+        </div>
+        <div id="examThumbStatus" style="font-size:12px; color:var(--text-muted); margin-top:4px;">⏳ No file selected</div>
+        <input type="hidden" id="examThumbUrl">
+    </div>
+    <div id="examQuestionsContainer">
                     <div class="exam-question-block" data-qnum="1">
                         <p style="font-weight:900; margin-bottom:4px;">Q1</p>
                         <input type="text" id="examQ1" placeholder="Question...">
@@ -3243,6 +3253,47 @@ html, body {
                 </div>
                 <button class="btn-sm btn-teal" onclick="addExamQuestion()" style="width:100%; margin-bottom:12px;"><i class="fas fa-plus"></i> Add Another Question</button>
             </div>
+
+            <!-- NEW BOOK FORM -->
+            <div id="createForm-book" class="create-form">
+                <div class="form-group"><label>Book Title</label><input type="text" id="bookTitle" maxlength="100"></div>
+                <div class="form-group"><label>Author</label><input type="text" id="bookAuthor" maxlength="100"></div>
+                <div class="form-group"><label>Description</label><textarea id="bookDesc" rows="3" maxlength="500"></textarea></div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select id="bookCategory">
+                        <option value="textbook">Textbook</option>
+                        <option value="reference">Reference</option>
+                        <option value="case_studies">Case Studies</option>
+                        <option value="review">Review</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Cover Image (optional)</label>
+                    <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                        <input type="file" id="bookCover" accept="image/*" style="flex:1;">
+                        <button class="btn-sm btn-teal" onclick="uploadCreateFile('bookCover')" style="margin:0; width:auto;"><i class="fas fa-upload"></i> Upload</button>
+                    </div>
+                    <div id="bookCoverStatus" style="font-size:12px; color:var(--text-muted); margin-top:4px;">⏳ No file selected</div>
+                    <input type="hidden" id="bookCoverUrl">
+                </div>
+                <div class="form-group">
+                    <label>Book File (PDF/EPUB/MOBI/DOC)</label>
+                    <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                        <input type="file" id="bookFileInput" accept=".pdf,.epub,.mobi,.doc,.docx" style="flex:1;">
+                        <button class="btn-sm btn-teal" onclick="uploadCreateFile('bookFile')" style="margin:0; width:auto;"><i class="fas fa-upload"></i> Upload</button>
+                    </div>
+                    <div id="bookFileStatus" style="font-size:12px; color:var(--text-muted); margin-top:4px;">⏳ No file selected</div>
+                    <input type="hidden" id="bookFileUrl">
+                </div>
+                <div class="form-group"><label>Monthly Price (Coins)</label><input type="number" id="bookPriceMonthly" placeholder="0" min="0"></div>
+                <div class="form-group"><label>3 Months (Coins)</label><input type="number" id="bookPrice3" placeholder="0" min="0"></div>
+                <div class="form-group"><label>6 Months (Coins)</label><input type="number" id="bookPrice6" placeholder="0" min="0"></div>
+                <div class="form-group"><label>9 Months (Coins)</label><input type="number" id="bookPrice9" placeholder="0" min="0"></div>
+                <div class="form-group"><label>1 Year (Coins)</label><input type="number" id="bookPriceYearly" placeholder="0" min="0"></div>
+            </div>
+
             <button class="btn btn-teal" onclick="submitCreateContent()"><i class="fas fa-paper-plane"></i> Publish</button>
         </div>
     </div>
@@ -4327,7 +4378,12 @@ function renderExamCard({ item, group, isLiked, isDisliked, giftTotals, isJoined
     return `<div class="media-card cover-landscape" id="group-exam-item-${idStr}" data-content-key="${key}" data-content-type="exam" data-content-id="${idStr}">
         <button class="media-card-menu-btn" data-action="menu">⋮</button>
         <div class="media-card-cover cover-banner exam-cat" data-action="start-exam">
-            <div class="banner-title"><i class="fas ${catIcon}"></i> ${escapeHtml(item.title || '')}</div>
+            ${item.thumbnail_url
+                ? `<img src="${escapeAttr(item.thumbnail_url)}" alt="" loading="lazy">
+                   <div class="banner-title" style="background:linear-gradient(to top, rgba(0,0,0,0.85), rgba(0,0,0,0));">
+                       <i class="fas ${catIcon}"></i> ${escapeHtml(item.title || '')}
+                   </div>`
+                : `<div class="banner-title"><i class="fas ${catIcon}"></i> ${escapeHtml(item.title || '')}</div>`}
         </div>
         <div class="media-card-body">
             <h3 class="media-card-title"><i class="fas ${catIcon}"></i> ${escapeHtml(item.title || '')}</h3>
@@ -8224,6 +8280,14 @@ function openCreateContentModal(defaultType = 'video') {
     if (container) {
         container.innerHTML = `<div class="exam-question-block" data-qnum="1"><p style="font-weight:900; margin-bottom:4px;">Q1</p><input type="text" id="examQ1" placeholder="Question..."><div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:6px;"><input type="text" id="examA1" placeholder="A"><input type="text" id="examB1" placeholder="B"><input type="text" id="examC1" placeholder="C"><input type="text" id="examD1" placeholder="D"></div><div style="margin-top:6px;"><label style="font-size:13px; font-weight:800;">Correct:</label> <select id="examAns1" style="width:auto; display:inline-block; margin-left:6px; padding:4px;"><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div><div style="margin-top:6px;"><label style="font-size:13px; font-weight:800;">Explanation:</label><input type="text" id="examExp1" placeholder="Optional"></div></div>`;
     }
+    // Reset hidden URL fields and status text
+    ['videoFileUrl','pptFileUrl','examThumbUrl','bookCoverUrl','bookFileUrl'].forEach(id => {
+        const el = document.getElementById(id); if (el) el.value = '';
+    });
+    ['videoUploadStatus','pptUploadStatus','examThumbStatus','bookCoverStatus','bookFileStatus'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { el.textContent = '⏳ No file selected'; el.style.color = 'var(--text-muted)'; }
+    });
     document.querySelectorAll('.ct-tab').forEach(t => t.classList.toggle('active', t.dataset.type === defaultType));
     document.querySelectorAll('.create-form').forEach(f => f.classList.remove('active'));
     const form = document.getElementById(`createForm-${defaultType}`);
@@ -8238,21 +8302,28 @@ function switchCreateType(type, btn) {
     if (form) form.classList.add('active');
 }
 async function uploadCreateFile(kind) {
-    const inputId = kind === 'video' ? 'videoFileInput' : 'pptFileInput';
-    const statusId = kind === 'video' ? 'videoUploadStatus' : 'pptUploadStatus';
-    const urlId = kind === 'video' ? 'videoFileUrl' : 'pptFileUrl';
-    const f = document.getElementById(inputId)?.files?.[0];
-    const s = document.getElementById(statusId);
+    const map = {
+        video:       { input: 'videoFileInput', status: 'videoUploadStatus', url: 'videoFileUrl', folder: 'uploads', maxMB: 100 },
+        ppt:         { input: 'pptFileInput',   status: 'pptUploadStatus',   url: 'pptFileUrl',   folder: 'uploads', maxMB: 100 },
+        examThumb:   { input: 'examThumb',      status: 'examThumbStatus',   url: 'examThumbUrl', folder: 'thumbnails', maxMB: 5 },
+        bookCover:   { input: 'bookCover',      status: 'bookCoverStatus',   url: 'bookCoverUrl', folder: 'bstore_covers', maxMB: 5 },
+        bookFile:    { input: 'bookFileInput',  status: 'bookFileStatus',    url: 'bookFileUrl',  folder: 'bstore_books', maxMB: 100 }
+    };
+    const cfg = map[kind];
+    if (!cfg) return showToast('Unknown upload kind', 'error');
+
+    const f = document.getElementById(cfg.input)?.files?.[0];
+    const s = document.getElementById(cfg.status);
     if (!f) return showToast('Select a file', 'error');
-    if (f.size > 100 * 1024 * 1024) return showToast('File too large (max 100MB)', 'error');
+    if (f.size > cfg.maxMB * 1024 * 1024) return showToast(`File too large (max ${cfg.maxMB}MB)`, 'error');
     if (s) { s.textContent = '⏳ Uploading...'; s.style.color = 'var(--gold-dark)'; }
     try {
         const ext = f.name.split('.').pop();
-        const path = `uploads/${AppState.userId}_${Date.now()}.${ext}`;
+        const path = `${cfg.folder}/${AppState.userId}_${Date.now()}.${ext}`;
         const { error } = await sb.storage.from('app-assets').upload(path, f, { cacheControl: '3600', contentType: f.type || 'application/octet-stream' });
         if (error) throw error;
         const { data: u } = sb.storage.from('app-assets').getPublicUrl(path);
-        const urlInput = document.getElementById(urlId); if (urlInput) urlInput.value = u.publicUrl;
+        const urlInput = document.getElementById(cfg.url); if (urlInput) urlInput.value = u.publicUrl;
         if (s) { s.textContent = '✅ Uploaded'; s.style.color = 'var(--green-success)'; }
     } catch (err) {
         if (s) { s.textContent = '❌ ' + err.message; s.style.color = 'var(--red-error)'; }
@@ -8303,6 +8374,7 @@ async function submitCreateContent() {
         const t = document.getElementById('examTitle')?.value.trim();
         if (!t) return showToast('Enter exam title', 'error');
         const tl = parseInt(document.getElementById('examTimeLimit')?.value) || 5;
+        const thumbUrl = document.getElementById('examThumbUrl')?.value?.trim() || null;
         const qs = [];
         const c = document.getElementById('examQuestionsContainer');
         const divs = c?.querySelectorAll('.exam-question-block') || [];
@@ -8322,10 +8394,45 @@ async function submitCreateContent() {
         });
         if (!qs.length) return showToast('Add at least one question', 'error');
         try {
-            await sb.from('mock_exams').insert({ group_id: gid, author_id: AppState.userId, title: t, questions: qs, time_limit: tl, attempts: 0, views: 0, likes: 0, dislikes: 0, comment_count: 0, share_count: 0 });
+            await sb.from('mock_exams').insert({
+                group_id: gid, author_id: AppState.userId,
+                title: t, questions: qs, time_limit: tl,
+                thumbnail_url: thumbUrl,
+                attempts: 0, views: 0, likes: 0, dislikes: 0, comment_count: 0, share_count: 0
+            });
             showToast('✅ Exam created', 'success');
             closeModal('createContentModal');
             afterCreateSuccess('mockexam');
+        } catch (err) { showToast('Error: ' + err.message, 'error'); }
+        return;
+    }
+
+    if (activeType === 'book') {
+        const t = document.getElementById('bookTitle')?.value.trim();
+        const a = document.getElementById('bookAuthor')?.value.trim();
+        const fileUrl = document.getElementById('bookFileUrl')?.value?.trim();
+        if (!t || !a || !fileUrl) return showToast('Title, author, and file are required', 'error');
+        const coverUrl = document.getElementById('bookCoverUrl')?.value?.trim() || null;
+        try {
+            await sb.from('bstore_books').insert({
+                title: t,
+                author: a,
+                description: document.getElementById('bookDesc')?.value || '',
+                category: document.getElementById('bookCategory')?.value || 'other',
+                file_url: fileUrl,
+                cover_url: coverUrl,
+                price_monthly: parseInt(document.getElementById('bookPriceMonthly')?.value) || 0,
+                price_3months: parseInt(document.getElementById('bookPrice3')?.value) || 0,
+                price_6months: parseInt(document.getElementById('bookPrice6')?.value) || 0,
+                price_9months: parseInt(document.getElementById('bookPrice9')?.value) || 0,
+                price_yearly: parseInt(document.getElementById('bookPriceYearly')?.value) || 0,
+                teacher_id: AppState.userId,
+                status: (AppState.isAdmin || AppState.isTeacher) ? 'approved' : 'pending',
+                views: 0
+            });
+            showToast('✅ Book uploaded', 'success');
+            closeModal('createContentModal');
+            afterCreateSuccess('books');
         } catch (err) { showToast('Error: ' + err.message, 'error'); }
         return;
     }
