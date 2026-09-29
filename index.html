@@ -5417,9 +5417,11 @@ async function loadTrendingContent(tab, append = false) {
         p.page++;
         p.loading = false;
     } catch (err) {
+        console.error('[loadTrendingContent] CRASH:', err);
+        console.error('[loadTrendingContent] stack:', err && err.stack);
         const loader = document.getElementById('homeLoader');
         if (loader) loader.remove();
-        if (!append) c.innerHTML = '<div class="loading" style="color:var(--red-error);">Failed.</div>';
+        if (!append) c.innerHTML = '<div class="loading" style="color:var(--red-error);">Failed.<br><small style="color:#666;font-size:11px;word-break:break-all;">' + ((err && err.message) ? err.message : String(err)) + '</small></div>';
         p.loading = false;
     }
 }
@@ -5764,10 +5766,13 @@ async function submitContentReport() {
 }
 async function notifyAdmins({ type, title, message, linkType, linkId }) {
     try {
-        const { data: admins } = await sb.from('users').select('user_id').eq('is_admin', true);
-        if (!admins?.length) return;
-        const rows = admins.map(a => ({ user_id: a.user_id, actor_id: AppState.userId, type, title, message, link_type: linkType || null, link_id: linkId ? String(linkId) : null }));
-        await sb.from('notifications').insert(rows);
+        await sb.rpc('notify_admins', {
+            p_type: type,
+            p_title: title,
+            p_message: message,
+            p_link_type: linkType || null,
+            p_link_id: linkId ? String(linkId) : null
+        });
     } catch (e) {}
 }
 async function shareContentLink(type, id) {
