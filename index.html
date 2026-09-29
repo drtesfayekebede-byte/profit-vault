@@ -4129,24 +4129,28 @@ async function batchFetchLikeState(contentTypes, idsByType) {
     const typesToQuery = [...new Set(contentTypes)];
     if (!AppState.userId || !typesToQuery.length) {
         typesToQuery.forEach(t => { out[t] = { likedSet: new Set(), dislikedSet: new Set() }; });
-        return out;
+    } else {
+        await Promise.all(typesToQuery.map(async (type) => {
+            const ids = idsByType[type] || [];
+            if (!ids.length) { out[type] = { likedSet: new Set(), dislikedSet: new Set() }; return; }
+            try {
+                const [likesRes, dislikesRes] = await Promise.all([
+                    sb.from('content_likes').select('content_id').eq('content_type', type).eq('user_id', AppState.userId).in('content_id', ids),
+                    sb.from('content_dislikes').select('content_id').eq('content_type', type).eq('user_id', AppState.userId).in('content_id', ids)
+                ]);
+                out[type] = {
+                    likedSet: new Set((likesRes.data || []).map(l => String(l.content_id))),
+                    dislikedSet: new Set((dislikesRes.data || []).map(d => String(d.content_id)))
+                };
+            } catch (e) {
+                out[type] = { likedSet: new Set(), dislikedSet: new Set() };
+            }
+        }));
     }
-    await Promise.all(typesToQuery.map(async (type) => {
-        const ids = idsByType[type] || [];
-        if (!ids.length) { out[type] = { likedSet: new Set(), dislikedSet: new Set() }; return; }
-        try {
-            const [likesRes, dislikesRes] = await Promise.all([
-                sb.from('content_likes').select('content_id').eq('content_type', type).eq('user_id', AppState.userId).in('content_id', ids),
-                sb.from('content_dislikes').select('content_id').eq('content_type', type).eq('user_id', AppState.userId).in('content_id', ids)
-            ]);
-            out[type] = {
-                likedSet: new Set((likesRes.data || []).map(l => String(l.content_id))),
-                dislikedSet: new Set((dislikesRes.data || []).map(d => String(d.content_id)))
-            };
-        } catch (e) {
-            out[type] = { likedSet: new Set(), dislikedSet: new Set() };
-        }
-    }));
+    // If caller requested exactly one type, unwrap for direct destructuring
+    if (contentTypes.length === 1) {
+        return out[contentTypes[0]] || { likedSet: new Set(), dislikedSet: new Set() };
+    }
     return out;
 }
 async function batchFetchGiftTotals(contentTypes, idsByType) {
