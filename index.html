@@ -4219,22 +4219,27 @@ function renderVideoCard({ item, group, isJoined, isOwner, followerCount, kind =
     const key = `video:${idStr}`;
     const thumbUrl = item.thumbnail_url || item.cover_url || '';
     const fileUrl = item.file_url || '';
-    ...
+    const giftTotals = item._giftTotals || null;
+    const isLiked = item._isLiked || false;
+    const isDisliked = item._isDisliked || false;
+    const giftChips = buildGiftChipsHtml(giftTotals);
+    const topGifterId = giftTotals?.top ? Object.entries(giftTotals.top).sort((a, b) => b[1] - a[1])[0]?.[0] : null;
+    const showTopGifter = giftTotals && giftTotals.total >= 1000 && topGifterId;
     const groupId = group?.id || AppState.currentGroupId;
     const prefix = kind === 'home' ? 'home' : 'group';
     return `<div class="content-card" id="${prefix}-video-item-${idStr}" data-content-key="${key}" data-content-type="video" data-content-id="${idStr}" data-file-url="${escapeAttr(fileUrl)}" data-video-kind="${kind}" style="padding:0;">
         <button class="content-card-menu-btn" data-action="menu">⋮</button>
         <div class="video-wrapper" id="${prefix}-video-wrapper-${idStr}" data-kind="${kind}">
-            <div class="video-thumbnail" id="group-thumbnail-${idStr}" data-action="play-video">
+            <div class="video-thumbnail" id="${prefix}-thumbnail-${idStr}" data-action="play-video">
                 ${thumbUrl ? `<img src="${escapeAttr(thumbUrl)}" alt="" loading="lazy" decoding="async">` : `<div style="position:absolute; inset:0; background:#1a1a2e; display:flex; align-items:center; justify-content:center; font-size:48px; color:var(--gold);"><i class="fas fa-film"></i></div>`}
                 <div class="play-btn-overlay"><span><i class="fas fa-play"></i></span></div>
             </div>
-            <div id="group-video-player-${idStr}" style="display:none; position:absolute; inset:0; background:#000; z-index:2;">
-                <video id="group-video-${idStr}" playsinline preload="metadata"></video>
+            <div id="${prefix}-video-player-${idStr}" style="display:none; position:absolute; inset:0; background:#000; z-index:2;">
+                <video id="${prefix}-video-${idStr}" playsinline preload="metadata"></video>
                 <div class="video-controls">
                     <button data-action="toggle-play"><i class="fas fa-pause"></i></button>
-                    <div class="progress-bar" data-action="seek"><div class="progress-fill" id="group-progressFill-${idStr}"></div></div>
-                    <span class="time-display" id="group-timeDisplay-${idStr}">0:00 / 0:00</span>
+                    <div class="progress-bar" data-action="seek"><div class="progress-fill" id="${prefix}-progressFill-${idStr}"></div></div>
+                    <span class="time-display" id="${prefix}-timeDisplay-${idStr}">0:00 / 0:00</span>
                     <input type="range" class="volume-slider" min="0" max="1" step="0.1" value="1" data-action="volume">
                     <button data-action="fullscreen"><i class="fas fa-expand"></i></button>
                     <button class="speed-control" data-action="speed">1x</button>
