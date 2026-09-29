@@ -956,14 +956,17 @@ html, body {
    ============================================================ */
 .media-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
+    grid-template-columns: 1fr;
+    gap: 12px;
 }
 @media (min-width: 700px) {
-    .media-grid { grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .media-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
 }
 @media (min-width: 1100px) {
-    .media-grid { grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .media-grid { grid-template-columns: repeat(3, 1fr); gap: 16px; }
+}
+@media (min-width: 1400px) {
+    .media-grid { grid-template-columns: repeat(4, 1fr); gap: 18px; }
 }
 
 /* ============================================================
@@ -4178,7 +4181,8 @@ async function batchFetchGiftTotals(contentTypes, idsByType) {
 }
 async function fetchLikeState(contentType, ids) {
     const result = await batchFetchLikeState([contentType], { [contentType]: ids });
-    return result[contentType] || { likedSet: new Set(), dislikedSet: new Set() };
+    if (result && result.likedSet && result.dislikedSet) return result;
+    return (result && result[contentType]) || { likedSet: new Set(), dislikedSet: new Set() };
 }
 
 function buildGiftChipsHtml(giftTotals) {
