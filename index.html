@@ -4214,21 +4214,17 @@ function buildActionRow({ contentType, contentId, likes, dislikes, comments, vie
     </div>`;
 }
 
-function renderVideoCard({ item, group, isJoined, isOwner, followerCount }) {
+function renderVideoCard({ item, group, isJoined, isOwner, followerCount, kind = 'group' }) {
     const idStr = String(item.id);
     const key = `video:${idStr}`;
     const thumbUrl = item.thumbnail_url || item.cover_url || '';
     const fileUrl = item.file_url || '';
-    const giftTotals = item._giftTotals || null;
-    const isLiked = item._isLiked || false;
-    const isDisliked = item._isDisliked || false;
-    const giftChips = buildGiftChipsHtml(giftTotals);
-    const topGifterId = giftTotals?.top ? Object.entries(giftTotals.top).sort((a, b) => b[1] - a[1])[0]?.[0] : null;
-    const showTopGifter = giftTotals && giftTotals.total >= 1000 && topGifterId;
+    ...
     const groupId = group?.id || AppState.currentGroupId;
-    return `<div class="content-card" id="group-video-item-${idStr}" data-content-key="${key}" data-content-type="video" data-content-id="${idStr}" data-file-url="${escapeAttr(fileUrl)}" style="padding:0;">
+    const prefix = kind === 'home' ? 'home' : 'group';
+    return `<div class="content-card" id="${prefix}-video-item-${idStr}" data-content-key="${key}" data-content-type="video" data-content-id="${idStr}" data-file-url="${escapeAttr(fileUrl)}" data-video-kind="${kind}" style="padding:0;">
         <button class="content-card-menu-btn" data-action="menu">⋮</button>
-        <div class="video-wrapper" id="group-video-wrapper-${idStr}" data-kind="group">
+        <div class="video-wrapper" id="${prefix}-video-wrapper-${idStr}" data-kind="${kind}">
             <div class="video-thumbnail" id="group-thumbnail-${idStr}" data-action="play-video">
                 ${thumbUrl ? `<img src="${escapeAttr(thumbUrl)}" alt="" loading="lazy" decoding="async">` : `<div style="position:absolute; inset:0; background:#1a1a2e; display:flex; align-items:center; justify-content:center; font-size:48px; color:var(--gold);"><i class="fas fa-film"></i></div>`}
                 <div class="play-btn-overlay"><span><i class="fas fa-play"></i></span></div>
@@ -4486,7 +4482,8 @@ async function loadGroupVideos(groupId, append = false) {
         const cardsHtml = visible.map(item => renderVideoCard({
             item, group, isJoined,
             isOwner: AppState.isGroupOwner,
-            followerCount: AppState.currentGroupFollowers
+            followerCount: AppState.currentGroupFollowers,
+            kind: 'group'
         })).join('');
 
         if (!append) {
@@ -4795,13 +4792,20 @@ function pauseAllOtherVideos(exceptId, exceptKind) {
     });
 }
 function closeAllVideos() {
+    // Close any inline players
     document.querySelectorAll('video').forEach(v => {
-        if (v.id.includes('-big-video')) { try { v.pause(); } catch(e) {} return; }
+        if (v.id.includes('-big-video')) {
+            try { v.pause(); } catch (e) {}
+            return;
+        }
         const m = v.id.match(/^(group|home)-video-(.+)$/);
         if (!m) return;
         const [, kind, id] = m;
         closeVideoPlayer(kind, id);
     });
+    // Also reset any active split views
+    if (AppState.videoSplit.group.active) closeVideoSplit('group');
+    if (AppState.videoSplit.home.active) closeVideoSplit('home');
 }
 function toggleVideoPlay(kind, id) { const v = document.getElementById(`${kind}-video-${id}`); if (!v) return; if (v.paused) v.play(); else v.pause(); }
 function updateVideoProgress(kind, id) {
@@ -5324,7 +5328,8 @@ async function loadTrendingContent(tab, append = false) {
                 group: gMap[item.group_id],
                 isJoined: joinedSet.has(item.group_id),
                 isOwner: ownedGroupIds.has(item.group_id),
-                followerCount: gMap[item.group_id]?.followers || 0
+                followerCount: gMap[item.group_id]?.followers || 0,
+                kind: 'home'
             })).join('');
 
             if (!append) {
@@ -8927,26 +8932,36 @@ document.addEventListener('click', function(e) {
     const card = e.target.closest('[data-content-key]');
     const bigInfo = e.target.closest('.yt-big-info');
     let ctx = null;
+
     if (card) {
         const actionEl = e.target.closest('[data-action]');
         if (actionEl && !e.target.closest('.comment-input-wrapper, .comment-reply-input, .chat-bubble-wrap')) {
+            // Read kind from the card itself — set by renderVideoCard for video cards.
+            // For non-video cards (ppt/exam/book), it defaults to 'group'.
+            const cardKind = card.dataset.videoKind
+                || card.querySelector('.video-wrapper')?.dataset.kind
+                || 'group';
             ctx = {
                 action: actionEl.dataset.action,
                 contentType: card.dataset.contentType,
                 contentId: card.dataset.contentId,
                 fileUrl: card.dataset.fileUrl || '',
-                kind: card.querySelector('.video-wrapper')?.dataset.kind || 'group',
+                kind: cardKind,
                 actionEl,
                 card,
                 el: card
             };
         }
     }
+
     if (!ctx && bigInfo) {
         const actionEl = e.target.closest('[data-action]');
         if (actionEl && !e.target.closest('.comment-input-wrapper, .comment-reply-input')) {
+            // Big player: figure out which split is active
             const isGroupActive = AppState.videoSplit.group.active;
-            const contentId = isGroupActive ? AppState.videoSplit.group.selected : AppState.videoSplit.home.selected;
+            const contentId = isGroupActive
+                ? AppState.videoSplit.group.selected
+                : AppState.videoSplit.home.selected;
             ctx = {
                 action: actionEl.dataset.action,
                 contentType: 'video',
@@ -8959,43 +8974,48 @@ document.addEventListener('click', function(e) {
             };
         }
     }
+
     if (!ctx) return;
     handleCardAction(ctx, e);
 }, false);
 
 async function handleCardAction(ctx, e) {
-    const { action, contentType, contentId, fileUrl, kind, actionEl, card } = ctx;
+    const { action, contentType, contentId, fileUrl, actionEl, card } = ctx;
+
+    // Prefer the card's own data-video-kind, fall back to ctx.kind, then 'group'
+    const cardKind = card?.dataset?.videoKind || ctx.kind || 'group';
+
     switch (action) {
         case 'play-video':
             e.preventDefault(); e.stopPropagation();
             {
-                const state = AppState.videoSplit[kind];
-                if (state.items.find(i => String(i.id) === String(contentId))) {
-                    openVideoInSplit(kind, contentId);
+                const state = AppState.videoSplit[cardKind];
+                if (state && state.items.find(i => String(i.id) === String(contentId))) {
+                    openVideoInSplit(cardKind, contentId);
                 } else {
-                    playVideo(kind, contentId, fileUrl);
+                    playVideo(cardKind, contentId, fileUrl);
                 }
             }
             break;
         case 'toggle-play':
             e.stopPropagation();
-            toggleVideoPlay(kind, contentId);
+            toggleVideoPlay(cardKind, contentId);
             break;
         case 'seek':
             e.stopPropagation();
-            seekVideo(e, kind, contentId);
+            seekVideo(e, cardKind, contentId);
             break;
         case 'volume':
             e.stopPropagation();
-            setVolume(kind, contentId, e.target.value);
+            setVolume(cardKind, contentId, e.target.value);
             break;
         case 'fullscreen':
             e.stopPropagation();
-            toggleFullscreen(kind, contentId);
+            toggleFullscreen(cardKind, contentId);
             break;
         case 'speed':
             e.stopPropagation();
-            changeSpeed(kind, contentId, actionEl);
+            changeSpeed(cardKind, contentId, actionEl);
             break;
         case 'download':
             e.stopPropagation();
@@ -9003,7 +9023,7 @@ async function handleCardAction(ctx, e) {
             break;
         case 'close-video':
             e.stopPropagation();
-            closeVideoPlayer(kind, contentId);
+            closeVideoPlayer(cardKind, contentId);
             break;
         case 'open-ppt':
             e.stopPropagation();
